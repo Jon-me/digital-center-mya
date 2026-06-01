@@ -275,15 +275,31 @@ document.getElementById("zonaAdmin").scrollIntoView({
 
 async function eliminarProducto(index){
 
+    let productoEliminar = productos[index];
+
+    console.log("Producto a eliminar:", productoEliminar);
+
+    if(!productoEliminar || !productoEliminar.id){
+        alert("Error: este producto no tiene ID de Firebase");
+        return;
+    }
+
     if(confirm("¿Eliminar producto?")){
 
-        let productoEliminar = productos[index];
+        try{
 
-        await deleteDoc(
-            doc(db, "productos", productoEliminar.id)
-        );
+            await deleteDoc(
+                doc(db, "productos", productoEliminar.id)
+            );
 
-        alert("Producto eliminado correctamente");
+            alert("Producto eliminado correctamente");
+
+        } catch(error){
+
+            console.error("Error al eliminar:", error);
+            alert("No se pudo eliminar. Revisa la consola.");
+
+        }
 
     }
 
