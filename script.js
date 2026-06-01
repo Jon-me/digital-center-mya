@@ -7,8 +7,7 @@ import {
     onSnapshot,
     deleteDoc,
     updateDoc,
-    doc,
-    getDocs
+    doc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1267,22 +1266,19 @@ function anularVenta(index){
 
     let rol = localStorage.getItem("rolActivo");
 
+    ventaPendienteAnular = index;
+
     if(rol === "vendedor"){
 
-        ventaPendienteAnular = index;
-
         document.getElementById("codigoAdminInput").value = "";
-
         document.getElementById("modalCodigo").style.display = "block";
-
         document.getElementById("fondoModal").style.display = "block";
+        document.getElementById("codigoAdminInput").focus();
 
         return;
-
     }
 
     ejecutarAnulacion(index);
-
 }
 
 function abrirConfiguracion(){
@@ -1332,29 +1328,18 @@ function controlarColumnaGanancia(){
 
 function validarCodigoAdmin(){
 
-    let codigoIngresado =
-        document.getElementById("codigoAdminInput").value;
+    let codigoIngresado = document.getElementById("codigoAdminInput").value;
 
     if(codigoIngresado !== codigoAnulacion){
-
-        alert("Código incorrecto. No puedes anular esta venta.");
-
+        alert("Código incorrecto");
         return;
-
     }
 
-    let indexAnular = ventaPendienteAnular;
-
     document.getElementById("modalCodigo").style.display = "none";
-
     document.getElementById("fondoModal").style.display = "none";
-
     document.getElementById("codigoAdminInput").value = "";
 
-    ejecutarAnulacion(indexAnular);
-
-    ventaPendienteAnular = null;
-
+    ejecutarAnulacion(ventaPendienteAnular);
 }
 
 function cerrarModalCodigo(){
@@ -1371,35 +1356,57 @@ function cerrarModalCodigo(){
 
 async function ejecutarAnulacion(index){
 
+    if(index === null || index === undefined){
+        alert("Error: no hay venta seleccionada");
+        return;
+    }
+
     if(!confirm("¿Anular esta venta?")){
         return;
     }
 
     let venta = historialVentas[index];
 
-    venta.productos.forEach(function(item){
+    if(!venta || !venta.id){
+        alert("Error: esta venta no tiene ID de Firebase");
+        return;
+    }
 
-        let producto = productos.find(function(p){
-            return p.producto === item.producto;
-        });
+    try{
 
-        if(producto){
-            producto.stock += item.cantidad;
+        for(let item of venta.productos){
+
+            let producto = productos.find(function(p){
+                return p.producto === item.producto;
+            });
+
+            if(producto && producto.id){
+
+                await updateDoc(
+                    doc(db, "productos", producto.id),
+                    {
+                        stock: Number(producto.stock) + Number(item.cantidad)
+                    }
+                );
+
+            }
+
         }
 
-    });
+        await deleteDoc(
+            doc(db, "ventas", venta.id)
+        );
 
-await deleteDoc(
-    doc(db, "ventas", venta.id)
-);
+        ventaPendienteAnular = null;
 
-mostrarProductos();
-mostrarHistorialVentas();
-controlarColumnaGanancia();
-actualizarReportes();
-mostrarReporteVendedores();
+        alert("Venta anulada correctamente");
 
-alert("Venta anulada correctamente");
+    } catch(error){
+
+        console.error("Error al anular:", error);
+        alert("No se pudo anular. Revisa la consola.");
+
+    }
 
 }
 
@@ -1641,6 +1648,7 @@ window.guardarConfiguracion = guardarConfiguracion;
 window.validarCodigoAdmin = validarCodigoAdmin;
 window.cerrarModalCodigo = cerrarModalCodigo;
 window.anularVenta = anularVenta;
+window.ejecutarAnulacion = ejecutarAnulacion;
 window.mostrarCarrito = mostrarCarrito;
 window.actualizarDashboard = actualizarDashboard;
 
