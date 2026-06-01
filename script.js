@@ -1569,3 +1569,48 @@ window.guardarConfiguracion = guardarConfiguracion;
 window.validarCodigoAdmin = validarCodigoAdmin;
 window.cerrarModalCodigo = cerrarModalCodigo;
 window.anularVenta = anularVenta;
+window.mostrarCarrito = mostrarCarrito;
+window.actualizarDashboard = actualizarDashboard;
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    let descuentoInput = document.getElementById("descuentoVenta");
+
+    if(descuentoInput){
+
+        descuentoInput.addEventListener("input", function(){
+
+            mostrarCarrito();
+            actualizarDashboard();
+
+        });
+
+    }
+
+});
+
+window.migrarProductosAFirebase = async function(){
+
+    let productosLocales =
+        JSON.parse(localStorage.getItem("productos")) || [];
+
+    if(productosLocales.length === 0){
+        alert("No hay productos antiguos en esta laptop");
+        return;
+    }
+
+    if(!confirm("¿Migrar " + productosLocales.length + " productos a Firebase? Hazlo SOLO UNA VEZ.")){
+        return;
+    }
+
+    for(let producto of productosLocales){
+
+        delete producto.id;
+
+        await addDoc(collection(db, "productos"), producto);
+
+    }
+
+    alert("Migración completada: " + productosLocales.length + " productos enviados a Firebase");
+
+};
