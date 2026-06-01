@@ -1369,7 +1369,7 @@ function cerrarModalCodigo(){
 
 }
 
-function ejecutarAnulacion(index){
+async function ejecutarAnulacion(index){
 
     if(!confirm("¿Anular esta venta?")){
         return;
@@ -1389,21 +1389,17 @@ function ejecutarAnulacion(index){
 
     });
 
-    historialVentas.splice(index, 1);
+await deleteDoc(
+    doc(db, "ventas", venta.id)
+);
 
-    localStorage.setItem("historialVentas", JSON.stringify(historialVentas));
+mostrarProductos();
+mostrarHistorialVentas();
+controlarColumnaGanancia();
+actualizarReportes();
+mostrarReporteVendedores();
 
-    mostrarProductos();
-
-    mostrarHistorialVentas();
-
-    controlarColumnaGanancia();
-    
-    actualizarReportes();
-
-    mostrarReporteVendedores();
-
-    alert("Venta anulada correctamente");
+alert("Venta anulada correctamente");
 
 }
 
@@ -1658,15 +1654,23 @@ document.addEventListener("DOMContentLoaded", function(){
     setTimeout(limpiarDescuentoSiCarritoVacio, 500);
 
     if(descuentoInput){
-
         descuentoInput.addEventListener("input", function(){
-
             mostrarCarrito();
             actualizarDashboard();
-
         });
-
     }
+
+    document.getElementById("usuario").addEventListener("keydown", function(event){
+        if(event.key === "Enter"){
+            iniciarSesion();
+        }
+    });
+
+    document.getElementById("password").addEventListener("keydown", function(event){
+        if(event.key === "Enter"){
+            iniciarSesion();
+        }
+    });
 
 });
 
