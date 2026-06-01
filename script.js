@@ -277,8 +277,6 @@ async function eliminarProducto(index){
 
     let productoEliminar = productos[index];
 
-    console.log("Producto a eliminar:", productoEliminar);
-
     if(!productoEliminar || !productoEliminar.id){
         alert("Error: este producto no tiene ID de Firebase");
         return;
@@ -291,6 +289,15 @@ async function eliminarProducto(index){
             await deleteDoc(
                 doc(db, "productos", productoEliminar.id)
             );
+
+            productos = productos.filter(function(p){
+                return p.id !== productoEliminar.id;
+            });
+
+            mostrarProductos();
+            actualizarDashboard();
+
+            localStorage.removeItem("productos");
 
             alert("Producto eliminado correctamente");
 
@@ -404,8 +411,6 @@ function eliminarDelCarrito(index){
 
     carrito.splice(index, 1);
 
-    localStorage.setItem("productos", JSON.stringify(productos));
-
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
     mostrarCarrito();
@@ -461,8 +466,6 @@ function agregarDirecto(index){
     // DESCONTAR STOCK
     producto.stock = stockActual - 1;
 
-    localStorage.setItem("productos", JSON.stringify(productos));
-
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
     mostrarCarrito();
@@ -491,8 +494,6 @@ function cancelarVenta(){
     });
 
     carrito = [];
-
-    localStorage.setItem("productos", JSON.stringify(productos));
 
     localStorage.removeItem("carrito");
 
@@ -546,8 +547,6 @@ carrito.forEach(function(item){
     localStorage.removeItem("carrito");
 
     document.getElementById("descuentoVenta").value = 0;
-
-    localStorage.setItem("productos", JSON.stringify(productos));
 
     mostrarCarrito();
     mostrarProductos();
@@ -1351,8 +1350,6 @@ function ejecutarAnulacion(index){
     });
 
     historialVentas.splice(index, 1);
-
-    localStorage.setItem("productos", JSON.stringify(productos));
 
     localStorage.setItem("historialVentas", JSON.stringify(historialVentas));
 
