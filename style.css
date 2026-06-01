@@ -734,3 +734,11 @@ tr:hover{
 .dashboard-card:hover h2{
     filter: blur(0);
 }
+
+body.rol-vendedor #dashboardAdmin,
+body.rol-vendedor #dashboardReportes,
+body.rol-vendedor #panelReporteVendedores,
+body.rol-vendedor #zonaAdmin,
+body.rol-vendedor .btn-toggle-producto{
+    display: none !important;
+}

@@ -101,7 +101,7 @@ function mostrarProductos(){
      ` : `
      <p>Precio: S/ ${producto.precio}</p>
 `}
-     <button onclick="agregarDirecto(${index})">
+     <button class="btn-agregar" onclick="agregarDirecto(${index})">
         🛒 Agregar
      </button>
  
@@ -620,6 +620,9 @@ function iniciarSesion(){
             usuarioEncontrado.rol
         );
 
+        document.body.classList.remove("rol-admin", "rol-vendedor");
+document.body.classList.add("rol-" + usuarioEncontrado.rol);
+
         document.getElementById("login")
             .style.display = "none";
 
@@ -662,21 +665,41 @@ function iniciarSesion(){
 
 function aplicarPermisos(){
 
-    let rol =
-        localStorage.getItem("rolActivo");
+    let rol = localStorage.getItem("rolActivo");
 
-    // SI ES VENDEDOR
     if(rol === "vendedor"){
 
-        let botonesEliminar =
-            document.querySelectorAll(
-                'button[onclick^="eliminarProducto"]'
-            );
+        document.getElementById("dashboardAdmin").style.display = "none";
+        document.getElementById("dashboardReportes").style.display = "none";
+        document.getElementById("panelReporteVendedores").style.display = "none";
+        document.getElementById("zonaAdmin").style.display = "none";
+        document.getElementById("tituloReportes").style.display = "none";
+        
+        let columnaGanancia = document.getElementById("columnaGanancia");
+        if(columnaGanancia){
+            columnaGanancia.style.display = "none";
+        }
 
-        botonesEliminar.forEach(function(btn){
-
+        document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
             btn.style.display = "none";
+        });
 
+        document.querySelectorAll('button[onclick^="editarProducto"]').forEach(function(btn){
+            btn.style.display = "none";
+        });
+
+        document.querySelectorAll('button[onclick^="eliminarProducto"]').forEach(function(btn){
+            btn.style.display = "none";
+        });
+
+    } else {
+
+        document.getElementById("dashboardAdmin").style.display = "grid";
+        document.getElementById("tituloReportes").style.display = "block";
+        document.getElementById("dashboardReportes").style.display = "grid";
+
+        document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
+            btn.style.display = "inline-block";
         });
 
     }
@@ -700,6 +723,9 @@ if(localStorage.getItem("sesion") === "activa"){
     document.getElementById("login").style.display = "none";
 
     document.getElementById("sistema").style.display = "block";
+
+    document.body.classList.remove("rol-admin", "rol-vendedor");
+document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
 
     if(localStorage.getItem("rolActivo") === "vendedor"){
         document.getElementById("dashboardAdmin").style.display = "none";
