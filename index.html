@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Digital Center M&A</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+   <div id="login" style="display: none;">
+
+    <h2>Iniciar Sesión</h2>
+
+    <input
+        type="text"
+        id="usuario"
+        placeholder="Usuario"
+    >
+
+    <br><br>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+    >
+
+    <br><br>
+
+    <button onclick="iniciarSesion()">
+        Entrar
+    </button>
+
+</div>
+
+   <div class="container" id="sistema" style="display: none;">
+
+        <button onclick="cerrarSesion()">
+    Cerrar Sesión
+</button>
+
+        <div class="hero-banner">
+    <h1>Digital Center M&A</h1>
+</div>
+        
+<h3>Buscar Producto</h3>
+
+<input 
+    type="text"
+    id="buscador"
+    placeholder="Buscar producto..."
+    onkeyup="buscarProducto()"
+>
+
+<br><br>
+
+<div class="categorias-pos">
+
+    <button onclick="filtrarCategoria('todos')">
+    📦 Todos
+</button>
+
+<button onclick="filtrarCategoria('CELULAR')">
+    📱 Celulares
+</button>
+
+<button onclick="filtrarCategoria('CARGADOR')">
+    🔌 Cargadores
+</button>
+
+<button onclick="filtrarCategoria('AUDIFONO')">
+    🎧 Audífonos
+</button>
+
+<button onclick="filtrarCategoria('PANTALLA')">
+    📲 Pantallas
+</button>
+
+<button onclick="filtrarCategoria('VIDRIO')">
+    🛡️ Vidrios
+</button>
+
+</div>
+
+<div class="zona-pos">
+
+    <div class="panel-carrito">
+
+        <h3>🛒 Carrito</h3>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="carritoTabla"></tbody>
+        </table>
+
+        <h2 id="totalVenta">
+            Total: S/ 0
+        </h2>
+
+        <input
+    id="descuentoVenta"
+    type="number"
+    placeholder="Descuento S/"
+    value="0"
+    oninput="mostrarCarrito(); actualizarDashboard();"
+>
+
+        <h3>Datos del Cliente</h3>
+
+        <input id="clienteNombre" type="text" placeholder="Nombre del Cliente">
+        <br>
+
+        <input id="clienteDni" type="text" placeholder="DNI">
+        <br>
+
+        <div class="acciones-venta">
+            <button onclick="cancelarVenta()">Cancelar Venta</button>
+            <button onclick="finalizarVenta()">Finalizar Venta</button>
+            <button onclick="imprimirBoleta()">🖨️ Imprimir Boleta</button>
+        </div>
+
+    </div>
+
+    <div class="panel-productos">
+
+        <h3>📱 Productos</h3>
+
+        <div id="tablaProductos" class="productos-grid"></div>
+
+    </div>
+
+</div>
+
+<h2>📋 Historial de Ventas</h2>
+
+<table border="1">
+
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Total</th>
+            <th id="columnaGanancia">
+            Ganancia
+</th>
+            <th>Acción</th>
+
+        </tr>
+        
+    </thead>
+
+    <tbody id="historialVentasTabla">
+
+    </tbody>
+
+</table>
+
+<h2 style="margin-top:40px;">
+    📊 Reportes y Estadísticas
+</h2>
+
+<div class="dashboard" id="dashboardAdmin">
+
+    <div class="dashboard-card">
+        <h2 id="totalProductos">0</h2>
+        <p>📦 Productos</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="valorInventario">S/ 0</h2>
+        <p>💰 Valor Inventario</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="productosCarrito">0</h2>
+        <p>🛒 Carrito</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="ventaActual">S/ 0</h2>
+        <p>📈 Venta Actual</p>
+    </div>
+
+</div>
+
+<!-- REPORTES -->
+
+<div class="dashboard" id="dashboardReportes">
+
+    <div class="dashboard-card">
+        <h2 id="ventasHoy">S/ 0</h2>
+        <p>📅 Ventas Hoy</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="gananciaHoy">S/ 0</h2>
+        <p>💵 Ganancia Hoy</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="ventasMes">S/ 0</h2>
+        <p>📈 Ventas Mes</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="gananciaMes">S/ 0</h2>
+        <p>🏦 Ganancia Mes</p>
+    </div>
+
+</div>
+
+<button onclick="toggleReporteVendedores()" class="btn-toggle-producto">
+    👨‍💼 Reporte por Vendedor
+</button>
+
+<div id="panelReporteVendedores" style="display:none;">
+
+<h3>👨‍💼 Reporte por Vendedor</h3>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Vendedor</th>
+            <th>Ventas</th>
+            <th>Total Vendido</th>
+            <th>Ganancia</th>
+        </tr>
+    </thead>
+
+    <tbody id="reporteVendedoresTabla"></tbody>
+</table>
+</div>
+
+<button onclick="toggleAgregarProducto()" class="btn-toggle-producto">
+   ⚙️ Gestión de Productos
+</button>
+
+<div id="zonaAdmin" style="display:none;">
+
+        <h2>Agregar Producto</h2>
+
+        <input id="codigo" type="text" placeholder="Código de Producto">
+        <br><br>
+
+        <input id="producto" type="text" placeholder="Nombre del Producto">
+        <br><br>
+
+        <input id="categoria" type="text" placeholder="Categoría">
+        <br><br>
+
+        <input id="stock" type="number" placeholder="Stock">
+        <br><br>
+
+        <input id="precioCompra" type="number" placeholder="Precio Compra">
+        <br><br>
+
+        <input id="precio" type="number" placeholder="Precio Venta">
+        <br><br>
+
+        <input
+    id="imagen"
+    type="file"
+    accept="image/*"
+>
+
+<br><br>
+
+        <button onclick="guardarProducto()">
+            Guardar Producto
+        </button>
+
+<br><br>
+
+<button onclick="abrirConfiguracion()">
+    ⚙️ Configuración
+</button>
+
+<div id="panelConfiguracion" style="display:none;">
+
+    <h2>⚙️ Configuración</h2>
+
+    <input
+        id="nuevoCodigoAnulacion"
+        type="text"
+        placeholder="Código de Anulación"
+    >
+
+    <br><br>
+
+    <button onclick="guardarConfiguracion()">
+        Guardar Configuración
+    </button>
+
+    </div>
+
+
+        </div>
+
+    </div>
+
+   <script type="module" src="script.js"></script>
+
+<div id="modalCodigo" style="display:none;">
+
+    <h3>🔐 Autorización Admin</h3>
+
+    <input
+        type="password"
+        id="codigoAdminInput"
+        placeholder="Ingrese código"
+    >
+
+    <br><br>
+
+    <button onclick="validarCodigoAdmin()">
+        Aceptar
+    </button>
+
+    <button onclick="cerrarModalCodigo()">
+        Cancelar
+    </button>
+
+</div>
+
+<div
+    id="fondoModal"
+    style="display:none;"
+></div>
+
+</body>
+
+</html>
