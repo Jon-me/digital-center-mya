@@ -2,9 +2,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 
 import {
     getFirestore,
-    collection,
-    addDoc,
-    onSnapshot
+collection,
+addDoc,
+onSnapshot,
+deleteDoc,
+updateDoc,
+doc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -162,7 +165,7 @@ function guardarProducto(){
 
 }
 
-function guardarConImagen(imagenBase64){
+async function guardarConImagen(imagenBase64){
 
         if(
      indiceEditar !== null &&
@@ -189,7 +192,12 @@ function guardarConImagen(imagenBase64){
 // EDITAR O GUARDAR NUEVO
 if(indiceEditar !== null){
 
-    productos[indiceEditar] = nuevoProducto;
+    let productoEditar = productos[indiceEditar];
+
+    await updateDoc(
+        doc(db, "productos", productoEditar.id),
+        nuevoProducto
+    );
 
     alert("✅ Producto editado correctamente");
 
@@ -197,9 +205,9 @@ if(indiceEditar !== null){
 
 } else {
 
-    addDoc(collection(db, "productos"), nuevoProducto);
+    await addDoc(collection(db, "productos"), nuevoProducto);
 
-alert("✅ Producto guardado correctamente");
+    alert("✅ Producto guardado correctamente");
 
 }
 
@@ -265,18 +273,17 @@ document.getElementById("zonaAdmin").scrollIntoView({
 
 }
 
-function eliminarProducto(index){
+async function eliminarProducto(index){
 
     if(confirm("¿Eliminar producto?")){
 
-        productos.splice(index, 1);
+        let productoEliminar = productos[index];
 
-        localStorage.setItem(
-            "productos",
-            JSON.stringify(productos)
+        await deleteDoc(
+            doc(db, "productos", productoEliminar.id)
         );
 
-        mostrarProductos();
+        alert("Producto eliminado correctamente");
 
     }
 
@@ -1519,8 +1526,11 @@ onSnapshot(collection(db, "productos"), function(snapshot){
 
     productos = [];
 
-    snapshot.forEach(function(doc){
-        productos.push(doc.data());
+    snapshot.forEach(function(documento){
+        productos.push({
+            id: documento.id,
+            ...documento.data()
+        });
     });
 
     mostrarProductos();
