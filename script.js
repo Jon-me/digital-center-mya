@@ -1262,7 +1262,10 @@ function mostrarHistorialVentas(){
 
 }
 
+
 function anularVenta(index){
+
+    console.log("PRUEBA JONATAN 123");
 
     let rol = localStorage.getItem("rolActivo");
 
