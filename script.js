@@ -1527,3 +1527,22 @@ onSnapshot(collection(db, "productos"), function(snapshot){
     actualizarDashboard();
 
 });
+
+window.iniciarSesion = iniciarSesion;
+window.cerrarSesion = cerrarSesion;
+window.buscarProducto = buscarProducto;
+window.filtrarCategoria = filtrarCategoria;
+window.guardarProducto = guardarProducto;
+window.agregarDirecto = agregarDirecto;
+window.editarProducto = editarProducto;
+window.eliminarProducto = eliminarProducto;
+window.cancelarVenta = cancelarVenta;
+window.finalizarVenta = finalizarVenta;
+window.imprimirBoleta = imprimirBoleta;
+window.toggleAgregarProducto = toggleAgregarProducto;
+window.toggleReporteVendedores = toggleReporteVendedores;
+window.abrirConfiguracion = abrirConfiguracion;
+window.guardarConfiguracion = guardarConfiguracion;
+window.validarCodigoAdmin = validarCodigoAdmin;
+window.cerrarModalCodigo = cerrarModalCodigo;
+window.anularVenta = anularVenta;
