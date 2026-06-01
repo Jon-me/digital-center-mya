@@ -1271,8 +1271,17 @@ function anularVenta(index){
     if(rol === "vendedor"){
 
         document.getElementById("codigoAdminInput").value = "";
-        document.getElementById("modalCodigo").style.display = "block";
-        document.getElementById("fondoModal").style.display = "block";
+        let modal = document.getElementById("modalCodigo");
+let fondo = document.getElementById("fondoModal");
+
+modal.style.display = "block";
+modal.style.visibility = "visible";
+modal.style.pointerEvents = "auto";
+
+fondo.style.display = "block";
+fondo.style.visibility = "visible";
+fondo.style.pointerEvents = "auto";
+        
         document.getElementById("codigoAdminInput").focus();
 
         return;
@@ -1335,8 +1344,17 @@ function validarCodigoAdmin(){
         return;
     }
 
-    document.getElementById("modalCodigo").style.display = "none";
-    document.getElementById("fondoModal").style.display = "none";
+    let modal = document.getElementById("modalCodigo");
+let fondo = document.getElementById("fondoModal");
+
+modal.style.display = "none";
+modal.style.visibility = "hidden";
+modal.style.pointerEvents = "none";
+
+fondo.style.display = "none";
+fondo.style.visibility = "hidden";
+fondo.style.pointerEvents = "none";
+    
     document.getElementById("codigoAdminInput").value = "";
 
     ejecutarAnulacion(ventaPendienteAnular);
@@ -1344,9 +1362,16 @@ function validarCodigoAdmin(){
 
 function cerrarModalCodigo(){
 
-    document.getElementById("modalCodigo").style.display = "none";
+    let modal = document.getElementById("modalCodigo");
+let fondo = document.getElementById("fondoModal");
 
-    document.getElementById("fondoModal").style.display = "none";
+modal.style.display = "none";
+modal.style.visibility = "hidden";
+modal.style.pointerEvents = "none";
+
+fondo.style.display = "none";
+fondo.style.visibility = "hidden";
+fondo.style.pointerEvents = "none";
 
     document.getElementById("codigoAdminInput").value = "";
 
