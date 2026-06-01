@@ -350,6 +350,8 @@ function mostrarCarrito(){
 
     let total = 0;
 
+    limpiarDescuentoSiCarritoVacio();
+
     carrito.forEach(function(item, index){
 
        total += Number(item.subtotal);
@@ -546,8 +548,8 @@ carrito.forEach(function(item){
 
     localStorage.removeItem("carrito");
 
-    document.getElementById("descuentoVenta").value = 0;
-
+document.getElementById("descuentoVenta").value = "";
+    
     mostrarCarrito();
     mostrarProductos();
     mostrarHistorialVentas();
@@ -768,22 +770,28 @@ document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
 // ENTER SOLO PARA LOGIN
 document.addEventListener("DOMContentLoaded", function(){
 
-    document.getElementById("usuario").addEventListener("keydown", function(event){
+    let descuentoInput = document.getElementById("descuentoVenta");
 
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
+    limpiarDescuentoSiCarritoVacio();
 
-    });
+    setTimeout(limpiarDescuentoSiCarritoVacio, 100);
+    setTimeout(limpiarDescuentoSiCarritoVacio, 500);
 
-    document.getElementById("password").addEventListener("keydown", function(event){
+    if(descuentoInput){
 
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
+        descuentoInput.addEventListener("input", function(){
 
-    });
+            mostrarCarrito();
+            actualizarDashboard();
 
+        });
+
+    }
+
+});
+
+window.addEventListener("pageshow", function(){
+    limpiarDescuentoSiCarritoVacio();
 });
 
 function actualizarDashboard(){
@@ -1550,14 +1558,31 @@ function toggleReporteVendedores(){
 
 function obtenerDescuento(){
 
-    let descuento =
-        Number(document.getElementById("descuentoVenta")?.value || 0);
+    let input = document.getElementById("descuentoVenta");
 
-    if(descuento < 0){
-        descuento = 0;
+    if(!input || input.value.trim() === ""){
+        return 0;
+    }
+
+    let descuento = Number(input.value);
+
+    if(isNaN(descuento) || descuento < 0){
+        return 0;
     }
 
     return descuento;
+
+}
+
+function limpiarDescuentoSiCarritoVacio(){
+
+    let input = document.getElementById("descuentoVenta");
+
+    if(input && carrito.length === 0){
+        input.value = "";
+        input.defaultValue = "";
+        input.removeAttribute("value");
+    }
 
 }
 
@@ -1603,6 +1628,8 @@ document.addEventListener("DOMContentLoaded", function(){
     let descuentoInput = document.getElementById("descuentoVenta");
 
     if(descuentoInput){
+
+        descuentoInput.value = "";
 
         descuentoInput.addEventListener("input", function(){
 
