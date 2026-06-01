@@ -7,7 +7,8 @@ import {
     onSnapshot,
     deleteDoc,
     updateDoc,
-    doc
+    doc,
+    setDoc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -64,8 +65,7 @@ let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
 let historialVentas = [];
 
-let codigoAnulacion =
-    localStorage.getItem("codigoAnulacion") || "9999";
+let codigoAnulacion = "DCMYA2811";
 
 let ventaPendienteAnular = null;
 
@@ -1301,21 +1301,19 @@ function abrirConfiguracion(){
 
 }
 
-function guardarConfiguracion(){
+async function guardarConfiguracion(){
 
     codigoAnulacion =
-        document.getElementById(
-            "nuevoCodigoAnulacion"
-        ).value;
+        document.getElementById("nuevoCodigoAnulacion").value;
 
-    localStorage.setItem(
-        "codigoAnulacion",
-        codigoAnulacion
-    );
+    await setDoc(
+    doc(db, "configuracion", "sistema"),
+    {
+        codigoAnulacion: codigoAnulacion
+    }
+);
 
-    alert(
-        "Configuración guardada correctamente"
-    );
+    alert("Configuración guardada correctamente");
 
     document.getElementById("panelConfiguracion").style.display = "none";
 
@@ -1655,6 +1653,17 @@ onSnapshot(collection(db, "ventas"), function(snapshot){
     mostrarHistorialVentas();
     actualizarReportes();
     mostrarReporteVendedores();
+
+});
+
+onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
+
+    if(documento.exists()){
+
+        codigoAnulacion =
+            documento.data().codigoAnulacion || "9999";
+
+    }
 
 });
 
