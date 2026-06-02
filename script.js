@@ -8,7 +8,8 @@ import {
     deleteDoc,
     updateDoc,
     doc,
-    setDoc
+    setDoc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1674,6 +1675,58 @@ onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
 
 });
 
+onSnapshot(
+    doc(
+        db,
+        "cajas",
+        new Date().toLocaleDateString()
+    ),
+    function(documento){
+
+        if(!documento.exists()){
+            return;
+        }
+
+        let datos = documento.data();
+
+        montoInicialCaja =
+            datos.montoInicial || 0;
+
+        document.getElementById("cajaInicial").innerHTML =
+            "S/ " + montoInicialCaja.toFixed(2);
+
+        actualizarCajaDiaria();
+
+    }
+);
+
+onSnapshot(
+    collection(
+        db,
+        "cajas",
+        new Date().toLocaleDateString(),
+        "gastos"
+    ),
+    function(snapshot){
+
+        gastosCaja = [];
+
+        snapshot.forEach(function(documento){
+
+            gastosCaja.push({
+                id: documento.id,
+                ...documento.data()
+            });
+
+        });
+
+        mostrarGastosCaja();
+
+        actualizarCajaDiaria();
+
+    }
+);
+
 function toggleCajaDiaria(){
 
     let panel =
@@ -1691,7 +1744,7 @@ function toggleCajaDiaria(){
 
 }
 
-function abrirCaja(){
+async function abrirCaja(){
 
     montoInicialCaja =
         Number(
@@ -1699,25 +1752,28 @@ function abrirCaja(){
         );
 
     if(montoInicialCaja <= 0){
-
         alert("Ingrese un monto válido");
-
         return;
-
     }
 
-    cajaAbierta = true;
+    let fechaCaja = new Date().toLocaleDateString();
 
-    document.getElementById("cajaInicial").innerHTML =
-        "S/ " + montoInicialCaja.toFixed(2);
-
-    actualizarCajaDiaria();
+    await setDoc(
+        doc(db, "cajas", fechaCaja),
+        {
+            fecha: fechaCaja,
+            montoInicial: montoInicialCaja,
+            abierta: true,
+            abiertaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
+            horaApertura: new Date().toLocaleTimeString()
+        }
+    );
 
     alert("✅ Caja abierta correctamente");
 
 }
 
-function registrarGasto(){
+async function registrarGasto(){
 
     let descripcion =
         document.getElementById("descripcionGasto").value;
@@ -1728,30 +1784,27 @@ function registrarGasto(){
         );
 
     if(descripcion === "" || monto <= 0){
-
         alert("Complete los datos");
-
         return;
-
     }
 
-    gastosCaja.push({
+    let fechaCaja =
+        new Date().toLocaleDateString();
 
-        hora: new Date().toLocaleTimeString(),
-
-        descripcion: descripcion,
-
-        monto: monto
-
-    });
-
-    mostrarGastosCaja();
-
-    actualizarCajaDiaria();
+    await addDoc(
+        collection(db, "cajas", fechaCaja, "gastos"),
+        {
+            hora: new Date().toLocaleTimeString(),
+            descripcion: descripcion,
+            monto: monto,
+            registradoPor: localStorage.getItem("nombreActivo") || "Sin usuario"
+        }
+    );
 
     document.getElementById("descripcionGasto").value = "";
-
     document.getElementById("montoGasto").value = "";
+
+    alert("✅ Gasto registrado correctamente");
 
 }
 
@@ -1816,13 +1869,46 @@ function actualizarCajaDiaria(){
 
 }
 
-function cerrarCaja(){
+async function cerrarCaja(){
 
     actualizarCajaDiaria();
 
+    let fechaCaja =
+        new Date().toLocaleDateString();
+
+    let ventasHoy = 0;
+    let gastos = 0;
+
+    historialVentas.forEach(function(venta){
+        if(venta.fecha === fechaCaja){
+            ventasHoy += venta.total;
+        }
+    });
+
+    gastosCaja.forEach(function(gasto){
+        gastos += gasto.monto;
+    });
+
+    let esperado =
+        montoInicialCaja +
+        ventasHoy -
+        gastos;
+
+    await updateDoc(
+        doc(db, "cajas", fechaCaja),
+        {
+            abierta: false,
+            cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
+            horaCierre: new Date().toLocaleTimeString(),
+            ventasDia: ventasHoy,
+            gastosDia: gastos,
+            cajaEsperada: esperado
+        }
+    );
+
     alert(
-        "💰 Caja cerrada.\n\n" +
-        document.getElementById("cajaEsperada").innerText
+        "💰 Caja cerrada correctamente.\n\n" +
+        "Caja esperada: S/ " + esperado.toFixed(2)
     );
 
 }
