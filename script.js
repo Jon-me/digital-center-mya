@@ -1466,14 +1466,14 @@ async function ejecutarAnulacion(index){
 
 }
 
-async function anularGastoCaja(idGasto){
+async function anularGastoCaja(idGasto, autorizado = false){
 
     let rol = localStorage.getItem("rolActivo");
 
-    if(rol === "vendedor"){
+    if(rol === "vendedor" && autorizado === false){
 
         pedirAutorizacionAdmin(async function(){
-            await anularGastoCaja(idGasto);
+            await anularGastoCaja(idGasto, true);
         });
 
         return;
@@ -1975,14 +1975,14 @@ async function cerrarCaja(){
 
 }
 
-async function anularCajaDelDia(){
+async function anularCajaDelDia(autorizado = false){
 
     let rol = localStorage.getItem("rolActivo");
 
-    if(rol === "vendedor"){
+    if(rol === "vendedor" && autorizado === false){
 
         pedirAutorizacionAdmin(async function(){
-            await anularCajaDelDia();
+            await anularCajaDelDia(true);
         });
 
         return;
