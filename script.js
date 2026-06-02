@@ -1444,6 +1444,47 @@ async function ejecutarAnulacion(index){
 
 }
 
+async function anularGastoCaja(idGasto){
+
+    let rol = localStorage.getItem("rolActivo");
+
+    if(rol === "vendedor"){
+
+        let codigo = prompt(
+            "Ingrese código de administrador"
+        );
+
+        if(codigo !== codigoAnulacion){
+
+            alert("Código incorrecto");
+
+            return;
+
+        }
+
+    }
+
+    if(!confirm("¿Anular este gasto?")){
+        return;
+    }
+
+    let fechaCaja =
+        new Date().toLocaleDateString();
+
+    await deleteDoc(
+        doc(
+            db,
+            "cajas",
+            fechaCaja,
+            "gastos",
+            idGasto
+        )
+    );
+
+    alert("✅ Gasto anulado correctamente");
+
+}
+
 function filtrarCategoria(categoria){
 
     let tarjetas =
@@ -1819,10 +1860,15 @@ function mostrarGastosCaja(){
 
         tabla.innerHTML += `
         <tr>
-            <td>${gasto.hora}</td>
-            <td>${gasto.descripcion}</td>
-            <td>S/ ${gasto.monto.toFixed(2)}</td>
-        </tr>
+    <td>${gasto.hora}</td>
+    <td>${gasto.descripcion}</td>
+    <td>S/ ${gasto.monto.toFixed(2)}</td>
+    <td>
+        <button onclick="anularGastoCaja('${gasto.id}')">
+            ↩️ Anular
+        </button>
+    </td>
+</tr>
         `;
     });
 
@@ -1938,6 +1984,7 @@ window.toggleCajaDiaria = toggleCajaDiaria;
 window.abrirCaja = abrirCaja;
 window.registrarGasto = registrarGasto;
 window.cerrarCaja = cerrarCaja;
+window.anularGastoCaja = anularGastoCaja;
 
 document.addEventListener("DOMContentLoaded", function(){
 
