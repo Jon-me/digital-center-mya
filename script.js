@@ -1748,12 +1748,37 @@ onSnapshot(
 
         let datos = documento.data();
 
-        montoInicialCaja =
-            datos.montoInicial || 0;
+        montoInicialCaja = datos.montoInicial || 0;
 
         document.getElementById("cajaInicial").innerHTML =
             "S/ " + montoInicialCaja.toFixed(2);
 
+        actualizarCajaDiaria();
+
+    }
+);
+
+onSnapshot(
+    collection(
+        db,
+        "cajas",
+        new Date().toLocaleDateString(),
+        "gastos"
+    ),
+    function(snapshot){
+
+        gastosCaja = [];
+
+        snapshot.forEach(function(documento){
+
+            gastosCaja.push({
+                id: documento.id,
+                ...documento.data()
+            });
+
+        });
+
+        mostrarGastosCaja();
         actualizarCajaDiaria();
 
     }
@@ -1767,10 +1792,14 @@ onSnapshot(
 
         snapshot.forEach(function(documento){
 
-            historialCajas.push({
+            let caja = {
                 id: documento.id,
                 ...documento.data()
-            });
+            };
+
+            if(caja.horaCierre || caja.resultadoCuadre || caja.anulada){
+                historialCajas.push(caja);
+            }
 
         });
 
