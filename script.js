@@ -78,6 +78,8 @@ let montoInicialCaja = 0;
 
 let gastosCaja = [];
 
+let historialCajas = [];
+
 let tabla = document.getElementById("tablaProductos");
 
 function mostrarProductos(){
@@ -1758,28 +1760,25 @@ onSnapshot(
 );
 
 onSnapshot(
-    collection(
-        db,
-        "cajas",
-        new Date().toLocaleDateString(),
-        "gastos"
-    ),
+    collection(db, "cajas"),
     function(snapshot){
 
-        gastosCaja = [];
+        historialCajas = [];
 
         snapshot.forEach(function(documento){
 
-            gastosCaja.push({
+            historialCajas.push({
                 id: documento.id,
                 ...documento.data()
             });
 
         });
 
-        mostrarGastosCaja();
+        historialCajas.sort(function(a, b){
+            return (b.fecha || "").localeCompare(a.fecha || "");
+        });
 
-        actualizarCajaDiaria();
+        mostrarHistorialCajas();
 
     }
 );
@@ -1791,9 +1790,10 @@ function toggleCajaDiaria(){
 
     if(panel.style.display === "none"){
 
-        panel.style.display = "block";
+    panel.style.display = "block";
+    mostrarHistorialCajas();
 
-    } else {
+} else {
 
         panel.style.display = "none";
 
@@ -2001,6 +2001,34 @@ function cuadrarCaja(){
 
 }
 
+function mostrarHistorialCajas(){
+
+    let tabla =
+        document.getElementById("historialCajasTabla");
+
+    if(!tabla){
+        return;
+    }
+
+    tabla.innerHTML = "";
+
+    historialCajas.forEach(function(caja){
+
+        tabla.innerHTML += `
+        <tr>
+            <td>${caja.fecha || "-"}</td>
+            <td>${caja.cerradaPor || "-"}</td>
+            <td>S/ ${(caja.ventasDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.gastosDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.cajaEsperada || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.dineroReal || 0).toFixed(2)}</td>
+            <td>${caja.resultadoCuadre || "-"}</td>
+        </tr>
+        `;
+    });
+
+}
+
 async function cerrarCaja(){
 
     actualizarCajaDiaria();
@@ -2026,17 +2054,41 @@ async function cerrarCaja(){
         ventasHoy -
         gastos;
 
-    await updateDoc(
-        doc(db, "cajas", fechaCaja),
-        {
-            abierta: false,
-            cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
-            horaCierre: new Date().toLocaleTimeString(),
-            ventasDia: ventasHoy,
-            gastosDia: gastos,
-            cajaEsperada: esperado
-        }
+ let dineroReal =
+    Number(
+        document.getElementById("dineroRealCaja").value
     );
+
+let diferencia =
+    dineroReal - esperado;
+
+let resultadoCuadre = "No cuadrado";
+
+if(!isNaN(dineroReal) && dineroReal >= 0){
+
+    if(diferencia === 0){
+        resultadoCuadre = "Caja exacta";
+    } else if(diferencia > 0){
+        resultadoCuadre = "Sobrante S/ " + diferencia.toFixed(2);
+    } else {
+        resultadoCuadre = "Faltante S/ " + Math.abs(diferencia).toFixed(2);
+    }
+
+}
+
+await updateDoc(
+    doc(db, "cajas", fechaCaja),
+    {
+        abierta: false,
+        cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
+        horaCierre: new Date().toLocaleTimeString(),
+        ventasDia: ventasHoy,
+        gastosDia: gastos,
+        cajaEsperada: esperado,
+        dineroReal: isNaN(dineroReal) ? 0 : dineroReal,
+        resultadoCuadre: resultadoCuadre
+    }
+);
 
     alert(
         "💰 Caja cerrada correctamente.\n\n" +
@@ -2140,6 +2192,7 @@ window.cerrarCaja = cerrarCaja;
 window.anularGastoCaja = anularGastoCaja;
 window.anularCajaDelDia = anularCajaDelDia;
 window.cuadrarCaja = cuadrarCaja;
+window.mostrarHistorialCajas = mostrarHistorialCajas;
 
 document.addEventListener("DOMContentLoaded", function(){
 
