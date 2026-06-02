@@ -688,9 +688,14 @@ function aplicarPermisos(){
         }
 
         document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
-            btn.style.display = "none";
-        });
 
+    if(btn.innerText.includes("Caja Diaria")){
+        btn.style.display = "inline-block";
+    } else {
+        btn.style.display = "none";
+    }
+
+});
         document.querySelectorAll('button[onclick^="editarProducto"]').forEach(function(btn){
             btn.style.display = "none";
         });
