@@ -70,6 +70,8 @@ let codigoAnulacion = "DCMYA2811";
 
 let ventaPendienteAnular = null;
 
+let accionAdminPendiente = null;
+
 let cajaAbierta = false;
 
 let montoInicialCaja = 0;
@@ -1349,29 +1351,23 @@ function controlarColumnaGanancia(){
 
 }
 
-function validarCodigoAdmin(){
+async function validarCodigoAdmin(){
 
-    let codigoIngresado = document.getElementById("codigoAdminInput").value;
+    let codigoIngresado =
+        document.getElementById("codigoAdminInput").value;
 
     if(codigoIngresado !== codigoAnulacion){
         alert("Código incorrecto");
         return;
     }
 
-    let modal = document.getElementById("modalCodigo");
-let fondo = document.getElementById("fondoModal");
+    cerrarModalCodigo();
 
-modal.style.display = "none";
-modal.style.visibility = "hidden";
-modal.style.pointerEvents = "none";
+    if(accionAdminPendiente){
+        await accionAdminPendiente();
+        accionAdminPendiente = null;
+    }
 
-fondo.style.display = "none";
-fondo.style.visibility = "hidden";
-fondo.style.pointerEvents = "none";
-    
-    document.getElementById("codigoAdminInput").value = "";
-
-    ejecutarAnulacion(ventaPendienteAnular);
 }
 
 function cerrarModalCodigo(){
@@ -1390,6 +1386,27 @@ fondo.style.pointerEvents = "none";
     document.getElementById("codigoAdminInput").value = "";
 
     ventaPendienteAnular = null;
+
+}
+
+function pedirAutorizacionAdmin(accion){
+
+    accionAdminPendiente = accion;
+
+    document.getElementById("codigoAdminInput").value = "";
+
+    let modal = document.getElementById("modalCodigo");
+    let fondo = document.getElementById("fondoModal");
+
+    modal.style.display = "block";
+    modal.style.visibility = "visible";
+    modal.style.pointerEvents = "auto";
+
+    fondo.style.display = "block";
+    fondo.style.visibility = "visible";
+    fondo.style.pointerEvents = "auto";
+
+    document.getElementById("codigoAdminInput").focus();
 
 }
 
@@ -1455,17 +1472,11 @@ async function anularGastoCaja(idGasto){
 
     if(rol === "vendedor"){
 
-        let codigo = prompt(
-            "Ingrese código de administrador"
-        );
+        pedirAutorizacionAdmin(async function(){
+            await anularGastoCaja(idGasto);
+        });
 
-        if(codigo !== codigoAnulacion){
-
-            alert("Código incorrecto");
-
-            return;
-
-        }
+        return;
 
     }
 
@@ -1964,6 +1975,73 @@ async function cerrarCaja(){
 
 }
 
+async function anularCajaDelDia(){
+
+    let rol = localStorage.getItem("rolActivo");
+
+    if(rol === "vendedor"){
+
+        pedirAutorizacionAdmin(async function(){
+            await anularCajaDelDia();
+        });
+
+        return;
+
+    }
+
+    if(!confirm("¿Anular toda la caja del día? Se borrará la apertura y los gastos.")){
+        return;
+    }
+
+    let fechaCaja =
+        new Date().toLocaleDateString();
+
+    for(let gasto of gastosCaja){
+
+        if(gasto.id){
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "cajas",
+                    fechaCaja,
+                    "gastos",
+                    gasto.id
+                )
+            );
+
+        }
+
+    }
+
+    await setDoc(
+        doc(db, "cajas", fechaCaja),
+        {
+            fecha: fechaCaja,
+            montoInicial: 0,
+            abierta: false,
+            anulada: true,
+            anuladaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
+            horaAnulacion: new Date().toLocaleTimeString()
+        }
+    );
+
+    montoInicialCaja = 0;
+    gastosCaja = [];
+
+    document.getElementById("montoInicialCaja").value = "";
+    document.getElementById("cajaInicial").innerHTML = "S/ 0.00";
+    document.getElementById("cajaVentas").innerHTML = "S/ 0.00";
+    document.getElementById("cajaGastos").innerHTML = "S/ 0.00";
+    document.getElementById("cajaEsperada").innerHTML = "S/ 0.00";
+
+    mostrarGastosCaja();
+    actualizarCajaDiaria();
+
+    alert("✅ Caja del día anulada correctamente");
+
+}
+
 window.iniciarSesion = iniciarSesion;
 window.cerrarSesion = cerrarSesion;
 window.buscarProducto = buscarProducto;
@@ -1990,6 +2068,7 @@ window.abrirCaja = abrirCaja;
 window.registrarGasto = registrarGasto;
 window.cerrarCaja = cerrarCaja;
 window.anularGastoCaja = anularGastoCaja;
+window.anularCajaDelDia = anularCajaDelDia;
 
 document.addEventListener("DOMContentLoaded", function(){
 
