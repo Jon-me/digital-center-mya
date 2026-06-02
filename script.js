@@ -1931,6 +1931,76 @@ function actualizarCajaDiaria(){
 
 }
 
+function cuadrarCaja(){
+
+    let dineroReal =
+        Number(
+            document.getElementById("dineroRealCaja").value
+        );
+
+    if(isNaN(dineroReal) || dineroReal < 0){
+
+        alert("Ingrese un monto válido");
+
+        return;
+
+    }
+
+    let ventasHoy = 0;
+
+    historialVentas.forEach(function(venta){
+
+        if(
+            venta.fecha ===
+            new Date().toLocaleDateString()
+        ){
+
+            ventasHoy += venta.total;
+
+        }
+
+    });
+
+    let gastos = 0;
+
+    gastosCaja.forEach(function(gasto){
+
+        gastos += gasto.monto;
+
+    });
+
+    let esperado =
+        montoInicialCaja +
+        ventasHoy -
+        gastos;
+
+    let diferencia =
+        dineroReal - esperado;
+
+    let resultado =
+        document.getElementById("resultadoCuadreCaja");
+
+    if(diferencia === 0){
+
+        resultado.innerHTML =
+            "✅ Caja exacta";
+
+    } else if(diferencia > 0){
+
+        resultado.innerHTML =
+            "🟢 Sobrante: S/ " +
+            diferencia.toFixed(2);
+
+    } else {
+
+        resultado.innerHTML =
+            "🔴 Faltante: S/ " +
+            Math.abs(diferencia).toFixed(2);
+
+    }
+
+}
+
 async function cerrarCaja(){
 
     actualizarCajaDiaria();
@@ -2069,6 +2139,7 @@ window.registrarGasto = registrarGasto;
 window.cerrarCaja = cerrarCaja;
 window.anularGastoCaja = anularGastoCaja;
 window.anularCajaDelDia = anularCajaDelDia;
+window.cuadrarCaja = cuadrarCaja;
 
 document.addEventListener("DOMContentLoaded", function(){
 
