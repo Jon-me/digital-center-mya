@@ -2059,40 +2059,35 @@ function mostrarHistorialCajas(){
 
 async function cerrarCaja(){
 
-    actualizarCajaDiaria();
-
-    let fechaCaja =
-        new Date().toLocaleDateString();
+    let fechaCaja = new Date().toLocaleDateString();
 
     let ventasHoy = 0;
     let gastos = 0;
 
     historialVentas.forEach(function(venta){
         if(venta.fecha === fechaCaja){
-            ventasHoy += venta.total;
+            ventasHoy += Number(venta.total || 0);
         }
     });
 
     gastosCaja.forEach(function(gasto){
-        gastos += gasto.monto;
+        gastos += Number(gasto.monto || 0);
     });
 
     let esperado =
-        montoInicialCaja +
-        ventasHoy -
-        gastos;
+        montoInicialCaja + ventasHoy - gastos;
 
- let dineroReal =
-    Number(
-        document.getElementById("dineroRealCaja").value
-    );
+    let dineroReal =
+        Number(document.getElementById("dineroRealCaja").value);
 
-let diferencia =
-    dineroReal - esperado;
+    if(isNaN(dineroReal) || dineroReal < 0){
+        alert("Ingrese el dinero físico contado antes de cerrar caja");
+        return;
+    }
 
-let resultadoCuadre = "No cuadrado";
+    let diferencia = dineroReal - esperado;
 
-if(!isNaN(dineroReal) && dineroReal >= 0){
+    let resultadoCuadre = "";
 
     if(diferencia === 0){
         resultadoCuadre = "Caja exacta";
@@ -2102,40 +2097,35 @@ if(!isNaN(dineroReal) && dineroReal >= 0){
         resultadoCuadre = "Faltante S/ " + Math.abs(diferencia).toFixed(2);
     }
 
-}
-
-await updateDoc(
-    doc(db, "cajas", fechaCaja),
-    {
-        abierta: false,
-        cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
-        horaCierre: new Date().toLocaleTimeString(),
-        ventasDia: ventasHoy,
-        gastosDia: gastos,
-        cajaEsperada: esperado,
-        dineroReal: isNaN(dineroReal) ? 0 : dineroReal,
-        resultadoCuadre: resultadoCuadre
-    }
-);
-
-await addDoc(
-    collection(db, "cierresCaja"),
-    {
+    let cierre = {
         fecha: fechaCaja,
         cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
         horaCierre: new Date().toLocaleTimeString(),
         ventasDia: ventasHoy,
         gastosDia: gastos,
         cajaEsperada: esperado,
-        dineroReal: isNaN(dineroReal) ? 0 : dineroReal,
+        dineroReal: dineroReal,
         resultadoCuadre: resultadoCuadre
-    }
-);
+    };
 
-    alert(
-        "💰 Caja cerrada correctamente.\n\n" +
-        "Caja esperada: S/ " + esperado.toFixed(2)
+    await setDoc(
+        doc(db, "cajas", fechaCaja),
+        {
+            abierta: false,
+            ...cierre
+        },
+        { merge: true }
     );
+
+    await addDoc(
+        collection(db, "cierresCaja"),
+        cierre
+    );
+
+    historialCajas.unshift(cierre);
+    mostrarHistorialCajas();
+
+    alert("💰 Caja cerrada correctamente");
 
 }
 
