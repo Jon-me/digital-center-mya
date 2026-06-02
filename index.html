@@ -245,6 +245,77 @@
 </table>
 </div>
 
+<button onclick="toggleCajaDiaria()" class="btn-toggle-producto">
+    💰 Caja Diaria
+</button>
+
+<div id="panelCajaDiaria" style="display:none;">
+
+    <h2>💰 Caja Diaria</h2>
+
+    <div class="dashboard">
+
+        <div class="dashboard-card">
+            <h2 id="cajaInicial">S/ 0</h2>
+            <p>💵 Caja Inicial</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaVentas">S/ 0</h2>
+            <p>🛒 Ventas del Día</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaGastos">S/ 0</h2>
+            <p>📉 Gastos</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaEsperada">S/ 0</h2>
+            <p>✅ Caja Esperada</p>
+        </div>
+
+    </div>
+
+    <h3>Abrir Caja</h3>
+
+    <input id="montoInicialCaja" type="number" placeholder="Monto inicial S/">
+
+    <button onclick="abrirCaja()">
+        Abrir Caja
+    </button>
+
+    <h3>Registrar Gasto</h3>
+
+    <input id="descripcionGasto" type="text" placeholder="Descripción del gasto">
+    <input id="montoGasto" type="number" placeholder="Monto gasto S/">
+
+    <button onclick="registrarGasto()">
+        Registrar Gasto
+    </button>
+
+    <h3>Gastos del Día</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+
+        <tbody id="tablaGastosCaja"></tbody>
+    </table>
+
+    <br>
+
+    <button onclick="cerrarCaja()">
+        🔒 Cerrar Caja
+    </button>
+
+</div>
+
 <button onclick="toggleAgregarProducto()" class="btn-toggle-producto">
    ⚙️ Gestión de Productos
 </button>

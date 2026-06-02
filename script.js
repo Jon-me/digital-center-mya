@@ -69,6 +69,12 @@ let codigoAnulacion = "DCMYA2811";
 
 let ventaPendienteAnular = null;
 
+let cajaAbierta = false;
+
+let montoInicialCaja = 0;
+
+let gastosCaja = [];
+
 let tabla = document.getElementById("tablaProductos");
 
 function mostrarProductos(){
@@ -553,6 +559,7 @@ document.getElementById("descuentoVenta").value = "";
     controlarColumnaGanancia();
     actualizarReportes();
     mostrarReporteVendedores();
+    actualizarCajaDiaria();
 
 }
 
@@ -1667,6 +1674,159 @@ onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
 
 });
 
+function toggleCajaDiaria(){
+
+    let panel =
+        document.getElementById("panelCajaDiaria");
+
+    if(panel.style.display === "none"){
+
+        panel.style.display = "block";
+
+    } else {
+
+        panel.style.display = "none";
+
+    }
+
+}
+
+function abrirCaja(){
+
+    montoInicialCaja =
+        Number(
+            document.getElementById("montoInicialCaja").value
+        );
+
+    if(montoInicialCaja <= 0){
+
+        alert("Ingrese un monto válido");
+
+        return;
+
+    }
+
+    cajaAbierta = true;
+
+    document.getElementById("cajaInicial").innerHTML =
+        "S/ " + montoInicialCaja.toFixed(2);
+
+    actualizarCajaDiaria();
+
+    alert("✅ Caja abierta correctamente");
+
+}
+
+function registrarGasto(){
+
+    let descripcion =
+        document.getElementById("descripcionGasto").value;
+
+    let monto =
+        Number(
+            document.getElementById("montoGasto").value
+        );
+
+    if(descripcion === "" || monto <= 0){
+
+        alert("Complete los datos");
+
+        return;
+
+    }
+
+    gastosCaja.push({
+
+        hora: new Date().toLocaleTimeString(),
+
+        descripcion: descripcion,
+
+        monto: monto
+
+    });
+
+    mostrarGastosCaja();
+
+    actualizarCajaDiaria();
+
+    document.getElementById("descripcionGasto").value = "";
+
+    document.getElementById("montoGasto").value = "";
+
+}
+
+function mostrarGastosCaja(){
+
+    let tabla =
+        document.getElementById("tablaGastosCaja");
+
+    tabla.innerHTML = "";
+
+    gastosCaja.forEach(function(gasto){
+
+        tabla.innerHTML += `
+        <tr>
+            <td>${gasto.hora}</td>
+            <td>${gasto.descripcion}</td>
+            <td>S/ ${gasto.monto.toFixed(2)}</td>
+        </tr>
+        `;
+    });
+
+}
+
+function actualizarCajaDiaria(){
+
+    let ventasHoy = 0;
+
+    historialVentas.forEach(function(venta){
+
+        if(
+            venta.fecha ===
+            new Date().toLocaleDateString()
+        ){
+
+            ventasHoy += venta.total;
+
+        }
+
+    });
+
+    let gastos = 0;
+
+    gastosCaja.forEach(function(gasto){
+
+        gastos += gasto.monto;
+
+    });
+
+    let esperado =
+        montoInicialCaja +
+        ventasHoy -
+        gastos;
+
+    document.getElementById("cajaVentas").innerHTML =
+        "S/ " + ventasHoy.toFixed(2);
+
+    document.getElementById("cajaGastos").innerHTML =
+        "S/ " + gastos.toFixed(2);
+
+    document.getElementById("cajaEsperada").innerHTML =
+        "S/ " + esperado.toFixed(2);
+
+}
+
+function cerrarCaja(){
+
+    actualizarCajaDiaria();
+
+    alert(
+        "💰 Caja cerrada.\n\n" +
+        document.getElementById("cajaEsperada").innerText
+    );
+
+}
+
 window.iniciarSesion = iniciarSesion;
 window.cerrarSesion = cerrarSesion;
 window.buscarProducto = buscarProducto;
@@ -1688,6 +1848,10 @@ window.anularVenta = anularVenta;
 window.ejecutarAnulacion = ejecutarAnulacion;
 window.mostrarCarrito = mostrarCarrito;
 window.actualizarDashboard = actualizarDashboard;
+window.toggleCajaDiaria = toggleCajaDiaria;
+window.abrirCaja = abrirCaja;
+window.registrarGasto = registrarGasto;
+window.cerrarCaja = cerrarCaja;
 
 document.addEventListener("DOMContentLoaded", function(){
 
