@@ -1785,7 +1785,8 @@ onSnapshot(
 );
 
 onSnapshot(
-    collection(db, "cajas"),
+    collection(db, "cierresCaja"),
+
     function(snapshot){
 
         historialCajas = [];
@@ -1797,9 +1798,7 @@ onSnapshot(
                 ...documento.data()
             };
 
-            if(caja.horaCierre || caja.resultadoCuadre || caja.anulada){
-                historialCajas.push(caja);
-            }
+            historialCajas.push(caja);
 
         });
 
@@ -2109,6 +2108,20 @@ await updateDoc(
     doc(db, "cajas", fechaCaja),
     {
         abierta: false,
+        cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
+        horaCierre: new Date().toLocaleTimeString(),
+        ventasDia: ventasHoy,
+        gastosDia: gastos,
+        cajaEsperada: esperado,
+        dineroReal: isNaN(dineroReal) ? 0 : dineroReal,
+        resultadoCuadre: resultadoCuadre
+    }
+);
+
+await addDoc(
+    collection(db, "cierresCaja"),
+    {
+        fecha: fechaCaja,
         cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
         horaCierre: new Date().toLocaleTimeString(),
         ventasDia: ventasHoy,
