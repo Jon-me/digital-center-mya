@@ -9,7 +9,9 @@ import {
     updateDoc,
     doc,
     setDoc,
-    getDoc
+    getDoc,
+    runTransaction
+
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -544,29 +546,44 @@ carrito.forEach(function(item){
     ganancia: ganancia - descuento
 };
 
-for(let item of carrito){
+try{
 
-    let productoVendido = productos.find(function(p){
-        return p.id === item.id;
+    await runTransaction(db, async function(transaction){
+
+        for(let item of carrito){
+
+            let productoRef = doc(db, "productos", item.id);
+            let productoSnap = await transaction.get(productoRef);
+
+            if(!productoSnap.exists()){
+                throw new Error("Producto no encontrado");
+            }
+
+            let productoData = productoSnap.data();
+            let stockActual = Number(productoData.stock || 0);
+
+            if(stockActual < item.cantidad){
+                throw new Error("Stock insuficiente para: " + item.producto);
+            }
+
+            transaction.update(productoRef, {
+                stock: stockActual - Number(item.cantidad)
+            });
+
+        }
+
+        let ventaRef = doc(collection(db, "ventas"));
+        transaction.set(ventaRef, venta);
+
     });
 
-    if(productoVendido && productoVendido.id){
+} catch(error){
 
-        await updateDoc(
-            doc(db, "productos", productoVendido.id),
-            {
-                stock: Number(productoVendido.stock)
-            }
-        );
-
-    }
+    alert(error.message);
+    return;
 
 }
 
-await addDoc(
-    collection(db, "ventas"),
-    venta
-);
     alert("Venta realizada correctamente");
 
     carrito = [];
