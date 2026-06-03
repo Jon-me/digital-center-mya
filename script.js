@@ -506,10 +506,51 @@ function cancelarVenta(){
     carrito = [];
 
     localStorage.removeItem("carrito");
+    document.getElementById("descuentoVenta").value = "";
+
+document.getElementById("pagoEfectivo").value = "";
+document.getElementById("pagoYape").value = "";
+document.getElementById("pagoPlin").value = "";
+document.getElementById("pagoTarjeta").value = "";
+document.getElementById("pagoTransferencia").value = "";
+
+calcularTotalPagado();
 
     mostrarCarrito();
 
     mostrarProductos();
+
+}
+
+function obtenerPagosMixtos(){
+
+    let pagos = {
+        efectivo: Number(document.getElementById("pagoEfectivo").value) || 0,
+        yape: Number(document.getElementById("pagoYape").value) || 0,
+        plin: Number(document.getElementById("pagoPlin").value) || 0,
+        tarjeta: Number(document.getElementById("pagoTarjeta").value) || 0,
+        transferencia: Number(document.getElementById("pagoTransferencia").value) || 0
+    };
+
+    return pagos;
+
+}
+
+function calcularTotalPagado(){
+
+    let pagos = obtenerPagosMixtos();
+
+    let totalPagado =
+        pagos.efectivo +
+        pagos.yape +
+        pagos.plin +
+        pagos.tarjeta +
+        pagos.transferencia;
+
+    document.getElementById("totalPagado").innerHTML =
+        "Pagado: S/ " + totalPagado.toFixed(2);
+
+    return totalPagado;
 
 }
 
@@ -523,6 +564,7 @@ async function finalizarVenta(){
     let total = 0;
     let ganancia = 0;
     let descuento = obtenerDescuento();
+    let metodoPago = document.getElementById("metodoPago").value;
 
 carrito.forEach(function(item){
 
@@ -533,6 +575,32 @@ carrito.forEach(function(item){
 
 });
 
+let totalFinal = total - descuento;
+
+if(totalFinal < 0){
+    totalFinal = 0;
+}
+
+let pagos = obtenerPagosMixtos();
+
+let totalPagado =
+    pagos.efectivo +
+    pagos.yape +
+    pagos.plin +
+    pagos.tarjeta +
+    pagos.transferencia;
+
+if(totalPagado !== totalFinal){
+
+    alert(
+        "⚠️ El pago no coincide con el total.\n\n" +
+        "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
+        "Pagado: S/ " + totalPagado.toFixed(2)
+    );
+
+    return;
+}
+
   let venta = {
     fecha: new Date().toLocaleDateString(),
     fechaISO: obtenerFechaISO(),
@@ -540,7 +608,9 @@ carrito.forEach(function(item){
     vendedor: localStorage.getItem("nombreActivo") || "Sin vendedor",
     productos: JSON.parse(JSON.stringify(carrito)),
     descuento: descuento,
-    total: total - descuento,
+    metodoPago: metodoPago,
+    pagos: pagos,
+total: totalFinal,
     ganancia: ganancia - descuento
 };
 
@@ -588,9 +658,16 @@ try{
 
     localStorage.removeItem("carrito");
 
-document.getElementById("descuentoVenta").value = "";
-    
-    mostrarCarrito();
+
+  document.getElementById("descuentoVenta").value = "";  
+  document.getElementById("pagoEfectivo").value = "";
+document.getElementById("pagoYape").value = "";
+document.getElementById("pagoPlin").value = "";
+document.getElementById("pagoTarjeta").value = "";
+document.getElementById("pagoTransferencia").value = "";
+
+calcularTotalPagado();
+  mostrarCarrito();
     mostrarProductos();
     mostrarHistorialVentas();
     controlarColumnaGanancia();
@@ -825,6 +902,17 @@ document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
 document.addEventListener("DOMContentLoaded", function(){
 
     let descuentoInput = document.getElementById("descuentoVenta");
+["pagoEfectivo", "pagoYape", "pagoPlin", "pagoTarjeta", "pagoTransferencia"].forEach(function(id){
+
+    let input = document.getElementById(id);
+
+    if(input){
+        input.addEventListener("input", function(){
+            calcularTotalPagado();
+        });
+    }
+
+});
 
     limpiarDescuentoSiCarritoVacio();
 
@@ -959,7 +1047,63 @@ await runTransaction(db, async function(transaction){
     let total = 0;
 
     let descuento = obtenerDescuento();
+    let metodoPago = document.getElementById("metodoPago").value;
+carrito.forEach(function(item){
+    total += Number(item.subtotal);
+});
 
+let totalFinal = total - descuento;
+
+if(totalFinal < 0){
+    totalFinal = 0;
+}
+
+let pagos = obtenerPagosMixtos();
+
+let totalPagado =
+    pagos.efectivo +
+    pagos.yape +
+    pagos.plin +
+    pagos.tarjeta +
+    pagos.transferencia;
+
+if(totalPagado !== totalFinal){
+
+    alert(
+        "⚠️ No puedes imprimir la boleta.\n\n" +
+        "El pago no coincide con el total.\n\n" +
+        "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
+        "Pagado: S/ " + totalPagado.toFixed(2)
+    );
+
+    return;
+}
+
+let detallePagos = "";
+
+if(pagos.efectivo > 0){
+    detallePagos += `Efectivo: S/ ${pagos.efectivo.toFixed(2)}<br>`;
+}
+
+if(pagos.yape > 0){
+    detallePagos += `Yape: S/ ${pagos.yape.toFixed(2)}<br>`;
+}
+
+if(pagos.plin > 0){
+    detallePagos += `Plin: S/ ${pagos.plin.toFixed(2)}<br>`;
+}
+
+if(pagos.tarjeta > 0){
+    detallePagos += `Tarjeta: S/ ${pagos.tarjeta.toFixed(2)}<br>`;
+}
+
+if(pagos.transferencia > 0){
+    detallePagos += `Transferencia: S/ ${pagos.transferencia.toFixed(2)}<br>`;
+}
+
+if(detallePagos === ""){
+    detallePagos = metodoPago;
+}
     let clienteNombre =
     document.getElementById("clienteNombre").value || "CLIENTE GENERAL";
 
@@ -1189,17 +1333,16 @@ let clienteDni =
             <br>
             <strong>Atendido por:</strong> ${localStorage.getItem("nombreActivo") || "Vendedor"}
             <br>
-            <strong>Cliente:</strong> ${clienteNombre}<br>
-            <strong>DNI:</strong> ${clienteDni}
+           <strong>Cliente:</strong> ${clienteNombre}<br>
+<strong>DNI:</strong> ${clienteDni}<br>
+<strong>Método de Pago:</strong><br>
+${detallePagos}
             </div>
 
         <div class="linea"></div>
 `;
 
     carrito.forEach(function(item){
-
-        total += Number(item.subtotal);
-
         contenido += `
         <div class="producto">
             <div class="producto-nombre">${item.producto}</div>
@@ -1223,7 +1366,7 @@ let clienteDni =
 </div>
 
 <div class="total">
-    TOTAL: S/ ${(total - descuento).toFixed(2)}
+  TOTAL: S/ ${totalFinal.toFixed(2)}
 </div>
 
         <div class="gracias">
@@ -1305,6 +1448,62 @@ setTimeout(function(){
 
 }
 
+async function finalizarEImprimir(){
+
+    if(carrito.length === 0){
+        alert("El carrito está vacío");
+        return;
+    }
+
+    await imprimirBoleta();
+
+    let confirmar = confirm(
+        "¿La boleta se imprimió correctamente?"
+    );
+
+    if(!confirmar){
+        alert("Venta no guardada. Puedes volver a imprimir.");
+        return;
+    }
+
+    await finalizarVenta();
+
+}
+
+function obtenerDetallePagosVenta(venta){
+
+    if(venta.pagos){
+
+        let detalle = "";
+
+        if(venta.pagos.efectivo > 0){
+            detalle += "Efectivo: S/ " + venta.pagos.efectivo.toFixed(2) + "<br>";
+        }
+
+        if(venta.pagos.yape > 0){
+            detalle += "Yape: S/ " + venta.pagos.yape.toFixed(2) + "<br>";
+        }
+
+        if(venta.pagos.plin > 0){
+            detalle += "Plin: S/ " + venta.pagos.plin.toFixed(2) + "<br>";
+        }
+
+        if(venta.pagos.tarjeta > 0){
+            detalle += "Tarjeta: S/ " + venta.pagos.tarjeta.toFixed(2) + "<br>";
+        }
+
+        if(venta.pagos.transferencia > 0){
+            detalle += "Transferencia: S/ " + venta.pagos.transferencia.toFixed(2);
+        }
+
+        return detalle || "No registrado";
+
+    }
+
+    return venta.metodoPago || "No registrado";
+
+}
+
 function mostrarHistorialVentas(){
 
     let tabla = document.getElementById("historialVentasTabla");
@@ -1324,6 +1523,7 @@ function mostrarHistorialVentas(){
     <td>${venta.fecha}</td>
     <td>${venta.hora}</td>
     <td>S/ ${venta.total.toFixed(2)}</td>
+<td>${obtenerDetallePagosVenta(venta)}</td>
 
     ${
         rol === "admin"
@@ -1608,6 +1808,11 @@ function actualizarReportes(){
 
     let ventasMes = 0;
     let gananciaMes = 0;
+    let ventasEfectivo = 0;
+let ventasYape = 0;
+let ventasPlin = 0;
+let ventasTarjeta = 0;
+let ventasTransferencia = 0;
 
     historialVentas.forEach(function(venta){
 
@@ -1615,6 +1820,39 @@ function actualizarReportes(){
 
             ventasHoy += venta.total;
             gananciaHoy += venta.ganancia;
+  if(venta.pagos){
+
+    ventasEfectivo += Number(venta.pagos.efectivo || 0);
+    ventasYape += Number(venta.pagos.yape || 0);
+    ventasPlin += Number(venta.pagos.plin || 0);
+    ventasTarjeta += Number(venta.pagos.tarjeta || 0);
+    ventasTransferencia += Number(venta.pagos.transferencia || 0);
+
+} else {
+
+    let metodo = venta.metodoPago || "No registrado";
+
+    if(metodo === "Efectivo"){
+        ventasEfectivo += Number(venta.total || 0);
+    }
+
+    if(metodo === "Yape"){
+        ventasYape += Number(venta.total || 0);
+    }
+
+    if(metodo === "Plin"){
+        ventasPlin += Number(venta.total || 0);
+    }
+
+    if(metodo === "Tarjeta"){
+        ventasTarjeta += Number(venta.total || 0);
+    }
+
+    if(metodo === "Transferencia"){
+        ventasTransferencia += Number(venta.total || 0);
+    }
+
+}
 
         }
 
@@ -1645,6 +1883,21 @@ function actualizarReportes(){
 
     document.getElementById("gananciaMes").innerHTML =
 "S/ " + gananciaMes.toFixed(2);
+
+document.getElementById("ventasEfectivo").innerHTML =
+    "S/ " + ventasEfectivo.toFixed(2);
+
+document.getElementById("ventasYape").innerHTML =
+    "S/ " + ventasYape.toFixed(2);
+
+document.getElementById("ventasPlin").innerHTML =
+    "S/ " + ventasPlin.toFixed(2);
+
+document.getElementById("ventasTarjeta").innerHTML =
+    "S/ " + ventasTarjeta.toFixed(2);
+
+document.getElementById("ventasTransferencia").innerHTML =
+    "S/ " + ventasTransferencia.toFixed(2);
 
 }
 
@@ -2115,11 +2368,51 @@ function actualizarCajaDiaria(){
 
     let ventasHoy = 0;
 
+    let cajaEfectivo = 0;
+    let cajaYape = 0;
+    let cajaPlin = 0;
+    let cajaTarjeta = 0;
+    let cajaTransferencia = 0;
+
     historialVentas.forEach(function(venta){
 
         if(venta.fechaISO === obtenerFechaISO()){
 
-            ventasHoy += venta.total;
+            ventasHoy += Number(venta.total || 0);
+
+            if(venta.pagos){
+
+                cajaEfectivo += Number(venta.pagos.efectivo || 0);
+                cajaYape += Number(venta.pagos.yape || 0);
+                cajaPlin += Number(venta.pagos.plin || 0);
+                cajaTarjeta += Number(venta.pagos.tarjeta || 0);
+                cajaTransferencia += Number(venta.pagos.transferencia || 0);
+
+            } else {
+
+                let metodo = venta.metodoPago || "No registrado";
+
+                if(metodo === "Efectivo"){
+                    cajaEfectivo += Number(venta.total || 0);
+                }
+
+                if(metodo === "Yape"){
+                    cajaYape += Number(venta.total || 0);
+                }
+
+                if(metodo === "Plin"){
+                    cajaPlin += Number(venta.total || 0);
+                }
+
+                if(metodo === "Tarjeta"){
+                    cajaTarjeta += Number(venta.total || 0);
+                }
+
+                if(metodo === "Transferencia"){
+                    cajaTransferencia += Number(venta.total || 0);
+                }
+
+            }
 
         }
 
@@ -2128,9 +2421,7 @@ function actualizarCajaDiaria(){
     let gastos = 0;
 
     gastosCaja.forEach(function(gasto){
-
-        gastos += gasto.monto;
-
+        gastos += Number(gasto.monto || 0);
     });
 
     let esperado =
@@ -2140,6 +2431,21 @@ function actualizarCajaDiaria(){
 
     document.getElementById("cajaVentas").innerHTML =
         "S/ " + ventasHoy.toFixed(2);
+
+    document.getElementById("cajaEfectivo").innerHTML =
+        "S/ " + cajaEfectivo.toFixed(2);
+
+    document.getElementById("cajaYape").innerHTML =
+        "S/ " + cajaYape.toFixed(2);
+
+    document.getElementById("cajaPlin").innerHTML =
+        "S/ " + cajaPlin.toFixed(2);
+
+    document.getElementById("cajaTarjeta").innerHTML =
+        "S/ " + cajaTarjeta.toFixed(2);
+
+    document.getElementById("cajaTransferencia").innerHTML =
+        "S/ " + cajaTransferencia.toFixed(2);
 
     document.getElementById("cajaGastos").innerHTML =
         "S/ " + gastos.toFixed(2);
@@ -2234,6 +2540,11 @@ function mostrarHistorialCajas(){
             <td>${caja.fecha || "-"}</td>
             <td>${caja.cerradaPor || "-"}</td>
             <td>S/ ${(caja.ventasDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.efectivoDia || 0).toFixed(2)}</td>
+<td>S/ ${(caja.yapeDia || 0).toFixed(2)}</td>
+<td>S/ ${(caja.plinDia || 0).toFixed(2)}</td>
+<td>S/ ${(caja.tarjetaDia || 0).toFixed(2)}</td>
+<td>S/ ${(caja.transferenciaDia || 0).toFixed(2)}</td>
             <td>S/ ${(caja.gastosDia || 0).toFixed(2)}</td>
             <td>S/ ${(caja.cajaEsperada || 0).toFixed(2)}</td>
             <td>S/ ${(caja.dineroReal || 0).toFixed(2)}</td>
@@ -2283,10 +2594,54 @@ async function cerrarCaja(){
     let ventasHoy = 0;
     let gastos = 0;
 
+    let efectivoDia = 0;
+    let yapeDia = 0;
+    let plinDia = 0;
+    let tarjetaDia = 0;
+    let transferenciaDia = 0;
+
     historialVentas.forEach(function(venta){
-      if(venta.fechaISO === fechaCaja){
+
+        if(venta.fechaISO === fechaCaja){
+
             ventasHoy += Number(venta.total || 0);
+
+            if(venta.pagos){
+
+                efectivoDia += Number(venta.pagos.efectivo || 0);
+                yapeDia += Number(venta.pagos.yape || 0);
+                plinDia += Number(venta.pagos.plin || 0);
+                tarjetaDia += Number(venta.pagos.tarjeta || 0);
+                transferenciaDia += Number(venta.pagos.transferencia || 0);
+
+            } else {
+
+                let metodo = venta.metodoPago || "No registrado";
+
+                if(metodo === "Efectivo"){
+                    efectivoDia += Number(venta.total || 0);
+                }
+
+                if(metodo === "Yape"){
+                    yapeDia += Number(venta.total || 0);
+                }
+
+                if(metodo === "Plin"){
+                    plinDia += Number(venta.total || 0);
+                }
+
+                if(metodo === "Tarjeta"){
+                    tarjetaDia += Number(venta.total || 0);
+                }
+
+                if(metodo === "Transferencia"){
+                    transferenciaDia += Number(venta.total || 0);
+                }
+
+            }
+
         }
+
     });
 
     gastosCaja.forEach(function(gasto){
@@ -2320,7 +2675,15 @@ async function cerrarCaja(){
         fecha: fechaCaja,
         cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
         horaCierre: new Date().toLocaleTimeString(),
+
         ventasDia: ventasHoy,
+
+        efectivoDia: efectivoDia,
+        yapeDia: yapeDia,
+        plinDia: plinDia,
+        tarjetaDia: tarjetaDia,
+        transferenciaDia: transferenciaDia,
+
         gastosDia: gastos,
         cajaEsperada: esperado,
         dineroReal: dineroReal,
@@ -2344,7 +2707,31 @@ async function cerrarCaja(){
     historialCajas.unshift(cierre);
     mostrarHistorialCajas();
 
-    alert("💰 Caja cerrada correctamente");
+    alert(
+
+`💰 CAJA CERRADA
+
+Ventas:
+S/ ${ventasHoy.toFixed(2)}
+
+💵 Efectivo:
+S/ ${efectivoDia.toFixed(2)}
+
+📱 Yape:
+S/ ${yapeDia.toFixed(2)}
+
+🟢 Plin:
+S/ ${plinDia.toFixed(2)}
+
+💳 Tarjeta:
+S/ ${tarjetaDia.toFixed(2)}
+
+🏦 Transferencia:
+S/ ${transferenciaDia.toFixed(2)}
+
+${resultadoCuadre}`
+
+);
 
 }
 
@@ -2424,6 +2811,7 @@ window.editarProducto = editarProducto;
 window.eliminarProducto = eliminarProducto;
 window.cancelarVenta = cancelarVenta;
 window.finalizarVenta = finalizarVenta;
+window.finalizarEImprimir = finalizarEImprimir;
 window.imprimirBoleta = imprimirBoleta;
 window.toggleAgregarProducto = toggleAgregarProducto;
 window.toggleReporteVendedores = toggleReporteVendedores;
