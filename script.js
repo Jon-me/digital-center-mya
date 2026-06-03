@@ -29,31 +29,17 @@ const db = getFirestore(app);
 let usuarios = [
 
     {
-        usuario: "Jonatan",
-        password: "262214",
-        rol: "admin",
-        nombreCompleto: "Jonatan Távara"
-    },
-
-    {
-        usuario: "Mercy",
-        password: "251419",
-        rol: "admin",
-        nombreCompleto: "Mercy Villegas"
-    },
-
-    {
         usuario: "Karina",
         password: "1234",
         rol: "vendedor",
-        nombreCompleto: "Karina Antón"
+        nombreCompleto: "Karina A."
     },
 
     {
         usuario: "Judith",
         password: "1234",
         rol: "vendedor",
-        nombreCompleto: "Judith Nunura"
+        nombreCompleto: "Judith N."
     }
 
 ];
@@ -81,6 +67,16 @@ let gastosCaja = [];
 let historialCajas = [];
 
 let tabla = document.getElementById("tablaProductos");
+
+function obtenerFechaISO(){
+    let fecha = new Date();
+
+    let año = fecha.getFullYear();
+    let mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    let dia = String(fecha.getDate()).padStart(2, "0");
+
+    return `${año}-${mes}-${dia}`;
+}
 
 function mostrarProductos(){
 
@@ -538,6 +534,7 @@ carrito.forEach(function(item){
 
   let venta = {
     fecha: new Date().toLocaleDateString(),
+    fechaISO: obtenerFechaISO(),
     hora: new Date().toLocaleTimeString(),
     vendedor: localStorage.getItem("nombreActivo") || "Sin vendedor",
     productos: JSON.parse(JSON.stringify(carrito)),
@@ -545,6 +542,25 @@ carrito.forEach(function(item){
     total: total - descuento,
     ganancia: ganancia - descuento
 };
+
+for(let item of carrito){
+
+    let productoVendido = productos.find(function(p){
+        return p.producto === item.producto;
+    });
+
+    if(productoVendido && productoVendido.id){
+
+        await updateDoc(
+            doc(db, "productos", productoVendido.id),
+            {
+                stock: Number(productoVendido.stock)
+            }
+        );
+
+    }
+
+}
 
 await addDoc(
     collection(db, "ventas"),
@@ -596,82 +612,77 @@ function desbloquearSistema(){
 
 }
 
-function iniciarSesion(){
+async function iniciarSesion(){
 
     let usuarioInput =
-        document.getElementById("usuario").value;
+        document.getElementById("usuario").value.trim();
 
     let passwordInput =
-        document.getElementById("password").value;
+        document.getElementById("password").value.trim();
 
-    let usuarioEncontrado = usuarios.find(function(user){
+    let usuarioEncontrado = null;
 
-        return (
-            user.usuario === usuarioInput &&
-            user.password === passwordInput
-        );
+    // 1. Buscar primero en Firebase
+    let usuarioRef = doc(db, "usuarios", usuarioInput);
+    let usuarioSnap = await getDoc(usuarioRef);
 
-    });
+    if(usuarioSnap.exists()){
 
-    if(usuarioEncontrado){
+        let usuarioFirebase = usuarioSnap.data();
 
-        localStorage.setItem("sesion", "activa");
-
-        localStorage.setItem(
-            "usuarioActivo",
-            usuarioEncontrado.usuario
-        );
-
-        localStorage.setItem(
-            "nombreActivo",
-           usuarioEncontrado.nombreCompleto
-        );
-
-        localStorage.setItem(
-            "rolActivo",
-            usuarioEncontrado.rol
-        );
-
-        document.body.classList.remove("rol-admin", "rol-vendedor");
-document.body.classList.add("rol-" + usuarioEncontrado.rol);
-
-        document.getElementById("login")
-            .style.display = "none";
-
-        document.getElementById("sistema")
-            .style.display = "block";
-
-            if(usuarioEncontrado.rol === "vendedor"){
-    document.getElementById("dashboardAdmin").style.display = "none";
-} else {
-    document.getElementById("dashboardAdmin").style.display = "grid";
-}
-
-            desbloquearSistema();
-
-            setTimeout(function(){
-
-            mostrarProductos();
-
-            mostrarCarrito();
-
-            mostrarHistorialVentas();
-
-            controlarColumnaGanancia();
-
-            actualizarReportes();
-
-            mostrarReporteVendedores();
-
-            aplicarPermisos();
-
-            }, 100);
-    
-         } else {
-
-         alert("Usuario o contraseña incorrectos");
+        if(usuarioFirebase.password === passwordInput){
+            usuarioEncontrado = usuarioFirebase;
+        }
 
     }
+
+    // 2. Si no está en Firebase, buscar vendedores locales
+    if(!usuarioEncontrado){
+
+        usuarioEncontrado = usuarios.find(function(user){
+            return (
+                user.usuario === usuarioInput &&
+                user.password === passwordInput
+            );
+        });
+
+    }
+
+    if(!usuarioEncontrado){
+        alert("Usuario o contraseña incorrectos");
+        return;
+    }
+
+    localStorage.setItem("sesion", "activa");
+    localStorage.setItem("usuarioActivo", usuarioEncontrado.usuario);
+    localStorage.setItem("nombreActivo", usuarioEncontrado.nombreCompleto);
+    localStorage.setItem("rolActivo", usuarioEncontrado.rol);
+
+    document.body.classList.remove("rol-admin", "rol-vendedor");
+    document.body.classList.add("rol-" + usuarioEncontrado.rol);
+
+    document.getElementById("login").style.display = "none";
+    document.getElementById("sistema").style.display = "block";
+
+    if(usuarioEncontrado.rol === "vendedor"){
+        document.getElementById("dashboardAdmin").style.display = "none";
+    } else {
+        document.getElementById("dashboardAdmin").style.display = "grid";
+    }
+
+    desbloquearSistema();
+
+    setTimeout(function(){
+
+        mostrarProductos();
+        mostrarCarrito();
+        mostrarHistorialVentas();
+        controlarColumnaGanancia();
+        actualizarReportes();
+        mostrarReporteVendedores();
+        aplicarPermisos();
+
+    }, 100);
 
 }
 
@@ -766,12 +777,6 @@ document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
         document.getElementById("dashboardAdmin").style.display = "none";
     } else {
         document.getElementById("dashboardAdmin").style.display = "grid";
-    }
-
-    if(localStorage.getItem("rolActivo") === "vendedor"){
-        document.getElementById("zonaAdmin").style.display = "none";
-    } else {
-        document.getElementById("zonaAdmin").style.display = "none";
     }
 
             mostrarProductos();
@@ -1509,8 +1514,7 @@ async function anularGastoCaja(idGasto, autorizado = false){
         return;
     }
 
-    let fechaCaja =
-        new Date().toLocaleDateString();
+   let fechaCaja = obtenerFechaISO();
 
     await deleteDoc(
         doc(
@@ -1574,8 +1578,9 @@ function actualizarReportes(){
 
         }
 
-        let fechaVenta =
-            new Date(venta.fecha);
+        let fechaVenta = venta.fechaISO
+    ? new Date(venta.fechaISO + "T00:00:00")
+    : new Date(venta.fecha);
 
         if(
             fechaVenta.getMonth() === mesActual &&
@@ -1599,7 +1604,7 @@ function actualizarReportes(){
         "S/ " + ventasMes.toFixed(2);
 
     document.getElementById("gananciaMes").innerHTML =
-        "S/ " + gananciaMes.toFixed(2);
+"S/ " + gananciaMes.toFixed(2);
 
 }
 
@@ -1611,10 +1616,24 @@ function actualizarDashboardEjecutivo(){
     let vendedores = {};
 
     let gananciaDia = 0;
+    let gananciaMes = 0;
     let totalVentasDia = 0;
     let cantidadVentasDia = 0;
 
     historialVentas.forEach(function(venta){
+
+       let fechaVenta = venta.fechaISO
+    ? new Date(venta.fechaISO + "T00:00:00")
+    : new Date(venta.fecha);
+
+let hoyFecha = new Date();
+
+if(
+    fechaVenta.getMonth() === hoyFecha.getMonth() &&
+    fechaVenta.getFullYear() === hoyFecha.getFullYear()
+){
+    gananciaMes += Number(venta.ganancia || 0);
+}
 
         if(venta.fecha === hoy){
 
@@ -1675,10 +1694,15 @@ function actualizarDashboardEjecutivo(){
         ? totalVentasDia / cantidadVentasDia
         : 0;
 
-    document.getElementById("productoMasVendido").innerHTML =
-        productoTop === "-"
-        ? "-"
-        : productoTop + "<br><small>Vendidos: " + cantidadTop + "</small>";
+    let nombreCorto =
+    productoTop.length > 15
+    ? productoTop.substring(0, 15) + "..."
+    : productoTop;
+
+document.getElementById("productoMasVendido").innerHTML =
+    productoTop === "-"
+    ? "-"
+    : nombreCorto + "<br><small>Vendidos: " + cantidadTop + "</small>";
 
     document.getElementById("mejorVendedor").innerHTML =
         vendedorTop === "-"
@@ -1690,6 +1714,9 @@ function actualizarDashboardEjecutivo(){
 
     document.getElementById("ticketPromedio").innerHTML =
         "S/ " + ticketPromedio.toFixed(2);
+
+       document.getElementById("gananciaMesEjecutiva").innerHTML =
+"S/ " + gananciaMes.toFixed(2);
 
 }
 
@@ -1852,7 +1879,7 @@ onSnapshot(
     doc(
         db,
         "cajas",
-        new Date().toLocaleDateString()
+        obtenerFechaISO()
     ),
     function(documento){
 
@@ -1876,7 +1903,7 @@ onSnapshot(
     collection(
         db,
         "cajas",
-        new Date().toLocaleDateString(),
+        obtenerFechaISO(),
         "gastos"
     ),
     function(snapshot){
@@ -1955,7 +1982,7 @@ async function abrirCaja(){
         return;
     }
 
-    let fechaCaja = new Date().toLocaleDateString();
+    let fechaCaja = obtenerFechaISO();
 
     await setDoc(
         doc(db, "cajas", fechaCaja),
@@ -1987,8 +2014,7 @@ async function registrarGasto(){
         return;
     }
 
-    let fechaCaja =
-        new Date().toLocaleDateString();
+   let fechaCaja = obtenerFechaISO();
 
     await addDoc(
         collection(db, "cajas", fechaCaja, "gastos"),
@@ -2038,10 +2064,7 @@ function actualizarCajaDiaria(){
 
     historialVentas.forEach(function(venta){
 
-        if(
-            venta.fecha ===
-            new Date().toLocaleDateString()
-        ){
+        if(venta.fechaISO === obtenerFechaISO()){
 
             ventasHoy += venta.total;
 
@@ -2092,10 +2115,7 @@ function cuadrarCaja(){
 
     historialVentas.forEach(function(venta){
 
-        if(
-            venta.fecha ===
-            new Date().toLocaleDateString()
-        ){
+       if(venta.fechaISO === obtenerFechaISO()){
 
             ventasHoy += venta.total;
 
@@ -2205,13 +2225,13 @@ async function borrarHistorialCierres(){
 
 async function cerrarCaja(){
 
-    let fechaCaja = new Date().toLocaleDateString();
+    let fechaCaja = obtenerFechaISO();
 
     let ventasHoy = 0;
     let gastos = 0;
 
     historialVentas.forEach(function(venta){
-        if(venta.fecha === fechaCaja){
+      if(venta.fechaISO === fechaCaja){
             ventasHoy += Number(venta.total || 0);
         }
     });
@@ -2293,8 +2313,7 @@ async function anularCajaDelDia(autorizado = false){
         return;
     }
 
-    let fechaCaja =
-        new Date().toLocaleDateString();
+    let fechaCaja = obtenerFechaISO();
 
     for(let gasto of gastosCaja){
 
