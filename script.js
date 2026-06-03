@@ -686,6 +686,13 @@ function aplicarPermisos(){
         document.getElementById("zonaAdmin").style.display = "none";
         document.getElementById("tituloReportes").style.display = "none";
         
+let btnBorrarHistorial =
+    document.getElementById("btnBorrarHistorialCajas");
+
+if(btnBorrarHistorial){
+    btnBorrarHistorial.style.display = "none";
+}
+
         let columnaGanancia = document.getElementById("columnaGanancia");
         if(columnaGanancia){
             columnaGanancia.style.display = "none";
@@ -710,15 +717,22 @@ function aplicarPermisos(){
 
     } else {
 
-        document.getElementById("dashboardAdmin").style.display = "grid";
-        document.getElementById("tituloReportes").style.display = "block";
-        document.getElementById("dashboardReportes").style.display = "grid";
+    document.getElementById("dashboardAdmin").style.display = "grid";
+    document.getElementById("tituloReportes").style.display = "block";
+    document.getElementById("dashboardReportes").style.display = "grid";
 
-        document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
-            btn.style.display = "inline-block";
-        });
+    let btnBorrarHistorial =
+        document.getElementById("btnBorrarHistorialCajas");
 
+    if(btnBorrarHistorial){
+        btnBorrarHistorial.style.display = "inline-block";
     }
+
+    document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
+        btn.style.display = "inline-block";
+    });
+
+}
 
 }
 
@@ -1368,6 +1382,12 @@ async function validarCodigoAdmin(){
     if(accionAdminPendiente){
         await accionAdminPendiente();
         accionAdminPendiente = null;
+        return;
+    }
+
+    if(ventaPendienteAnular !== null){
+        await ejecutarAnulacion(ventaPendienteAnular);
+        ventaPendienteAnular = null;
     }
 
 }
@@ -1375,19 +1395,17 @@ async function validarCodigoAdmin(){
 function cerrarModalCodigo(){
 
     let modal = document.getElementById("modalCodigo");
-let fondo = document.getElementById("fondoModal");
+    let fondo = document.getElementById("fondoModal");
 
-modal.style.display = "none";
-modal.style.visibility = "hidden";
-modal.style.pointerEvents = "none";
+    modal.style.display = "none";
+    modal.style.visibility = "hidden";
+    modal.style.pointerEvents = "none";
 
-fondo.style.display = "none";
-fondo.style.visibility = "hidden";
-fondo.style.pointerEvents = "none";
+    fondo.style.display = "none";
+    fondo.style.visibility = "hidden";
+    fondo.style.pointerEvents = "none";
 
     document.getElementById("codigoAdminInput").value = "";
-
-    ventaPendienteAnular = null;
 
 }
 
@@ -2057,6 +2075,38 @@ function mostrarHistorialCajas(){
 
 }
 
+async function borrarHistorialCierres(){
+
+    let rol = localStorage.getItem("rolActivo");
+
+    if(rol !== "admin"){
+        alert("Solo el administrador puede borrar este historial");
+        return;
+    }
+
+    if(!confirm("¿Borrar todo el historial de cierres?")){
+        return;
+    }
+
+    for(let caja of historialCajas){
+
+        if(caja.id){
+
+            await deleteDoc(
+                doc(db, "cierresCaja", caja.id)
+            );
+
+        }
+
+    }
+
+    historialCajas = [];
+    mostrarHistorialCajas();
+
+    alert("✅ Historial de cierres borrado");
+
+}
+
 async function cerrarCaja(){
 
     let fechaCaja = new Date().toLocaleDateString();
@@ -2225,6 +2275,7 @@ window.anularGastoCaja = anularGastoCaja;
 window.anularCajaDelDia = anularCajaDelDia;
 window.cuadrarCaja = cuadrarCaja;
 window.mostrarHistorialCajas = mostrarHistorialCajas;
+window.borrarHistorialCierres = borrarHistorialCierres;
 
 document.addEventListener("DOMContentLoaded", function(){
 
