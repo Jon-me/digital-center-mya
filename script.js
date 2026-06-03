@@ -1478,28 +1478,30 @@ async function ejecutarAnulacion(index){
 
     try{
 
-        for(let item of venta.productos){
+        await runTransaction(db, async function(transaction){
 
-            let producto = productos.find(function(p){
-                return p.id === item.id;
+    for(let item of venta.productos){
+
+        let productoRef = doc(db, "productos", item.id);
+        let productoSnap = await transaction.get(productoRef);
+
+        if(productoSnap.exists()){
+
+            let productoData = productoSnap.data();
+            let stockActual = Number(productoData.stock || 0);
+
+            transaction.update(productoRef, {
+                stock: stockActual + Number(item.cantidad)
             });
-
-            if(producto && producto.id){
-
-                await updateDoc(
-                    doc(db, "productos", producto.id),
-                    {
-                        stock: Number(producto.stock) + Number(item.cantidad)
-                    }
-                );
-
-            }
 
         }
 
-        await deleteDoc(
-            doc(db, "ventas", venta.id)
-        );
+    }
+
+    let ventaRef = doc(db, "ventas", venta.id);
+    transaction.delete(ventaRef);
+
+});
 
         ventaPendienteAnular = null;
 
