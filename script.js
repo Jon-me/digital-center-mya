@@ -919,7 +919,7 @@ mostrarCarrito();
 actualizarReportes();
 
 
-function imprimirBoleta(){
+async function imprimirBoleta(){
 
     if(carrito.length === 0){
         alert("El carrito está vacío");
@@ -929,8 +929,32 @@ function imprimirBoleta(){
     let fecha = new Date().toLocaleDateString();
     let hora = new Date().toLocaleTimeString();
 
-    let numeroVenta =
-        String(historialVentas.length + 1).padStart(6, "0");
+    let numeroVenta = "";
+
+await runTransaction(db, async function(transaction){
+
+    let correlativoRef = doc(db, "configuracion", "boletas");
+    let correlativoSnap = await transaction.get(correlativoRef);
+
+    let ultimoNumero = 0;
+
+    if(correlativoSnap.exists()){
+        ultimoNumero = Number(correlativoSnap.data().ultimoNumero || 0);
+    }
+
+    let nuevoNumero = ultimoNumero + 1;
+
+    transaction.set(
+        correlativoRef,
+        {
+            ultimoNumero: nuevoNumero
+        },
+        { merge: true }
+    );
+
+    numeroVenta = String(nuevoNumero).padStart(6, "0");
+
+});
 
     let total = 0;
 
