@@ -407,7 +407,7 @@ function eliminarDelCarrito(index){
 
     let producto = productos.find(function(p){
 
-        return p.producto === item.producto;
+        return p.id === item.id;
 
     });
 
@@ -445,7 +445,7 @@ function agregarDirecto(index){
     // BUSCAR SI YA EXISTE EN EL CARRITO
     let itemExistente = carrito.find(function(item){
 
-        return item.producto === producto.producto;
+       return item.id === producto.id;
 
     });
 
@@ -462,6 +462,7 @@ function agregarDirecto(index){
         // SI NO EXISTE
         carrito.push({
 
+    id: producto.id,
     producto: producto.producto,
     cantidad: 1,
     precioCompra: Number(producto.precioCompra || 0),
@@ -489,7 +490,7 @@ function cancelarVenta(){
 
         let producto = productos.find(function(p){
 
-            return p.producto === item.producto;
+          return p.id === item.id;
 
         });
 
@@ -546,7 +547,7 @@ carrito.forEach(function(item){
 for(let item of carrito){
 
     let productoVendido = productos.find(function(p){
-        return p.producto === item.producto;
+        return p.id === item.id;
     });
 
     if(productoVendido && productoVendido.id){
@@ -1463,7 +1464,7 @@ async function ejecutarAnulacion(index){
         for(let item of venta.productos){
 
             let producto = productos.find(function(p){
-                return p.producto === item.producto;
+                return p.id === item.id;
             });
 
             if(producto && producto.id){
