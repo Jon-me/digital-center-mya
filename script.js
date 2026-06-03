@@ -60,8 +60,6 @@ let ventaPendienteAnular = null;
 
 let accionAdminPendiente = null;
 
-let cajaAbierta = false;
-
 let montoInicialCaja = 0;
 
 let gastosCaja = [];
@@ -1324,8 +1322,6 @@ function mostrarHistorialVentas(){
 
 function anularVenta(index){
 
-    console.log("PRUEBA JONATAN 123");
-
     let rol = localStorage.getItem("rolActivo");
 
     ventaPendienteAnular = index;
@@ -1591,7 +1587,7 @@ function actualizarReportes(){
 
     historialVentas.forEach(function(venta){
 
-        if(venta.fecha === hoy){
+     if(venta.fechaISO === obtenerFechaISO()){
 
             ventasHoy += venta.total;
             gananciaHoy += venta.ganancia;
@@ -1655,7 +1651,7 @@ if(
     gananciaMes += Number(venta.ganancia || 0);
 }
 
-        if(venta.fecha === hoy){
+      if(venta.fechaISO === obtenerFechaISO()){
 
             gananciaDia += Number(venta.ganancia || 0);
             totalVentasDia += Number(venta.total || 0);
@@ -2429,7 +2425,6 @@ window.actualizarDashboardEjecutivo = actualizarDashboardEjecutivo;
 document.addEventListener("DOMContentLoaded", function(){
 
     let descuentoInput = document.getElementById("descuentoVenta");
-
     limpiarDescuentoSiCarritoVacio();
 
     setTimeout(limpiarDescuentoSiCarritoVacio, 100);
