@@ -1809,11 +1809,24 @@ function obtenerDescuento(){
 
     let descuento = Number(input.value);
 
-    if(isNaN(descuento) || descuento < 0){
-        return 0;
-    }
+   if(isNaN(descuento) || descuento < 0){
+    return 0;
+}
 
-    return descuento;
+let totalVenta = 0;
+
+carrito.forEach(function(item){
+    totalVenta += Number(item.subtotal || 0);
+});
+
+if(descuento > totalVenta){
+    descuento = totalVenta;
+}
+
+document.getElementById("descuentoVenta").value =
+    descuento;
+
+return descuento;
 
 }
 
