@@ -459,17 +459,8 @@ tr:hover{
 
 .hero-banner h1{
 
-    color: white;
-
-    font-size: 70px;
-
-    font-weight: 800;
-
-    letter-spacing: 3px;
-
-    text-shadow:
-        0 0 15px rgba(37,99,235,0.8),
-        0 0 30px rgba(124,58,237,0.6);
+    color: red !important;
+    font-size: 100px !important;
 
 }
 
