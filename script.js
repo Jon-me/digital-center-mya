@@ -1605,8 +1605,7 @@ function actualizarReportes(){
 
 function actualizarDashboardEjecutivo(){
 
-    let hoy =
-        new Date().toLocaleDateString();
+    let hoy = new Date().toLocaleDateString();
 
     let productosVendidos = {};
     let vendedores = {};
@@ -1621,10 +1620,9 @@ function actualizarDashboardEjecutivo(){
 
             gananciaDia += Number(venta.ganancia || 0);
             totalVentasDia += Number(venta.total || 0);
-            cantidadVentasDia += 1;
+            cantidadVentasDia++;
 
-            let vendedor =
-                venta.vendedor || "Sin vendedor";
+            let vendedor = venta.vendedor || "Sin vendedor";
 
             if(!vendedores[vendedor]){
                 vendedores[vendedor] = 0;
@@ -1632,18 +1630,21 @@ function actualizarDashboardEjecutivo(){
 
             vendedores[vendedor] += Number(venta.total || 0);
 
-            venta.productos.forEach(function(item){
+            if(venta.productos){
 
-                let nombre =
-                    item.producto || "Sin producto";
+                venta.productos.forEach(function(item){
 
-                if(!productosVendidos[nombre]){
-                    productosVendidos[nombre] = 0;
-                }
+                    let producto = item.producto || "Sin producto";
 
-                productosVendidos[nombre] += Number(item.cantidad || 0);
+                    if(!productosVendidos[producto]){
+                        productosVendidos[producto] = 0;
+                    }
 
-            });
+                    productosVendidos[producto] += Number(item.cantidad || 0);
+
+                });
+
+            }
 
         }
 
@@ -1653,27 +1654,23 @@ function actualizarDashboardEjecutivo(){
     let cantidadTop = 0;
 
     for(let producto in productosVendidos){
-
         if(productosVendidos[producto] > cantidadTop){
             productoTop = producto;
             cantidadTop = productosVendidos[producto];
         }
-
     }
 
     let vendedorTop = "-";
-    let ventaTop = 0;
+    let montoTop = 0;
 
     for(let vendedor in vendedores){
-
-        if(vendedores[vendedor] > ventaTop){
+        if(vendedores[vendedor] > montoTop){
             vendedorTop = vendedor;
-            ventaTop = vendedores[vendedor];
+            montoTop = vendedores[vendedor];
         }
-
     }
 
-    let ticket =
+    let ticketPromedio =
         cantidadVentasDia > 0
         ? totalVentasDia / cantidadVentasDia
         : 0;
@@ -1681,18 +1678,18 @@ function actualizarDashboardEjecutivo(){
     document.getElementById("productoMasVendido").innerHTML =
         productoTop === "-"
         ? "-"
-        : productoTop + " (" + cantidadTop + ")";
+        : productoTop + "<br><small>Vendidos: " + cantidadTop + "</small>";
 
     document.getElementById("mejorVendedor").innerHTML =
         vendedorTop === "-"
         ? "-"
-        : vendedorTop;
+        : vendedorTop + "<br><small>S/ " + montoTop.toFixed(2) + "</small>";
 
     document.getElementById("gananciaRealDia").innerHTML =
         "S/ " + gananciaDia.toFixed(2);
 
     document.getElementById("ticketPromedio").innerHTML =
-        "S/ " + ticket.toFixed(2);
+        "S/ " + ticketPromedio.toFixed(2);
 
 }
 
