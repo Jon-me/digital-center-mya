@@ -14,6 +14,12 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
+import {
+    getMessaging,
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyD_vUmAunFhTZH24SfCZMST5PVRBcAMMNI",
     authDomain: "digital-center-mya.firebaseapp.com",
@@ -27,6 +33,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+const messaging = getMessaging(app);
+
+const vapidKey = "BPOC-OO2rTZMZdGTsrO8WYkK39YMiABU3mzkOU0ToEfN1L2pAfgGQNumw966SaXED2bVniLu2gwI1U9-dWnihJM";
 
 let usuarios = [
 
@@ -2866,6 +2876,70 @@ document.addEventListener("DOMContentLoaded", function(){
 window.addEventListener("pageshow", function(){
     limpiarDescuentoSiCarritoVacio();
 });
+
+async function activarNotificaciones(){
+
+    if(!("Notification" in window)){
+        alert("Este navegador no soporta notificaciones");
+        return;
+    }
+
+    if(!("serviceWorker" in navigator)){
+        alert("Este navegador no soporta service workers");
+        return;
+    }
+
+    try{
+
+        const permiso = await Notification.requestPermission();
+
+        if(permiso !== "granted"){
+            alert("Permiso de notificaciones denegado");
+            return;
+        }
+
+        const registration =
+            await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+        const token = await getToken(messaging, {
+            vapidKey: vapidKey,
+            serviceWorkerRegistration: registration
+        });
+
+        if(token){
+
+            await setDoc(
+                doc(db, "tokensNotificaciones", token),
+                {
+                    token: token,
+                    usuario: localStorage.getItem("nombreActivo") || "Sin usuario",
+                    fecha: new Date().toISOString()
+                }
+            );
+
+            alert("🔔 Notificaciones activadas correctamente");
+
+        }
+
+    } catch(error){
+
+        console.error("Error activando notificaciones:", error);
+        alert("Error activando notificaciones. Revisa la consola.");
+
+    }
+
+}
+
+onMessage(messaging, function(payload){
+
+    alert(
+        "🔔 " + payload.notification.title + "\n\n" +
+        payload.notification.body
+    );
+
+});
+
+window.activarNotificaciones = activarNotificaciones;
 
 window.migrarProductosAFirebase = async function(){
 
