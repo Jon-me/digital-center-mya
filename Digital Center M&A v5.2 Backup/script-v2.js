@@ -24,7 +24,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyD_vUmAunFhTZH24SfCZMST5PVRBcAMMNI",
     authDomain: "digital-center-mya.firebaseapp.com",
     projectId: "digital-center-mya",
- storageBucket: "digital-center-mya.firebasestorage.app",
+    storageBucket: "digital-center-mya.firebasestorage.app",
     messagingSenderId: "52765537655",
     appId: "1:52765537655:web:c0d0f6f5449e3cdc339d72",
     measurementId: "G-NLS4F507HM"
@@ -36,7 +36,7 @@ const db = getFirestore(app);
 
 const messaging = getMessaging(app);
 
-const vapidKey = "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzLwb4FqPkz0oFFI3lgD5l21infE";
+const vapidKey = "BPOC-OO2rTZMZdGTsrO8WYkK39YMiABU3mzkOU0ToEfN1L2pAfgGQNumw966SaXED2bVniLu2gwI1U9-dWnihJM";
 
 let usuarios = [
 
@@ -2899,16 +2899,16 @@ async function activarNotificaciones(){
         }
 
         const registration =
-    await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
-        scope: "/"
-    });
-
+            await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 await navigator.serviceWorker.ready;
 
-const token = await getToken(messaging, {
-    vapidKey: vapidKey,
-    serviceWorkerRegistration: registration
-});
+        const token = await getToken(messaging, {
+            vapidKey: vapidKey,
+            serviceWorkerRegistration: registration
+        });
+
+        if(token){
+
             await setDoc(
                 doc(db, "tokensNotificaciones", token),
                 {
@@ -2922,7 +2922,7 @@ const token = await getToken(messaging, {
 
         }
 
-     catch(error){
+    } catch(error){
 
        console.error("Error activando notificaciones:", error);
 

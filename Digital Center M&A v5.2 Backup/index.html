@@ -8,6 +8,9 @@
     <title>Digital Center M&A</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
 
 </head>
 
@@ -45,7 +48,7 @@
     Cerrar Sesión
 </button>
 
-        <div class="hero-banner">
+      <div class="hero-banner">
     <h1>Digital Center M&A</h1>
 </div>
         
@@ -112,13 +115,38 @@
             Total: S/ 0
         </h2>
 
-        <input
+       <input
     id="descuentoVenta"
-    type="number"
+    type="text"
     placeholder="Descuento S/"
-    value="0"
-    oninput="mostrarCarrito(); actualizarDashboard();"
+    autocomplete="off"
 >
+
+<label class="label-metodo-pago">
+    <strong>💳 Método de Pago</strong>
+</label>
+
+<select id="metodoPago">
+    <option value="Efectivo">💵 Efectivo</option>
+    <option value="Yape">📱 Yape</option>
+    <option value="Plin">🟢 Plin</option>
+    <option value="Tarjeta">💳 Tarjeta</option>
+    <option value="Transferencia">🏦 Transferencia</option>
+</select>
+
+<div id="pagosMixtos">
+
+    <input id="pagoEfectivo" type="number" placeholder="Efectivo S/">
+    <input id="pagoYape" type="number" placeholder="Yape S/">
+    <input id="pagoPlin" type="number" placeholder="Plin S/">
+    <input id="pagoTarjeta" type="number" placeholder="Tarjeta S/">
+    <input id="pagoTransferencia" type="number" placeholder="Transferencia S/">
+
+    <h3 id="totalPagado">
+        Pagado: S/ 0.00
+    </h3>
+
+</div>
 
         <h3>Datos del Cliente</h3>
 
@@ -131,6 +159,9 @@
         <div class="acciones-venta">
             <button onclick="cancelarVenta()">Cancelar Venta</button>
             <button onclick="finalizarVenta()">Finalizar Venta</button>
+            <button onclick="finalizarEImprimir()">
+    🧾 Finalizar + Imprimir
+</button>
             <button onclick="imprimirBoleta()">🖨️ Imprimir Boleta</button>
         </div>
 
@@ -154,9 +185,10 @@
         <tr>
             <th>Fecha</th>
             <th>Hora</th>
-            <th>Total</th>
-            <th id="columnaGanancia">
-            Ganancia
+           <th>Total</th>
+<th>Método</th>
+<th id="columnaGanancia">
+Ganancia
 </th>
             <th>Acción</th>
 
@@ -170,7 +202,7 @@
 
 </table>
 
-<h2 style="margin-top:40px;">
+<h2 id="tituloReportes" style="margin-top:40px;">
     📊 Reportes y Estadísticas
 </h2>
 
@@ -222,6 +254,64 @@
         <p>🏦 Ganancia Mes</p>
     </div>
 
+    <div class="dashboard-card">
+    <h2 id="ventasEfectivo">S/ 0</h2>
+    <p>💵 Efectivo Hoy</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="ventasYape">S/ 0</h2>
+    <p>📱 Yape Hoy</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="ventasPlin">S/ 0</h2>
+    <p>🟢 Plin Hoy</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="ventasTarjeta">S/ 0</h2>
+    <p>💳 Tarjeta Hoy</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="ventasTransferencia">S/ 0</h2>
+    <p>🏦 Transferencia Hoy</p>
+</div>
+
+</div>
+
+<h2 id="tituloDashboardEjecutivo">
+    🧠 Dashboard Ejecutivo
+</h2>
+
+<div class="dashboard" id="dashboardEjecutivo">
+
+    <div class="dashboard-card">
+        <h2 id="productoMasVendido">-</h2>
+        <p>🏆 Producto Más Vendido</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="mejorVendedor">-</h2>
+        <p>👑 Mejor Vendedor</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="gananciaRealDia">S/ 0</h2>
+        <p>💰 Ganancia Real del Día</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h2 id="ticketPromedio">S/ 0</h2>
+        <p>🧾 Ticket Promedio</p>
+    </div>
+
+    <div class="dashboard-card">
+    <h2 id="gananciaMesEjecutiva">S/ 0</h2>
+    <p>📈 Ganancia del Mes</p>
+    </div>
+
 </div>
 
 <button onclick="toggleReporteVendedores()" class="btn-toggle-producto">
@@ -244,6 +334,150 @@
 
     <tbody id="reporteVendedoresTabla"></tbody>
 </table>
+</div>
+
+<button onclick="toggleCajaDiaria()" class="btn-toggle-producto">
+    💰 Caja Diaria
+</button>
+
+<div id="panelCajaDiaria" style="display:none;">
+
+    <h2>💰 Caja Diaria</h2>
+
+    <div class="dashboard">
+
+        <div class="dashboard-card">
+            <h2 id="cajaInicial">S/ 0</h2>
+            <p>💵 Caja Inicial</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaVentas">S/ 0</h2>
+            <p>🛒 Ventas del Día</p>
+        </div>
+
+        <div class="dashboard-card">
+    <h2 id="cajaEfectivo">S/ 0</h2>
+    <p>💵 Efectivo</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="cajaYape">S/ 0</h2>
+    <p>📱 Yape</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="cajaPlin">S/ 0</h2>
+    <p>🟢 Plin</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="cajaTarjeta">S/ 0</h2>
+    <p>💳 Tarjeta</p>
+</div>
+
+<div class="dashboard-card">
+    <h2 id="cajaTransferencia">S/ 0</h2>
+    <p>🏦 Transferencia</p>
+</div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaGastos">S/ 0</h2>
+            <p>📉 Gastos</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaEsperada">S/ 0</h2>
+            <p>✅ Caja Esperada</p>
+        </div>
+
+    </div>
+
+    <h3>Abrir Caja</h3>
+
+    <input id="montoInicialCaja" type="number" placeholder="Monto inicial S/">
+
+    <button onclick="abrirCaja()">
+        Abrir Caja
+    </button>
+
+    <h3>Registrar Gasto</h3>
+
+    <input id="descripcionGasto" type="text" placeholder="Descripción del gasto">
+    <input id="montoGasto" type="number" placeholder="Monto gasto S/">
+
+    <button onclick="registrarGasto()">
+        Registrar Gasto
+    </button>
+
+    <h3>Gastos del Día</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+             <th>Hora</th>
+             <th>Descripción</th>
+             <th>Monto</th>
+             <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody id="tablaGastosCaja"></tbody>
+    </table>
+
+    <br>
+
+    <h3>Cuadre Real de Caja</h3>
+
+<input
+    id="dineroRealCaja"
+    type="number"
+    placeholder="Dinero físico contado S/"
+>
+
+<button onclick="cuadrarCaja()">
+    🧮 Cuadrar Caja
+</button>
+
+<h3 id="resultadoCuadreCaja">
+    Resultado: -
+</h3>
+
+    <button onclick="cerrarCaja()">
+        🔒 Cerrar Caja
+    </button>
+
+<button onclick="anularCajaDelDia()">
+    🗑️ Anular Caja del Día
+</button>
+
+<h3>📚 Historial de Cierres</h3>
+
+<button id="btnBorrarHistorialCajas" onclick="borrarHistorialCierres()">
+    🗑️ Borrar Historial de Cierres
+</button>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cerró</th>
+           <th>Ventas</th>
+<th>Efectivo</th>
+<th>Yape</th>
+<th>Plin</th>
+<th>Tarjeta</th>
+<th>Transferencia</th>
+<th>Gastos</th>
+            <th>Esperado</th>
+            <th>Real</th>
+            <th>Resultado</th>
+        </tr>
+    </thead>
+
+    <tbody id="historialCajasTabla"></tbody>
+</table>
+
 </div>
 
 <button onclick="toggleAgregarProducto()" class="btn-toggle-producto">
@@ -290,6 +524,10 @@
     ⚙️ Configuración
 </button>
 
+<button onclick="activarNotificaciones()">
+    🔔 Activar Notificaciones
+</button>
+
 <div id="panelConfiguracion" style="display:none;">
 
     <h2>⚙️ Configuración</h2>
@@ -306,15 +544,19 @@
         Guardar Configuración
     </button>
 
-    </div>
+    <br><br>
 
+<button onclick="activarNotificaciones()">
+    🚀 BOTON DE PRUEBA
+</button>
+
+    </div>
 
         </div>
 
-
     </div>
 
-   <script src="script.js"></script>
+   <script type="module" src="script.js"></script>
 
 <div id="modalCodigo" style="display:none;">
 

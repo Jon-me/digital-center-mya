@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
     getFirestore,
@@ -12,13 +12,13 @@ import {
     getDoc,
     runTransaction
 
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
     getMessaging,
     getToken,
     onMessage
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD_vUmAunFhTZH24SfCZMST5PVRBcAMMNI",
@@ -36,7 +36,7 @@ const db = getFirestore(app);
 
 const messaging = getMessaging(app);
 
-const vapidKey = "BPOC-OO2rTZMZdGTsrO8WYkK39YMiABU3mzkOU0ToEfN1L2pAfgGQNumw966SaXED2bVniLu2gwI1U9-dWnihJM";
+const vapidKey = "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzLwb4FqPkz0oFFI3lgD5l21infE";
 
 let usuarios = [
 
@@ -2899,12 +2899,15 @@ async function activarNotificaciones(){
         }
 
         const registration =
-            await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+            await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
+                scope: "/"
+            });
+
+        await navigator.serviceWorker.ready;
 
         const token = await getToken(messaging, {
-            vapidKey: vapidKey,
-            serviceWorkerRegistration: registration
-        });
+    vapidKey: vapidKey
+});
 
         if(token){
 
@@ -2924,7 +2927,13 @@ async function activarNotificaciones(){
     } catch(error){
 
         console.error("Error activando notificaciones:", error);
-        alert("Error activando notificaciones. Revisa la consola.");
+
+        alert(
+            "ERROR REAL\n\n" +
+            (error.code || "sin-code") +
+            "\n\n" +
+            (error.message || error)
+        );
 
     }
 
@@ -2938,6 +2947,7 @@ onMessage(messaging, function(payload){
     );
 
 });
+
 
 window.activarNotificaciones = activarNotificaciones;
 

@@ -256,29 +256,32 @@ tr:hover{
 }
 #login{
 
-    width: 100%;
+    position: relative;
+
+    z-index: 10;
 
     max-width: 450px;
 
-    background: white;
+    margin: 80px auto;
 
     padding: 40px;
 
     border-radius: 25px;
 
-    box-shadow:
-    0 20px 40px rgba(0,0,0,0.25);
+    background:
+    rgba(0,0,0,0.35);
+
+    backdrop-filter: blur(18px);
+
+    border:
+    1px solid rgba(255,255,255,0.15);
 
     text-align: center;
 
-    position: absolute;
+    color: white;
 
-    top: 50%;
-
-    left: 50%;
-
-    transform:
-    translate(-50%, -50%);
+    box-shadow:
+    0 20px 60px rgba(0,0,0,0.6);
 
 }
 
@@ -423,7 +426,14 @@ tr:hover{
 
 }
 #login h2{
-    color: #1e293b;
+
+    color: white;
+
+    font-size: 32px;
+
+    text-shadow:
+    0 0 10px rgba(255,255,255,0.5);
+
 }
 
 .producto-card{
@@ -763,4 +773,50 @@ tr:hover{
 #totalPagado{
     color: #22c55e;
     text-align: center;
+}
+
+#videoFondo{
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    z-index: -2;
+}
+
+#login input{
+
+    width: 100%;
+
+    max-width: none;
+
+    background:
+    rgba(255,255,255,0.15);
+
+    color: white;
+
+    border:
+    1px solid rgba(255,255,255,0.25);
+
+}
+
+#login input::placeholder{
+
+    color:
+    rgba(255,255,255,0.8);
+
+}
+
+#login button{
+
+    width: 100%;
+
+    font-size: 18px;
+
+    padding: 15px;
+
 }
