@@ -2954,10 +2954,20 @@ async function buscarGarantia(){
                     <hr>
 
                     <p>
-                        <strong>Estado Garantía:</strong>
-                        ${b.estadoGarantia || "Pendiente"}
-                    </p>
+    <strong>Estado Garantía:</strong>
 
+    <span class="
+        ${
+            b.estadoGarantia === "Aprobada"
+            ? "estado-aprobada"
+            : b.estadoGarantia === "Rechazada"
+            ? "estado-rechazada"
+            : "estado-pendiente"
+        }
+    ">
+        ${b.estadoGarantia || "Pendiente"}
+    </span>
+</p>
                     <p>
                         <strong>Última atención:</strong>
                         ${b.atendidoGarantia || "-"}
