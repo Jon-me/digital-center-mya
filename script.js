@@ -2917,8 +2917,15 @@ async function buscarGarantia(){
         let datosBoleta = await getDocs(consultaBoleta);
 
         let html = "";
+        let idsMostrados = [];
 
-        function pintarBoleta(b){
+        function pintarBoleta(id, b){
+
+            if(idsMostrados.includes(id)){
+                return;
+            }
+
+            idsMostrados.push(id);
 
             let productosHtml = "";
 
@@ -2933,23 +2940,58 @@ async function buscarGarantia(){
             html += `
                 <div class="garantia-card">
                     <h3>🧾 ${b.numeroBoleta}</h3>
+
                     <p><strong>Cliente:</strong> ${b.clienteNombre}</p>
                     <p><strong>DNI:</strong> ${b.clienteDni}</p>
                     <p><strong>Fecha:</strong> ${b.fecha}</p>
                     <p><strong>Vendedor:</strong> ${b.vendedor}</p>
                     <p><strong>Total:</strong> S/ ${Number(b.total || 0).toFixed(2)}</p>
+
                     <hr>
+
                     ${productosHtml}
+
+                    <hr>
+
+                    <p>
+                        <strong>Estado Garantía:</strong>
+                        ${b.estadoGarantia || "Pendiente"}
+                    </p>
+
+                    <p>
+                        <strong>Última atención:</strong>
+                        ${b.atendidoGarantia || "-"}
+                    </p>
+
+                    <p>
+                        <strong>Fecha garantía:</strong>
+                        ${b.fechaGarantia || "-"}
+                    </p>
+
+                    <textarea
+                        id="observacionGarantia-${id}"
+                        placeholder="📝 Escribir observación de garantía..."
+                    >${b.observacionGarantia || ""}</textarea>
+
+                    <div class="acciones-garantia">
+                        <button onclick="actualizarGarantia('${id}', 'Aprobada')">
+                            ✅ Aprobar Garantía
+                        </button>
+
+                        <button onclick="actualizarGarantia('${id}', 'Rechazada')">
+                            ❌ Rechazar Garantía
+                        </button>
+                    </div>
                 </div>
             `;
         }
 
         datosDni.forEach(function(documento){
-            pintarBoleta(documento.data());
+            pintarBoleta(documento.id, documento.data());
         });
 
         datosBoleta.forEach(function(documento){
-            pintarBoleta(documento.data());
+            pintarBoleta(documento.id, documento.data());
         });
 
         if(html === ""){
@@ -2962,6 +3004,38 @@ async function buscarGarantia(){
 
         console.error("Error buscando garantía:", error);
         resultado.innerHTML = "<p style='color:white;'>Error buscando garantía.</p>";
+
+    }
+
+}
+
+async function actualizarGarantia(idBoleta, estado){
+
+    let observacion =
+        document.getElementById("observacionGarantia-" + idBoleta)
+        .value
+        .trim();
+
+    try{
+
+        await updateDoc(
+            doc(db, "boletas", idBoleta),
+            {
+                estadoGarantia: estado,
+                observacionGarantia: observacion,
+                fechaGarantia: new Date().toLocaleString(),
+                atendidoGarantia: localStorage.getItem("nombreActivo") || "Sin usuario"
+            }
+        );
+
+        alert("✅ Garantía " + estado + " correctamente");
+
+        buscarGarantia();
+
+    } catch(error){
+
+        console.error("Error actualizando garantía:", error);
+        alert("No se pudo actualizar la garantía");
 
     }
 
@@ -3010,6 +3084,7 @@ window.toggleHistorialVentas = toggleHistorialVentas;
 window.toggleReportes = toggleReportes;
 window.toggleDashboardEjecutivo = toggleDashboardEjecutivo;
 window.toggleGarantias = toggleGarantias;
+window.actualizarGarantia = actualizarGarantia;
 
 document.addEventListener("DOMContentLoaded", function(){
 
