@@ -55,6 +55,13 @@ let usuarios = [
         password: "1234",
         rol: "vendedor",
         nombreCompleto: "Judith N."
+    },
+
+    {
+        usuario: "David",
+        password: "1234",
+        rol: "vendedor",
+        nombreCompleto: "David S."
     }
 
 ];
@@ -388,7 +395,17 @@ function mostrarCarrito(){
 
     <tr>
 
-        <td>${item.producto}</td>
+        <td>
+    <strong>${item.producto}</strong>
+
+    <input
+        type="text"
+        class="input-nombre-boleta-carrito"
+        value="${item.nombreBoleta || ""}"
+        placeholder="Nombre para boleta"
+        oninput="actualizarNombreBoletaCarrito(${index}, this.value)"
+    >
+</td>
 
         <td>${item.cantidad}</td>
 
@@ -423,6 +440,14 @@ function mostrarCarrito(){
 
     document.getElementById("totalVenta").innerHTML =
       "Total: S/ " + totalFinal.toFixed(2);
+}
+
+function actualizarNombreBoletaCarrito(index, valor){
+
+    carrito[index].nombreBoleta = valor.trim();
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+
 }
 
 function eliminarDelCarrito(index){
@@ -1214,12 +1239,17 @@ let clienteDni =
 
     .logo-container{
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    overflow: visible;
 }
 
 .logo-boleta{
     width: 220px;
     max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px auto;
+    object-fit: contain;
 }
 
     h2{
@@ -1393,7 +1423,9 @@ ${detallePagos}
     carrito.forEach(function(item){
         contenido += `
         <div class="producto">
-            <div class="producto-nombre">${item.producto}</div>
+           <div class="producto-nombre">
+    ${item.nombreBoleta || item.producto}
+</div>
             <div class="producto-detalle">
                 <span>${item.cantidad} x S/ ${item.precio.toFixed(2)}</span>
                 <span>S/ ${item.subtotal.toFixed(2)}</span>
@@ -1409,8 +1441,13 @@ ${detallePagos}
         <div class="linea"></div>
 
 <div class="datos">
-    <strong>Subtotal:</strong> S/ ${total.toFixed(2)}<br>
-    <strong>Descuento:</strong> S/ ${descuento.toFixed(2)}
+    <strong>Subtotal:</strong> S/ ${total.toFixed(2)}
+
+    ${
+        descuento > 0
+        ? `<br><strong>Descuento:</strong> S/ ${descuento.toFixed(2)}`
+        : ""
+    }
 </div>
 
 <div class="total">
@@ -1554,6 +1591,20 @@ function obtenerDetallePagosVenta(venta){
 
 }
 
+function obtenerProductosVenta(venta){
+
+    if(!venta.productos || venta.productos.length === 0){
+        return "Sin productos";
+    }
+
+    return venta.productos.map(function(item){
+
+        return (item.nombreBoleta || item.producto) + " x " + item.cantidad;
+
+    }).join("<br>");
+
+}
+
 function mostrarHistorialVentas(){
 
     let tabla = document.getElementById("historialVentasTabla");
@@ -1572,6 +1623,7 @@ function mostrarHistorialVentas(){
 <tr>
     <td>${venta.fecha}</td>
     <td>${venta.hora}</td>
+    <td>${obtenerProductosVenta(venta)}</td>
     <td>S/ ${venta.total.toFixed(2)}</td>
 <td>${obtenerDetallePagosVenta(venta)}</td>
 
@@ -1748,6 +1800,23 @@ async function ejecutarAnulacion(index){
 
     try{
 
+        let boletasAnular = [];
+
+if(venta.numeroBoleta && venta.numeroBoleta !== "SIN IMPRESION"){
+
+    let consultaBoleta = query(
+        collection(db, "boletas"),
+        where("numeroBoleta", "==", venta.numeroBoleta)
+    );
+
+    let resultadoBoleta = await getDocs(consultaBoleta);
+
+    resultadoBoleta.forEach(function(documento){
+        boletasAnular.push(documento.id);
+    });
+
+}
+
         await runTransaction(db, async function(transaction){
 
     for(let item of venta.productos){
@@ -1770,6 +1839,13 @@ async function ejecutarAnulacion(index){
 
     let ventaRef = doc(db, "ventas", venta.id);
     transaction.delete(ventaRef);
+
+boletasAnular.forEach(function(idBoleta){
+
+    let boletaRef = doc(db, "boletas", idBoleta);
+    transaction.delete(boletaRef);
+
+});
 
 });
 
@@ -2931,9 +3007,9 @@ async function buscarGarantia(){
 
             if(b.productos){
                 b.productos.forEach(function(item){
-                    productosHtml += `
-                        <p>📱 ${item.producto} x ${item.cantidad}</p>
-                    `;
+                   productosHtml += `
+    <p>📱 ${item.nombreBoleta || item.producto} x ${item.cantidad}</p>
+`;
                 });
             }
 
@@ -3095,6 +3171,7 @@ window.toggleReportes = toggleReportes;
 window.toggleDashboardEjecutivo = toggleDashboardEjecutivo;
 window.toggleGarantias = toggleGarantias;
 window.actualizarGarantia = actualizarGarantia;
+window.actualizarNombreBoletaCarrito = actualizarNombreBoletaCarrito;
 
 document.addEventListener("DOMContentLoaded", function(){
 
