@@ -86,6 +86,12 @@ let gastosCaja = [];
 
 let historialCajas = [];
 
+const sonidoVenta = new Audio("venta.mp3");
+
+sonidoVenta.volume = 0.4;
+
+sonidoVenta.load();
+
 let tabla = document.getElementById("tablaProductos");
 
 function obtenerFechaISO(){
@@ -725,11 +731,21 @@ transaction.set(boletaRef, {
 
 }
 
-    alert("Venta realizada correctamente");
+sonidoVenta.currentTime = 0;
 
-    carrito = [];
+sonidoVenta.play().catch(function(error){
+    console.log(error);
+});
 
-    localStorage.removeItem("carrito");
+setTimeout(function(){
+
+    alert("✅ Venta realizada correctamente");
+
+}, 150);
+
+carrito = [];
+
+localStorage.removeItem("carrito");
 
 
   document.getElementById("descuentoVenta").value = "";  
@@ -829,6 +845,7 @@ async function iniciarSesion(){
 
     document.getElementById("login").style.display = "none";
     document.getElementById("sistema").style.display = "block";
+    sonidoVenta.load();
 
     if(usuarioEncontrado.rol === "vendedor"){
         document.getElementById("dashboardAdmin").style.display = "none";
@@ -2963,17 +2980,25 @@ async function anularCajaDelDia(autorizado = false){
 
 async function buscarGarantia(){
 
-    let texto = document
-        .getElementById("inputGarantia")
-        .value
-        .trim();
+let inputGarantiaModal =
+    document.querySelector("#contenidoModalPanel #inputGarantia");
+
+let inputGarantiaNormal =
+    document.getElementById("inputGarantia");
+
+let inputGarantia =
+    inputGarantiaModal || inputGarantiaNormal;
+
+let texto = inputGarantia.value.trim();
 
     if(!texto){
         alert("Ingrese DNI o número de boleta");
         return;
     }
 
-    let resultado = document.getElementById("resultadoGarantia");
+    let resultado =
+    document.querySelector("#contenidoModalPanel #resultadoGarantia") ||
+    document.getElementById("resultadoGarantia");
 
     resultado.innerHTML = "Buscando...";
 
@@ -3347,3 +3372,23 @@ function toggleHistorialVentas(){
     let panel = document.getElementById("panelHistorialVentas");
     panel.style.display = panel.style.display === "none" ? "block" : "none";
 }
+
+function abrirModalPanel(idPanel){
+
+    let panel = document.getElementById(idPanel);
+    let modal = document.getElementById("modalPanel");
+    let contenido = document.getElementById("contenidoModalPanel");
+
+    contenido.innerHTML = panel.innerHTML;
+
+    modal.style.display = "flex";
+}
+
+function cerrarModalPanel(){
+
+    document.getElementById("modalPanel").style.display = "none";
+
+}
+
+window.abrirModalPanel = abrirModalPanel;
+window.cerrarModalPanel = cerrarModalPanel;

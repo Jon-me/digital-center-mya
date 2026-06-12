@@ -7,7 +7,7 @@
 
     <title>Digital Center M&A</title>
 
-    <link rel="stylesheet" href="style.css?v=LOGOSVIP1">
+    <link rel="stylesheet" href="style.css?v=LOGOSVIP2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
@@ -59,8 +59,12 @@
 <input 
     type="text"
     id="buscador"
-   placeholder="🔍 Buscar producto..."
+    placeholder="🔍 Buscar producto..."
     onkeyup="buscarProducto()"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
 >
 
 <br><br>
@@ -68,28 +72,39 @@
 <div class="categorias-pos">
 
     <button onclick="filtrarCategoria('todos')">
-    📦 Todos
-</button>
+        <img src="icons/todos.png" class="icono-categoria">
+        Todos
+    </button>
 
-<button onclick="filtrarCategoria('CELULAR')">
-   📱 Celulares
-</button>
+    <button onclick="filtrarCategoria('CELULAR')">
+        <img src="icons/celular.png" class="icono-categoria">
+        Celulares
+    </button>
 
-<button onclick="filtrarCategoria('CARGADOR')">
-    🔌 Cargadores
-</button>
+    <button onclick="filtrarCategoria('CARGADOR')">
+        <img src="icons/cargador.png" class="icono-categoria">
+        Cargadores
+    </button>
 
-<button onclick="filtrarCategoria('AUDIFONO')">
-    🎧 Audífonos
-</button>
+    <button onclick="filtrarCategoria('AUDIFONO')">
+        <img src="icons/audifono.png" class="icono-categoria">
+        Audífonos
+    </button>
 
-<button onclick="filtrarCategoria('PANTALLA')">
-    📱 Pantallas
-</button>
+    <button onclick="filtrarCategoria('PANTALLA')">
+       <img src="icons/pantalla.png" class="icono-categoria icono-pantalla">
+        Pantallas
+    </button>
 
-<button onclick="filtrarCategoria('VIDRIO')">
-    🛡️ Vidrios
-</button>
+    <button onclick="filtrarCategoria('VIDRIO')">
+        <img src="icons/vidrio.png" class="icono-categoria">
+        Vidrios
+    </button>
+
+    <button onclick="filtrarCategoria('CASE')">
+        <img src="icons/case.png" class="icono-categoria">
+        Case
+    </button>
 
 </div>
 
@@ -202,7 +217,7 @@
 
 </div>
 
-<button onclick="toggleHistorialVentas()" class="btn-toggle-producto">
+<button onclick="abrirModalPanel('panelHistorialVentas')" class="btn-toggle-producto">
     📋 Historial de Ventas
 </button>
 
@@ -236,7 +251,7 @@ Ganancia
 
 </div>
 
-<button onclick="toggleReportes()" class="btn-toggle-producto">
+<button onclick="abrirModalPanel('panelReportes')" class="btn-toggle-producto">
     📊 Reportes y Estadísticas
 </button>
 
@@ -323,7 +338,7 @@ Ganancia
 
 </div>
 
-<button onclick="toggleDashboardEjecutivo()" class="btn-toggle-producto">
+<button onclick="abrirModalPanel('panelDashboardEjecutivo')" class="btn-toggle-producto">
     🧠 Dashboard Ejecutivo
 </button>
 
@@ -364,7 +379,7 @@ Ganancia
 
 </div>
 
-<button onclick="toggleReporteVendedores()" class="btn-toggle-producto">
+<button onclick="abrirModalPanel('panelReporteVendedores')" class="btn-toggle-producto">
     👤 Reporte por Vendedor
 </button>
 
@@ -386,7 +401,7 @@ Ganancia
 </table>
 </div>
 
-<button onclick="toggleCajaDiaria()" class="btn-toggle-producto">
+<button onclick="abrirModalPanel('panelCajaDiaria')" class="btn-toggle-producto">
     💰 Caja Diaria
 </button>
 
@@ -534,7 +549,7 @@ Ganancia
    ⚙️ Gestión de Productos
 </button>
 
-<button onclick="toggleGarantias()" class="btn-toggle-producto">
+<button onclick="abrirModalPanel('panelGarantias')" class="btn-toggle-producto">
     🛡️ Garantías
 </button>
 
@@ -545,10 +560,14 @@ Ganancia
     <h2>🛡️ Garantías</h2>
 
     <input
-        type="text"
-        id="inputGarantia"
-        placeholder="DNI o Número de Boleta"
-    >
+    type="text"
+    id="inputGarantia"
+    placeholder="DNI o Número de Boleta"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+>
 
     <button onclick="window.buscarGarantia()">
     🔍 Buscar Garantía
@@ -626,7 +645,7 @@ Ganancia
 
     </div>
 
-  <script type="module" src="script.js?v=UXFIX1"></script>
+  <script type="module" src="script.js?v=UXFIX2"></script>
 
   <div id="modalCodigo" style="display:none;">
 
@@ -654,6 +673,13 @@ Ganancia
     id="fondoModal"
     style="display:none;"
 ></div>
+
+<div id="modalPanel" class="modal-panel" style="display:none;">
+    <div class="modal-contenido">
+        <button class="cerrar-modal" onclick="cerrarModalPanel()">X</button>
+        <div id="contenidoModalPanel"></div>
+    </div>
+</div>
 
 </body>
 
