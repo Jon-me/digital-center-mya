@@ -763,12 +763,6 @@ body::before{
     font-size: 14px;
 }
 
-.container > button:first-child{
-
-    margin-bottom: 35px;
-
-}
-
 /* TEMA AZUL NEÓN - DIGITAL CENTER M&A */
 
 button,
@@ -1442,5 +1436,106 @@ button[onclick="cancelarVenta()"]{
     .acciones-venta{
         flex-direction: column;
     }
+
+}
+
+.btn-actualizar-sistema{
+
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #2563eb
+    ) !important;
+
+    border: 1px solid rgba(96,165,250,0.8) !important;
+
+    box-shadow:
+        0 0 15px rgba(37,99,235,0.55),
+        inset 0 0 12px rgba(96,165,250,0.15) !important;
+
+}
+
+.btn-actualizar-sistema:hover{
+
+    background: linear-gradient(
+        135deg,
+        #1e40af,
+        #2563eb
+    ) !important;
+
+    box-shadow:
+        0 0 25px rgba(96,165,250,0.95),
+        inset 0 0 15px rgba(255,255,255,0.12) !important;
+
+}
+
+.barra-superior{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+/* BOTONES VIP DIGITAL CENTER */
+
+.barra-superior button,
+.acciones-venta button{
+
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #2563eb
+    ) !important;
+
+    border: 1px solid rgba(96,165,250,0.8) !important;
+
+    box-shadow:
+        0 0 15px rgba(37,99,235,0.55),
+        inset 0 0 12px rgba(96,165,250,0.15) !important;
+
+    color: white !important;
+
+    font-weight: 700;
+
+    border-radius: 12px;
+
+    transition: all 0.3s ease;
+
+}
+
+.barra-superior button:hover,
+.acciones-venta button:hover{
+
+    background: linear-gradient(
+        135deg,
+        #1e40af,
+        #2563eb
+    ) !important;
+
+    box-shadow:
+        0 0 25px rgba(96,165,250,0.95),
+        inset 0 0 15px rgba(255,255,255,0.12) !important;
+
+    transform:
+        translateY(-3px)
+        scale(1.03);
+
+}
+
+button[onclick="cancelarVenta()"]{
+    background: linear-gradient(135deg, #020617, #991b1b) !important;
+    border: 1px solid rgba(248,113,113,0.9) !important;
+    box-shadow: 0 0 16px rgba(239,68,68,0.55) !important;
+}
+
+/* MODAL VIP GESTIÓN DE PRODUCTOS */
+
+.modal-contenido.modal-admin{
+
+    width: 95% !important;
+
+    max-width: 1400px !important;
 
 }

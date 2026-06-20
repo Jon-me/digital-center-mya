@@ -3371,10 +3371,26 @@ function abrirModalPanel(idPanel){
     let panel = document.getElementById(idPanel);
     let modal = document.getElementById("modalPanel");
     let contenido = document.getElementById("contenidoModalPanel");
+    let modalContenido = document.querySelector(".modal-contenido");
 
     if(!panel || !modal || !contenido){
         alert("Error abriendo panel");
         return;
+    }
+
+    // Modal especial para Gestión de Productos
+    if(idPanel === "zonaAdmin"){
+
+    modalContenido.classList.add("modal-admin");
+
+    setTimeout(function(){
+        document.getElementById("codigo")?.focus();
+    }, 100);
+
+} else {
+
+        modalContenido.classList.remove("modal-admin");
+
     }
 
     placeholderModal = document.createComment("placeholder-" + idPanel);
@@ -3409,3 +3425,48 @@ function cerrarModalPanel(){
 
 window.abrirModalPanel = abrirModalPanel;
 window.cerrarModalPanel = cerrarModalPanel;
+
+async function actualizarSistema(){
+    const confirmar = confirm("¿Actualizar el sistema y cargar la versión más reciente?");
+
+    if(!confirmar){
+        return;
+    }
+
+    try{
+        if("serviceWorker" in navigator){
+            const registros = await navigator.serviceWorker.getRegistrations();
+
+            for(const registro of registros){
+                await registro.update();
+            }
+        }
+
+        localStorage.setItem("ultimaActualizacionSistema", new Date().toISOString());
+
+        const nuevaVersion = Date.now();
+        window.location.href = window.location.pathname + "?v=" + nuevaVersion;
+
+    }catch(error){
+        console.error("Error actualizando sistema:", error);
+        alert("No se pudo actualizar automáticamente. Intenta con Ctrl + Shift + R.");
+    }
+}
+
+window.actualizarSistema = actualizarSistema;
+
+document.addEventListener("keydown", function(event){
+
+    if(event.key === "Escape"){
+
+        let modal = document.getElementById("modalPanel");
+
+        if(modal && modal.style.display !== "none"){
+
+            cerrarModalPanel();
+
+        }
+
+    }
+
+});
