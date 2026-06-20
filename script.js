@@ -44,13 +44,6 @@ const vapidKey = "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzL
 let usuarios = [
 
     {
-        usuario: "Karina",
-        password: "1234",
-        rol: "vendedor",
-        nombreCompleto: "Karina A."
-    },
-
-    {
         usuario: "Judith",
         password: "1234",
         rol: "vendedor",
@@ -86,13 +79,13 @@ let gastosCaja = [];
 
 let historialCajas = [];
 
+let panelActivoModal = null;
+
+let placeholderModal = null;
+
 const sonidoVenta = new Audio("venta.mp3");
 
 sonidoVenta.volume = 0.4;
-
-sonidoVenta.load();
-
-let tabla = document.getElementById("tablaProductos");
 
 function obtenerFechaISO(){
     let fecha = new Date();
@@ -106,10 +99,16 @@ function obtenerFechaISO(){
 
 function mostrarProductos(){
 
-     let html = "";
+    let tabla = document.getElementById("tablaProductos");
+
+    if(!tabla){
+        return;
+    }
+    
+    let html = "";
 
      productos.sort(function(a, b){
-        return a.codigo.localeCompare(b.codigo);
+        return String(a.codigo || "").localeCompare(String(b.codigo || ""));
      });
 
      productos.forEach(function(producto, index){
@@ -134,16 +133,16 @@ function mostrarProductos(){
      ` : `
      <p>Precio: S/ ${producto.precio}</p>
 `}
-     <button class="btn-agregar" onclick="agregarDirecto(${index})">
+     <button class="btn-agregar" onclick="agregarDirecto('${producto.id}')">
         🛒 Agregar
      </button>
  
      ${localStorage.getItem("rolActivo") === "admin" ? `
-     <button onclick="editarProducto(${index})">
+     <button onclick="editarProducto('${producto.id}')">
         ✏️ Editar
      </button>
 
-     <button onclick="eliminarProducto(${index})">
+     <button onclick="eliminarProducto('${producto.id}')">
         🗑️ Eliminar
      </button>
      ` : ""}
@@ -177,6 +176,37 @@ function guardarProducto(){
      let archivo =
         document.getElementById("imagen")
         .files[0];
+
+if(
+    codigo.trim() === "" ||
+    producto.trim() === "" ||
+    categoria.trim() === "" ||
+    stock === "" ||
+    precioCompra === "" ||
+    precio === ""
+){
+    alert("Complete todos los campos del producto");
+    return;
+}
+
+if(
+    isNaN(Number(stock)) ||
+    isNaN(Number(precioCompra)) ||
+    isNaN(Number(precio))
+){
+    alert("Stock y precios deben ser números válidos");
+    return;
+}
+
+if(!Number.isInteger(Number(stock))){
+    alert("El stock debe ser un número entero");
+    return;
+}
+
+if(Number(stock) < 0 || Number(precioCompra) < 0 || Number(precio) < 0){
+    alert("Stock y precios no pueden ser negativos");
+    return;
+}
 
      // SI HAY IMAGEN
      if(archivo){
@@ -276,14 +306,21 @@ if(posicion){
 
 }
 
-function editarProducto(index){
+function editarProducto(idProducto){
 
     localStorage.setItem(
         "scrollEditar",
         window.scrollY
     );
 
-    let productoEditar = productos[index];
+    let productoEditar = productos.find(function(p){
+        return p.id === idProducto;
+    });
+
+    if(!productoEditar){
+        alert("Producto no encontrado");
+        return;
+    }
 
     let zonaAdmin = document.getElementById("zonaAdmin");
 
@@ -298,7 +335,9 @@ function editarProducto(index){
     document.getElementById("precioCompra").value = productoEditar.precioCompra || 0;
     document.getElementById("precio").value = productoEditar.precio;
 
-    indiceEditar = index;
+    indiceEditar = productos.findIndex(function(p){
+        return p.id === idProducto;
+    });
 
     document.getElementById("zonaAdmin").scrollIntoView({
         behavior: "smooth",
@@ -307,9 +346,11 @@ function editarProducto(index){
 
 }
 
-async function eliminarProducto(index){
+async function eliminarProducto(idProducto){
 
-    let productoEliminar = productos[index];
+    let productoEliminar = productos.find(function(p){
+        return p.id === idProducto;
+    });
 
     if(!productoEliminar || !productoEliminar.id){
         alert("Error: este producto no tiene ID de Firebase");
@@ -384,8 +425,11 @@ function mostrarCarrito(){
 
     let tablaCarrito = document.getElementById("carritoTabla");
 
-    tablaCarrito.innerHTML = "";
+    if(!tablaCarrito){
+        return;
+    }
 
+    let html = "";
     let total = 0;
     let cantidadProductos = 0;
 
@@ -393,45 +437,38 @@ function mostrarCarrito(){
 
     carrito.forEach(function(item, index){
 
-       cantidadProductos += item.cantidad;
+        cantidadProductos += item.cantidad;
+        total += Number(item.subtotal);
 
-       total += Number(item.subtotal);
+        html += `
+        <tr>
+            <td>
+                <strong>${item.producto}</strong>
 
-        tablaCarrito.innerHTML += `
+                <input
+                    type="text"
+                    class="input-nombre-boleta-carrito"
+                    value="${item.nombreBoleta || ""}"
+                    placeholder="Nombre para boleta"
+                    oninput="actualizarNombreBoletaCarrito(${index}, this.value)"
+                >
+            </td>
 
-    <tr>
+            <td>${item.cantidad}</td>
+            <td>S/ ${item.precio.toFixed(2)}</td>
+            <td>S/ ${item.subtotal.toFixed(2)}</td>
 
-        <td>
-    <strong>${item.producto}</strong>
-
-    <input
-        type="text"
-        class="input-nombre-boleta-carrito"
-        value="${item.nombreBoleta || ""}"
-        placeholder="Nombre para boleta"
-        oninput="actualizarNombreBoletaCarrito(${index}, this.value)"
-    >
-</td>
-
-        <td>${item.cantidad}</td>
-
-        <td>S/ ${item.precio.toFixed(2)}</td>
-
-        <td>S/ ${item.subtotal.toFixed(2)}</td>
-
-        <td>
-
-            <button onclick="eliminarDelCarrito(${index})">
-                X
-            </button>
-
-        </td>
-
-    </tr>
-
-`;
+            <td>
+                <button onclick="eliminarDelCarrito(${index})">
+                    X
+                </button>
+            </td>
+        </tr>
+        `;
 
     });
+
+    tablaCarrito.innerHTML = html;
 
     document.getElementById("tituloCarrito").innerHTML =
         "🛒 Carrito (" + cantidadProductos + ")";
@@ -445,7 +482,8 @@ function mostrarCarrito(){
     }
 
     document.getElementById("totalVenta").innerHTML =
-      "Total: S/ " + totalFinal.toFixed(2);
+        "Total: S/ " + totalFinal.toFixed(2);
+
 }
 
 function actualizarNombreBoletaCarrito(index, valor){
@@ -466,13 +504,6 @@ function eliminarDelCarrito(index){
 
     });
 
-    if(producto){
-
-        producto.stock =
-            parseInt(producto.stock) + item.cantidad;
-
-    }
-
     carrito.splice(index, 1);
 
     localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -483,19 +514,16 @@ function eliminarDelCarrito(index){
 
 }
 
-function agregarDirecto(index){
+function agregarDirecto(idProducto){
 
-    let tarjeta = document.querySelectorAll(".producto-card")[index];
+    let producto = productos.find(function(p){
+        return p.id === idProducto;
+    });
 
-    if(tarjeta){
-        tarjeta.classList.add("agregado");
-
-        setTimeout(function(){
-            tarjeta.classList.remove("agregado");
-        }, 350);
+    if(!producto){
+        alert("Producto no encontrado");
+        return;
     }
-
-    let producto = productos[index];
 
     let stockActual = Number(producto.stock);
 
@@ -504,66 +532,37 @@ function agregarDirecto(index){
         return;
     }
 
-    // BUSCAR SI YA EXISTE EN EL CARRITO
     let itemExistente = carrito.find(function(item){
-
-       return item.id === producto.id;
-
+        return item.id === producto.id;
     });
 
-    // SI YA EXISTE
     if(itemExistente){
 
         itemExistente.cantidad += 1;
-
         itemExistente.subtotal =
             itemExistente.cantidad * itemExistente.precio;
 
     } else {
 
-        // SI NO EXISTE
         carrito.push({
-
             id: producto.id,
             producto: producto.producto,
             cantidad: 1,
             precioCompra: Number(producto.precioCompra || 0),
             precio: Number(producto.precio),
             subtotal: Number(producto.precio)
-
         });
 
     }
 
-    // DESCONTAR STOCK
-    producto.stock = stockActual - 1;
-
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
     mostrarCarrito();
-
     mostrarProductos();
 
 }
 
 function cancelarVenta(){
-
-    carrito.forEach(function(item){
-
-        let producto = productos.find(function(p){
-
-          return p.id === item.id;
-
-        });
-
-        if(producto){
-
-            producto.stock =
-                parseInt(producto.stock) + item.cantidad;
-
-        }
-
-    });
 
     carrito = [];
 
@@ -652,7 +651,7 @@ let totalPagado =
     pagos.tarjeta +
     pagos.transferencia;
 
-if(totalPagado !== totalFinal){
+if(Math.abs(totalPagado - totalFinal) > 0.01){
 
     alert(
         "⚠️ El pago no coincide con el total.\n\n" +
@@ -714,14 +713,17 @@ try{
         let ventaRef = doc(collection(db, "ventas"));
         transaction.set(ventaRef, venta);
 
-        let boletaRef = doc(collection(db, "boletas"));
+        if(numeroBoleta !== "SIN IMPRESION"){
 
-transaction.set(boletaRef, {
-    ...venta,
-    estado: "activa",
-    creadaEn: new Date().toISOString()
-});
+    let boletaRef = doc(collection(db, "boletas"));
 
+    transaction.set(boletaRef, {
+        ...venta,
+        estado: "activa",
+        creadaEn: new Date().toISOString()
+    });
+
+}
     });
 
 } catch(error){
@@ -757,13 +759,7 @@ document.getElementById("pagoTransferencia").value = "";
 
 calcularTotalPagado();
   mostrarCarrito();
-    mostrarProductos();
-    mostrarHistorialVentas();
-    controlarColumnaGanancia();
-    actualizarReportes();
-    mostrarReporteVendedores();
-    actualizarCajaDiaria();
-    actualizarDashboardEjecutivo();
+    actualizarDashboard();
 
 }
 
@@ -857,15 +853,11 @@ async function iniciarSesion(){
 
     setTimeout(function(){
 
-        mostrarProductos();
-        mostrarCarrito();
-        mostrarHistorialVentas();
-        controlarColumnaGanancia();
-        actualizarReportes();
-        mostrarReporteVendedores();
-        aplicarPermisos();
+    mostrarCarrito();
+    controlarColumnaGanancia();
+    aplicarPermisos();
 
-    }, 100);
+}, 100);
 
 }
 
@@ -962,17 +954,9 @@ document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
         document.getElementById("dashboardAdmin").style.display = "grid";
     }
 
-            mostrarProductos();
-
             mostrarCarrito();
 
-            mostrarHistorialVentas();
-
             controlarColumnaGanancia();
-
-            actualizarReportes();
-
-            mostrarReporteVendedores();
 
             aplicarPermisos();
 
@@ -1016,17 +1000,24 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     }
 
-    document.getElementById("usuario").addEventListener("keydown", function(event){
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
-    });
+   let inputUsuario = document.getElementById("usuario");
+let inputPassword = document.getElementById("password");
 
-    document.getElementById("password").addEventListener("keydown", function(event){
+if(inputUsuario){
+    inputUsuario.addEventListener("keydown", function(event){
         if(event.key === "Enter"){
             iniciarSesion();
         }
     });
+}
+
+if(inputPassword){
+    inputPassword.addEventListener("keydown", function(event){
+        if(event.key === "Enter"){
+            iniciarSesion();
+        }
+    });
+}
 
 });
 
@@ -1036,66 +1027,50 @@ window.addEventListener("pageshow", function(){
 
 function actualizarDashboard(){
 
-    document.getElementById(
-        "totalProductos"
-    ).innerHTML =
-    productos.length;
+    let totalProductos = document.getElementById("totalProductos");
+    let valorInventario = document.getElementById("valorInventario");
+    let productosCarrito = document.getElementById("productosCarrito");
+    let ventaActualElemento = document.getElementById("ventaActual");
+
+    if(!totalProductos || !valorInventario || !productosCarrito || !ventaActualElemento){
+        return;
+    }
+
+    totalProductos.innerHTML = productos.length;
 
     let valorTotal = 0;
 
     productos.forEach(function(producto){
-
-        valorTotal +=
-            producto.stock *
-            producto.precio;
-
+        valorTotal += Number(producto.stock || 0) * Number(producto.precio || 0);
     });
 
-    document.getElementById(
-        "valorInventario"
-    ).innerHTML =
-    "S/ " + valorTotal.toFixed(2);
+    valorInventario.innerHTML =
+        "S/ " + valorTotal.toFixed(2);
 
     let cantidadCarrito = 0;
 
     carrito.forEach(function(item){
-
-        cantidadCarrito +=
-            item.cantidad;
-
+        cantidadCarrito += Number(item.cantidad || 0);
     });
 
-    document.getElementById(
-        "productosCarrito"
-    ).innerHTML =
-    cantidadCarrito;
+    productosCarrito.innerHTML = cantidadCarrito;
 
     let ventaActual = 0;
 
     carrito.forEach(function(item){
-
-        ventaActual +=
-            item.subtotal;
-
+        ventaActual += Number(item.subtotal || 0);
     });
 
     ventaActual = ventaActual - obtenerDescuento();
 
-if(ventaActual < 0){
-    ventaActual = 0;
-}
+    if(ventaActual < 0){
+        ventaActual = 0;
+    }
 
-document.getElementById(
-    "ventaActual"
-).innerHTML =
-"S/ " + ventaActual.toFixed(2);
+    ventaActualElemento.innerHTML =
+        "S/ " + ventaActual.toFixed(2);
 
 }
-
-mostrarProductos();
-mostrarCarrito();
-actualizarReportes();
-
 
 async function imprimirBoleta(){
 
@@ -1106,6 +1081,39 @@ async function imprimirBoleta(){
 
     let fecha = new Date().toLocaleDateString();
     let hora = new Date().toLocaleTimeString();
+    let total = 0;
+    let descuento = obtenerDescuento();
+    let metodoPago = document.getElementById("metodoPago").value;
+carrito.forEach(function(item){
+    total += Number(item.subtotal);
+});
+
+let totalFinal = total - descuento;
+
+if(totalFinal < 0){
+    totalFinal = 0;
+}
+
+let pagos = obtenerPagosMixtos();
+
+let totalPagado =
+    pagos.efectivo +
+    pagos.yape +
+    pagos.plin +
+    pagos.tarjeta +
+    pagos.transferencia;
+
+if(Math.abs(totalPagado - totalFinal) > 0.01){
+
+    alert(
+        "⚠️ No puedes imprimir la boleta.\n\n" +
+        "El pago no coincide con el total.\n\n" +
+        "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
+        "Pagado: S/ " + totalPagado.toFixed(2)
+    );
+
+    return;
+}
 
     let numeroVenta = "";
 
@@ -1133,41 +1141,6 @@ await runTransaction(db, async function(transaction){
     numeroVenta = String(nuevoNumero).padStart(6, "0");
 
 });
-
-    let total = 0;
-
-    let descuento = obtenerDescuento();
-    let metodoPago = document.getElementById("metodoPago").value;
-carrito.forEach(function(item){
-    total += Number(item.subtotal);
-});
-
-let totalFinal = total - descuento;
-
-if(totalFinal < 0){
-    totalFinal = 0;
-}
-
-let pagos = obtenerPagosMixtos();
-
-let totalPagado =
-    pagos.efectivo +
-    pagos.yape +
-    pagos.plin +
-    pagos.tarjeta +
-    pagos.transferencia;
-
-if(totalPagado !== totalFinal){
-
-    alert(
-        "⚠️ No puedes imprimir la boleta.\n\n" +
-        "El pago no coincide con el total.\n\n" +
-        "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
-        "Pagado: S/ " + totalPagado.toFixed(2)
-    );
-
-    return;
-}
 
 let detallePagos = "";
 
@@ -1561,9 +1534,17 @@ async function finalizarEImprimir(){
 
     let numeroBoleta = await imprimirBoleta();
 
-    let confirmar = confirm(
-        "¿La boleta se imprimió correctamente?"
-    );
+if(!numeroBoleta){
+    return;
+}
+
+await new Promise(function(resolve){
+    setTimeout(resolve, 1500);
+});
+
+let confirmar = confirm(
+    "¿La boleta se imprimió correctamente?"
+);
 
     if(!confirmar){
         alert("Venta no guardada. Puedes volver a imprimir.");
@@ -1630,23 +1611,27 @@ function mostrarHistorialVentas(){
         return;
     }
 
-    tabla.innerHTML = "";
+    let html = "";
 
     let rol = localStorage.getItem("rolActivo");
 
     historialVentas.forEach(function(venta, index){
 
-        tabla.innerHTML += `
+        html += `
 <tr>
     <td>${venta.fecha}</td>
+
     <td>${venta.hora}</td>
+
     <td>${obtenerProductosVenta(venta)}</td>
-    <td>S/ ${venta.total.toFixed(2)}</td>
-<td>${obtenerDetallePagosVenta(venta)}</td>
+
+    <td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
+
+    <td>${obtenerDetallePagosVenta(venta)}</td>
 
     ${
         rol === "admin"
-        ? `<td>S/ ${venta.ganancia.toFixed(2)}</td>`
+        ? `<td>S/ ${Number(venta.ganancia || 0).toFixed(2)}</td>`
         : ""
     }
 
@@ -1655,13 +1640,15 @@ function mostrarHistorialVentas(){
             ↩️ Anular
         </button>
     </td>
+
 </tr>
 `;
 
     });
 
-}
+    tabla.innerHTML = html;
 
+}
 
 function anularVenta(index){
 
@@ -1937,116 +1924,131 @@ function filtrarCategoria(categoria){
 
 function actualizarReportes(){
 
-    let hoy =
-        new Date().toLocaleDateString();
+    let ventasHoyElemento = document.getElementById("ventasHoy");
+    let gananciaHoyElemento = document.getElementById("gananciaHoy");
+    let ventasMesElemento = document.getElementById("ventasMes");
+    let gananciaMesElemento = document.getElementById("gananciaMes");
+    let ventasEfectivoElemento = document.getElementById("ventasEfectivo");
+    let ventasYapeElemento = document.getElementById("ventasYape");
+    let ventasPlinElemento = document.getElementById("ventasPlin");
+    let ventasTarjetaElemento = document.getElementById("ventasTarjeta");
+    let ventasTransferenciaElemento = document.getElementById("ventasTransferencia");
 
-    let mesActual =
-        new Date().getMonth();
+    if(
+        !ventasHoyElemento ||
+        !gananciaHoyElemento ||
+        !ventasMesElemento ||
+        !gananciaMesElemento ||
+        !ventasEfectivoElemento ||
+        !ventasYapeElemento ||
+        !ventasPlinElemento ||
+        !ventasTarjetaElemento ||
+        !ventasTransferenciaElemento
+    ){
+        return;
+    }
 
-    let anioActual =
-        new Date().getFullYear();
+    let mesActual = new Date().getMonth();
+    let anioActual = new Date().getFullYear();
 
     let ventasHoy = 0;
     let gananciaHoy = 0;
-
     let ventasMes = 0;
     let gananciaMes = 0;
+
     let ventasEfectivo = 0;
-let ventasYape = 0;
-let ventasPlin = 0;
-let ventasTarjeta = 0;
-let ventasTransferencia = 0;
+    let ventasYape = 0;
+    let ventasPlin = 0;
+    let ventasTarjeta = 0;
+    let ventasTransferencia = 0;
 
     historialVentas.forEach(function(venta){
 
-     if(venta.fechaISO === obtenerFechaISO()){
+        if(venta.fechaISO === obtenerFechaISO()){
 
-            ventasHoy += venta.total;
-            gananciaHoy += venta.ganancia;
-  if(venta.pagos){
+            ventasHoy += Number(venta.total || 0);
+            gananciaHoy += Number(venta.ganancia || 0);
 
-    ventasEfectivo += Number(venta.pagos.efectivo || 0);
-    ventasYape += Number(venta.pagos.yape || 0);
-    ventasPlin += Number(venta.pagos.plin || 0);
-    ventasTarjeta += Number(venta.pagos.tarjeta || 0);
-    ventasTransferencia += Number(venta.pagos.transferencia || 0);
+            if(venta.pagos){
 
-} else {
+                ventasEfectivo += Number(venta.pagos.efectivo || 0);
+                ventasYape += Number(venta.pagos.yape || 0);
+                ventasPlin += Number(venta.pagos.plin || 0);
+                ventasTarjeta += Number(venta.pagos.tarjeta || 0);
+                ventasTransferencia += Number(venta.pagos.transferencia || 0);
 
-    let metodo = venta.metodoPago || "No registrado";
+            } else {
 
-    if(metodo === "Efectivo"){
-        ventasEfectivo += Number(venta.total || 0);
-    }
+                let metodo = venta.metodoPago || "No registrado";
 
-    if(metodo === "Yape"){
-        ventasYape += Number(venta.total || 0);
-    }
+                if(metodo === "Efectivo"){
+                    ventasEfectivo += Number(venta.total || 0);
+                }
 
-    if(metodo === "Plin"){
-        ventasPlin += Number(venta.total || 0);
-    }
+                if(metodo === "Yape"){
+                    ventasYape += Number(venta.total || 0);
+                }
 
-    if(metodo === "Tarjeta"){
-        ventasTarjeta += Number(venta.total || 0);
-    }
+                if(metodo === "Plin"){
+                    ventasPlin += Number(venta.total || 0);
+                }
 
-    if(metodo === "Transferencia"){
-        ventasTransferencia += Number(venta.total || 0);
-    }
+                if(metodo === "Tarjeta"){
+                    ventasTarjeta += Number(venta.total || 0);
+                }
 
-}
+                if(metodo === "Transferencia"){
+                    ventasTransferencia += Number(venta.total || 0);
+                }
+
+            }
 
         }
 
         let fechaVenta = venta.fechaISO
-    ? new Date(venta.fechaISO + "T00:00:00")
-    : new Date(venta.fecha);
+            ? new Date(venta.fechaISO + "T00:00:00")
+            : new Date(venta.fecha);
 
         if(
             fechaVenta.getMonth() === mesActual &&
             fechaVenta.getFullYear() === anioActual
         ){
-
-            ventasMes += venta.total;
-            gananciaMes += venta.ganancia;
-
+            ventasMes += Number(venta.total || 0);
+            gananciaMes += Number(venta.ganancia || 0);
         }
 
     });
 
-    document.getElementById("ventasHoy").innerHTML =
-        "S/ " + ventasHoy.toFixed(2);
+    ventasHoyElemento.innerHTML = "S/ " + ventasHoy.toFixed(2);
+    gananciaHoyElemento.innerHTML = "S/ " + gananciaHoy.toFixed(2);
+    ventasMesElemento.innerHTML = "S/ " + ventasMes.toFixed(2);
+    gananciaMesElemento.innerHTML = "S/ " + gananciaMes.toFixed(2);
 
-    document.getElementById("gananciaHoy").innerHTML =
-        "S/ " + gananciaHoy.toFixed(2);
-
-    document.getElementById("ventasMes").innerHTML =
-        "S/ " + ventasMes.toFixed(2);
-
-    document.getElementById("gananciaMes").innerHTML =
-"S/ " + gananciaMes.toFixed(2);
-
-document.getElementById("ventasEfectivo").innerHTML =
-    "S/ " + ventasEfectivo.toFixed(2);
-
-document.getElementById("ventasYape").innerHTML =
-    "S/ " + ventasYape.toFixed(2);
-
-document.getElementById("ventasPlin").innerHTML =
-    "S/ " + ventasPlin.toFixed(2);
-
-document.getElementById("ventasTarjeta").innerHTML =
-    "S/ " + ventasTarjeta.toFixed(2);
-
-document.getElementById("ventasTransferencia").innerHTML =
-    "S/ " + ventasTransferencia.toFixed(2);
+    ventasEfectivoElemento.innerHTML = "S/ " + ventasEfectivo.toFixed(2);
+    ventasYapeElemento.innerHTML = "S/ " + ventasYape.toFixed(2);
+    ventasPlinElemento.innerHTML = "S/ " + ventasPlin.toFixed(2);
+    ventasTarjetaElemento.innerHTML = "S/ " + ventasTarjeta.toFixed(2);
+    ventasTransferenciaElemento.innerHTML = "S/ " + ventasTransferencia.toFixed(2);
 
 }
 
 function actualizarDashboardEjecutivo(){
 
-    let hoy = new Date().toLocaleDateString();
+    let productoMasVendidoElemento = document.getElementById("productoMasVendido");
+    let mejorVendedorElemento = document.getElementById("mejorVendedor");
+    let gananciaRealDiaElemento = document.getElementById("gananciaRealDia");
+    let ticketPromedioElemento = document.getElementById("ticketPromedio");
+    let gananciaMesEjecutivaElemento = document.getElementById("gananciaMesEjecutiva");
+
+    if(
+        !productoMasVendidoElemento ||
+        !mejorVendedorElemento ||
+        !gananciaRealDiaElemento ||
+        !ticketPromedioElemento ||
+        !gananciaMesEjecutivaElemento
+    ){
+        return;
+    }
 
     let productosVendidos = {};
     let vendedores = {};
@@ -2058,20 +2060,20 @@ function actualizarDashboardEjecutivo(){
 
     historialVentas.forEach(function(venta){
 
-       let fechaVenta = venta.fechaISO
-    ? new Date(venta.fechaISO + "T00:00:00")
-    : new Date(venta.fecha);
+        let fechaVenta = venta.fechaISO
+            ? new Date(venta.fechaISO + "T00:00:00")
+            : new Date(venta.fecha);
 
-let hoyFecha = new Date();
+        let hoyFecha = new Date();
 
-if(
-    fechaVenta.getMonth() === hoyFecha.getMonth() &&
-    fechaVenta.getFullYear() === hoyFecha.getFullYear()
-){
-    gananciaMes += Number(venta.ganancia || 0);
-}
+        if(
+            fechaVenta.getMonth() === hoyFecha.getMonth() &&
+            fechaVenta.getFullYear() === hoyFecha.getFullYear()
+        ){
+            gananciaMes += Number(venta.ganancia || 0);
+        }
 
-      if(venta.fechaISO === obtenerFechaISO()){
+        if(venta.fechaISO === obtenerFechaISO()){
 
             gananciaDia += Number(venta.ganancia || 0);
             totalVentasDia += Number(venta.total || 0);
@@ -2089,7 +2091,7 @@ if(
 
                 venta.productos.forEach(function(item){
 
-                    let producto = item.producto || "Sin producto";
+                    let producto = item.nombreBoleta || item.producto || "Sin producto";
 
                     if(!productosVendidos[producto]){
                         productosVendidos[producto] = 0;
@@ -2131,28 +2133,28 @@ if(
         : 0;
 
     let nombreCorto =
-    productoTop.length > 15
-    ? productoTop.substring(0, 15) + "..."
-    : productoTop;
+        productoTop.length > 15
+        ? productoTop.substring(0, 15) + "..."
+        : productoTop;
 
-document.getElementById("productoMasVendido").innerHTML =
-    productoTop === "-"
-    ? "-"
-    : nombreCorto + "<br><small>Vendidos: " + cantidadTop + "</small>";
+    productoMasVendidoElemento.innerHTML =
+        productoTop === "-"
+        ? "-"
+        : nombreCorto + "<br><small>Vendidos: " + cantidadTop + "</small>";
 
-    document.getElementById("mejorVendedor").innerHTML =
+    mejorVendedorElemento.innerHTML =
         vendedorTop === "-"
         ? "-"
         : vendedorTop + "<br><small>S/ " + montoTop.toFixed(2) + "</small>";
 
-    document.getElementById("gananciaRealDia").innerHTML =
+    gananciaRealDiaElemento.innerHTML =
         "S/ " + gananciaDia.toFixed(2);
 
-    document.getElementById("ticketPromedio").innerHTML =
+    ticketPromedioElemento.innerHTML =
         "S/ " + ticketPromedio.toFixed(2);
 
-       document.getElementById("gananciaMesEjecutiva").innerHTML =
-"S/ " + gananciaMes.toFixed(2);
+    gananciaMesEjecutivaElemento.innerHTML =
+        "S/ " + gananciaMes.toFixed(2);
 
 }
 
@@ -2165,23 +2167,19 @@ function mostrarReporteVendedores(){
         return;
     }
 
-    tabla.innerHTML = "";
-
     let vendedores = {};
+    let html = "";
 
     historialVentas.forEach(function(venta){
 
-        let nombre =
-            venta.vendedor || "Sin vendedor";
+        let nombre = venta.vendedor || "Sin vendedor";
 
         if(!vendedores[nombre]){
-
             vendedores[nombre] = {
                 ventas: 0,
                 total: 0,
                 ganancia: 0
             };
-
         }
 
         vendedores[nombre].ventas += 1;
@@ -2192,7 +2190,7 @@ function mostrarReporteVendedores(){
 
     for(let nombre in vendedores){
 
-        tabla.innerHTML += `
+        html += `
         <tr>
             <td>${nombre}</td>
             <td>${vendedores[nombre].ventas}</td>
@@ -2200,7 +2198,10 @@ function mostrarReporteVendedores(){
             <td>S/ ${vendedores[nombre].ganancia.toFixed(2)}</td>
         </tr>
         `;
+
     }
+
+    tabla.innerHTML = html;
 
 }
 
@@ -2322,8 +2323,10 @@ onSnapshot(collection(db, "productos"), function(snapshot){
         });
     });
 
+ if(localStorage.getItem("sesion") === "activa"){
     mostrarProductos();
     actualizarDashboard();
+}
 
 });
 
@@ -2340,10 +2343,12 @@ onSnapshot(collection(db, "ventas"), function(snapshot){
 
     });
 
+  if(localStorage.getItem("sesion") === "activa"){
     mostrarHistorialVentas();
     actualizarReportes();
     mostrarReporteVendedores();
     actualizarDashboardEjecutivo();
+}
 
 });
 
@@ -2374,10 +2379,12 @@ onSnapshot(
 
         montoInicialCaja = datos.montoInicial || 0;
 
-        document.getElementById("cajaInicial").innerHTML =
-            "S/ " + montoInicialCaja.toFixed(2);
+       if(localStorage.getItem("sesion") === "activa"){
+    document.getElementById("cajaInicial").innerHTML =
+        "S/ " + montoInicialCaja.toFixed(2);
 
-        actualizarCajaDiaria();
+    actualizarCajaDiaria();
+}
 
     }
 );
@@ -2402,8 +2409,12 @@ onSnapshot(
 
         });
 
-        mostrarGastosCaja();
-        actualizarCajaDiaria();
+       if(localStorage.getItem("sesion") === "activa"){
+
+    mostrarGastosCaja();
+    actualizarCajaDiaria();
+
+}
 
     }
 );
@@ -2430,7 +2441,11 @@ onSnapshot(
             return (b.fecha || "").localeCompare(a.fecha || "");
         });
 
-        mostrarHistorialCajas();
+      if(localStorage.getItem("sesion") === "activa"){
+
+    mostrarHistorialCajas();
+
+}
 
     }
 );
@@ -2521,26 +2536,32 @@ function mostrarGastosCaja(){
     let tabla =
         document.getElementById("tablaGastosCaja");
 
-    tabla.innerHTML = "";
+    if(!tabla){
+        return;
+    }
+
+    let html = "";
 
     gastosCaja.forEach(function(gasto){
 
-        tabla.innerHTML += `
+        html += `
         <tr>
-    <td>${gasto.hora}</td>
-    <td>${gasto.descripcion}</td>
-    <td>S/ ${gasto.monto.toFixed(2)}</td>
-    <td>
-        <button onclick="anularGastoCaja('${gasto.id}')">
-            ↩️ Anular
-        </button>
-    </td>
-</tr>
+            <td>${gasto.hora}</td>
+            <td>${gasto.descripcion}</td>
+            <td>S/ ${gasto.monto.toFixed(2)}</td>
+            <td>
+                <button onclick="anularGastoCaja('${gasto.id}')">
+                    ↩️ Anular
+                </button>
+            </td>
+        </tr>
         `;
+
     });
 
-}
+    tabla.innerHTML = html;
 
+}
 function actualizarCajaDiaria(){
 
     let ventasHoy = 0;
@@ -2678,7 +2699,7 @@ function cuadrarCaja(){
     let resultado =
         document.getElementById("resultadoCuadreCaja");
 
-    if(diferencia === 0){
+    if(Math.abs(diferencia) < 0.01){
 
         resultado.innerHTML =
             "✅ Caja exacta";
@@ -2708,27 +2729,30 @@ function mostrarHistorialCajas(){
         return;
     }
 
-    tabla.innerHTML = "";
+    let html = "";
 
     historialCajas.forEach(function(caja){
 
-        tabla.innerHTML += `
+        html += `
         <tr>
             <td>${caja.fecha || "-"}</td>
             <td>${caja.cerradaPor || "-"}</td>
             <td>S/ ${(caja.ventasDia || 0).toFixed(2)}</td>
             <td>S/ ${(caja.efectivoDia || 0).toFixed(2)}</td>
-<td>S/ ${(caja.yapeDia || 0).toFixed(2)}</td>
-<td>S/ ${(caja.plinDia || 0).toFixed(2)}</td>
-<td>S/ ${(caja.tarjetaDia || 0).toFixed(2)}</td>
-<td>S/ ${(caja.transferenciaDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.yapeDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.plinDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.tarjetaDia || 0).toFixed(2)}</td>
+            <td>S/ ${(caja.transferenciaDia || 0).toFixed(2)}</td>
             <td>S/ ${(caja.gastosDia || 0).toFixed(2)}</td>
             <td>S/ ${(caja.cajaEsperada || 0).toFixed(2)}</td>
             <td>S/ ${(caja.dineroReal || 0).toFixed(2)}</td>
             <td>${caja.resultadoCuadre || "-"}</td>
         </tr>
         `;
+
     });
+
+    tabla.innerHTML = html;
 
 }
 
@@ -2840,7 +2864,7 @@ async function cerrarCaja(){
 
     let resultadoCuadre = "";
 
-    if(diferencia === 0){
+    if(Math.abs(diferencia) < 0.01){
         resultadoCuadre = "Caja exacta";
     } else if(diferencia > 0){
         resultadoCuadre = "Sobrante S/ " + diferencia.toFixed(2);
@@ -3198,39 +3222,6 @@ window.toggleGarantias = toggleGarantias;
 window.actualizarGarantia = actualizarGarantia;
 window.actualizarNombreBoletaCarrito = actualizarNombreBoletaCarrito;
 
-document.addEventListener("DOMContentLoaded", function(){
-
-    let descuentoInput = document.getElementById("descuentoVenta");
-    limpiarDescuentoSiCarritoVacio();
-
-    setTimeout(limpiarDescuentoSiCarritoVacio, 100);
-    setTimeout(limpiarDescuentoSiCarritoVacio, 500);
-
-    if(descuentoInput){
-        descuentoInput.addEventListener("input", function(){
-            mostrarCarrito();
-            actualizarDashboard();
-        });
-    }
-
-    document.getElementById("usuario").addEventListener("keydown", function(event){
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
-    });
-
-    document.getElementById("password").addEventListener("keydown", function(event){
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
-    });
-
-});
-
-window.addEventListener("pageshow", function(){
-    limpiarDescuentoSiCarritoVacio();
-});
-
 async function activarNotificaciones(){
 
     if(!("Notification" in window)){
@@ -3293,9 +3284,11 @@ alert(
 
 onMessage(messaging, function(payload){
 
+    let titulo = payload.notification?.title || "Nueva notificación";
+    let cuerpo = payload.notification?.body || "Tienes una actualización";
+
     alert(
-        "🔔 " + payload.notification.title + "\n\n" +
-        payload.notification.body
+        "🔔 " + titulo + "\n\n" + cuerpo
     );
 
 });
@@ -3379,15 +3372,39 @@ function abrirModalPanel(idPanel){
     let modal = document.getElementById("modalPanel");
     let contenido = document.getElementById("contenidoModalPanel");
 
-    contenido.innerHTML = panel.innerHTML;
+    if(!panel || !modal || !contenido){
+        alert("Error abriendo panel");
+        return;
+    }
 
+    placeholderModal = document.createComment("placeholder-" + idPanel);
+
+    panel.parentNode.insertBefore(placeholderModal, panel);
+
+    contenido.innerHTML = "";
+    contenido.appendChild(panel);
+
+    panel.style.display = "block";
     modal.style.display = "flex";
+
+    panelActivoModal = panel;
 }
 
 function cerrarModalPanel(){
 
-    document.getElementById("modalPanel").style.display = "none";
+    let modal = document.getElementById("modalPanel");
 
+    if(panelActivoModal && placeholderModal){
+        placeholderModal.parentNode.insertBefore(panelActivoModal, placeholderModal);
+        placeholderModal.remove();
+
+        panelActivoModal.style.display = "none";
+    }
+
+    panelActivoModal = null;
+    placeholderModal = null;
+
+    modal.style.display = "none";
 }
 
 window.abrirModalPanel = abrirModalPanel;
