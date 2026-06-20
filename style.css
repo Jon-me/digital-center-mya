@@ -255,12 +255,6 @@ tr:hover{
     border-radius: 8px;
 }
 
-#sistema{
-
-    display: none;
-
-}
-
 .productos-grid{
     display: grid !important;
     grid-template-columns: repeat(4, minmax(210px, 1fr)) !important;
@@ -355,28 +349,6 @@ tr:hover{
     gap: 20px;
 
     margin-bottom: 30px;
-
-}
-
-.dashboard-card{
-
-    background:
-    linear-gradient(
-        135deg,
-        #2563eb,
-        #1d4ed8
-    );
-
-    color: white;
-
-    border-radius: 20px;
-
-    padding: 25px;
-
-    text-align: center;
-
-    box-shadow:
-    0 8px 25px rgba(37,99,235,0.4);
 
 }
 
@@ -639,12 +611,6 @@ tr:hover{
 }
 
 .panel-carrito table{
-
-    table-layout: fixed;
-
-}
-
-.panel-carrito table{
     table-layout: auto;
     width: 100%;
     font-size: 14px;
@@ -729,24 +695,6 @@ tr:hover{
 
 .dashboard-card:hover h2{
     transform: scale(1.05);
-}
-
-.label-metodo-pago{
-    display: block;
-    color: white;
-    margin-top: 15px;
-    margin-bottom: 8px;
-}
-
-#metodoPago{
-    width: 100%;
-    max-width: 400px;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 16px;
-    margin-bottom: 15px;
-    outline: none;
 }
 
 #pagosMixtos{
@@ -1316,16 +1264,6 @@ button[onclick="cancelarVenta()"]{
     color: rgba(255,255,255,0.60) !important;
 }
 
-.icono-categoria{
-    width: 42px;
-    height: 42px;
-    object-fit: contain;
-    margin-right: 10px;
-    vertical-align: middle;
-    flex-shrink: 0;
-    mix-blend-mode: multiply;
-}
-
 .icono-pantalla{
     width: 50px;
     height: 50px;
@@ -1465,4 +1403,44 @@ button[onclick="cancelarVenta()"]{
     box-shadow:
         0 0 15px rgba(96,165,250,0.55),
         inset 0 0 12px rgba(96,165,250,0.18) !important;
+}
+
+@media (max-width: 600px){
+
+    body{
+        padding: 10px;
+    }
+
+    .container{
+        padding: 10px;
+    }
+
+    .hero-banner h1{
+        font-size: 34px;
+        letter-spacing: 1px;
+    }
+
+    .productos-grid{
+        grid-template-columns: 1fr !important;
+        grid-auto-rows: auto !important;
+        height: 65vh !important;
+    }
+
+    .producto-card{
+        height: auto !important;
+        min-height: 520px !important;
+    }
+
+    #pagosMixtos{
+        grid-template-columns: 1fr;
+    }
+
+    #totalVenta{
+        font-size: 42px;
+    }
+
+    .acciones-venta{
+        flex-direction: column;
+    }
+
 }
