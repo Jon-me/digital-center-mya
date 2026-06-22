@@ -258,7 +258,7 @@ tr:hover{
 .productos-grid{
     display: grid !important;
     grid-template-columns: repeat(4, minmax(210px, 1fr)) !important;
-    grid-auto-rows: 580px !important;
+    grid-auto-rows: auto !important;
     gap: 22px !important;
 
     height: 70vh !important;
@@ -286,7 +286,7 @@ tr:hover{
 .producto-card{
 
     background: linear-gradient(145deg, #020617, #0f172a) !important;
-    border: 1px solid rgba(37,99,235,0.8) !important;
+    border: 1px solid rgba(96,165,250,0.35) !important;
     border-radius: 14px !important;
 
     padding: 14px !important;
@@ -295,8 +295,8 @@ tr:hover{
     flex-direction: column !important;
     justify-content: flex-start !important;
 
-    box-shadow: 0 0 18px rgba(37,99,235,0.35) !important;
-    overflow: hidden !important;
+    box-shadow: 0 0 18px rgba(15,23,42,0.75) !important;
+    overflow: visible !important;
 }
 
 .producto-card:hover{
@@ -467,84 +467,118 @@ tr:hover{
 
 /* MODAL AUTORIZACIÓN */
 
+/* MODAL ADMIN VIP - SIEMPRE ENCIMA */
+
+#fondoModal{
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(2,6,23,0.78) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    z-index: 100000 !important;
+}
+
 #modalCodigo{
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
 
-    position: fixed;
+    width: 92% !important;
+    max-width: 480px !important;
 
-    top: 50%;
+    padding: 30px !important;
+    border-radius: 24px !important;
 
-    left: 50%;
+    background: linear-gradient(145deg, #020617, #0f172a) !important;
+    border: 1px solid rgba(96,165,250,0.65) !important;
 
-    transform: translate(-50%, -50%);
+    box-shadow:
+        0 0 35px rgba(37,99,235,0.65),
+        inset 0 0 20px rgba(96,165,250,0.08) !important;
 
-    background: white;
+    text-align: center !important;
+    z-index: 100001 !important;
+animation: aparecerModalAdmin 0.25s ease;
+}
 
-    padding: 25px;
+@keyframes aparecerModalAdmin{
 
-    border-radius: 12px;
+    from{
+        opacity: 0;
+        transform:
+        translate(-50%, -55%)
+        scale(0.96);
+    }
 
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-
-    z-index: 9999;
-
-    text-align: center;
-
-    min-width: 320px;
+    to{
+        opacity: 1;
+        transform:
+        translate(-50%, -50%)
+        scale(1);
+    }
 
 }
 
 #modalCodigo h3{
-    margin-bottom: 20px;
-    color: #1e293b;
+    color: white !important;
+    font-size: 24px !important;
+    margin-bottom: 22px !important;
 }
 
 #codigoAdminInput{
+    width: 100% !important;
+    padding: 15px 18px !important;
 
-    width: 100%;
+    background: rgba(15,23,42,0.85) !important;
+    color: white !important;
 
-    padding: 10px;
+    border: 1px solid rgba(96,165,250,0.55) !important;
+    border-radius: 14px !important;
 
-    border: 1px solid #ccc;
+    font-size: 16px !important;
+    outline: none !important;
 
-    border-radius: 8px;
+    box-shadow: 0 0 16px rgba(37,99,235,0.25) !important;
+}
 
-    font-size: 16px;
+#codigoAdminInput::placeholder{
+    color: rgba(255,255,255,0.65) !important;
+}
 
-    box-sizing: border-box;
-
+#codigoAdminInput:focus{
+    border-color: rgba(96,165,250,1) !important;
+    box-shadow:
+        0 0 18px rgba(96,165,250,0.75),
+        0 0 35px rgba(37,99,235,0.35) !important;
 }
 
 #modalCodigo button{
+    margin-top: 18px !important;
+    margin-inline: 6px !important;
 
-    padding: 10px 15px;
+    padding: 12px 22px !important;
+    border-radius: 14px !important;
 
-    margin: 5px;
+    background: linear-gradient(135deg, #1e40af, #2563eb) !important;
+    border: 1px solid rgba(96,165,250,0.75) !important;
 
-    border: none;
+    color: white !important;
+    font-weight: 900 !important;
 
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-weight: bold;
-
+    box-shadow: 0 0 18px rgba(37,99,235,0.55) !important;
+min-width: 120px !important;
+transition: all 0.25s ease !important;
 }
 
-#fondoModal{
+#modalCodigo button:hover{
 
-    position: fixed;
+    transform:
+        translateY(-2px)
+        scale(1.03);
 
-    top: 0;
-
-    left: 0;
-
-    width: 100%;
-
-    height: 100%;
-
-    background: rgba(0,0,0,0.6);
-
-    z-index: 9998;
+    box-shadow:
+        0 0 25px rgba(96,165,250,0.95) !important;
 
 }
 
@@ -675,18 +709,11 @@ tr:hover{
 
 #zonaAdmin input{
     display:block;
-    width:100%;
-    max-width:700px;
-    margin:12px auto;
 }
 
 #zonaAdmin button{
     display:block;
     margin:12px auto;
-}
-
-#zonaAdmin input[type="file"]{
-    max-width:700px;
 }
 
 .dashboard-card h2{
@@ -699,22 +726,6 @@ tr:hover{
 
 #pagosMixtos{
     margin-top: 15px;
-    padding: 15px;
-    border-radius: 15px;
-    background: rgba(255,255,255,0.08);
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-}
-
-#pagosMixtos input{
-    max-width: 100%;
-}
-
-#totalPagado{
-    text-align: center;
-    grid-column: 1 / -1 !important;
 }
 
 #videoFondo{
@@ -817,27 +828,12 @@ th{
 
 }
 
-#totalPagado{
-
-    color: #60a5fa !important;
-
-    text-shadow:
-        0 0 12px rgba(96,165,250,0.8);
-
-}
-
 .panel-carrito,
 .panel-productos,
 .dashboard-card{
     background: rgba(2, 6, 23, 0.62) !important;
     border: 1px solid rgba(96,165,250,0.28) !important;
     box-shadow: 0 0 25px rgba(15,23,42,0.75) !important;
-}
-
-.producto-card{
-    background: linear-gradient(145deg, #020617, #0f172a) !important;
-    border: 1px solid rgba(96,165,250,0.35) !important;
-    box-shadow: 0 0 18px rgba(15,23,42,0.75) !important;
 }
 
 @keyframes brilloLogo{
@@ -890,18 +886,6 @@ button[onclick="cancelarVenta()"]{
     box-shadow: 0 0 16px rgba(239,68,68,0.55) !important;
 }
 
-#pagosMixtos input,
-#clienteNombre,
-#clienteDni,
-#descuentoVenta{
-    width: 100% !important;
-    background: rgba(2,6,23,0.65) !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.35) !important;
-    border-radius: 6px !important;
-    padding: 8px !important;
-}
-
 #tablaProductos button[onclick^="eliminarProducto"]{
     background: linear-gradient(135deg, #020617, #991b1b) !important;
     border: 1px solid rgba(248,113,113,0.95) !important;
@@ -926,8 +910,8 @@ button[onclick="cancelarVenta()"]{
 }
 
 .producto-card{
-    height: 580px !important;
-    min-height: 580px !important;
+    height: auto !important;
+    min-height: 720px !important;
 }
 
 .producto-card p{
@@ -1075,104 +1059,6 @@ button[onclick="cancelarVenta()"]{
 
 }
 
-.metodo-pago-card{
-
-    position: relative;
-
-    width: 100%;
-
-}
-
-.metodo-pago-card input{
-
-    padding-right: 55px !important;
-
-}
-
-.metodo-pago-card::after{
-
-    content: "";
-
-    position: absolute;
-
-    right: 10px;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    width: 52px;
-    height: 52px;
-
-    background-size: 75%;
-    background-repeat: no-repeat;
-    background-position: center;
-
-    background-color: rgba(15,23,42,0.95);
-
-    border-radius: 50%;
-
-    border: 1px solid rgba(96,165,250,0.45);
-
-    box-shadow:
-        0 0 12px rgba(37,99,235,0.45),
-        inset 0 0 10px rgba(96,165,250,0.15);
-
-    opacity: 1;
-
-    pointer-events: none;
-
-}
-
-.metodo-pago-card:focus-within{
-
-    transform: scale(1.02);
-
-    transition: 0.3s;
-
-}
-
-.metodo-pago-card:focus-within::after{
-
-    transform: translateY(-50%) scale(1.08);
-
-    box-shadow:
-        0 0 18px rgba(96,165,250,0.9),
-        0 0 35px rgba(37,99,235,0.5);
-
-}
-
-.efectivo::after{
-    background-image: url("efectivo.png");
-    background-size: 115%;
-}
-
-.yape::after{
-    background-image: url("yape.png");
-    background-size: 115%;
-}
-
-.plin::after{
-    background-image: url("plin.png");
-    background-size: 115%;
-}
-
-.tarjeta::after{
-    background-image: url("tarjeta.png");
-    background-size: 115%;
-}
-
-.transferencia::after{
-    background-image: url("transferencia.png");
-    background-size: 115%;
-}
-
-#metodoPago,
-.label-metodo-pago{
-
-    display: none !important;
-
-}
-
 /* INPUTS PREMIUM - CAJA Y GESTIÓN */
 
 #panelCajaDiaria input,
@@ -1221,6 +1107,8 @@ button[onclick="cancelarVenta()"]{
 
 /* FILE INPUT MÁS LIMPIO */
 #zonaAdmin input[type="file"]{
+    max-width:700px;
+
     background: rgba(2,6,23,0.65) !important;
     color: white !important;
     border: 1px solid rgba(255,255,255,0.35) !important;
@@ -1309,7 +1197,7 @@ button[onclick="cancelarVenta()"]{
 
 .modal-contenido{
     width: 98%;
-    max-width: 1700px;
+    max-width: 1500px !important;
     max-height: 90vh;
     overflow-y: auto;
     background: rgba(2,6,23,0.95);
@@ -1329,42 +1217,6 @@ button[onclick="cancelarVenta()"]{
     height: 35px;
     padding: 0;
     z-index: 10;
-}
-
-#panelCajaDiaria input{
-    width: 100%;
-    max-width: 360px;
-
-    padding: 12px 14px;
-
-    background: rgba(15,23,42,0.65) !important;
-    color: white !important;
-
-    border: 1px solid rgba(96,165,250,0.45) !important;
-    border-radius: 10px;
-
-    outline: none;
-
-    box-shadow:
-        inset 0 0 12px rgba(96,165,250,0.10),
-        0 0 10px rgba(37,99,235,0.18);
-}
-
-#panelCajaDiaria input::placeholder{
-    color: rgba(255,255,255,0.55);
-}
-
-#panelCajaDiaria input:focus{
-    border-color: rgba(96,165,250,0.95) !important;
-
-    box-shadow:
-        0 0 15px rgba(96,165,250,0.55),
-        inset 0 0 12px rgba(96,165,250,0.18);
-}
-
-#panelCajaDiaria h3 + input{
-    margin-right: 8px;
-    margin-bottom: 10px;
 }
 
 #contenidoModalPanel input{
@@ -1524,12 +1376,6 @@ button[onclick="cancelarVenta()"]{
 
 }
 
-button[onclick="cancelarVenta()"]{
-    background: linear-gradient(135deg, #020617, #991b1b) !important;
-    border: 1px solid rgba(248,113,113,0.9) !important;
-    box-shadow: 0 0 16px rgba(239,68,68,0.55) !important;
-}
-
 /* MODAL VIP GESTIÓN DE PRODUCTOS */
 
 .modal-contenido.modal-admin{
@@ -1538,4 +1384,663 @@ button[onclick="cancelarVenta()"]{
 
     max-width: 1400px !important;
 
+}
+
+/* COBRAR VENTA - CABECERA ESTABLE */
+
+#panelCobroVenta{
+    padding: 20px;
+}
+
+.titulo-cobro{
+    font-size: 30px !important;
+    margin-bottom: 22px !important;
+}
+
+.cobro-top{
+    display: grid !important;
+    grid-template-columns: 1fr 1.4fr !important;
+    gap: 24px !important;
+    margin-bottom: 30px !important;
+}
+
+.cobro-descuento,
+.resumen-cobro{
+    height: 140px !important;
+    box-sizing: border-box !important;
+    background: rgba(2,6,23,0.75) !important;
+    border: 1px solid rgba(37,99,235,0.75) !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+}
+
+.cobro-descuento{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:24px !important;
+    padding:20px 28px !important;
+}
+
+.cobro-descuento-info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.cobro-descuento-info label{
+    font-size:18px !important;
+    color:white !important;
+    margin-bottom:10px !important;
+    font-weight:600;
+}
+
+.cobro-icono{
+    font-size: 42px !important;
+    text-align: center !important;
+}
+
+.input-descuento-wrap{
+    width: 360px !important;
+    max-width: 360px !important;
+    height: 50px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    padding: 0 16px !important;
+
+    border: 1px solid rgba(96,165,250,.75) !important;
+    border-radius: 12px !important;
+    background: rgba(2,6,23,.75) !important;
+}
+
+.input-descuento-wrap input,
+#descuentoVenta{
+    width: 100% !important;
+    height: 100% !important;
+
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    text-align: right !important;
+    color: white !important;
+    font-size: 18px !important;
+}
+
+.resumen-cobro{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+    padding: 16px !important;
+}
+
+.resumen-card{
+    display: grid !important;
+    grid-template-columns: 70px 1fr !important;
+    align-items: center !important;
+    gap: 18px !important;
+    padding: 18px 22px !important;
+    min-width: 0 !important;
+    background: rgba(15,23,42,0.75) !important;
+    border: 1px solid rgba(96,165,250,0.35) !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}
+
+.resumen-icono{
+    font-size: 42px !important;
+    text-align: center !important;
+}
+
+.resumen-info{
+    min-width: 0 !important;
+}
+
+.resumen-info p{
+    margin: 0 0 5px 0 !important;
+    font-size: 16px !important;
+    color: #60a5fa !important;
+}
+
+.resumen-info h3{
+    margin: 0 !important;
+    font-size: 34px !important;
+    line-height: 1 !important;
+    color: white !important;
+}
+
+.resumen-info small{
+    font-size: 13px !important;
+    color: rgba(255,255,255,.75) !important;
+}
+
+.total-card h2{
+    margin: 0 !important;
+    font-size: clamp(28px, 2.2vw, 40px) !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+    color: #22c55e !important;
+    text-shadow: 0 0 18px rgba(34,197,94,0.8) !important;
+}
+
+.input-descuento-wrap strong{
+    color: white !important;
+    font-size: 18px !important;
+    min-width: 35px !important;
+}
+
+.input-descuento-wrap input::-webkit-outer-spin-button,
+.input-descuento-wrap input::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+/* MATAR CUADRITO INTERNO DESCUENTO */
+
+#contenidoModalPanel .input-descuento-wrap #descuentoVenta{
+    all: unset !important;
+
+    flex: 1 !important;
+    height: 100% !important;
+
+    color: white !important;
+    font-size: 18px !important;
+    text-align: right !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#contenidoModalPanel .input-descuento-wrap{
+    width: 360px !important;
+    height: 50px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+
+    padding: 0 16px !important;
+
+    border: 1px solid rgba(96,165,250,.75) !important;
+    border-radius: 12px !important;
+    background: rgba(2,6,23,.75) !important;
+}
+
+/* METODOS DE PAGO VIP */
+
+.zona-pagos-vip{
+    display: grid !important;
+    grid-template-columns: 1fr 285px !important;
+    gap: 22px !important;
+    padding: 22px 26px 18px 26px !important;
+    background: rgba(2,6,23,.78) !important;
+    border-bottom: 1px solid rgba(37,99,235,.45) !important;
+}
+
+.pagos-grid-vip{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px 14px !important;
+}
+
+.metodo-pago-card{
+    position: relative;
+    width: 100%;
+
+    height: 72px !important;
+    display: grid !important;
+    grid-template-columns: 72px 1fr 150px !important;
+    align-items: center !important;
+    gap: 16px !important;
+
+    padding: 0 22px !important;
+
+    border-radius: 12px !important;
+    background: rgba(2,6,23,.65) !important;
+
+    box-sizing: border-box !important;
+}
+
+.metodo-pago-card strong{
+    color: white !important;
+    font-size: 17px !important;
+}
+
+.logo-pago{
+    width: 54px !important;
+    height: 54px !important;
+
+    object-fit: contain !important;
+
+    border-radius: 50% !important;
+
+    box-shadow:
+        0 0 18px rgba(59,130,246,.45) !important;
+}
+
+.tarjeta .logo-pago{
+    width: 62px !important;
+    height: 42px !important;
+    border-radius: 0 !important;
+    object-fit: contain !important;
+    box-shadow: none !important;
+}
+
+.metodo-pago-card input{
+    width: 100% !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-align: right !important;
+    color: white !important;
+    font-size: 17px !important;
+    padding: 0 !important;
+}
+
+.metodo-pago-card input::placeholder{
+    color: rgba(255,255,255,.85) !important;
+}
+
+.metodo-pago-card.efectivo{
+    border: 1px solid rgba(34,197,94,.8) !important;
+}
+
+.metodo-pago-card.yape{
+    border: 1px solid rgba(168,85,247,.85) !important;
+}
+
+.metodo-pago-card.plin{
+    border: 1px solid rgba(6,182,212,.85) !important;
+}
+
+.metodo-pago-card.tarjeta{
+    border: 1px solid rgba(37,99,235,.9) !important;
+}
+
+.metodo-pago-card.transferencia{
+    border: 1px solid rgba(59,130,246,.8) !important;
+}
+
+.total-pagado-vip{
+    padding: 24px 20px !important;
+
+    border-radius: 14px !important;
+
+    background: rgba(2,6,23,.72) !important;
+
+    border: 1px solid rgba(37,99,235,.75) !important;
+
+    box-shadow: 0 0 24px rgba(37,99,235,.18) !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    align-items: center !important;
+
+    text-align: center !important;
+}
+
+.total-pagado-vip span{
+    font-size: 54px !important;
+
+    display: block !important;
+
+    margin-bottom: 12px !important;
+
+    text-align: center !important;
+}
+
+.total-pagado-vip p{
+    margin: 0 0 8px 0 !important;
+    color: white !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+#totalPagado{
+    text-align: center;
+    grid-column: 1 / -1 !important;
+
+    margin: 0 !important;
+    color: #2f8cff !important;
+    font-size: 38px !important;
+    text-shadow: 0 0 14px rgba(47,140,255,.75) !important;
+}
+
+.linea-total-vip{
+    width: 100% !important;
+    height: 1px !important;
+    background: rgba(96,165,250,.35) !important;
+    margin: 26px 0 !important;
+}
+
+.total-pagado-vip p,
+.total-pagado-vip h3,
+.total-pagado-vip h2{
+    text-align: center !important;
+    width: 100% !important;
+}
+
+#totalPendienteCobro{
+    margin: 0 !important;
+    color: #ff4b55 !important;
+    font-size: 38px !important;
+    text-shadow: 0 0 14px rgba(255,75,85,.55) !important;
+}
+
+#contenidoModalPanel #pagosMixtos .metodo-pago-card input{
+    all: unset !important;
+
+    width: 150px !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    color: white !important;
+    font-size: 17px !important;
+    text-align: right !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#contenidoModalPanel #pagosMixtos .metodo-pago-card input::placeholder{
+    color: rgba(255,255,255,.85) !important;
+}
+
+/* MODAL DATOS CLIENTE BOLETA */
+
+.acciones-cobro-rapido{
+    justify-content: center !important;
+    gap: 18px !important;
+    margin-top: 28px !important;
+}
+
+.modal-boleta-cliente{
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,.72) !important;
+    backdrop-filter: blur(8px) !important;
+    z-index: 100000 !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.modal-boleta-contenido{
+    width: 420px !important;
+    max-width: 92vw !important;
+    padding: 28px !important;
+    border-radius: 20px !important;
+    background: rgba(2,6,23,.96) !important;
+    border: 1px solid rgba(96,165,250,.75) !important;
+    box-shadow: 0 0 35px rgba(37,99,235,.45) !important;
+    position: relative !important;
+    text-align: center !important;
+}
+
+.modal-boleta-contenido input{
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 12px 0 !important;
+    padding: 14px 16px !important;
+    border-radius: 12px !important;
+    background: rgba(2,6,23,.75) !important;
+    color: white !important;
+    border: 1px solid rgba(96,165,250,.65) !important;
+    outline: none !important;
+}
+
+.cerrar-boleta-cliente{
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+}
+
+.btn-finalizar-boleta{
+    width: 100% !important;
+    margin-top: 14px !important;
+    font-size: 16px !important;
+}
+
+/* STOCK POR TIENDA - DIGITAL CENTER M&A */
+
+.stock-tiendas-form{
+    width: 100%;
+    max-width: 700px;
+    margin: 15px auto 20px auto;
+    padding: 18px;
+
+    background: rgba(2,6,23,0.65);
+    border: 1px solid rgba(96,165,250,0.45);
+    border-radius: 18px;
+
+    box-shadow:
+        0 0 18px rgba(37,99,235,0.25),
+        inset 0 0 18px rgba(96,165,250,0.08);
+}
+
+.stock-tiendas-form h3{
+    margin: 0 0 12px 0;
+    color: white;
+    text-align: center;
+}
+
+.stock-tiendas-card{
+    margin: 10px 0;
+    padding: 10px 12px;
+
+    background: rgba(15,23,42,0.85);
+    border: 1px solid rgba(96,165,250,0.35);
+    border-radius: 12px;
+}
+
+.stock-total{
+    color: #22c55e !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 10px rgba(34,197,94,0.45);
+}
+
+.stock-tienda{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    color: white;
+    font-size: 13px;
+    margin: 5px 0;
+}
+
+.stock-tienda strong{
+    color: #60a5fa;
+}
+
+.btn-transferir-stock{
+    margin-top: 8px !important;
+    flex-shrink: 0 !important;
+
+    background: linear-gradient(135deg, #064e3b, #16a34a) !important;
+    border: 1px solid rgba(74,222,128,0.75) !important;
+    box-shadow:
+        0 0 14px rgba(34,197,94,0.45),
+        inset 0 0 14px rgba(255,255,255,0.08) !important;
+}
+
+.modal-transferencia{
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.78);
+    backdrop-filter: blur(10px);
+
+    z-index: 100000;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-transferencia-contenido{
+    width: 92%;
+    max-width: 460px;
+
+    padding: 28px;
+
+    background: linear-gradient(145deg, #020617, #0f172a);
+    border: 1px solid rgba(96,165,250,0.55);
+    border-radius: 24px;
+
+    box-shadow:
+        0 0 35px rgba(37,99,235,0.45),
+        inset 0 0 18px rgba(96,165,250,0.08);
+
+    color: white;
+    position: relative;
+    text-align: center;
+}
+
+.cerrar-transferencia{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    width: 38px;
+    height: 38px;
+
+    padding: 0 !important;
+    border-radius: 50% !important;
+
+    background: linear-gradient(135deg, #020617, #991b1b) !important;
+    border: 1px solid rgba(248,113,113,0.9) !important;
+}
+
+.resumen-stock-transferencia{
+    margin: 18px 0;
+    padding: 16px;
+
+    background: rgba(2,6,23,0.75);
+    border: 1px solid rgba(96,165,250,0.35);
+    border-radius: 16px;
+}
+
+.resumen-stock-transferencia p{
+    margin: 8px 0;
+}
+
+.modal-transferencia select,
+.modal-transferencia input{
+    width: 100%;
+    margin: 10px 0;
+    padding: 14px 16px;
+
+    background: rgba(2,6,23,0.75);
+    color: white;
+
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 12px;
+
+    font-size: 16px;
+    outline: none;
+}
+
+.btn-confirmar-transferencia{
+    width: 100%;
+    margin-top: 14px !important;
+    background: linear-gradient(135deg, #064e3b, #16a34a) !important;
+    border: 1px solid rgba(74,222,128,0.8) !important;
+}
+
+/* SELECTOR DE TIENDA EN VENTA */
+
+.selector-tienda-venta{
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto 28px auto;
+    padding: 20px;
+
+    background: rgba(2,6,23,0.75);
+    border: 1px solid rgba(96,165,250,0.55);
+    border-radius: 20px;
+
+    box-shadow:
+        0 0 18px rgba(37,99,235,0.35),
+        inset 0 0 14px rgba(96,165,250,0.08);
+
+    text-align: center;
+}
+
+.selector-tienda-venta h3{
+    margin: 0 0 14px 0;
+    color: white;
+}
+
+#tiendaVenta{
+    width: 100%;
+    padding: 14px 16px;
+
+    background: rgba(15,23,42,0.92);
+    color: white;
+
+    border: 1px solid rgba(96,165,250,0.65);
+    border-radius: 14px;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    outline: none;
+}
+
+.producto-card button{
+    flex-shrink: 0 !important;
+}
+
+/* FIX TARJETAS VENDEDOR - MÁS COMPACTAS */
+
+body.rol-vendedor .producto-card{
+    min-height: 560px !important;
+}
+
+body.rol-vendedor .producto-card img{
+    height: 140px !important;
+}
+
+body.rol-vendedor .producto-card h3{
+    min-height: 80px !important;
+    max-height: 80px !important;
+    font-size: 18px !important;
+}
+
+body.rol-vendedor .producto-card p{
+    font-size: 13px !important;
+    margin: 4px 0 !important;
+}
+
+body.rol-vendedor .stock-tiendas-card{
+    margin-top: 10px !important;
+    padding: 12px !important;
+}
+
+body.rol-vendedor .producto-card .btn-agregar{
+    margin-top: auto !important;
 }

@@ -85,6 +85,37 @@ let placeholderModal = null;
 
 const sonidoVenta = new Audio("venta.mp3");
 
+let productoTransferenciaActual = null;
+
+const tiendasSistema = {
+    principal: "Mercado",
+    sucursal: "Peluquería"
+};
+
+function obtenerStockTiendas(producto){
+
+    if(producto.stockTiendas){
+        return {
+            principal: Number(producto.stockTiendas.principal || 0),
+            sucursal: Number(producto.stockTiendas.sucursal || 0)
+        };
+    }
+
+    return {
+        principal: Number(producto.stock || 0),
+        sucursal: 0
+    };
+
+}
+
+function obtenerStockTotal(producto){
+
+    let stockTiendas = obtenerStockTiendas(producto);
+
+    return stockTiendas.principal + stockTiendas.sucursal;
+
+}
+
 sonidoVenta.volume = 0.4;
 
 function obtenerFechaISO(){
@@ -104,14 +135,17 @@ function mostrarProductos(){
     if(!tabla){
         return;
     }
-    
+
     let html = "";
 
-     productos.sort(function(a, b){
+    productos.sort(function(a, b){
         return String(a.codigo || "").localeCompare(String(b.codigo || ""));
-     });
+    });
 
-     productos.forEach(function(producto, index){
+    productos.forEach(function(producto){
+
+        let stockTiendas = obtenerStockTiendas(producto);
+        let stockTotal = obtenerStockTotal(producto);
 
         html += `
 
@@ -125,7 +159,19 @@ function mostrarProductos(){
 
      <p>Categoría: ${producto.categoria}</p>
 
-     <p>Stock: ${producto.stock}</p>
+     <div class="stock-tiendas-card">
+        <p class="stock-total">Stock Total: ${stockTotal}</p>
+
+        <div class="stock-tienda">
+            <span>🏬 Mercado</span>
+            <strong>${stockTiendas.principal}</strong>
+        </div>
+
+        <div class="stock-tienda">
+            <span>✂️ Peluquería</span>
+            <strong>${stockTiendas.sucursal}</strong>
+        </div>
+     </div>
 
      ${localStorage.getItem("rolActivo") === "admin" ? `
      <p>Compra: S/ ${producto.precioCompra || 0}</p>
@@ -133,11 +179,16 @@ function mostrarProductos(){
      ` : `
      <p>Precio: S/ ${producto.precio}</p>
 `}
+
      <button class="btn-agregar" onclick="agregarDirecto('${producto.id}')">
         🛒 Agregar
      </button>
- 
+
      ${localStorage.getItem("rolActivo") === "admin" ? `
+     <button class="btn-transferir-stock" onclick="abrirTransferenciaStock('${producto.id}')">
+        🔄 Transferir
+     </button>
+
      <button onclick="editarProducto('${producto.id}')">
         ✏️ Editar
      </button>
@@ -151,11 +202,11 @@ function mostrarProductos(){
 
      `;
 
-     });
+    });
 
-     tabla.innerHTML = html;
- 
-     actualizarDashboard();
+    tabla.innerHTML = html;
+
+    actualizarDashboard();
 
 }
 
@@ -167,7 +218,9 @@ function guardarProducto(){
 
      let categoria = document.getElementById("categoria").value;
 
-     let stock = document.getElementById("stock").value;
+     let stockPrincipal = document.getElementById("stockPrincipal").value;
+let stockSucursal = document.getElementById("stockSucursal").value;
+let stock = Number(stockPrincipal || 0) + Number(stockSucursal || 0);
 
      let precioCompra = document.getElementById("precioCompra").value;
 
@@ -181,7 +234,6 @@ if(
     codigo.trim() === "" ||
     producto.trim() === "" ||
     categoria.trim() === "" ||
-    stock === "" ||
     precioCompra === "" ||
     precio === ""
 ){
@@ -190,7 +242,8 @@ if(
 }
 
 if(
-    isNaN(Number(stock)) ||
+   isNaN(Number(stockPrincipal || 0)) ||
+isNaN(Number(stockSucursal || 0)) ||
     isNaN(Number(precioCompra)) ||
     isNaN(Number(precio))
 ){
@@ -198,12 +251,20 @@ if(
     return;
 }
 
-if(!Number.isInteger(Number(stock))){
-    alert("El stock debe ser un número entero");
+if(
+    !Number.isInteger(Number(stockPrincipal || 0)) ||
+    !Number.isInteger(Number(stockSucursal || 0))
+){
+    alert("El stock por tienda debe ser un número entero");
     return;
 }
 
-if(Number(stock) < 0 || Number(precioCompra) < 0 || Number(precio) < 0){
+if(
+    Number(stockPrincipal || 0) < 0 ||
+    Number(stockSucursal || 0) < 0 ||
+    Number(precioCompra) < 0 ||
+    Number(precio) < 0
+){
     alert("Stock y precios no pueden ser negativos");
     return;
 }
@@ -246,6 +307,10 @@ async function guardarConImagen(imagenBase64){
     producto: producto,
     categoria: categoria,
     stock: Number(stock),
+stockTiendas: {
+    principal: Number(stockPrincipal || 0),
+    sucursal: Number(stockSucursal || 0)
+},
     precioCompra: Number(precioCompra),
     precio: Number(precio),
     imagen: imagenBase64
@@ -294,7 +359,8 @@ if(posicion){
 
          document.getElementById("categoria").value = "";
 
-         document.getElementById("stock").value = "";
+         document.getElementById("stockPrincipal").value = "";
+document.getElementById("stockSucursal").value = "";
 
         document.getElementById("precioCompra").value = "";
 
@@ -331,7 +397,10 @@ function editarProducto(idProducto){
     document.getElementById("codigo").value = productoEditar.codigo;
     document.getElementById("producto").value = productoEditar.producto;
     document.getElementById("categoria").value = productoEditar.categoria;
-    document.getElementById("stock").value = productoEditar.stock;
+    let stockTiendasEditar = obtenerStockTiendas(productoEditar);
+
+document.getElementById("stockPrincipal").value = stockTiendasEditar.principal;
+document.getElementById("stockSucursal").value = stockTiendasEditar.sucursal;
     document.getElementById("precioCompra").value = productoEditar.precioCompra || 0;
     document.getElementById("precio").value = productoEditar.precio;
 
@@ -371,8 +440,6 @@ async function eliminarProducto(idProducto){
 
             mostrarProductos();
             actualizarDashboard();
-
-            localStorage.removeItem("productos");
 
             alert("Producto eliminado correctamente");
 
@@ -484,6 +551,19 @@ function mostrarCarrito(){
     document.getElementById("totalVenta").innerHTML =
         "Total: S/ " + totalFinal.toFixed(2);
 
+        let resumenProductosCobro = document.getElementById("resumenProductosCobro");
+let resumenTotalCobro = document.getElementById("resumenTotalCobro");
+
+if(resumenProductosCobro){
+    resumenProductosCobro.innerHTML =
+        cantidadProductos;
+}
+
+if(resumenTotalCobro){
+    resumenTotalCobro.innerHTML =
+        "S/ " + totalFinal.toFixed(2);
+}
+
 }
 
 function actualizarNombreBoletaCarrito(index, valor){
@@ -495,14 +575,6 @@ function actualizarNombreBoletaCarrito(index, valor){
 }
 
 function eliminarDelCarrito(index){
-
-    let item = carrito[index];
-
-    let producto = productos.find(function(p){
-
-        return p.id === item.id;
-
-    });
 
     carrito.splice(index, 1);
 
@@ -525,9 +597,9 @@ function agregarDirecto(idProducto){
         return;
     }
 
-    let stockActual = Number(producto.stock);
+    let stockTotal = obtenerStockTotal(producto);
 
-    if(stockActual <= 0 || isNaN(stockActual)){
+    if(stockTotal <= 0 || isNaN(stockTotal)){
         alert("Sin stock");
         return;
     }
@@ -535,6 +607,13 @@ function agregarDirecto(idProducto){
     let itemExistente = carrito.find(function(item){
         return item.id === producto.id;
     });
+
+    let cantidadEnCarrito = itemExistente ? Number(itemExistente.cantidad || 0) : 0;
+
+    if(cantidadEnCarrito + 1 > stockTotal){
+        alert("No hay más stock disponible");
+        return;
+    }
 
     if(itemExistente){
 
@@ -547,6 +626,7 @@ function agregarDirecto(idProducto){
         carrito.push({
             id: producto.id,
             producto: producto.producto,
+            categoria: producto.categoria || "Sin categoría",
             cantidad: 1,
             precioCompra: Number(producto.precioCompra || 0),
             precio: Number(producto.precio),
@@ -608,8 +688,33 @@ function calcularTotalPagado(){
         pagos.tarjeta +
         pagos.transferencia;
 
+    let totalVenta = 0;
+
+    carrito.forEach(function(item){
+        totalVenta += Number(item.subtotal || 0);
+    });
+
+    totalVenta = totalVenta - obtenerDescuento();
+
+    if(totalVenta < 0){
+        totalVenta = 0;
+    }
+
+    let pendiente = totalVenta - totalPagado;
+
+    if(pendiente < 0){
+        pendiente = 0;
+    }
+
     document.getElementById("totalPagado").innerHTML =
-        "Pagado: S/ " + totalPagado.toFixed(2);
+        "S/ " + totalPagado.toFixed(2);
+
+    let totalPendienteCobro = document.getElementById("totalPendienteCobro");
+
+    if(totalPendienteCobro){
+        totalPendienteCobro.innerHTML =
+            "S/ " + pendiente.toFixed(2);
+    }
 
     return totalPagado;
 
@@ -625,7 +730,9 @@ async function finalizarVenta(numeroBoleta = "SIN IMPRESION"){
     let total = 0;
     let ganancia = 0;
     let descuento = obtenerDescuento();
-    let metodoPago = document.getElementById("metodoPago").value;
+    let metodoPago = "Pagos mixtos";
+let tiendaVenta =
+    document.getElementById("tiendaVenta").value || "principal";
 
 carrito.forEach(function(item){
 
@@ -679,6 +786,8 @@ let venta = {
     productos: JSON.parse(JSON.stringify(carrito)),
     descuento: descuento,
     metodoPago: metodoPago,
+    tiendaVenta: tiendaVenta,
+tiendaVentaNombre: tiendasSistema[tiendaVenta],
     pagos: pagos,
     total: totalFinal,
     ganancia: ganancia - descuento
@@ -698,15 +807,28 @@ try{
             }
 
             let productoData = productoSnap.data();
-            let stockActual = Number(productoData.stock || 0);
+           let stockTiendas = obtenerStockTiendas(productoData);
+let cantidadDescontar = Number(item.cantidad);
 
-            if(stockActual < item.cantidad){
-                throw new Error("Stock insuficiente para: " + item.producto);
-            }
+if(stockTiendas[tiendaVenta] < cantidadDescontar){
+    throw new Error(
+        "Stock insuficiente en " +
+        tiendasSistema[tiendaVenta] +
+        " para: " +
+        item.producto
+    );
+}
 
-            transaction.update(productoRef, {
-                stock: stockActual - Number(item.cantidad)
-            });
+stockTiendas[tiendaVenta] -= cantidadDescontar;
+
+let nuevoStockTotal =
+    stockTiendas.principal +
+    stockTiendas.sucursal;
+
+transaction.update(productoRef, {
+    stock: nuevoStockTotal,
+    stockTiendas: stockTiendas
+});
 
         }
 
@@ -851,11 +973,18 @@ async function iniciarSesion(){
 
     desbloquearSistema();
 
-    setTimeout(function(){
+    setTimeout(async function(){
 
     mostrarCarrito();
     controlarColumnaGanancia();
     aplicarPermisos();
+
+    if(productos.length === 0){
+        await cargarProductosUnaVez();
+    } else {
+        mostrarProductos();
+        actualizarDashboard();
+    }
 
 }, 100);
 
@@ -889,11 +1018,14 @@ if(btnBorrarHistorial){
 
         document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
 
-    if(btn.innerText.includes("Caja Diaria")){
-        btn.style.display = "inline-block";
-    } else {
-        btn.style.display = "none";
-    }
+    if(
+    btn.innerText.includes("Caja Diaria") ||
+    btn.innerText.includes("Historial de Ventas")
+){
+    btn.style.display = "inline-block";
+} else {
+    btn.style.display = "none";
+}
 
 });
         document.querySelectorAll('button[onclick^="editarProducto"]').forEach(function(btn){
@@ -954,13 +1086,24 @@ document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
         document.getElementById("dashboardAdmin").style.display = "grid";
     }
 
-            mostrarCarrito();
+           mostrarCarrito();
 
-            controlarColumnaGanancia();
+controlarColumnaGanancia();
 
-            aplicarPermisos();
+aplicarPermisos();
 
-            desbloquearSistema();
+desbloquearSistema();
+
+setTimeout(async function(){
+
+    if(productos.length === 0){
+        await cargarProductosUnaVez();
+    } else {
+        mostrarProductos();
+        actualizarDashboard();
+    }
+
+}, 300);
 
 } else {
 
@@ -1041,7 +1184,7 @@ function actualizarDashboard(){
     let valorTotal = 0;
 
     productos.forEach(function(producto){
-        valorTotal += Number(producto.stock || 0) * Number(producto.precio || 0);
+      valorTotal += obtenerStockTotal(producto) * Number(producto.precio || 0);
     });
 
     valorInventario.innerHTML =
@@ -1072,6 +1215,43 @@ function actualizarDashboard(){
 
 }
 
+async function validarStockAntesDeImprimir(){
+
+    let tiendaVenta =
+        document.getElementById("tiendaVenta").value || "principal";
+
+    for(let item of carrito){
+
+        let productoRef = doc(db, "productos", item.id);
+        let productoSnap = await getDoc(productoRef);
+
+        if(!productoSnap.exists()){
+            alert("Producto no encontrado: " + item.producto);
+            return false;
+        }
+
+        let productoData = productoSnap.data();
+        let stockTiendas = obtenerStockTiendas(productoData);
+        let cantidad = Number(item.cantidad || 0);
+
+        if(stockTiendas[tiendaVenta] < cantidad){
+
+            alert(
+                "Stock insuficiente en " +
+                tiendasSistema[tiendaVenta] +
+                " para: " +
+                item.producto
+            );
+
+            return false;
+        }
+
+    }
+
+    return true;
+
+}
+
 async function imprimirBoleta(){
 
     if(carrito.length === 0){
@@ -1083,7 +1263,7 @@ async function imprimirBoleta(){
     let hora = new Date().toLocaleTimeString();
     let total = 0;
     let descuento = obtenerDescuento();
-    let metodoPago = document.getElementById("metodoPago").value;
+    let metodoPago = "Pagos mixtos";
 carrito.forEach(function(item){
     total += Number(item.subtotal);
 });
@@ -1112,6 +1292,12 @@ if(Math.abs(totalPagado - totalFinal) > 0.01){
         "Pagado: S/ " + totalPagado.toFixed(2)
     );
 
+    return;
+}
+
+let stockDisponible = await validarStockAntesDeImprimir();
+
+if(!stockDisponible){
     return;
 }
 
@@ -1504,22 +1690,67 @@ documento.open();
 documento.write(contenido);
 documento.close();
 
-setTimeout(function(){
+function imprimirCuandoImagenesCarguen(){
 
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
+    let imagenes = iframe.contentDocument.images;
+    let totalImagenes = imagenes.length;
+    let cargadas = 0;
+
+    if(totalImagenes === 0){
+        imprimirAhora();
+        return;
+    }
+
+    for(let img of imagenes){
+
+        if(img.complete){
+            cargadas++;
+        } else {
+            img.onload = function(){
+                cargadas++;
+                if(cargadas === totalImagenes){
+                    imprimirAhora();
+                }
+            };
+
+            img.onerror = function(){
+                cargadas++;
+                if(cargadas === totalImagenes){
+                    imprimirAhora();
+                }
+            };
+        }
+
+    }
+
+    if(cargadas === totalImagenes){
+        imprimirAhora();
+    }
+
+}
+
+function imprimirAhora(){
 
     setTimeout(function(){
-        document.body.removeChild(iframe);
 
-        document.getElementById("clienteNombre").disabled = false;
-        document.getElementById("clienteDni").disabled = false;
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
 
-        document.getElementById("clienteNombre").focus();
+        setTimeout(function(){
+            document.body.removeChild(iframe);
 
-    }, 1000);
+            document.getElementById("clienteNombre").disabled = false;
+            document.getElementById("clienteDni").disabled = false;
 
-}, 700);
+            document.getElementById("clienteNombre").focus();
+
+        }, 1000);
+
+    }, 300);
+
+}
+
+imprimirCuandoImagenesCarguen();
 
 return numeroVenta;
 
@@ -1534,17 +1765,17 @@ async function finalizarEImprimir(){
 
     let numeroBoleta = await imprimirBoleta();
 
-if(!numeroBoleta){
-    return;
-}
+    if(!numeroBoleta){
+        return;
+    }
 
-await new Promise(function(resolve){
-    setTimeout(resolve, 1500);
-});
+    await new Promise(function(resolve){
+        setTimeout(resolve, 1500);
+    });
 
-let confirmar = confirm(
-    "¿La boleta se imprimió correctamente?"
-);
+    let confirmar = confirm(
+        "¿La boleta se imprimió correctamente?"
+    );
 
     if(!confirmar){
         alert("Venta no guardada. Puedes volver a imprimir.");
@@ -1552,6 +1783,14 @@ let confirmar = confirm(
     }
 
     await finalizarVenta("B001-" + numeroBoleta);
+
+    cerrarDatosClienteBoleta();
+    cerrarModalPanel();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
 }
 
@@ -1603,6 +1842,30 @@ function obtenerProductosVenta(venta){
 
 }
 
+function obtenerCategoriasVenta(venta){
+
+    if(!venta.productos || venta.productos.length === 0){
+        return "Sin categoría";
+    }
+
+    return venta.productos.map(function(item){
+
+        if(item.categoria){
+            return item.categoria;
+        }
+
+        let productoEncontrado = productos.find(function(p){
+            return p.id === item.id;
+        });
+
+        return productoEncontrado
+            ? productoEncontrado.categoria
+            : "Sin categoría";
+
+    }).join("<br>");
+
+}
+
 function mostrarHistorialVentas(){
 
     let tabla = document.getElementById("historialVentasTabla");
@@ -1614,19 +1877,35 @@ function mostrarHistorialVentas(){
     let html = "";
 
     let rol = localStorage.getItem("rolActivo");
+    let vendedorActivo = localStorage.getItem("nombreActivo") || "";
 
-    historialVentas.forEach(function(venta, index){
+    let ventasFiltradas = historialVentas.filter(function(venta){
+
+        if(rol === "vendedor"){
+            return (
+                venta.fechaISO === obtenerFechaISO() &&
+                venta.vendedor === vendedorActivo
+            );
+        }
+
+        return true;
+
+    });
+
+    ventasFiltradas.forEach(function(venta){
+
+        let indexReal = historialVentas.findIndex(function(v){
+            return v.id === venta.id;
+        });
 
         html += `
 <tr>
     <td>${venta.fecha}</td>
-
     <td>${venta.hora}</td>
-
     <td>${obtenerProductosVenta(venta)}</td>
-
+    <td>${obtenerCategoriasVenta(venta)}</td>
+    <td>${venta.vendedor || "Sin vendedor"}</td>
     <td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
-
     <td>${obtenerDetallePagosVenta(venta)}</td>
 
     ${
@@ -1636,15 +1915,25 @@ function mostrarHistorialVentas(){
     }
 
     <td>
-        <button onclick="anularVenta(${index})">
-            ↩️ Anular
-        </button>
-    </td>
+    <button onclick="anularVenta(${indexReal})">
+        ↩️ Anular
+    </button>
+</td>
 
 </tr>
 `;
 
     });
+
+    if(html === ""){
+        html = `
+        <tr>
+            <td colspan="8" style="text-align:center;">
+                No tienes ventas registradas hoy.
+            </td>
+        </tr>
+        `;
+    }
 
     tabla.innerHTML = html;
 
@@ -1831,11 +2120,21 @@ if(venta.numeroBoleta && venta.numeroBoleta !== "SIN IMPRESION"){
         if(productoSnap.exists()){
 
             let productoData = productoSnap.data();
-            let stockActual = Number(productoData.stock || 0);
+let stockTiendas = obtenerStockTiendas(productoData);
 
-            transaction.update(productoRef, {
-                stock: stockActual + Number(item.cantidad)
-            });
+let tiendaVenta =
+    venta.tiendaVenta || "principal";
+
+stockTiendas[tiendaVenta] += Number(item.cantidad);
+
+let stockTotal =
+    stockTiendas.principal +
+    stockTiendas.sucursal;
+
+transaction.update(productoRef, {
+    stock: stockTotal,
+    stockTiendas: stockTiendas
+});
 
         }
 
@@ -2205,70 +2504,6 @@ function mostrarReporteVendedores(){
 
 }
 
-function toggleAgregarProducto(){
-
-    let zona =
-        document.getElementById("zonaAdmin");
-
-    if(zona.style.display === "none"){
-
-        zona.style.display = "grid";
-
-    } else {
-
-        zona.style.display = "none";
-
-    }
-
-}
-
-function toggleReporteVendedores(){
-
-    let panel =
-        document.getElementById("panelReporteVendedores");
-
-    if(panel.style.display === "none"){
-        panel.style.display = "block";
-    } else {
-        panel.style.display = "none";
-    }
-
-}
-
-function toggleDashboardEjecutivo(){
-
-    let panel =
-        document.getElementById("panelDashboardEjecutivo");
-
-    if(panel.style.display === "none"){
-
-        panel.style.display = "block";
-
-    } else {
-
-        panel.style.display = "none";
-
-    }
-
-}
-
-function toggleGarantias(){
-
-    let panel =
-        document.getElementById("panelGarantias");
-
-    if(panel.style.display === "none"){
-
-        panel.style.display = "block";
-
-    } else {
-
-        panel.style.display = "none";
-
-    }
-
-}
-
 function obtenerDescuento(){
 
     let input = document.getElementById("descuentoVenta");
@@ -2312,45 +2547,62 @@ function limpiarDescuentoSiCarritoVacio(){
 
 }
 
-onSnapshot(collection(db, "productos"), function(snapshot){
+async function cargarProductosUnaVez(){
 
-    productos = [];
+    try{
 
-    snapshot.forEach(function(documento){
-        productos.push({
-            id: documento.id,
-            ...documento.data()
-        });
-    });
+        let snapshot = await getDocs(collection(db, "productos"));
 
- if(localStorage.getItem("sesion") === "activa"){
-    mostrarProductos();
-    actualizarDashboard();
-}
+        productos = [];
 
-});
-
-onSnapshot(collection(db, "ventas"), function(snapshot){
-
-    historialVentas = [];
-
-    snapshot.forEach(function(documento){
-
-        historialVentas.push({
-            id: documento.id,
-            ...documento.data()
+        snapshot.forEach(function(documento){
+            productos.push({
+                id: documento.id,
+                ...documento.data()
+            });
         });
 
-    });
+        mostrarProductos();
+        actualizarDashboard();
 
-  if(localStorage.getItem("sesion") === "activa"){
-    mostrarHistorialVentas();
-    actualizarReportes();
-    mostrarReporteVendedores();
-    actualizarDashboardEjecutivo();
+    } catch(error){
+
+        console.error("Error cargando productos:", error);
+        alert("No se pudieron cargar los productos. Revisa tu conexión e intenta actualizar.");
+
+    }
+
 }
 
-});
+onSnapshot(
+    collection(db, "productos"),
+    function(snapshot){
+
+        productos = [];
+
+        snapshot.forEach(function(documento){
+            productos.push({
+                id: documento.id,
+                ...documento.data()
+            });
+        });
+
+        if(localStorage.getItem("sesion") === "activa"){
+            mostrarProductos();
+            actualizarDashboard();
+        }
+
+    },
+    async function(error){
+
+        console.error("Error en tiempo real productos:", error);
+
+        if(localStorage.getItem("sesion") === "activa"){
+            await cargarProductosUnaVez();
+        }
+
+    }
+);
 
 onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
 
@@ -2449,24 +2701,6 @@ onSnapshot(
 
     }
 );
-
-function toggleCajaDiaria(){
-
-    let panel =
-        document.getElementById("panelCajaDiaria");
-
-    if(panel.style.display === "none"){
-
-    panel.style.display = "block";
-    mostrarHistorialCajas();
-
-} else {
-
-        panel.style.display = "none";
-
-    }
-
-}
 
 async function abrirCaja(){
 
@@ -3013,6 +3247,11 @@ let inputGarantiaNormal =
 let inputGarantia =
     inputGarantiaModal || inputGarantiaNormal;
 
+if(!inputGarantia){
+    alert("No se encontró el buscador de garantía");
+    return;
+}
+
 let texto = inputGarantia.value.trim();
 
     if(!texto){
@@ -3176,9 +3415,165 @@ async function actualizarGarantia(idBoleta, estado){
 
 }
 
+function abrirTransferenciaStock(idProducto){
+
+    let producto = productos.find(function(p){
+        return p.id === idProducto;
+    });
+
+    if(!producto){
+        alert("Producto no encontrado");
+        return;
+    }
+
+    productoTransferenciaActual = producto;
+
+    let stockTiendas = obtenerStockTiendas(producto);
+
+    document.getElementById("transferenciaProductoNombre").innerHTML =
+        producto.producto;
+
+    document.getElementById("stockTransferPrincipal").innerHTML =
+        stockTiendas.principal;
+
+    document.getElementById("stockTransferSucursal").innerHTML =
+        stockTiendas.sucursal;
+
+    document.getElementById("transferenciaOrigen").value = "principal";
+    document.getElementById("transferenciaDestino").value = "sucursal";
+    document.getElementById("transferenciaCantidad").value = "";
+
+    document.getElementById("modalTransferenciaStock").style.display = "flex";
+
+}
+
+function cerrarTransferenciaStock(){
+
+    document.getElementById("modalTransferenciaStock").style.display = "none";
+    productoTransferenciaActual = null;
+
+}
+
+async function confirmarTransferenciaStock(){
+
+    if(!productoTransferenciaActual){
+        alert("No hay producto seleccionado");
+        return;
+    }
+
+    let origen = document.getElementById("transferenciaOrigen").value;
+    let destino = document.getElementById("transferenciaDestino").value;
+    let cantidad = Number(document.getElementById("transferenciaCantidad").value);
+
+    if(origen === destino){
+        alert("Origen y destino no pueden ser iguales");
+        return;
+    }
+
+    if(!Number.isInteger(cantidad) || cantidad <= 0){
+        alert("Ingrese una cantidad válida");
+        return;
+    }
+
+    let productoRef = doc(db, "productos", productoTransferenciaActual.id);
+
+    try{
+
+        await runTransaction(db, async function(transaction){
+
+            let productoSnap = await transaction.get(productoRef);
+
+            if(!productoSnap.exists()){
+                throw new Error("Producto no encontrado");
+            }
+
+            let productoData = productoSnap.data();
+            let stockTiendas = obtenerStockTiendas(productoData);
+
+            if(stockTiendas[origen] < cantidad){
+                throw new Error("Stock insuficiente en " + tiendasSistema[origen]);
+            }
+
+            stockTiendas[origen] -= cantidad;
+            stockTiendas[destino] += cantidad;
+
+            let stockTotal = stockTiendas.principal + stockTiendas.sucursal;
+
+            transaction.update(productoRef, {
+                stock: stockTotal,
+                stockTiendas: stockTiendas
+            });
+
+            let transferenciaRef = doc(collection(db, "transferenciasStock"));
+
+            transaction.set(transferenciaRef, {
+                productoId: productoTransferenciaActual.id,
+                codigo: productoTransferenciaActual.codigo || "",
+                producto: productoTransferenciaActual.producto || "",
+                cantidad: cantidad,
+                origen: tiendasSistema[origen],
+                destino: tiendasSistema[destino],
+                fecha: new Date().toLocaleDateString(),
+                fechaISO: obtenerFechaISO(),
+                hora: new Date().toLocaleTimeString(),
+                usuario: localStorage.getItem("nombreActivo") || "Sin usuario"
+            });
+
+        });
+
+        alert("✅ Stock transferido correctamente");
+
+        cerrarTransferenciaStock();
+
+    } catch(error){
+
+        console.error("Error transfiriendo stock:", error);
+        alert(error.message || "No se pudo transferir stock");
+
+    }
+
+}
+
+function abrirPanelSeguro(ids){
+
+    for(let id of ids){
+        let panel = document.getElementById(id);
+
+        if(panel){
+            abrirModalPanel(id);
+            return;
+        }
+    }
+
+    alert("No se encontró el panel");
+}
+
+function toggleAgregarProducto(){
+    abrirPanelSeguro(["zonaAdmin", "panelAgregarProducto"]);
+}
+
+function toggleReporteVendedores(){
+    abrirPanelSeguro(["panelReporteVendedores", "reporteVendedores"]);
+}
+
+function toggleCajaDiaria(){
+    abrirPanelSeguro(["panelCajaDiaria", "cajaDiaria"]);
+}
+
+function toggleHistorialVentas(){
+    abrirPanelSeguro(["panelHistorialVentas", "historialVentas"]);
+}
+
 function toggleReportes(){
-    let panel = document.getElementById("panelReportes");
-    panel.style.display = panel.style.display === "none" ? "block" : "none";
+    abrirPanelSeguro(["dashboardReportes", "panelReportes"]);
+}
+
+function toggleDashboardEjecutivo(){
+    abrirPanelSeguro(["dashboardEjecutivo", "panelDashboardEjecutivo"]);
+}
+
+function toggleGarantias(){
+    abrirPanelSeguro(["panelGarantias", "garantias"]);
 }
 
 window.iniciarSesion = iniciarSesion;
@@ -3221,6 +3616,9 @@ window.toggleDashboardEjecutivo = toggleDashboardEjecutivo;
 window.toggleGarantias = toggleGarantias;
 window.actualizarGarantia = actualizarGarantia;
 window.actualizarNombreBoletaCarrito = actualizarNombreBoletaCarrito;
+window.abrirTransferenciaStock = abrirTransferenciaStock;
+window.cerrarTransferenciaStock = cerrarTransferenciaStock;
+window.confirmarTransferenciaStock = confirmarTransferenciaStock;
 
 async function activarNotificaciones(){
 
@@ -3295,32 +3693,6 @@ onMessage(messaging, function(payload){
 
 window.activarNotificaciones = activarNotificaciones;
 
-window.migrarProductosAFirebase = async function(){
-
-    let productosLocales =
-        JSON.parse(localStorage.getItem("productos")) || [];
-
-    if(productosLocales.length === 0){
-        alert("No hay productos antiguos en esta laptop");
-        return;
-    }
-
-    if(!confirm("¿Migrar " + productosLocales.length + " productos a Firebase? Hazlo SOLO UNA VEZ.")){
-        return;
-    }
-
-    for(let producto of productosLocales){
-
-        delete producto.id;
-
-        await addDoc(collection(db, "productos"), producto);
-
-    }
-
-    alert("Migración completada: " + productosLocales.length + " productos enviados a Firebase");
-
-};
-
 async function toggleSonido(){
 
     const video = document.getElementById("videoFondo");
@@ -3360,11 +3732,6 @@ async function toggleSonido(){
 }
 
 window.toggleSonido = toggleSonido;
-
-function toggleHistorialVentas(){
-    let panel = document.getElementById("panelHistorialVentas");
-    panel.style.display = panel.style.display === "none" ? "block" : "none";
-}
 
 function abrirModalPanel(idPanel){
 
@@ -3442,8 +3809,6 @@ async function actualizarSistema(){
             }
         }
 
-        localStorage.setItem("ultimaActualizacionSistema", new Date().toISOString());
-
         const nuevaVersion = Date.now();
         window.location.href = window.location.pathname + "?v=" + nuevaVersion;
 
@@ -3470,3 +3835,60 @@ document.addEventListener("keydown", function(event){
     }
 
 });
+
+function abrirCobroVenta(){
+
+    if(carrito.length === 0){
+
+        alert("⚠️ Agregue productos al carrito primero");
+        return;
+
+    }
+
+    abrirModalPanel("panelCobroVenta");
+
+}
+
+window.abrirCobroVenta = abrirCobroVenta;
+
+function abrirDatosClienteBoleta(){
+
+    let modal = document.getElementById("modalDatosClienteBoleta");
+
+    if(!modal){
+        alert("No se encontró la ventana de datos del cliente");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    setTimeout(function(){
+        document.getElementById("clienteNombre").focus();
+    }, 100);
+
+}
+
+function cerrarDatosClienteBoleta(){
+
+    let modal = document.getElementById("modalDatosClienteBoleta");
+    let clienteNombre = document.getElementById("clienteNombre");
+    let clienteDni = document.getElementById("clienteDni");
+
+    if(clienteNombre){
+        clienteNombre.value = "";
+        clienteNombre.disabled = false;
+    }
+
+    if(clienteDni){
+        clienteDni.value = "";
+        clienteDni.disabled = false;
+    }
+
+    if(modal){
+        modal.style.display = "none";
+    }
+
+}
+
+window.abrirDatosClienteBoleta = abrirDatosClienteBoleta;
+window.cerrarDatosClienteBoleta = cerrarDatosClienteBoleta;
