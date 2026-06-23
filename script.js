@@ -3724,7 +3724,10 @@ window.activarNotificaciones = activarNotificaciones;
 
 async function toggleSonido(){
 
-    const video = document.getElementById("videoFondo");
+   const video =
+    window.innerWidth <= 768
+    ? document.getElementById("videoFondoApp")
+    : document.getElementById("videoFondoLaptop");
     const boton = document.getElementById("btnSonido");
 
     if(!video || !boton){

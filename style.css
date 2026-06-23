@@ -728,18 +728,6 @@ transition: all 0.25s ease !important;
     margin-top: 15px;
 }
 
-#videoFondo{
-    position: fixed;
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    object-fit: cover;
-
-    z-index: -1;
-}
-
 body::before{
     content: "";
     position: fixed;
@@ -2224,4 +2212,47 @@ body.rol-vendedor .producto-card .btn-agregar{
         padding: 14px 20px !important;
         border-radius: 18px !important;
     }
+}
+
+/* ==============================
+   VIDEO LOGIN SEPARADO
+   LAPTOP / APP
+============================== */
+
+/* LAPTOP */
+#videoFondoLaptop{
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    z-index: -2 !important;
+}
+
+#videoFondoApp{
+    display: none !important;
+}
+
+/* APP / CELULAR */
+@media (max-width: 768px){
+
+    #videoFondoLaptop{
+        display: none !important;
+    }
+
+    #videoFondoApp{
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+
+        width: 100vw !important;
+        height: 100dvh !important;
+
+        object-fit: cover !important;
+        object-position: center center !important;
+
+        z-index: -2 !important;
+    }
+
 }
