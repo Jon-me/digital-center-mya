@@ -2602,6 +2602,37 @@ onSnapshot(
     }
 );
 
+onSnapshot(
+    collection(db, "ventas"),
+    function(snapshot){
+
+        historialVentas = [];
+
+        snapshot.forEach(function(documento){
+            historialVentas.push({
+                id: documento.id,
+                ...documento.data()
+            });
+        });
+
+        historialVentas.sort(function(a, b){
+            return String(b.fechaISO || "").localeCompare(String(a.fechaISO || ""));
+        });
+
+        if(localStorage.getItem("sesion") === "activa"){
+            mostrarHistorialVentas();
+            actualizarReportes();
+            actualizarDashboardEjecutivo();
+            mostrarReporteVendedores();
+            actualizarCajaDiaria();
+        }
+
+    },
+    function(error){
+        console.error("Error cargando ventas:", error);
+    }
+);
+
 onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
 
     if(documento.exists()){
