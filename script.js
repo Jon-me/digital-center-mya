@@ -1879,18 +1879,15 @@ function mostrarHistorialVentas(){
     let rol = localStorage.getItem("rolActivo");
     let vendedorActivo = localStorage.getItem("nombreActivo") || "";
 
-    let ventasFiltradas = historialVentas.filter(function(venta){
+   let ventasFiltradas = historialVentas.filter(function(venta){
 
-        if(rol === "vendedor"){
-            return (
-                venta.fechaISO === obtenerFechaISO() &&
-                venta.vendedor === vendedorActivo
-            );
-        }
+    if(rol === "vendedor"){
+        return venta.fechaISO === obtenerFechaISO();
+    }
 
-        return true;
+    return true;
 
-    });
+});
 
     ventasFiltradas.forEach(function(venta){
 
