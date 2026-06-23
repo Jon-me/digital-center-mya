@@ -2328,3 +2328,36 @@ body.rol-vendedor .producto-card .btn-agregar{
     }
 
 }
+
+/* =========================
+   APP - BOTONES SUPERIORES
+========================= */
+
+@media (max-width:768px){
+
+    .barra-superior{
+        display:flex !important;
+        justify-content:space-between !important;
+        align-items:center !important;
+
+        width:100% !important;
+        padding:0 8px !important;
+
+        margin-bottom:12px !important;
+        box-sizing:border-box !important;
+    }
+
+    .barra-superior button{
+        min-width:96px !important;
+        max-width:96px !important;
+        height:38px !important;
+
+        padding:0 8px !important;
+        font-size:11px !important;
+        border-radius:18px !important;
+
+        white-space:normal !important;
+        line-height:1.05 !important;
+    }
+
+}
