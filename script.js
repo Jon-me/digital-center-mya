@@ -1904,8 +1904,9 @@ function mostrarHistorialVentas(){
     <td>${venta.hora}</td>
     <td>${obtenerProductosVenta(venta)}</td>
     <td>${obtenerCategoriasVenta(venta)}</td>
-    <td>${venta.vendedor || "Sin vendedor"}</td>
-    <td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
+   <td>${venta.vendedor || "Sin vendedor"}</td>
+<td>${venta.tiendaVentaNombre || tiendasSistema[venta.tiendaVenta] || "Mercado"}</td>
+<td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
     <td>${obtenerDetallePagosVenta(venta)}</td>
 
     ${
@@ -1928,7 +1929,7 @@ function mostrarHistorialVentas(){
     if(html === ""){
         html = `
         <tr>
-            <td colspan="8" style="text-align:center;">
+            <td colspan="9" style="text-align:center;">
                 No tienes ventas registradas hoy.
             </td>
         </tr>
