@@ -2252,7 +2252,23 @@ body.rol-vendedor .producto-card .btn-agregar{
         object-fit: cover !important;
         object-position: center center !important;
 
+        filter:
+            brightness(3.55)
+            contrast(3.85)
+            saturate(3.85) !important;
+
         z-index: -2 !important;
     }
+
+    body::before{
+    content: "" !important;
+    position: fixed !important;
+    inset: 0 !important;
+
+    background: transparent !important;
+
+    z-index: -1 !important;
+    pointer-events: none !important;
+}
 
 }
