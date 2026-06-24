@@ -962,8 +962,11 @@ async function iniciarSesion(){
     document.body.classList.add("rol-" + usuarioEncontrado.rol);
 
     document.getElementById("login").style.display = "none";
-    document.getElementById("sistema").style.display = "block";
-    sonidoVenta.load();
+document.getElementById("sistema").style.display = "block";
+
+document.getElementById("btnSonido").style.display = "none";
+
+sonidoVenta.load();
 
     if(usuarioEncontrado.rol === "vendedor"){
         document.getElementById("dashboardAdmin").style.display = "none";
@@ -1077,6 +1080,8 @@ if(localStorage.getItem("sesion") === "activa"){
 
     document.getElementById("sistema").style.display = "block";
 
+document.getElementById("btnSonido").style.display = "none";
+
     document.body.classList.remove("rol-admin", "rol-vendedor");
 document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
 
@@ -1110,6 +1115,8 @@ setTimeout(async function(){
     document.getElementById("login").style.display = "block";
 
     document.getElementById("sistema").style.display = "none";
+
+    document.getElementById("btnSonido").style.display = "block";
 
     desbloquearSistema();
 
