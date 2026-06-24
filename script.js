@@ -540,6 +540,12 @@ function mostrarCarrito(){
     document.getElementById("tituloCarrito").innerHTML =
         "🛒 Carrito (" + cantidadProductos + ")";
 
+let contadorFlotante = document.getElementById("contadorCarritoFlotante");
+
+if(contadorFlotante){
+    contadorFlotante.innerHTML = cantidadProductos;
+}
+
     let descuento = obtenerDescuento();
 
     let totalFinal = total - descuento;
@@ -3877,6 +3883,8 @@ document.addEventListener("keydown", function(event){
 
 function abrirCobroVenta(){
 
+    document.body.classList.remove("carrito-app-abierto");
+
     if(carrito.length === 0){
 
         alert("⚠️ Agregue productos al carrito primero");
@@ -3929,5 +3937,15 @@ function cerrarDatosClienteBoleta(){
 
 }
 
+function abrirCarritoApp(){
+    document.body.classList.add("carrito-app-abierto");
+}
+
+function cerrarCarritoApp(){
+    document.body.classList.remove("carrito-app-abierto");
+}
+
 window.abrirDatosClienteBoleta = abrirDatosClienteBoleta;
 window.cerrarDatosClienteBoleta = cerrarDatosClienteBoleta;
+window.abrirCarritoApp = abrirCarritoApp;
+window.cerrarCarritoApp = cerrarCarritoApp;
