@@ -2253,9 +2253,9 @@ body.rol-vendedor .producto-card .btn-agregar{
         object-position: center center !important;
 
         filter:
-            brightness(3.55)
-            contrast(3.85)
-            saturate(3.85) !important;
+            brightness(1.85)
+            contrast(1.15)
+            saturate(1.15) !important;
 
         z-index: -2 !important;
     }
@@ -2358,6 +2358,24 @@ body.rol-vendedor .producto-card .btn-agregar{
 
         white-space:normal !important;
         line-height:1.05 !important;
+    }
+
+}
+
+/* FIX APP LOGIN PRIMER INGRESO */
+@media (max-width: 768px){
+
+    body #login{
+        position: fixed !important;
+        top: 39% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+
+        width: 60% !important;
+        max-width: 225px !important;
+
+        padding: 9px 9px !important;
+        border-radius: 16px !important;
     }
 
 }
