@@ -1067,9 +1067,16 @@ sonidoVenta.load();
     aplicarPermisos();
 
 if(productos.length > 0){
+    ordenarProductosPorCodigo();
     catalogoDirty = true;
     mostrarProductos();
 }
+
+setTimeout(function(){
+    if(productos.length === 0){
+        cargarProductosUnaVez();
+    }
+}, 1500);
 
 }, 100);
 
@@ -1188,9 +1195,16 @@ iniciarListenersFirebase();
 setTimeout(async function(){
 
 if(productos.length > 0){
+    ordenarProductosPorCodigo();
     catalogoDirty = true;
     mostrarProductos();
 }
+
+setTimeout(function(){
+    if(productos.length === 0){
+        cargarProductosUnaVez();
+    }
+}, 1500);
 
 }, 300);
 
