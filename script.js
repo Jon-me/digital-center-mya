@@ -150,6 +150,14 @@ function obtenerFechaISO(){
     return `${año}-${mes}-${dia}`;
 }
 
+function ordenarProductosPorCodigo(){
+
+    productos.sort(function(a, b){
+        return String(a.codigo || "").localeCompare(String(b.codigo || ""));
+    });
+
+}
+
 function mostrarProductos(){
 
     let tabla = document.getElementById("tablaProductos");
@@ -159,10 +167,6 @@ function mostrarProductos(){
     }
 
     let html = "";
-
-    productos.sort(function(a, b){
-        return String(a.codigo || "").localeCompare(String(b.codigo || ""));
-    });
 
     productos.forEach(function(producto){
 
@@ -2609,6 +2613,10 @@ function limpiarDescuentoSiCarritoVacio(){
 
 }
 
+ordenarProductosPorCodigo();
+
+localStorage.setItem("cacheProductos", JSON.stringify(productos));
+
 async function cargarProductosUnaVez(){
 
     try{
@@ -2676,6 +2684,8 @@ onSnapshot(
                 ...documento.data()
             });
         });
+
+        ordenarProductosPorCodigo();
 
         if(localStorage.getItem("sesion") === "activa"){
             mostrarProductos();
