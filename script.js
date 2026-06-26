@@ -186,8 +186,10 @@ catalogoDirty = false;
 
      <div class="producto-card">
 
-     <img loading="lazy" src="${producto.imagen || 'https://via.placeholder.com/300x180?text=Sin+Imagen'}">
-
+    <img
+    loading="lazy"
+    src="${producto.imagen || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Sin imagen</text></svg>'}"
+/>
      <h3>${producto.producto}</h3>
 
      <p>Código: ${producto.codigo}</p>
@@ -1066,7 +1068,10 @@ sonidoVenta.load();
     controlarColumnaGanancia();
     aplicarPermisos();
 
-if(productos.length > 0){
+let productosLocalDB = await cargarProductosIndexedDB();
+
+if(productosLocalDB.length > 0){
+    productos = productosLocalDB;
     ordenarProductosPorCodigo();
     catalogoDirty = true;
     mostrarProductos();
@@ -1194,7 +1199,10 @@ iniciarListenersFirebase();
 
 setTimeout(async function(){
 
-if(productos.length > 0){
+let productosLocalDB = await cargarProductosIndexedDB();
+
+if(productosLocalDB.length > 0){
+    productos = productosLocalDB;
     ordenarProductosPorCodigo();
     catalogoDirty = true;
     mostrarProductos();
@@ -2649,6 +2657,93 @@ function limpiarDescuentoSiCarritoVacio(){
 
 }
 
+function abrirDBProductos(){
+
+    return new Promise(function(resolve, reject){
+
+        let request = indexedDB.open("DigitalCenterMYA_DB", 1);
+
+        request.onupgradeneeded = function(event){
+
+            let dbLocal = event.target.result;
+
+            if(!dbLocal.objectStoreNames.contains("productos")){
+                dbLocal.createObjectStore("productos", { keyPath: "id" });
+            }
+
+        };
+
+        request.onsuccess = function(event){
+            resolve(event.target.result);
+        };
+
+        request.onerror = function(){
+            reject("No se pudo abrir IndexedDB");
+        };
+
+    });
+
+}
+
+async function guardarProductosIndexedDB(){
+
+    try{
+
+        let dbLocal = await abrirDBProductos();
+
+        let transaction = dbLocal.transaction(["productos"], "readwrite");
+
+        let store = transaction.objectStore("productos");
+
+        productos.forEach(function(producto){
+            store.put(producto);
+        });
+
+        transaction.oncomplete = function(){
+            dbLocal.close();
+        };
+
+    }catch(error){
+        console.warn("No se pudo guardar productos en IndexedDB:", error);
+    }
+
+}
+
+async function cargarProductosIndexedDB(){
+
+    try{
+
+        let dbLocal = await abrirDBProductos();
+
+        return new Promise(function(resolve, reject){
+
+            let transaction = dbLocal.transaction(["productos"], "readonly");
+
+            let store = transaction.objectStore("productos");
+
+            let request = store.getAll();
+
+            request.onsuccess = function(){
+                dbLocal.close();
+                resolve(request.result || []);
+            };
+
+            request.onerror = function(){
+                dbLocal.close();
+                reject("No se pudo leer productos desde IndexedDB");
+            };
+
+        });
+
+    }catch(error){
+
+        console.warn("No se pudo cargar productos desde IndexedDB:", error);
+        return [];
+
+    }
+
+}
+
 function guardarCacheProductosSeguro(){
 
     try{
@@ -2755,6 +2850,7 @@ onSnapshot(
             mostrarProductos();
         }
 
+guardarProductosIndexedDB();
 guardarCacheProductosSeguro();
 
     },
