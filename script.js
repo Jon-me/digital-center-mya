@@ -23,6 +23,14 @@ import {
     onMessage
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
 
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyD_vUmAunFhTZH24SfCZMST5PVRBcAMMNI",
     authDomain: "digital-center-mya.firebaseapp.com",
@@ -38,6 +46,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const messaging = getMessaging(app);
+
+const storage = getStorage(app);
 
 const vapidKey = "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzLwb4FqPkz0oFFI3lgD5l21infE";
 
@@ -98,6 +108,8 @@ let listenersFirebaseActivos = [];
 let listenersFirebaseIniciados = false;
 
 let catalogoDirty = true;
+
+let cantidadRenderProductos = 24;
 
 function detenerListenersFirebase(){
 
@@ -163,6 +175,8 @@ function ordenarProductosPorCodigo(){
 
 function mostrarProductos(){
 
+    console.time("Render productos");
+
     let tabla = document.getElementById("tablaProductos");
 
     if(!tabla){
@@ -177,7 +191,7 @@ catalogoDirty = false;
 
     let html = "";
 
-    productos.forEach(function(producto){
+    productos.slice(0, cantidadRenderProductos).forEach(function(producto){
 
         let stockTiendas = obtenerStockTiendas(producto);
         let stockTotal = obtenerStockTotal(producto);
@@ -241,171 +255,193 @@ catalogoDirty = false;
 
     });
 
-    tabla.innerHTML = html;
+    if(productos.length > cantidadRenderProductos){
+
+    html += `
+        <button class="btn-cargar-mas-productos" onclick="cargarMasProductos()">
+            Ver más productos
+        </button>
+    `;
+
+}
+
+tabla.innerHTML = html;
 
     actualizarDashboard();
 
-}
-
-function guardarProducto(){
-
-     let codigo = document.getElementById("codigo").value;
-
-     let producto = document.getElementById("producto").value;
-
-     let categoria = document.getElementById("categoria").value;
-
-     let stockPrincipal = document.getElementById("stockPrincipal").value;
-let stockSucursal = document.getElementById("stockSucursal").value;
-let stock = Number(stockPrincipal || 0) + Number(stockSucursal || 0);
-
-     let precioCompra = document.getElementById("precioCompra").value;
-
-     let precio = document.getElementById("precio").value;
-
-     let archivo =
-        document.getElementById("imagen")
-        .files[0];
-
-if(
-    codigo.trim() === "" ||
-    producto.trim() === "" ||
-    categoria.trim() === "" ||
-    precioCompra === "" ||
-    precio === ""
-){
-    alert("Complete todos los campos del producto");
-    return;
-}
-
-if(
-   isNaN(Number(stockPrincipal || 0)) ||
-isNaN(Number(stockSucursal || 0)) ||
-    isNaN(Number(precioCompra)) ||
-    isNaN(Number(precio))
-){
-    alert("Stock y precios deben ser números válidos");
-    return;
-}
-
-if(
-    !Number.isInteger(Number(stockPrincipal || 0)) ||
-    !Number.isInteger(Number(stockSucursal || 0))
-){
-    alert("El stock por tienda debe ser un número entero");
-    return;
-}
-
-if(
-    Number(stockPrincipal || 0) < 0 ||
-    Number(stockSucursal || 0) < 0 ||
-    Number(precioCompra) < 0 ||
-    Number(precio) < 0
-){
-    alert("Stock y precios no pueden ser negativos");
-    return;
-}
-
-     // SI HAY IMAGEN
-     if(archivo){
-
-     let lector = new FileReader();
-
-         lector.onload = function(e){
-
-            guardarConImagen(e.target.result);
-
-        };
-
-        lector.readAsDataURL(archivo);
-
-     } else {
-
-        // SI NO HAY IMAGEN
-        guardarConImagen("");
+    console.timeEnd("Render productos");
 
 }
 
-async function guardarConImagen(imagenBase64){
+function cargarMasProductos(){
 
-        if(
-     indiceEditar !== null &&
-     imagenBase64 === ""
-     ){
+    cantidadRenderProductos += 24;
 
-     imagenBase64 =
-        productos[indiceEditar].imagen;
+    catalogoDirty = true;
+
+    mostrarProductos();
 
 }
 
-     let nuevoProducto = {
+async function subirImagenProductoStorage(archivo){
 
-    codigo: codigo,
-    producto: producto,
-    categoria: categoria,
-    stock: Number(stock),
-stockTiendas: {
-    principal: Number(stockPrincipal || 0),
-    sucursal: Number(stockSucursal || 0)
-},
-    precioCompra: Number(precioCompra),
-    precio: Number(precio),
-    imagen: imagenBase64
+    if(!archivo){
+        return "";
+    }
 
-};
+    let nombreArchivo =
+        "productos/" +
+        Date.now() +
+        "_" +
+        archivo.name.replace(/\s+/g, "_");
 
-// EDITAR O GUARDAR NUEVO
-if(indiceEditar !== null){
+    let imagenRef = ref(storage, nombreArchivo);
 
-    let productoEditar = productos[indiceEditar];
+    await uploadBytes(imagenRef, archivo);
 
-    await updateDoc(
-        doc(db, "productos", productoEditar.id),
-        nuevoProducto
-    );
+    let urlImagen = await getDownloadURL(imagenRef);
 
-    alert("✅ Producto editado correctamente");
-
-    indiceEditar = null;
-
-} else {
-
-    await addDoc(collection(db, "productos"), nuevoProducto);
-
-    alert("✅ Producto guardado correctamente");
+    return urlImagen;
 
 }
 
-         let posicion = localStorage.getItem("scrollEditar");
+async function eliminarImagenAnteriorStorage(urlImagen){
 
-if(posicion){
+    if(!urlImagen){
+        return;
+    }
 
-    window.scrollTo({
-        top: Number(posicion),
-        behavior: "smooth"
-    });
+    if(!urlImagen.includes("firebasestorage.googleapis.com")){
+        return;
+    }
 
-    localStorage.removeItem("scrollEditar");
+    try{
+
+        let imagenRef = ref(storage, urlImagen);
+
+        await deleteObject(imagenRef);
+
+    }catch(error){
+        console.warn("No se pudo eliminar imagen anterior:", error);
+    }
 
 }
 
-         // LIMPIAR
-         document.getElementById("codigo").value = "";
+async function guardarProducto(){
 
-         document.getElementById("producto").value = "";
+    let codigo = document.getElementById("codigo").value;
+    let producto = document.getElementById("producto").value;
+    let categoria = document.getElementById("categoria").value;
 
-         document.getElementById("categoria").value = "";
+    let stockPrincipal = document.getElementById("stockPrincipal").value;
+    let stockSucursal = document.getElementById("stockSucursal").value;
+    let stock = Number(stockPrincipal || 0) + Number(stockSucursal || 0);
 
-         document.getElementById("stockPrincipal").value = "";
-document.getElementById("stockSucursal").value = "";
+    let precioCompra = document.getElementById("precioCompra").value;
+    let precio = document.getElementById("precio").value;
 
-        document.getElementById("precioCompra").value = "";
+    let archivo = document.getElementById("imagen").files[0];
 
-         document.getElementById("precio").value = "";
+    if(
+        codigo.trim() === "" ||
+        producto.trim() === "" ||
+        categoria.trim() === "" ||
+        precioCompra === "" ||
+        precio === ""
+    ){
+        alert("Complete todos los campos del producto");
+        return;
+    }
 
-         document.getElementById("imagen").value = "";
+    if(
+        isNaN(Number(stockPrincipal || 0)) ||
+        isNaN(Number(stockSucursal || 0)) ||
+        isNaN(Number(precioCompra)) ||
+        isNaN(Number(precio))
+    ){
+        alert("Stock y precios deben ser números válidos");
+        return;
+    }
+
+    if(
+        !Number.isInteger(Number(stockPrincipal || 0)) ||
+        !Number.isInteger(Number(stockSucursal || 0))
+    ){
+        alert("El stock por tienda debe ser un número entero");
+        return;
+    }
+
+    if(
+        Number(stockPrincipal || 0) < 0 ||
+        Number(stockSucursal || 0) < 0 ||
+        Number(precioCompra) < 0 ||
+        Number(precio) < 0
+    ){
+        alert("Stock y precios no pueden ser negativos");
+        return;
+    }
+
+    let urlImagen = "";
+
+    try{
+        urlImagen = await subirImagenProductoStorage(archivo);
+    }catch(error){
+        console.error("Error subiendo imagen:", error);
+        alert("No se pudo subir la imagen del producto.");
+        return;
+    }
+
+    if(indiceEditar !== null && urlImagen === ""){
+        urlImagen = productos[indiceEditar].imagen || "";
+    }
+
+    if(indiceEditar !== null && archivo && productos[indiceEditar].imagen){
+    await eliminarImagenAnteriorStorage(productos[indiceEditar].imagen);
+}
+
+    let nuevoProducto = {
+        codigo: codigo,
+        producto: producto,
+        categoria: categoria,
+        stock: Number(stock),
+        stockTiendas: {
+            principal: Number(stockPrincipal || 0),
+            sucursal: Number(stockSucursal || 0)
+        },
+        precioCompra: Number(precioCompra),
+        precio: Number(precio),
+        imagen: urlImagen
+    };
+
+    if(indiceEditar !== null){
+
+        let productoEditar = productos[indiceEditar];
+
+        await updateDoc(
+            doc(db, "productos", productoEditar.id),
+            nuevoProducto
+        );
+
+        alert("✅ Producto editado correctamente");
+
+        indiceEditar = null;
+
+    } else {
+
+        await addDoc(collection(db, "productos"), nuevoProducto);
+
+        alert("✅ Producto guardado correctamente");
 
     }
+
+    document.getElementById("codigo").value = "";
+    document.getElementById("producto").value = "";
+    document.getElementById("categoria").value = "";
+    document.getElementById("stockPrincipal").value = "";
+    document.getElementById("stockSucursal").value = "";
+    document.getElementById("precioCompra").value = "";
+    document.getElementById("precio").value = "";
+    document.getElementById("imagen").value = "";
 
 }
 
@@ -500,27 +536,35 @@ function buscarProducto(){
         .replace(/[\u0300-\u036f]/g, "")
         .trim();
 
-    let tarjetas = document.querySelectorAll(".producto-card");
+    if(textoBusqueda === ""){
+        cantidadRenderProductos = 24;
+        catalogoDirty = true;
+        mostrarProductos();
+        return;
+    }
 
-    tarjetas.forEach(function(tarjeta){
+    let productosFiltrados = productos.filter(function(producto){
 
-        let textoTarjeta = tarjeta
-            .innerText
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "");
+        let textoProducto = (
+            (producto.producto || "") + " " +
+            (producto.codigo || "") + " " +
+            (producto.categoria || "")
+        )
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
-        if(textoBusqueda === "" || textoTarjeta.includes(textoBusqueda)){
-
-            tarjeta.style.setProperty("display", "flex", "important");
-
-        } else {
-
-            tarjeta.style.setProperty("display", "none", "important");
-
-        }
+        return textoProducto.includes(textoBusqueda);
 
     });
+
+    let productosOriginales = productos;
+
+    productos = productosFiltrados;
+    catalogoDirty = true;
+    mostrarProductos();
+
+    productos = productosOriginales;
 
 }
 
@@ -2773,6 +2817,8 @@ async function cargarProductosUnaVez(){
 
     try{
 
+        console.time("Descarga Firestore");
+
         let snapshot = await getDocs(collection(db, "productos"));
 
         productos = [];
@@ -2784,6 +2830,7 @@ async function cargarProductosUnaVez(){
             });
         });
 
+        console.timeEnd("Descarga Firestore");
 
         ordenarProductosPorCodigo();
 
@@ -3974,6 +4021,7 @@ window.actualizarNombreBoletaCarrito = actualizarNombreBoletaCarrito;
 window.abrirTransferenciaStock = abrirTransferenciaStock;
 window.cerrarTransferenciaStock = cerrarTransferenciaStock;
 window.confirmarTransferenciaStock = confirmarTransferenciaStock;
+window.cargarMasProductos = cargarMasProductos;
 
 async function activarNotificaciones(){
 
