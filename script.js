@@ -94,7 +94,10 @@ const sonidoVenta = new Audio("venta.mp3");
 let productoTransferenciaActual = null;
 
 let listenersFirebaseActivos = [];
+
 let listenersFirebaseIniciados = false;
+
+let catalogoDirty = true;
 
 function detenerListenersFirebase(){
 
@@ -165,6 +168,12 @@ function mostrarProductos(){
     if(!tabla){
         return;
     }
+
+    if(!catalogoDirty){
+    return;
+}
+
+catalogoDirty = false;
 
     let html = "";
 
@@ -465,7 +474,6 @@ async function eliminarProducto(idProducto){
             });
 
             mostrarProductos();
-            actualizarDashboard();
 
             alert("Producto eliminado correctamente");
 
@@ -572,6 +580,32 @@ if(contadorFlotante){
     contadorFlotante.innerHTML = cantidadProductos;
 }
 
+actualizarResumenVenta();
+
+}
+
+function actualizarResumenVenta(){
+
+    let total = 0;
+    let cantidadProductos = 0;
+
+    carrito.forEach(function(item){
+        cantidadProductos += Number(item.cantidad || 0);
+        total += Number(item.subtotal || 0);
+    });
+
+    let contadorFlotante = document.getElementById("contadorCarritoFlotante");
+
+    if(contadorFlotante){
+        contadorFlotante.innerHTML = cantidadProductos;
+    }
+
+    let resumenProductosCobro = document.getElementById("resumenProductosCobro");
+
+    if(resumenProductosCobro){
+        resumenProductosCobro.innerHTML = cantidadProductos;
+    }
+
     let descuento = obtenerDescuento();
 
     let totalFinal = total - descuento;
@@ -580,21 +614,20 @@ if(contadorFlotante){
         totalFinal = 0;
     }
 
-    document.getElementById("totalVenta").innerHTML =
-        "Total: S/ " + totalFinal.toFixed(2);
+    let totalVenta = document.getElementById("totalVenta");
 
-        let resumenProductosCobro = document.getElementById("resumenProductosCobro");
-let resumenTotalCobro = document.getElementById("resumenTotalCobro");
+    if(totalVenta){
+        totalVenta.innerHTML = "Total: S/ " + totalFinal.toFixed(2);
+    }
 
-if(resumenProductosCobro){
-    resumenProductosCobro.innerHTML =
-        cantidadProductos;
-}
+    let resumenTotalCobro = document.getElementById("resumenTotalCobro");
 
-if(resumenTotalCobro){
-    resumenTotalCobro.innerHTML =
-        "S/ " + totalFinal.toFixed(2);
-}
+    if(resumenTotalCobro){
+        resumenTotalCobro.innerHTML = "S/ " + totalFinal.toFixed(2);
+    }
+
+    calcularTotalPagado();
+    actualizarDashboard();
 
 }
 
@@ -612,9 +645,7 @@ function eliminarDelCarrito(index){
 
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
-    mostrarCarrito();
-
-    mostrarProductos();
+   mostrarCarrito();
 
 }
 
@@ -669,8 +700,7 @@ function agregarDirecto(idProducto){
 
     localStorage.setItem("carrito", JSON.stringify(carrito));
 
-    mostrarCarrito();
-    mostrarProductos();
+   mostrarCarrito();
 
 }
 
@@ -690,8 +720,6 @@ document.getElementById("pagoTransferencia").value = "";
 calcularTotalPagado();
 
     mostrarCarrito();
-
-    mostrarProductos();
 
 }
 
@@ -913,7 +941,6 @@ document.getElementById("pagoTransferencia").value = "";
 
 calcularTotalPagado();
   mostrarCarrito();
-    actualizarDashboard();
 
 }
 
@@ -1039,11 +1066,9 @@ sonidoVenta.load();
     controlarColumnaGanancia();
     aplicarPermisos();
 
-  mostrarProductos();
-actualizarDashboard();
-
-if(productos.length === 0){
-    cargarProductosUnaVez();
+if(productos.length > 0){
+    catalogoDirty = true;
+    mostrarProductos();
 }
 
 }, 100);
@@ -1162,11 +1187,9 @@ iniciarListenersFirebase();
 
 setTimeout(async function(){
 
-  mostrarProductos();
-actualizarDashboard();
-
-if(productos.length === 0){
-    cargarProductosUnaVez();
+if(productos.length > 0){
+    catalogoDirty = true;
+    mostrarProductos();
 }
 
 }, 300);
@@ -1206,9 +1229,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     if(descuentoInput){
         descuentoInput.addEventListener("input", function(){
-            mostrarCarrito();
-            actualizarDashboard();
-        });
+    actualizarResumenVenta();
+});
     }
 
    let inputUsuario = document.getElementById("usuario");
@@ -2613,10 +2635,6 @@ function limpiarDescuentoSiCarritoVacio(){
 
 }
 
-ordenarProductosPorCodigo();
-
-localStorage.setItem("cacheProductos", JSON.stringify(productos));
-
 async function cargarProductosUnaVez(){
 
     try{
@@ -2632,10 +2650,14 @@ async function cargarProductosUnaVez(){
             });
         });
 
-        localStorage.setItem("cacheProductos", JSON.stringify(productos));
 
-        mostrarProductos();
-        actualizarDashboard();
+        ordenarProductosPorCodigo();
+
+localStorage.setItem("cacheProductos", JSON.stringify(productos));
+
+catalogoDirty = true;
+
+mostrarProductos();
 
     } catch(error){
 
@@ -2651,8 +2673,9 @@ async function cargarProductosUnaVez(){
 
         if(cache.length > 0){
             productos = cache;
-            mostrarProductos();
-            actualizarDashboard();
+            ordenarProductosPorCodigo();
+            catalogoDirty = true;
+    mostrarProductos();
 
             console.warn("Se usaron productos desde caché local.");
             return;
@@ -2688,8 +2711,9 @@ onSnapshot(
         ordenarProductosPorCodigo();
 
         if(localStorage.getItem("sesion") === "activa"){
+            
+            catalogoDirty = true;
             mostrarProductos();
-            actualizarDashboard();
         }
 
 localStorage.setItem("cacheProductos", JSON.stringify(productos));
@@ -2709,11 +2733,12 @@ localStorage.setItem("cacheProductos", JSON.stringify(productos));
     }
 
     if(localStorage.getItem("sesion") === "activa" && cache.length > 0){
-        productos = cache;
-        mostrarProductos();
-        actualizarDashboard();
-        return;
-    }
+    productos = cache;
+    ordenarProductosPorCodigo();
+    catalogoDirty = true;
+    mostrarProductos();
+    return;
+}
 
 }
 
@@ -2865,10 +2890,9 @@ onSnapshot(
 
 async function abrirCaja(){
 
-    montoInicialCaja =
-        Number(
-            document.getElementById("montoInicialCaja").value
-        );
+    montoInicialCaja = Number(
+        document.getElementById("montoInicialCaja").value
+    );
 
     if(montoInicialCaja <= 0){
         alert("Ingrese un monto válido");
@@ -2877,18 +2901,53 @@ async function abrirCaja(){
 
     let fechaCaja = obtenerFechaISO();
 
-    await setDoc(
-        doc(db, "cajas", fechaCaja),
-        {
-            fecha: fechaCaja,
-            montoInicial: montoInicialCaja,
-            abierta: true,
-            abiertaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
-            horaApertura: new Date().toLocaleTimeString()
-        }
-    );
+    let cajaRef = doc(db, "cajas", fechaCaja);
 
-    alert("✅ Caja abierta correctamente");
+    try{
+
+        await runTransaction(db, async function(transaction){
+
+            let cajaDoc = await transaction.get(cajaRef);
+
+            if(cajaDoc.exists()){
+                throw new Error("CAJA_EXISTENTE");
+            }
+
+            transaction.set(cajaRef,{
+
+                fecha: fechaCaja,
+
+                montoInicial: montoInicialCaja,
+
+                abierta: true,
+
+                abiertaPor:
+                    localStorage.getItem("nombreActivo") || "Sin usuario",
+
+                horaApertura:
+                    new Date().toLocaleTimeString()
+
+            });
+
+        });
+
+        alert("✅ Caja abierta correctamente");
+
+    }catch(error){
+
+        if(error.message === "CAJA_EXISTENTE"){
+
+            alert("⚠️ La caja del día ya fue abierta.");
+
+            return;
+
+        }
+
+        console.error(error);
+
+        alert("Error al abrir la caja.");
+
+    }
 
 }
 
