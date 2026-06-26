@@ -93,6 +93,22 @@ const sonidoVenta = new Audio("venta.mp3");
 
 let productoTransferenciaActual = null;
 
+let listenersFirebaseActivos = [];
+let listenersFirebaseIniciados = false;
+
+function detenerListenersFirebase(){
+
+    listenersFirebaseActivos.forEach(function(unsubscribe){
+        if(typeof unsubscribe === "function"){
+            unsubscribe();
+        }
+    });
+
+    listenersFirebaseActivos = [];
+    listenersFirebaseIniciados = false;
+
+}
+
 const tiendasSistema = {
     principal: "Mercado",
     sucursal: "Peluquería"
@@ -1011,6 +1027,7 @@ sonidoVenta.load();
     }
 
     desbloquearSistema();
+    iniciarListenersFirebase();
 
     setTimeout(async function(){
 
@@ -1100,6 +1117,8 @@ if(btnBorrarHistorial){
 
 function cerrarSesion(){
 
+    detenerListenersFirebase();
+
     localStorage.removeItem("sesion");
     localStorage.removeItem("usuarioActivo");
     localStorage.removeItem("nombreActivo");
@@ -1134,6 +1153,8 @@ controlarColumnaGanancia();
 aplicarPermisos();
 
 desbloquearSistema();
+
+iniciarListenersFirebase();
 
 setTimeout(async function(){
 
@@ -2634,6 +2655,15 @@ async function cargarProductosUnaVez(){
 
 }
 
+function iniciarListenersFirebase(){
+
+    if(listenersFirebaseIniciados){
+        return;
+    }
+
+    listenersFirebaseIniciados = true;
+
+listenersFirebaseActivos.push(
 onSnapshot(
     collection(db, "productos"),
     function(snapshot){
@@ -2677,8 +2707,10 @@ localStorage.setItem("cacheProductos", JSON.stringify(productos));
 
 }
 
+)
 );
 
+listenersFirebaseActivos.push(
 onSnapshot(
     collection(db, "ventas"),
     function(snapshot){
@@ -2708,8 +2740,10 @@ onSnapshot(
     function(error){
         console.error("Error cargando ventas:", error);
     }
+)
 );
 
+listenersFirebaseActivos.push(
 onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
 
     if(documento.exists()){
@@ -2719,8 +2753,11 @@ onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
 
     }
 
-});
+}
+)
+);
 
+listenersFirebaseActivos.push(
 onSnapshot(
     doc(
         db,
@@ -2745,8 +2782,10 @@ onSnapshot(
 }
 
     }
+)
 );
 
+listenersFirebaseActivos.push(
 onSnapshot(
     collection(
         db,
@@ -2775,8 +2814,10 @@ onSnapshot(
 }
 
     }
+)
 );
 
+listenersFirebaseActivos.push(
 onSnapshot(
     collection(db, "cierresCaja"),
 
@@ -2806,7 +2847,11 @@ onSnapshot(
 }
 
     }
+
+)
 );
+
+}
 
 async function abrirCaja(){
 
