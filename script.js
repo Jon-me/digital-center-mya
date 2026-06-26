@@ -2649,6 +2649,31 @@ function limpiarDescuentoSiCarritoVacio(){
 
 }
 
+function guardarCacheProductosSeguro(){
+
+    try{
+
+        let productosCache = productos.map(function(producto){
+            return {
+                id: producto.id,
+                codigo: producto.codigo,
+                producto: producto.producto,
+                categoria: producto.categoria,
+                stock: producto.stock,
+                stockTiendas: producto.stockTiendas,
+                precioCompra: producto.precioCompra,
+                precio: producto.precio
+            };
+        });
+
+        localStorage.setItem("cacheProductos", JSON.stringify(productosCache));
+
+    }catch(error){
+        console.warn("No se pudo guardar caché de productos:", error);
+    }
+
+}
+
 async function cargarProductosUnaVez(){
 
     try{
@@ -2667,11 +2692,11 @@ async function cargarProductosUnaVez(){
 
         ordenarProductosPorCodigo();
 
-localStorage.setItem("cacheProductos", JSON.stringify(productos));
+        guardarCacheProductosSeguro();
 
-catalogoDirty = true;
+        catalogoDirty = true;
 
-mostrarProductos();
+        mostrarProductos();
 
     } catch(error){
 
@@ -2730,7 +2755,7 @@ onSnapshot(
             mostrarProductos();
         }
 
-localStorage.setItem("cacheProductos", JSON.stringify(productos));
+guardarCacheProductosSeguro();
 
     },
 
