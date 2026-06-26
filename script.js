@@ -61,6 +61,12 @@ let usuarios = [
 
 let productos = [];
 
+try{
+    productos = JSON.parse(localStorage.getItem("cacheProductos")) || [];
+}catch(error){
+    productos = [];
+}
+
 let indiceEditar = null;
 
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -918,6 +924,30 @@ function desbloquearSistema(){
 
 }
 
+function apagarSonidoLogin(){
+
+    let videoLaptop = document.getElementById("videoFondoLaptop");
+    let videoApp = document.getElementById("videoFondoApp");
+    let boton = document.getElementById("btnSonido");
+
+    [videoLaptop, videoApp].forEach(function(video){
+
+        if(video){
+            video.muted = true;
+            video.volume = 0;
+            video.pause();
+            video.currentTime = 0;
+        }
+
+    });
+
+    if(boton){
+        boton.textContent = "🔊 Activar sonido";
+        boton.style.display = "none";
+    }
+
+}
+
 async function iniciarSesion(){
 
     let usuarioInput =
@@ -970,7 +1000,7 @@ async function iniciarSesion(){
     document.getElementById("login").style.display = "none";
 document.getElementById("sistema").style.display = "block";
 
-document.getElementById("btnSonido").style.display = "none";
+apagarSonidoLogin();
 
 sonidoVenta.load();
 
@@ -988,12 +1018,12 @@ sonidoVenta.load();
     controlarColumnaGanancia();
     aplicarPermisos();
 
-    if(productos.length === 0){
-        await cargarProductosUnaVez();
-    } else {
-        mostrarProductos();
-        actualizarDashboard();
-    }
+  mostrarProductos();
+actualizarDashboard();
+
+if(productos.length === 0){
+    cargarProductosUnaVez();
+}
 
 }, 100);
 
@@ -1086,7 +1116,7 @@ if(localStorage.getItem("sesion") === "activa"){
 
     document.getElementById("sistema").style.display = "block";
 
-document.getElementById("btnSonido").style.display = "none";
+    apagarSonidoLogin();
 
     document.body.classList.remove("rol-admin", "rol-vendedor");
 document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
@@ -1107,12 +1137,12 @@ desbloquearSistema();
 
 setTimeout(async function(){
 
-    if(productos.length === 0){
-        await cargarProductosUnaVez();
-    } else {
-        mostrarProductos();
-        actualizarDashboard();
-    }
+  mostrarProductos();
+actualizarDashboard();
+
+if(productos.length === 0){
+    cargarProductosUnaVez();
+}
 
 }, 300);
 
@@ -2573,14 +2603,33 @@ async function cargarProductosUnaVez(){
             });
         });
 
+        localStorage.setItem("cacheProductos", JSON.stringify(productos));
+
         mostrarProductos();
         actualizarDashboard();
 
     } catch(error){
 
         console.error("Error cargando productos:", error);
-        alert("No se pudieron cargar los productos. Revisa tu conexión e intenta actualizar.");
 
+        let cache = [];
+
+        try{
+            cache = JSON.parse(localStorage.getItem("cacheProductos")) || [];
+        }catch(e){
+            cache = [];
+        }
+
+        if(cache.length > 0){
+            productos = cache;
+            mostrarProductos();
+            actualizarDashboard();
+
+            console.warn("Se usaron productos desde caché local.");
+            return;
+        }
+
+        alert("No se pudieron cargar los productos. Revisa tu conexión e intenta actualizar.");
     }
 
 }
@@ -2603,16 +2652,31 @@ onSnapshot(
             actualizarDashboard();
         }
 
+localStorage.setItem("cacheProductos", JSON.stringify(productos));
+
     },
-    async function(error){
 
-        console.error("Error en tiempo real productos:", error);
+    function(error){
 
-        if(localStorage.getItem("sesion") === "activa"){
-            await cargarProductosUnaVez();
-        }
+    console.error("Error en tiempo real productos:", error);
 
+    let cache = [];
+
+    try{
+        cache = JSON.parse(localStorage.getItem("cacheProductos")) || [];
+    }catch(e){
+        cache = [];
     }
+
+    if(localStorage.getItem("sesion") === "activa" && cache.length > 0){
+        productos = cache;
+        mostrarProductos();
+        actualizarDashboard();
+        return;
+    }
+
+}
+
 );
 
 onSnapshot(
@@ -3839,6 +3903,7 @@ window.abrirModalPanel = abrirModalPanel;
 window.cerrarModalPanel = cerrarModalPanel;
 
 async function actualizarSistema(){
+
     const confirmar = confirm("¿Actualizar el sistema y cargar la versión más reciente?");
 
     if(!confirmar){
@@ -3846,40 +3911,42 @@ async function actualizarSistema(){
     }
 
     try{
+
+        if("caches" in window){
+            const nombresCache = await caches.keys();
+
+            await Promise.all(
+                nombresCache.map(function(nombre){
+                    return caches.delete(nombre);
+                })
+            );
+        }
+
         if("serviceWorker" in navigator){
             const registros = await navigator.serviceWorker.getRegistrations();
 
             for(const registro of registros){
-                await registro.update();
+                await registro.unregister();
             }
         }
 
-        const nuevaVersion = Date.now();
-        window.location.href = window.location.pathname + "?v=" + nuevaVersion;
+        localStorage.setItem("forzarRecargaSistema", Date.now());
+
+        window.location.href =
+            window.location.origin +
+            window.location.pathname +
+            "?v=" + Date.now();
 
     }catch(error){
+
         console.error("Error actualizando sistema:", error);
-        alert("No se pudo actualizar automáticamente. Intenta con Ctrl + Shift + R.");
+        alert("No se pudo actualizar automáticamente. Intenta borrar caché manualmente.");
+
     }
+
 }
 
 window.actualizarSistema = actualizarSistema;
-
-document.addEventListener("keydown", function(event){
-
-    if(event.key === "Escape"){
-
-        let modal = document.getElementById("modalPanel");
-
-        if(modal && modal.style.display !== "none"){
-
-            cerrarModalPanel();
-
-        }
-
-    }
-
-});
 
 function abrirCobroVenta(){
 
