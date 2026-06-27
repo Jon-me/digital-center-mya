@@ -329,18 +329,41 @@ async function eliminarImagenAnteriorStorage(urlImagen){
 
 async function guardarProducto(){
 
-    let codigo = document.getElementById("codigo").value;
-    let producto = document.getElementById("producto").value;
-    let categoria = document.getElementById("categoria").value;
+    let codigoInput = document.getElementById("codigo");
+    let productoInput = document.getElementById("producto");
+    let categoriaInput = document.getElementById("categoria");
+    let stockPrincipalInput = document.getElementById("stockPrincipal");
+    let stockSucursalInput = document.getElementById("stockSucursal");
+    let precioCompraInput = document.getElementById("precioCompra");
+    let precioInput = document.getElementById("precio");
+    let imagenInput = document.getElementById("imagen");
 
-    let stockPrincipal = document.getElementById("stockPrincipal").value;
-    let stockSucursal = document.getElementById("stockSucursal").value;
+    if(
+        !codigoInput ||
+        !productoInput ||
+        !categoriaInput ||
+        !stockPrincipalInput ||
+        !stockSucursalInput ||
+        !precioCompraInput ||
+        !precioInput ||
+        !imagenInput
+    ){
+        alert("ERROR: Hay un input del formulario que no existe en el HTML.");
+        return;
+    }
+
+    let codigo = codigoInput.value;
+    let producto = productoInput.value;
+    let categoria = categoriaInput.value;
+
+    let stockPrincipal = stockPrincipalInput.value;
+    let stockSucursal = stockSucursalInput.value;
     let stock = Number(stockPrincipal || 0) + Number(stockSucursal || 0);
 
-    let precioCompra = document.getElementById("precioCompra").value;
-    let precio = document.getElementById("precio").value;
+    let precioCompra = precioCompraInput.value;
+    let precio = precioInput.value;
 
-    let archivo = document.getElementById("imagen").files[0];
+    let archivo = imagenInput.files[0];
 
     if(
         codigo.trim() === "" ||
@@ -384,20 +407,25 @@ async function guardarProducto(){
     let urlImagen = "";
 
     try{
-        urlImagen = await subirImagenProductoStorage(archivo);
-    }catch(error){
-        console.error("Error subiendo imagen:", error);
-        alert("No se pudo subir la imagen del producto.");
-        return;
-    }
 
+    urlImagen = await subirImagenProductoStorage(archivo);
+
+}catch(error){
+
+    console.error(error);
+
+    alert(
+        "ERROR REAL:\n\n" +
+        error.name +
+        "\n\n" +
+        error.message
+    );
+
+    return;
+}
     if(indiceEditar !== null && urlImagen === ""){
         urlImagen = productos[indiceEditar].imagen || "";
     }
-
-    if(indiceEditar !== null && archivo && productos[indiceEditar].imagen){
-    await eliminarImagenAnteriorStorage(productos[indiceEditar].imagen);
-}
 
     let nuevoProducto = {
         codigo: codigo,
@@ -444,6 +472,8 @@ async function guardarProducto(){
     document.getElementById("imagen").value = "";
 
 }
+
+window.guardarProducto = guardarProducto;
 
 function editarProducto(idProducto){
 
