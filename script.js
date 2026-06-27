@@ -71,11 +71,17 @@ let usuarios = [
 
 let productos = [];
 
-try{
-    productos = JSON.parse(localStorage.getItem("cacheProductos")) || [];
-}catch(error){
-    productos = [];
-}
+let productosVista = [];
+
+let busquedaCatalogo = "";
+
+let categoriaCatalogo = "todos";
+
+let catalogoVersion = 0;
+
+let ultimaFirmaCatalogo = "";
+
+let productosCargadosDesdeIndexedDB = false;
 
 let indiceEditar = null;
 
@@ -110,6 +116,10 @@ let listenersFirebaseIniciados = false;
 let catalogoDirty = true;
 
 let cantidadRenderProductos = 24;
+
+let cantidadRenderAnterior = 0;
+
+let modoRenderCatalogo = "completo";
 
 function detenerListenersFirebase(){
 
@@ -173,6 +183,215 @@ function ordenarProductosPorCodigo(){
 
 }
 
+function normalizarTexto(valor){
+
+    return String(valor || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+}
+
+function obtenerTextoBusquedaProducto(producto){
+
+    if(producto.textoBusqueda){
+        return producto.textoBusqueda;
+    }
+
+    producto.textoBusqueda = normalizarTexto(
+        (producto.producto || "") + " " +
+        (producto.codigo || "") + " " +
+        (producto.categoria || "")
+    );
+
+    return producto.textoBusqueda;
+
+}
+
+function aplicarFiltrosCatalogo(){
+
+    let busqueda = normalizarTexto(busquedaCatalogo);
+    let categoria = normalizarTexto(categoriaCatalogo);
+
+    productosVista = productos.filter(function(producto){
+
+        let coincideCategoria =
+            categoria === "todos" ||
+            normalizarTexto(producto.categoria) === categoria;
+
+        if(!coincideCategoria){
+            return false;
+        }
+
+        if(busqueda === ""){
+            return true;
+        }
+
+        return obtenerTextoBusquedaProducto(producto).includes(busqueda);
+
+    });
+
+}
+
+function renderProductoCard(producto, rolActivo){
+
+    let stockTiendas = obtenerStockTiendas(producto);
+    let stockTotal = obtenerStockTotal(producto);
+
+    return `
+     <div class="producto-card">
+
+        <img
+            loading="lazy"
+            src="${producto.imagen || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Sin imagen</text></svg>'}"
+        />
+
+        <h3>${producto.producto}</h3>
+        <p>Código: ${producto.codigo}</p>
+        <p>Categoría: ${producto.categoria}</p>
+
+        <div class="stock-tiendas-card">
+            <p class="stock-total">Stock Total: ${stockTotal}</p>
+
+            <div class="stock-tienda">
+                <span>🏬 Mercado</span>
+                <strong>${stockTiendas.principal}</strong>
+            </div>
+
+            <div class="stock-tienda">
+                <span>✂️ Peluquería</span>
+                <strong>${stockTiendas.sucursal}</strong>
+            </div>
+        </div>
+
+        ${
+            rolActivo === "admin"
+            ? `
+                <p>Compra: S/ ${producto.precioCompra || 0}</p>
+                <p>Venta: S/ ${producto.precio}</p>
+              `
+            : `
+                <p>Precio: S/ ${producto.precio}</p>
+              `
+        }
+
+        <button class="btn-agregar" onclick="agregarDirecto('${producto.id}')">
+            🛒 Agregar
+        </button>
+
+        ${
+            rolActivo === "admin"
+            ? `
+                <button class="btn-transferir-stock" onclick="abrirTransferenciaStock('${producto.id}')">
+                    🔄 Transferir
+                </button>
+
+                <button onclick="editarProducto('${producto.id}')">
+                    ✏️ Editar
+                </button>
+
+                <button onclick="eliminarProducto('${producto.id}')">
+                    🗑️ Eliminar
+                </button>
+              `
+            : ""
+        }
+
+     </div>
+    `;
+
+}
+
+function renderBotonVerMas(){
+
+    if(productosVista.length <= cantidadRenderProductos){
+        return "";
+    }
+
+    return `
+        <button class="btn-cargar-mas-productos" onclick="cargarMasProductos()">
+            Ver más productos
+        </button>
+    `;
+
+}
+
+function renderProductosRango(inicio, fin, rolActivo){
+
+    return productosVista
+        .slice(inicio, fin)
+        .map(function(producto){
+            return renderProductoCard(producto, rolActivo);
+        })
+        .join("");
+
+}
+
+const CatalogRenderer = {
+
+   renderIncremental: function(tabla, rolActivo){
+
+    let html = renderProductosRango(
+        cantidadRenderAnterior,
+        cantidadRenderProductos,
+        rolActivo
+    );
+
+    let boton = tabla.querySelector(".btn-cargar-mas-productos");
+
+    if(boton){
+        boton.remove();
+    }
+
+    tabla.insertAdjacentHTML("beforeend", html);
+
+    tabla.insertAdjacentHTML(
+        "beforeend",
+        renderBotonVerMas()
+    );
+
+    cantidadRenderAnterior = cantidadRenderProductos;
+
+},
+   
+    limpiar: function(tabla){
+        tabla.innerHTML = "";
+        cantidadRenderAnterior = 0;
+    },
+
+    renderInicial: function(tabla, rolActivo){
+
+        this.limpiar(tabla);
+
+        let html = renderProductosRango(
+            0,
+            cantidadRenderProductos,
+            rolActivo
+        );
+
+        html += renderBotonVerMas();
+
+        tabla.innerHTML = html;
+
+        cantidadRenderAnterior = cantidadRenderProductos;
+
+    }
+
+};
+
+function reiniciarRenderCatalogo(){
+
+    cantidadRenderProductos = 24;
+    cantidadRenderAnterior = 0;
+
+    modoRenderCatalogo = "completo";
+
+    ultimaFirmaCatalogo = "";
+    catalogoDirty = true;
+
+}
+
 function mostrarProductos(){
 
     console.time("Render productos");
@@ -184,98 +403,58 @@ function mostrarProductos(){
     }
 
     if(!catalogoDirty){
-    return;
-}
+        return;
+    }
 
-catalogoDirty = false;
+    aplicarFiltrosCatalogo();
 
-    let html = "";
+let firmaCatalogo =
+    catalogoVersion +
+    "|" + cantidadRenderProductos +
+    "|" + busquedaCatalogo +
+    "|" + categoriaCatalogo +
+    "|" + localStorage.getItem("rolActivo");
 
-    productos.slice(0, cantidadRenderProductos).forEach(function(producto){
+    if(firmaCatalogo === ultimaFirmaCatalogo){
+        catalogoDirty = false;
+        console.timeEnd("Render productos");
+        return;
+    }
 
-        let stockTiendas = obtenerStockTiendas(producto);
-        let stockTotal = obtenerStockTotal(producto);
+    ultimaFirmaCatalogo = firmaCatalogo;
+    catalogoDirty = false;
 
-        html += `
+    let rolActivo = localStorage.getItem("rolActivo");
 
-     <div class="producto-card">
+if (modoRenderCatalogo === "completo") {
 
-    <img
-    loading="lazy"
-    src="${producto.imagen || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Sin imagen</text></svg>'}"
-/>
-     <h3>${producto.producto}</h3>
+    CatalogRenderer.renderInicial(
+        tabla,
+        rolActivo
+    );
 
-     <p>Código: ${producto.codigo}</p>
+} else {
 
-     <p>Categoría: ${producto.categoria}</p>
-
-     <div class="stock-tiendas-card">
-        <p class="stock-total">Stock Total: ${stockTotal}</p>
-
-        <div class="stock-tienda">
-            <span>🏬 Mercado</span>
-            <strong>${stockTiendas.principal}</strong>
-        </div>
-
-        <div class="stock-tienda">
-            <span>✂️ Peluquería</span>
-            <strong>${stockTiendas.sucursal}</strong>
-        </div>
-     </div>
-
-     ${localStorage.getItem("rolActivo") === "admin" ? `
-     <p>Compra: S/ ${producto.precioCompra || 0}</p>
-     <p>Venta: S/ ${producto.precio}</p>
-     ` : `
-     <p>Precio: S/ ${producto.precio}</p>
-`}
-
-     <button class="btn-agregar" onclick="agregarDirecto('${producto.id}')">
-        🛒 Agregar
-     </button>
-
-     ${localStorage.getItem("rolActivo") === "admin" ? `
-     <button class="btn-transferir-stock" onclick="abrirTransferenciaStock('${producto.id}')">
-        🔄 Transferir
-     </button>
-
-     <button onclick="editarProducto('${producto.id}')">
-        ✏️ Editar
-     </button>
-
-     <button onclick="eliminarProducto('${producto.id}')">
-        🗑️ Eliminar
-     </button>
-     ` : ""}
-
-     </div>
-
-     `;
-
-    });
-
-    if(productos.length > cantidadRenderProductos){
-
-    html += `
-        <button class="btn-cargar-mas-productos" onclick="cargarMasProductos()">
-            Ver más productos
-        </button>
-    `;
+    CatalogRenderer.renderIncremental(
+        tabla,
+        rolActivo
+    );
 
 }
 
-tabla.innerHTML = html;
+modoRenderCatalogo = "completo";
 
-    actualizarDashboard();
+actualizarDashboard();
 
-    console.timeEnd("Render productos");
+console.timeEnd("Render productos");
 
 }
 
 function cargarMasProductos(){
 
     cantidadRenderProductos += 24;
+
+    modoRenderCatalogo = "incremental";
 
     catalogoDirty = true;
 
@@ -537,12 +716,6 @@ async function eliminarProducto(idProducto){
                 doc(db, "productos", productoEliminar.id)
             );
 
-            productos = productos.filter(function(p){
-                return p.id !== productoEliminar.id;
-            });
-
-            mostrarProductos();
-
             alert("Producto eliminado correctamente");
 
         } catch(error){
@@ -558,43 +731,13 @@ async function eliminarProducto(idProducto){
 
 function buscarProducto(){
 
-    let textoBusqueda = document
-        .getElementById("buscador")
-        .value
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
+    let buscador = document.getElementById("buscador");
 
-    if(textoBusqueda === ""){
-        cantidadRenderProductos = 24;
-        catalogoDirty = true;
-        mostrarProductos();
-        return;
-    }
+    busquedaCatalogo = buscador ? buscador.value : "";
 
-    let productosFiltrados = productos.filter(function(producto){
+   reiniciarRenderCatalogo();
 
-        let textoProducto = (
-            (producto.producto || "") + " " +
-            (producto.codigo || "") + " " +
-            (producto.categoria || "")
-        )
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-
-        return textoProducto.includes(textoBusqueda);
-
-    });
-
-    let productosOriginales = productos;
-
-    productos = productosFiltrados;
-    catalogoDirty = true;
     mostrarProductos();
-
-    productos = productosOriginales;
 
 }
 
@@ -1071,6 +1214,34 @@ function apagarSonidoLogin(){
 
 }
 
+async function hidratarProductosDesdeIndexedDB(){
+
+    if(productosCargadosDesdeIndexedDB){
+        return;
+    }
+
+    productosCargadosDesdeIndexedDB = true;
+
+    let productosLocalDB = await cargarProductosIndexedDB();
+
+    if(productosLocalDB.length === 0){
+        return;
+    }
+
+    productos = productosLocalDB;
+
+    ordenarProductosPorCodigo();
+
+catalogoVersion++;
+
+ultimaFirmaCatalogo = "";
+
+reiniciarRenderCatalogo();
+
+    mostrarProductos();
+
+}
+
 async function iniciarSesion(){
 
     let usuarioInput =
@@ -1142,20 +1313,7 @@ sonidoVenta.load();
     controlarColumnaGanancia();
     aplicarPermisos();
 
-let productosLocalDB = await cargarProductosIndexedDB();
-
-if(productosLocalDB.length > 0){
-    productos = productosLocalDB;
-    ordenarProductosPorCodigo();
-    catalogoDirty = true;
-    mostrarProductos();
-}
-
-setTimeout(function(){
-    if(productos.length === 0){
-        cargarProductosUnaVez();
-    }
-}, 1500);
+await hidratarProductosDesdeIndexedDB();
 
 }, 100);
 
@@ -1273,20 +1431,7 @@ iniciarListenersFirebase();
 
 setTimeout(async function(){
 
-let productosLocalDB = await cargarProductosIndexedDB();
-
-if(productosLocalDB.length > 0){
-    productos = productosLocalDB;
-    ordenarProductosPorCodigo();
-    catalogoDirty = true;
-    mostrarProductos();
-}
-
-setTimeout(function(){
-    if(productos.length === 0){
-        cargarProductosUnaVez();
-    }
-}, 1500);
+await hidratarProductosDesdeIndexedDB();
 
 }, 300);
 
@@ -2385,23 +2530,11 @@ async function anularGastoCaja(idGasto, autorizado = false){
 
 function filtrarCategoria(categoria){
 
-    let tarjetas = document.querySelectorAll(".producto-card");
+    categoriaCatalogo = categoria || "todos";
 
-    tarjetas.forEach(function(tarjeta){
+   reiniciarRenderCatalogo();
 
-        let texto = tarjeta.innerText.toLowerCase();
-
-        if(categoria === "todos" || texto.includes(categoria.toLowerCase())){
-
-            tarjeta.style.setProperty("display", "flex", "important");
-
-        } else {
-
-            tarjeta.style.setProperty("display", "none", "important");
-
-        }
-
-    });
+    mostrarProductos();
 
 }
 
@@ -2764,10 +2897,10 @@ async function guardarProductosIndexedDB(){
     try{
 
         let dbLocal = await abrirDBProductos();
-
         let transaction = dbLocal.transaction(["productos"], "readwrite");
-
         let store = transaction.objectStore("productos");
+
+        store.clear();
 
         productos.forEach(function(producto){
             store.put(producto);
@@ -2818,85 +2951,6 @@ async function cargarProductosIndexedDB(){
 
 }
 
-function guardarCacheProductosSeguro(){
-
-    try{
-
-        let productosCache = productos.map(function(producto){
-            return {
-                id: producto.id,
-                codigo: producto.codigo,
-                producto: producto.producto,
-                categoria: producto.categoria,
-                stock: producto.stock,
-                stockTiendas: producto.stockTiendas,
-                precioCompra: producto.precioCompra,
-                precio: producto.precio
-            };
-        });
-
-        localStorage.setItem("cacheProductos", JSON.stringify(productosCache));
-
-    }catch(error){
-        console.warn("No se pudo guardar caché de productos:", error);
-    }
-
-}
-
-async function cargarProductosUnaVez(){
-
-    try{
-
-        console.time("Descarga Firestore");
-
-        let snapshot = await getDocs(collection(db, "productos"));
-
-        productos = [];
-
-        snapshot.forEach(function(documento){
-            productos.push({
-                id: documento.id,
-                ...documento.data()
-            });
-        });
-
-        console.timeEnd("Descarga Firestore");
-
-        ordenarProductosPorCodigo();
-
-        guardarCacheProductosSeguro();
-
-        catalogoDirty = true;
-
-        mostrarProductos();
-
-    } catch(error){
-
-        console.error("Error cargando productos:", error);
-
-        let cache = [];
-
-        try{
-            cache = JSON.parse(localStorage.getItem("cacheProductos")) || [];
-        }catch(e){
-            cache = [];
-        }
-
-        if(cache.length > 0){
-            productos = cache;
-            ordenarProductosPorCodigo();
-            catalogoDirty = true;
-    mostrarProductos();
-
-            console.warn("Se usaron productos desde caché local.");
-            return;
-        }
-
-        alert("No se pudieron cargar los productos. Revisa tu conexión e intenta actualizar.");
-    }
-
-}
-
 function iniciarListenersFirebase(){
 
     if(listenersFirebaseIniciados){
@@ -2910,50 +2964,37 @@ onSnapshot(
     collection(db, "productos"),
     function(snapshot){
 
-        productos = [];
-
-        snapshot.forEach(function(documento){
-            productos.push({
+        productos = snapshot.docs.map(function(documento){
+            return {
                 id: documento.id,
                 ...documento.data()
-            });
+            };
         });
 
         ordenarProductosPorCodigo();
 
-        if(localStorage.getItem("sesion") === "activa"){
-            
-            catalogoDirty = true;
-            mostrarProductos();
-        }
+        catalogoVersion++;
 
-guardarProductosIndexedDB();
-guardarCacheProductosSeguro();
+        ultimaFirmaCatalogo = "";
+
+        guardarProductosIndexedDB();
+
+        if(localStorage.getItem("sesion") === "activa"){
+          reiniciarRenderCatalogo();
+        mostrarProductos();
+        }
 
     },
 
     function(error){
 
-    console.error("Error en tiempo real productos:", error);
+        console.error("Error en tiempo real productos:", error);
 
-    let cache = [];
+        if(productos.length === 0){
+            hidratarProductosDesdeIndexedDB();
+        }
 
-    try{
-        cache = JSON.parse(localStorage.getItem("cacheProductos")) || [];
-    }catch(e){
-        cache = [];
     }
-
-    if(localStorage.getItem("sesion") === "activa" && cache.length > 0){
-    productos = cache;
-    ordenarProductosPorCodigo();
-    catalogoDirty = true;
-    mostrarProductos();
-    return;
-}
-
-}
-
 )
 );
 
