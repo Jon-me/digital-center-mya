@@ -1255,10 +1255,11 @@ button[onclick="cancelarVenta()"]{
     }
 
     .productos-grid{
-        grid-template-columns: 1fr !important;
-        grid-auto-rows: auto !important;
-        height: 65vh !important;
-    }
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto !important;
+    height: auto !important;
+    max-height: none !important;
+}
 
     .producto-card{
         height: auto !important;
@@ -2115,29 +2116,45 @@ body.rol-vendedor .producto-card .btn-agregar{
     }
 
     .panel-carrito,
-    .panel-productos{
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 22px !important;
-        margin: 0 0 26px 0 !important;
-        border-radius: 24px !important;
-    }
+.panel-productos{
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 22px !important;
+    margin: 0 0 26px 0 !important;
+    border-radius: 24px !important;
+}
+
+.panel-productos{
+    display: flex !important;
+    flex-direction: column !important;
+    height: 82vh !important;
+    overflow: hidden !important;
+}
 
     .panel-productos h3,
     .panel-carrito h3{
         font-size: 30px !important;
     }
 
-    .productos-grid{
-        width: 100% !important;
-        max-width: 100% !important;
-        grid-template-columns: 1fr !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow-y: visible !important;
-        padding: 0 !important;
-        gap: 22px !important;
-    }
+   .productos-grid{
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: 1fr !important;
+
+    flex: 1 !important;
+
+    height: auto !important;
+    max-height: none !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    padding: 0 8px 20px 0 !important;
+    gap: 22px !important;
+
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+}
 
     .producto-card,
     body.rol-vendedor .producto-card{
