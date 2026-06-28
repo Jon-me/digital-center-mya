@@ -2482,22 +2482,24 @@ body.rol-vendedor .producto-card .btn-agregar{
         overflow-x: hidden !important;
 
         display: block !important;
-        -webkit-line-clamp: unset !important;
-        -webkit-box-orient: unset !important;
+    
+        scrollbar-width: thin;
+scrollbar-color: rgba(96,165,250,.55) transparent;
+
     }
 
     .producto-card h3::-webkit-scrollbar{
-        width: 2px !important;
-    }
+    width: 2px;
+}
 
     .producto-card h3::-webkit-scrollbar-track{
         background: transparent !important;
     }
 
     .producto-card h3::-webkit-scrollbar-thumb{
-        background: rgba(96,165,250,0.65) !important;
-        border-radius: 999px !important;
-    }
+    background: rgba(96,165,250,.55);
+    border-radius: 999px;
+}
 
     .producto-card p,
     body.rol-vendedor .producto-card p,
