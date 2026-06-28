@@ -11,11 +11,11 @@
 
    <!-- CSS Principal -->
 
-<link rel="stylesheet" href="style.css?v=CATEGORIAICONS2">
+<link rel="stylesheet" href="style.css?v=FOTOAPP1">
 
 <!-- PWA APP -->
 
-<link rel="manifest" href="/manifest.json?v=CATEGORIAICONS2">
+<link rel="manifest" href="/manifest.json?v=FOTOAPP1">
 
 <link rel="icon" href="icon-192.png">
 
@@ -770,11 +770,40 @@ Ganancia
     placeholder="Precio Venta"
 >
 
-        <input
-    id="imagen"
-    type="file"
-    accept="image/*"
->
+        <div class="imagen-producto-panel">
+
+            <input
+                id="imagen"
+                type="file"
+                accept="image/*"
+                class="input-imagen-producto-oculto"
+                onchange="window.seleccionarImagenProducto('galeria')"
+            >
+
+            <input
+                id="imagenCamara"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                class="input-imagen-producto-oculto"
+                onchange="window.seleccionarImagenProducto('camara')"
+            >
+
+            <div class="imagen-producto-botones">
+                <label for="imagen" class="btn-imagen-producto">
+                    📁 Subir imagen
+                </label>
+
+                <label for="imagenCamara" class="btn-imagen-producto btn-camara-producto">
+                    📷 Tomar foto
+                </label>
+            </div>
+
+            <p id="nombreImagenProducto" class="nombre-imagen-producto">
+                Ninguna imagen seleccionada
+            </p>
+
+        </div>
 
        <button type="button" id="btnGuardarProducto" onclick="window.guardarProducto()">
     Guardar Producto
@@ -897,7 +926,7 @@ Ganancia
     </div>
 </div>
 
-<script type="module" src="script.js?v=CATEGORIAICONS2"></script>
+<script type="module" src="script.js?v=FOTOAPP1"></script>
 
 </body>
 

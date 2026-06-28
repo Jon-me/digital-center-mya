@@ -1230,26 +1230,95 @@ button[onclick="cancelarVenta()"]{
         0 0 35px rgba(96,165,250,0.25) !important;
 }
 
-/* FILE INPUT MÁS LIMPIO */
-#zonaAdmin input[type="file"]{
-    max-width:700px;
+/* SELECTOR DE IMAGEN PRODUCTO - GALERÍA / CÁMARA */
 
-    background: rgba(2,6,23,0.65) !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.35) !important;
-    border-radius: 12px !important;
-    padding: 12px !important;
+.imagen-producto-panel{
+    width: 100%;
+    max-width: 700px;
+    margin: 10px 0 14px 0;
+    padding: 14px;
+
+    background: rgba(2,6,23,0.65);
+    border: 1px solid rgba(96,165,250,0.38);
+    border-radius: 16px;
+
+    box-shadow:
+        0 0 16px rgba(37,99,235,0.24),
+        inset 0 0 14px rgba(96,165,250,0.08);
 }
 
-#zonaAdmin input[type="file"]::file-selector-button{
-    background: linear-gradient(135deg, #1e40af, #2563eb);
-    color: white;
-    border: 1px solid rgba(96,165,250,0.6);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-weight: bold;
+.input-imagen-producto-oculto{
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.imagen-producto-botones{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.btn-imagen-producto{
+    min-height: 46px;
+    padding: 12px 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border-radius: 14px;
     cursor: pointer;
-    margin-right: 12px;
+
+    background: linear-gradient(135deg, #0f172a, #2563eb);
+    border: 1px solid rgba(96,165,250,0.75);
+
+    color: white;
+    font-weight: 900;
+    font-size: 15px;
+    text-align: center;
+
+    box-shadow:
+        0 0 15px rgba(37,99,235,0.45),
+        inset 0 0 12px rgba(96,165,250,0.14);
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease;
+}
+
+.btn-imagen-producto:hover,
+.btn-imagen-producto:active{
+    transform: translateY(-2px) scale(1.02);
+    border-color: rgba(96,165,250,0.95);
+
+    box-shadow:
+        0 0 22px rgba(96,165,250,0.75),
+        inset 0 0 14px rgba(255,255,255,0.12);
+}
+
+.btn-camara-producto{
+    background: linear-gradient(135deg, #064e3b, #16a34a);
+    border-color: rgba(74,222,128,0.78);
+    box-shadow:
+        0 0 15px rgba(34,197,94,0.42),
+        inset 0 0 12px rgba(255,255,255,0.10);
+}
+
+.nombre-imagen-producto{
+    margin: 10px 0 0 0;
+    color: rgba(255,255,255,0.72);
+    font-size: 13px;
+    line-height: 1.25;
+    text-align: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .input-nombre-boleta-carrito{
@@ -2628,6 +2697,30 @@ scrollbar-color: rgba(96,165,250,.55) transparent;
         border-radius: 11px !important;
     }
 
+    .imagen-producto-panel{
+        max-width: 100% !important;
+        margin: 6px 0 10px 0 !important;
+        padding: 10px !important;
+        border-radius: 13px !important;
+    }
+
+    .imagen-producto-botones{
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .btn-imagen-producto{
+        min-height: 38px !important;
+        padding: 9px 10px !important;
+        font-size: 12px !important;
+        border-radius: 12px !important;
+    }
+
+    .nombre-imagen-producto{
+        font-size: 11px !important;
+        margin-top: 8px !important;
+    }
+
     #zonaAdmin button,
     #panelCajaDiaria button,
     #panelConfiguracion button,
@@ -3098,5 +3191,33 @@ scrollbar-color: rgba(96,165,250,.55) transparent;
         transform: scale(0.82) !important;
         transform-origin: bottom right !important;
         z-index: 99998 !important;
+    }
+}
+
+.foto-producto-actions{
+    width: 100%;
+    max-width: 700px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px auto 14px auto;
+}
+
+.foto-producto-actions button{
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+.foto-producto-actions small{
+    grid-column: 1 / -1;
+    color: rgba(255,255,255,.75);
+    text-align: center;
+    font-weight: 700;
+}
+
+@media(max-width:768px){
+    .foto-producto-actions{
+        grid-template-columns: 1fr;
+        gap: 8px;
     }
 }

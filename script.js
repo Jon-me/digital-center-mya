@@ -516,6 +516,7 @@ async function guardarProducto(){
     let precioCompraInput = document.getElementById("precioCompra");
     let precioInput = document.getElementById("precio");
     let imagenInput = document.getElementById("imagen");
+    let imagenCamaraInput = document.getElementById("imagenCamara");
 
     if(
         !codigoInput ||
@@ -525,8 +526,11 @@ async function guardarProducto(){
         !stockSucursalInput ||
         !precioCompraInput ||
         !precioInput ||
-        !imagenInput
-    ){
+        !imagenInput ||
+        !imagenCamaraInput
+    )
+
+    {
         alert("ERROR: Hay un input del formulario que no existe en el HTML.");
         return;
     }
@@ -542,7 +546,9 @@ async function guardarProducto(){
     let precioCompra = precioCompraInput.value;
     let precio = precioInput.value;
 
-    let archivo = imagenInput.files[0];
+    let archivo =
+    imagenCamaraInput.files[0] ||
+    imagenInput.files[0];
 
     if(
         codigo.trim() === "" ||
@@ -649,8 +655,38 @@ async function guardarProducto(){
     document.getElementById("precioCompra").value = "";
     document.getElementById("precio").value = "";
     document.getElementById("imagen").value = "";
+    document.getElementById("imagenCamara").value = "";
+    document.getElementById("nombreImagenProducto").innerHTML = "Ninguna imagen seleccionada";
 
 }
+
+function seleccionarImagenProducto(origen){
+
+    let imagenInput = document.getElementById("imagen");
+    let imagenCamaraInput = document.getElementById("imagenCamara");
+    let nombreImagenProducto = document.getElementById("nombreImagenProducto");
+
+    if(origen === "galeria"){
+        imagenCamaraInput.value = "";
+    }
+
+    if(origen === "camara"){
+        imagenInput.value = "";
+    }
+
+    let archivo =
+        imagenCamaraInput.files[0] ||
+        imagenInput.files[0];
+
+    if(nombreImagenProducto){
+        nombreImagenProducto.innerHTML = archivo
+            ? archivo.name
+            : "Ninguna imagen seleccionada";
+    }
+
+}
+
+window.seleccionarImagenProducto = seleccionarImagenProducto;
 
 window.guardarProducto = guardarProducto;
 
