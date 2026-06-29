@@ -11,11 +11,11 @@
 
    <!-- CSS Principal -->
 
-<link rel="stylesheet" href="style.css?v=FOTOAPP1">
+<link rel="stylesheet" href="style.css?v=PRODUCTOSPREMIUM2">
 
 <!-- PWA APP -->
 
-<link rel="manifest" href="/manifest.json?v=FOTOAPP1">
+<link rel="manifest" href="/manifest.json?v=PRODUCTOSPREMIUM2">
 
 <link rel="icon" href="icon-192.png">
 
@@ -337,19 +337,83 @@
 
 </div>
 
-    <div class="panel-productos">
-
-      <h3>📦 Productos</h3>
-
-        <div id="tablaProductos" class="productos-grid"></div>
-
-    </div>
+    <section class="panel-productos productos-premium-panel" aria-label="Productos">
+    <div id="tablaProductos" class="productos-grid"></div>
+</section>
 
 </div>
 
-<button onclick="abrirModalPanel('panelHistorialVentas')" class="btn-toggle-producto">
-    📋 Historial de Ventas
-</button>
+<section class="centro-control-app centro-control-premium" aria-label="Centro de Control Premium">
+
+    <div class="centro-control-orbita"></div>
+    <div class="centro-control-orbita centro-control-orbita-2"></div>
+
+    <div class="centro-control-header premium-header">
+        <div class="control-logo-premium">
+            <span>⚡</span>
+        </div>
+
+        <div class="control-header-texto">
+            <span class="control-eyebrow">Panel administrativo</span>
+            <h3>Centro de Control</h3>
+            <p>Accesos rápidos para gestionar ventas, caja, reportes e inventario.</p>
+        </div>
+    </div>
+
+    <div class="centro-control-grid premium-grid">
+
+        <button onclick="abrirModalPanel('panelHistorialVentas')" class="btn-toggle-producto control-card premium-card control-historial">
+            <span class="control-icono">📋</span>
+            <strong>Historial</strong>
+            <small>Ventas realizadas</small>
+            <em>Ver movimientos</em>
+        </button>
+
+        <button onclick="abrirModalPanel('panelCajaDiaria')" class="btn-toggle-producto control-card premium-card control-caja">
+            <span class="control-icono">💰</span>
+            <strong>Caja</strong>
+            <small>Ingresos y cierre</small>
+            <em>Control diario</em>
+        </button>
+
+        <button onclick="abrirModalPanel('panelReportes')" class="btn-toggle-producto control-card premium-card control-reportes">
+            <span class="control-icono">📊</span>
+            <strong>Reportes</strong>
+            <small>Estadísticas</small>
+            <em>Ventas y métodos</em>
+        </button>
+
+        <button onclick="abrirModalPanel('panelDashboardEjecutivo')" class="btn-toggle-producto control-card premium-card control-dashboard">
+            <span class="control-icono">🧠</span>
+            <strong>Ejecutivo</strong>
+            <small>Resumen gerencial</small>
+            <em>Vista del negocio</em>
+        </button>
+
+        <button onclick="abrirModalPanel('panelReporteVendedores')" class="btn-toggle-producto control-card premium-card control-vendedor">
+            <span class="control-icono">👤</span>
+            <strong>Vendedor</strong>
+            <small>Rendimiento</small>
+            <em>Equipo comercial</em>
+        </button>
+
+        <button onclick="abrirModalPanel('zonaAdmin')" class="btn-toggle-producto control-card premium-card control-productos">
+            <span class="control-icono">⚙️</span>
+            <strong>Productos</strong>
+            <small>Inventario</small>
+            <em>Gestión de stock</em>
+        </button>
+
+        <button onclick="abrirModalPanel('panelGarantias')" class="btn-toggle-producto control-card premium-card control-garantias">
+            <span class="control-icono">🛡️</span>
+            <strong>Garantías</strong>
+            <small>Soporte postventa</small>
+            <em>Atención al cliente</em>
+        </button>
+
+    </div>
+
+</section>
 
 <div id="panelHistorialVentas" style="display:none;">
 
@@ -383,10 +447,6 @@ Ganancia
 </table>
 
 </div>
-
-<button onclick="abrirModalPanel('panelReportes')" class="btn-toggle-producto">
-    📊 Reportes y Estadísticas
-</button>
 
 <div id="panelReportes" style="display:none;">
 
@@ -469,10 +529,6 @@ Ganancia
 
 </div>
 
-<button onclick="abrirModalPanel('panelDashboardEjecutivo')" class="btn-toggle-producto">
-    🧠 Dashboard Ejecutivo
-</button>
-
 <div id="panelDashboardEjecutivo" style="display:none;">
 
 <h2 id="tituloDashboardEjecutivo">
@@ -510,10 +566,6 @@ Ganancia
 
 </div>
 
-<button onclick="abrirModalPanel('panelReporteVendedores')" class="btn-toggle-producto">
-    👤 Reporte por Vendedor
-</button>
-
 <div id="panelReporteVendedores" style="display:none;">
 
 <h3>👤 Reporte por Vendedor</h3>
@@ -531,10 +583,6 @@ Ganancia
     <tbody id="reporteVendedoresTabla"></tbody>
 </table>
 </div>
-
-<button onclick="abrirModalPanel('panelCajaDiaria')" class="btn-toggle-producto">
-    💰 Caja Diaria
-</button>
 
 <div id="panelCajaDiaria" style="display:none;">
 
@@ -689,13 +737,6 @@ Ganancia
 
 </div>
 
-<button onclick="abrirModalPanel('zonaAdmin')" class="btn-toggle-producto">
-   ⚙️ Gestión de Productos
-</button>
-
-<button onclick="abrirModalPanel('panelGarantias')" class="btn-toggle-producto">
-    🛡️ Garantías
-</button>
 
 <div id="panelGarantias" style="display:none;">
 
@@ -926,7 +967,7 @@ Ganancia
     </div>
 </div>
 
-<script type="module" src="script.js?v=FOTOAPP1"></script>
+<script type="module" src="script.js?v=PRODUCTOSPREMIUM2"></script>
 
 </body>
 
