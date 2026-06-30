@@ -1357,9 +1357,15 @@ await hidratarProductosDesdeIndexedDB();
 
 function aplicarPermisos(){
 
+    const centroControl = document.getElementById("centroControlAdmin");
+
     let rol = localStorage.getItem("rolActivo");
 
     if(rol === "vendedor"){
+
+    if(centroControl){
+        centroControl.style.display = "none";
+    }
 
         document.getElementById("dashboardAdmin").style.display = "none";
         document.getElementById("dashboardReportes").style.display = "none";
@@ -1402,6 +1408,10 @@ if(btnBorrarHistorial){
         });
 
     } else {
+
+        if(centroControl){
+        centroControl.style.display = "block";
+    }
 
     document.getElementById("dashboardAdmin").style.display = "grid";
     document.getElementById("tituloReportes").style.display = "block";
@@ -2136,23 +2146,13 @@ async function finalizarEImprimir(){
         return;
     }
 
-    await new Promise(function(resolve){
-        setTimeout(resolve, 1500);
-    });
-
-    let confirmar = confirm(
-        "¿La boleta se imprimió correctamente?"
-    );
-
-    if(!confirmar){
-        alert("Venta no guardada. Puedes volver a imprimir.");
-        return;
-    }
-
     await finalizarVenta("B001-" + numeroBoleta);
 
     cerrarDatosClienteBoleta();
-    cerrarModalPanel();
+
+    if(typeof cerrarModalPanel === "function"){
+        cerrarModalPanel();
+    }
 
     window.scrollTo({
         top: 0,
@@ -2160,6 +2160,8 @@ async function finalizarEImprimir(){
     });
 
 }
+
+window.finalizarEImprimir = finalizarEImprimir;
 
 function obtenerDetallePagosVenta(venta){
 
@@ -2280,6 +2282,12 @@ function mostrarHistorialVentas(){
     }
 
     <td>
+    ${
+        venta.numeroBoleta && venta.numeroBoleta !== "SIN IMPRESION"
+        ? `<button onclick="reimprimirBoletaVenta(${indexReal})">🧾 Reimprimir</button>`
+        : ""
+    }
+
     <button onclick="anularVenta(${indexReal})">
         ↩️ Anular
     </button>
@@ -2301,6 +2309,186 @@ function mostrarHistorialVentas(){
     }
 
     tabla.innerHTML = html;
+
+}
+
+function reimprimirBoletaVenta(index){
+
+    let venta = historialVentas[index];
+
+    if(!venta){
+        alert("No se encontró la venta");
+        return;
+    }
+
+    if(!venta.numeroBoleta || venta.numeroBoleta === "SIN IMPRESION"){
+        alert("Esta venta no tiene boleta para reimprimir");
+        return;
+    }
+
+    let detallePagos = obtenerDetallePagosVenta(venta);
+
+    let contenido = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reimpresión ${venta.numeroBoleta}</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:white;
+    padding:0;
+}
+.boleta{
+    width:280px;
+    margin:auto;
+    padding:15px;
+}
+.logo-boleta{
+    width:220px;
+    display:block;
+    margin:0 auto 10px auto;
+}
+h2{
+    text-align:center;
+    margin:5px 0;
+}
+.subtitulo,.datos,.footer{
+    font-size:12px;
+    line-height:1.5;
+}
+.linea{
+    border-top:1px dashed #000;
+    margin:10px 0;
+}
+.producto{
+    font-size:13px;
+    margin-bottom:8px;
+}
+.producto-nombre{
+    font-weight:bold;
+}
+.producto-detalle{
+    display:flex;
+    justify-content:space-between;
+}
+.total{
+    font-size:20px;
+    font-weight:bold;
+    text-align:center;
+    margin-top:12px;
+}
+.qr-container{
+    text-align:center;
+    margin-top:15px;
+}
+@media print{
+    body{ margin:0; }
+}
+</style>
+</head>
+<body>
+
+<div class="boleta">
+
+<img src="logo-boleta.png" class="logo-boleta">
+
+<h2>DIGITAL CENTER M&A</h2>
+
+<div style="text-align:center;font-weight:bold;">
+REIMPRESIÓN DE BOLETA
+</div>
+
+<div class="subtitulo" style="text-align:center;">
+<strong>RUC:</strong> 10027914077<br>
+Calle Chepa Santos 601<br>
+Frente al Banco de la Nación<br>
+WhatsApp: +51 913267246
+</div>
+
+<div class="linea"></div>
+
+<div class="datos">
+<strong>BOLETA N°:</strong> ${venta.numeroBoleta}<br>
+<strong>Fecha:</strong> ${venta.fecha}<br>
+<strong>Hora:</strong> ${venta.hora}<br>
+<strong>Atendido por:</strong> ${venta.vendedor || "Vendedor"}<br>
+<strong>Cliente:</strong> ${venta.clienteNombre || "CLIENTE GENERAL"}<br>
+<strong>DNI:</strong> ${venta.clienteDni || "-"}<br>
+<strong>Método de Pago:</strong><br>
+${detallePagos}
+</div>
+
+<div class="linea"></div>
+`;
+
+    if(venta.productos){
+        venta.productos.forEach(function(item){
+            contenido += `
+<div class="producto">
+    <div class="producto-nombre">${item.nombreBoleta || item.producto}</div>
+    <div class="producto-detalle">
+        <span>${item.cantidad} x S/ ${Number(item.precio || 0).toFixed(2)}</span>
+        <span>S/ ${Number(item.subtotal || 0).toFixed(2)}</span>
+    </div>
+</div>
+`;
+        });
+    }
+
+    contenido += `
+<div class="linea"></div>
+
+<div class="datos">
+<strong>Descuento:</strong> S/ ${Number(venta.descuento || 0).toFixed(2)}
+</div>
+
+<div class="total">
+TOTAL: S/ ${Number(venta.total || 0).toFixed(2)}
+</div>
+
+<div class="qr-container">
+<img src="qr-whatsapp.png" width="150">
+<p>Soporte, garantías y consultas aquí</p>
+</div>
+
+<div class="footer" style="text-align:center;">
+Conserve esta boleta para cualquier garantía.
+</div>
+
+</div>
+
+</body>
+</html>
+`;
+
+    let iframe = document.createElement("iframe");
+
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+
+    document.body.appendChild(iframe);
+
+    let documento = iframe.contentWindow.document;
+
+    documento.open();
+    documento.write(contenido);
+    documento.close();
+
+    setTimeout(function(){
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+
+        setTimeout(function(){
+            document.body.removeChild(iframe);
+        }, 1000);
+
+    }, 500);
 
 }
 
@@ -4129,6 +4317,7 @@ window.abrirTransferenciaStock = abrirTransferenciaStock;
 window.cerrarTransferenciaStock = cerrarTransferenciaStock;
 window.confirmarTransferenciaStock = confirmarTransferenciaStock;
 window.cargarMasProductos = cargarMasProductos;
+window.reimprimirBoletaVenta = reimprimirBoletaVenta;
 
 async function activarNotificaciones(){
 
@@ -4247,6 +4436,23 @@ async function toggleSonido(){
 window.toggleSonido = toggleSonido;
 
 function abrirModalPanel(idPanel){
+
+    const rol = localStorage.getItem("rolActivo");
+
+const panelesSoloAdmin = [
+    "panelReportes",
+    "panelDashboardEjecutivo",
+    "panelReporteVendedores",
+    "zonaAdmin",
+    "panelGarantias"
+];
+
+if(
+    rol === "vendedor" &&
+    panelesSoloAdmin.includes(idPanel)
+){
+    return;
+}
 
     let panel = document.getElementById(idPanel);
     let modal = document.getElementById("modalPanel");
@@ -4381,7 +4587,11 @@ function abrirDatosClienteBoleta(){
     modal.style.display = "flex";
 
     setTimeout(function(){
-        document.getElementById("clienteNombre").focus();
+        let clienteNombre = document.getElementById("clienteNombre");
+
+        if(clienteNombre){
+            clienteNombre.focus();
+        }
     }, 100);
 
 }
@@ -4408,15 +4618,306 @@ function cerrarDatosClienteBoleta(){
 
 }
 
-function abrirCarritoApp(){
-    document.body.classList.add("carrito-app-abierto");
-}
-
-function cerrarCarritoApp(){
-    document.body.classList.remove("carrito-app-abierto");
-}
-
 window.abrirDatosClienteBoleta = abrirDatosClienteBoleta;
 window.cerrarDatosClienteBoleta = cerrarDatosClienteBoleta;
-window.abrirCarritoApp = abrirCarritoApp;
-window.cerrarCarritoApp = cerrarCarritoApp;
+
+function prepararCarritoVentanaFinal(){
+
+    const panel = document.querySelector(".panel-carrito");
+    const titulo = document.getElementById("tituloCarrito");
+    const resizeHandle = document.querySelector(".carrito-resize-handle");
+
+    if(!panel || !titulo){
+        return;
+    }
+
+    if(panel.dataset.fixFinalInit === "true"){
+        return;
+    }
+
+    panel.dataset.fixFinalInit = "true";
+
+    function esMovil(){
+        return window.innerWidth <= 768;
+    }
+
+    function limitar(valor, minimo, maximo){
+        return Math.min(Math.max(valor, minimo), maximo);
+    }
+
+    function aplicarEstado(){
+        let estado = null;
+
+        try{
+            estado = JSON.parse(localStorage.getItem("carritoVentanaEstado"));
+        }catch(error){
+            estado = null;
+        }
+
+        const anchoDefault = window.innerWidth - 24;
+        const altoDefault = Math.round(window.innerHeight * 0.42);
+
+        const ancho = limitar(
+            Number(estado?.w || anchoDefault),
+            240,
+            window.innerWidth - 24
+        );
+
+        const alto = limitar(
+            Number(estado?.h || altoDefault),
+            90,
+            Math.round(window.innerHeight * 0.75)
+        );
+
+        const x = limitar(
+            Number(estado?.x || 12),
+            8,
+            window.innerWidth - ancho - 8
+        );
+
+        const y = limitar(
+            Number(estado?.y || (window.innerHeight - alto - 86)),
+            68,
+            window.innerHeight - 86
+        );
+
+        panel.style.setProperty("--carrito-x", x + "px");
+        panel.style.setProperty("--carrito-y", y + "px");
+        panel.style.setProperty("--carrito-w", ancho + "px");
+        panel.style.setProperty("--carrito-h", alto + "px");
+    }
+
+    function guardarEstado(){
+        const rect = panel.getBoundingClientRect();
+
+        localStorage.setItem(
+            "carritoVentanaEstado",
+            JSON.stringify({
+                x: rect.left,
+                y: rect.top,
+                w: rect.width,
+                h: panel.offsetHeight
+            })
+        );
+    }
+
+    aplicarEstado();
+
+    let modo = null;
+    let inicioX = 0;
+    let inicioY = 0;
+    let rectInicial = null;
+
+    titulo.addEventListener("pointerdown", function(evento){
+
+        if(!esMovil()){
+            return;
+        }
+
+        modo = "mover";
+        inicioX = evento.clientX;
+        inicioY = evento.clientY;
+        rectInicial = panel.getBoundingClientRect();
+
+        panel.classList.add("carrito-arrastrando");
+
+        try{
+            titulo.setPointerCapture(evento.pointerId);
+        }catch(error){}
+
+    });
+
+    titulo.addEventListener("pointermove", function(evento){
+
+        if(modo !== "mover" || !rectInicial){
+            return;
+        }
+
+        evento.preventDefault();
+
+        const nuevoX = limitar(
+            rectInicial.left + evento.clientX - inicioX,
+            8,
+            window.innerWidth - rectInicial.width - 8
+        );
+
+        const nuevoY = limitar(
+            rectInicial.top + evento.clientY - inicioY,
+            68,
+            window.innerHeight - 86
+        );
+
+        panel.style.setProperty("--carrito-x", nuevoX + "px");
+        panel.style.setProperty("--carrito-y", nuevoY + "px");
+
+    });
+
+    function terminarMovimiento(evento){
+
+        if(modo !== "mover"){
+            return;
+        }
+
+        modo = null;
+        rectInicial = null;
+
+        panel.classList.remove("carrito-arrastrando");
+
+        try{
+            titulo.releasePointerCapture(evento.pointerId);
+        }catch(error){}
+
+        guardarEstado();
+
+    }
+
+    titulo.addEventListener("pointerup", terminarMovimiento);
+    titulo.addEventListener("pointercancel", terminarMovimiento);
+
+    if(resizeHandle){
+
+        resizeHandle.addEventListener("pointerdown", function(evento){
+
+            if(!esMovil()){
+                return;
+            }
+
+            modo = "resize";
+            inicioX = evento.clientX;
+            inicioY = evento.clientY;
+            rectInicial = panel.getBoundingClientRect();
+
+            panel.classList.add("carrito-redimensionando");
+
+            try{
+                resizeHandle.setPointerCapture(evento.pointerId);
+            }catch(error){}
+
+        });
+
+        resizeHandle.addEventListener("pointermove", function(evento){
+
+            if(modo !== "resize" || !rectInicial){
+                return;
+            }
+
+            evento.preventDefault();
+
+            const nuevoAncho = limitar(
+                rectInicial.width + evento.clientX - inicioX,
+                240,
+                window.innerWidth - rectInicial.left - 8
+            );
+
+            const nuevoAlto = limitar(
+                rectInicial.height + evento.clientY - inicioY,
+                90,
+                Math.round(window.innerHeight * 0.75)
+            );
+
+            panel.style.setProperty("--carrito-w", nuevoAncho + "px");
+            panel.style.setProperty("--carrito-h", nuevoAlto + "px");
+
+        });
+
+        function terminarResize(evento){
+
+            if(modo !== "resize"){
+                return;
+            }
+
+            modo = null;
+            rectInicial = null;
+
+            panel.classList.remove("carrito-redimensionando");
+
+            try{
+                resizeHandle.releasePointerCapture(evento.pointerId);
+            }catch(error){}
+
+            guardarEstado();
+
+        }
+
+        resizeHandle.addEventListener("pointerup", terminarResize);
+        resizeHandle.addEventListener("pointercancel", terminarResize);
+
+    }
+
+    window.addEventListener("resize", aplicarEstado);
+
+}
+
+window.abrirCarritoApp = function(){
+
+    const panel = document.querySelector(".panel-carrito");
+
+    if(!panel){
+        return;
+    }
+
+    prepararCarritoVentanaFinal();
+
+    document.body.classList.add("carrito-abierto");
+    document.body.classList.add("carrito-app-abierto");
+
+    panel.classList.add("carrito-visible");
+
+    panel.style.setProperty("display", "block", "important");
+    panel.style.setProperty("opacity", "1", "important");
+    panel.style.setProperty("pointer-events", "auto", "important");
+    panel.style.setProperty("transform", "translateY(0)", "important");
+
+};
+
+window.cerrarCarritoApp = function(){
+
+    const panel = document.querySelector(".panel-carrito");
+
+    document.body.classList.remove("carrito-abierto");
+    document.body.classList.remove("carrito-app-abierto");
+
+    if(panel){
+        panel.classList.remove("carrito-visible");
+        panel.style.removeProperty("opacity");
+        panel.style.removeProperty("pointer-events");
+        panel.style.removeProperty("transform");
+    }
+
+};
+
+document.addEventListener("DOMContentLoaded", prepararCarritoVentanaFinal);
+
+setTimeout(prepararCarritoVentanaFinal, 700);
+
+/* FIN CARRITOFIX1 */
+
+function toggleCategoriasMenu(){
+    document.body.classList.toggle("categorias-menu-abierto");
+}
+
+function cerrarCategoriasMenu(){
+    document.body.classList.remove("categorias-menu-abierto");
+}
+
+document.addEventListener("click", function(evento){
+    const menuCategorias = document.getElementById("categoriasMenuApp");
+    const botonCategorias = document.querySelector(".btn-categorias-menu");
+
+    if(!menuCategorias || !botonCategorias || !document.body.classList.contains("categorias-menu-abierto")){
+        return;
+    }
+
+    if(!menuCategorias.contains(evento.target) && !botonCategorias.contains(evento.target)){
+        cerrarCategoriasMenu();
+    }
+});
+
+document.addEventListener("keydown", function(evento){
+    if(evento.key === "Escape"){
+        cerrarCategoriasMenu();
+    }
+});
+
+window.toggleCategoriasMenu = toggleCategoriasMenu;
+window.cerrarCategoriasMenu = cerrarCategoriasMenu;

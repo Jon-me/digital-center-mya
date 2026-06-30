@@ -11,11 +11,11 @@
 
    <!-- CSS Principal -->
 
-<link rel="stylesheet" href="style.css?v=PRODUCTOSPREMIUM2">
+<link rel="stylesheet" href="style.css?v=BOLETAFIX3">
 
 <!-- PWA APP -->
 
-<link rel="manifest" href="/manifest.json?v=PRODUCTOSPREMIUM2">
+<link rel="manifest" href="/manifest.json?v=BOLETAFIX3">
 
 <link rel="icon" href="icon-192.png">
 
@@ -35,8 +35,6 @@
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap"
     rel="stylesheet"
 >
-
-</head>
 
 <body>
 
@@ -78,34 +76,69 @@
 
    <div class="container" id="sistema" style="display: none;">
 
-    <div class="barra-superior">
+<section class="app-header-pro header-dios-pro" aria-label="Encabezado principal">
 
-    <button onclick="cerrarSesion()">
-        Cerrar Sesión
-    </button>
+    <div class="header-dios-bg"></div>
+    <div class="header-dios-grid"></div>
 
-    <button onclick="actualizarSistema()" class="btn-actualizar-sistema">
-        🔄 Actualizar Sistema
-    </button>
+    <div class="barra-superior app-actions-pro header-actions-dios">
 
-</div>
+        <button onclick="cerrarSesion()" class="btn-session-pro">
+            <span class="btn-action-icon">↪</span>
+            <span>Cerrar Sesión</span>
+        </button>
 
-<div class="hero-banner">
-    <h1>Digital Center M&A</h1>
-</div>
+        <div class="logo-ma-dios" aria-label="Logo M&A">
+            <span class="logo-ma-m">M</span>
+            <span class="logo-ma-a">A</span>
+        </div>
 
-<input 
-    type="text"
-    id="buscador"
-    placeholder="🔍 Buscar producto..."
-    onkeyup="buscarProducto()"
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    spellcheck="false"
->
+        <button onclick="actualizarSistema()" class="btn-actualizar-sistema btn-update-pro">
+            <span class="btn-action-icon">↻</span>
+            <span>Actualizar Sistema</span>
+        </button>
 
-<div class="categorias-scroll-wrap">
+    </div>
+
+    <div class="hero-banner hero-banner-pro hero-dios">
+        <div class="hero-dios-shield">✦</div>
+
+        <h1>
+            <span class="brand-word-digital">Digital</span>
+            <span class="brand-word-center">Center</span>
+            <span class="brand-word-ma">M&A</span>
+        </h1>
+
+        <div class="hero-dios-line"></div>
+
+        <div class="hero-dios-features">
+            <span>🛒 Ventas</span>
+            <span>📦 Inventario</span>
+            <span>💳 Caja</span>
+            <span>🛡️ Control</span>
+        </div>
+    </div>
+
+    <div class="search-pro-wrap search-dios-wrap">
+        <span class="search-dios-icon">⌕</span>
+
+        <input 
+            type="text"
+            id="buscador"
+            placeholder="Buscar producto..."
+            onkeyup="buscarProducto()"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        >
+
+        <button type="button" class="search-dios-filter btn-categorias-menu" onclick="toggleCategoriasMenu()" aria-label="Abrir categorías">☰</button>
+    </div>
+
+</section>
+
+<div class="categorias-scroll-wrap categorias-menu-app" id="categoriasMenuApp">
     <div class="categorias-pos categorias-scroll">
 
         <!-- TODOS -->
@@ -203,6 +236,8 @@
        <button onclick="abrirCobroVenta()">
     💳 Cobrar Venta
 </button>
+
+<div class="carrito-resize-handle" title="Redimensionar carrito"></div>
 
 </div>
 
@@ -315,25 +350,7 @@
     <button onclick="abrirDatosClienteBoleta()">🧾 Cliente pide boleta</button>
 </div>
 
-<div id="modalDatosClienteBoleta" class="modal-boleta-cliente" style="display:none;">
 
-    <div class="modal-boleta-contenido">
-
-        <button class="cerrar-boleta-cliente" onclick="cerrarDatosClienteBoleta()">X</button>
-
-        <h2>👤 Datos del Cliente</h2>
-
-        <input id="clienteNombre" type="text" placeholder="👤 Nombre del Cliente" autocomplete="off">
-
-        <input id="clienteDni" type="text" placeholder="🪪 DNI del Cliente" autocomplete="off">
-
-        <button class="btn-finalizar-boleta" onclick="finalizarEImprimir()">
-            🧾 Finalizar + Imprimir
-        </button>
-
-    </div>
-
-</div>
 
 </div>
 
@@ -343,8 +360,11 @@
 
 </div>
 
-<section class="centro-control-app centro-control-premium" aria-label="Centro de Control Premium">
-
+<section
+    id="centroControlAdmin"
+    class="centro-control-app centro-control-premium"
+    aria-label="Centro de Control Premium">
+    
     <div class="centro-control-orbita"></div>
     <div class="centro-control-orbita centro-control-orbita-2"></div>
 
@@ -967,7 +987,27 @@ Ganancia
     </div>
 </div>
 
-<script type="module" src="script.js?v=PRODUCTOSPREMIUM2"></script>
+<div id="modalDatosClienteBoleta" class="modal-boleta-cliente" style="display:none;">
+
+    <div class="modal-boleta-contenido">
+
+        <button class="cerrar-boleta-cliente" onclick="cerrarDatosClienteBoleta()">X</button>
+
+        <h2>👤 Datos del Cliente</h2>
+
+        <input id="clienteNombre" type="text" placeholder="👤 Nombre del Cliente" autocomplete="off">
+
+        <input id="clienteDni" type="text" placeholder="🪪 DNI del Cliente" autocomplete="off">
+
+        <button class="btn-finalizar-boleta" onclick="finalizarEImprimir()">
+            🧾 Finalizar + Imprimir
+        </button>
+
+    </div>
+
+</div>
+
+<script type="module" src="script.js?v=BOLETAFIX3"></script>
 
 </body>
 
