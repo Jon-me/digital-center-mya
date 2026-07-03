@@ -1,7 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-
 import {
-    getFirestore,
+    db,
+    messaging,
+    storage,
+    vapidKey,
     collection,
     addDoc,
     onSnapshot,
@@ -13,51 +14,29 @@ import {
     runTransaction,
     query,
     where,
-    getDocs
-
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-import {
-    getMessaging,
+    getDocs,
     getToken,
-    onMessage
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
-
-import {
-    getStorage,
+    onMessage,
     ref,
     uploadBytes,
     getDownloadURL,
     deleteObject
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyD_vUmAunFhTZH24SfCZMST5PVRBcAMMNI",
-    authDomain: "digital-center-mya.firebaseapp.com",
-    projectId: "digital-center-mya",
- storageBucket: "digital-center-mya.firebasestorage.app",
-    messagingSenderId: "52765537655",
-    appId: "1:52765537655:web:c0d0f6f5449e3cdc339d72",
-    measurementId: "G-NLS4F507HM"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-const messaging = getMessaging(app);
-
-const storage = getStorage(app);
-
-const vapidKey = "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzLwb4FqPkz0oFFI3lgD5l21infE";
+} from "./js/firebase.js";
 
 let usuarios = [
 
-    {
-        usuario: "Judith",
-        password: "1234",
-        rol: "vendedor",
-        nombreCompleto: "Judith N."
+     {
+        usuario: "Jonatan",
+        password: "262214",
+        rol: "admin",
+        nombreCompleto: "Jonatan Távara"
+    },
+
+     {
+        usuario: "Mercy",
+        password: "251419",
+        rol: "admin",
+        nombreCompleto: "Mercy Villegas"
     },
 
     {
@@ -1252,6 +1231,8 @@ async function iniciarSesion(){
     let usuarioEncontrado = null;
 
     // 1. Buscar primero en Firebase
+try{
+
     let usuarioRef = doc(db, "usuarios", usuarioInput);
     let usuarioSnap = await getDoc(usuarioRef);
 
@@ -1264,6 +1245,12 @@ async function iniciarSesion(){
         }
 
     }
+
+}catch(error){
+
+    console.warn("No se pudo leer usuario desde Firebase. Se usará login local si existe.", error);
+
+}
 
     // 2. Si no está en Firebase, buscar vendedores locales
     if(!usuarioEncontrado){
