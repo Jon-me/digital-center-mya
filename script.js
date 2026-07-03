@@ -394,8 +394,6 @@ function reiniciarRenderCatalogo(){
 
 function mostrarProductos(){
 
-    console.time("Render productos");
-
     let tabla = document.getElementById("tablaProductos");
 
     if(!tabla){
@@ -417,7 +415,6 @@ let firmaCatalogo =
 
     if(firmaCatalogo === ultimaFirmaCatalogo){
         catalogoDirty = false;
-        console.timeEnd("Render productos");
         return;
     }
 
@@ -445,8 +442,6 @@ if (modoRenderCatalogo === "completo") {
 modoRenderCatalogo = "completo";
 
 actualizarDashboard();
-
-console.timeEnd("Render productos");
 
 }
 
@@ -516,8 +511,7 @@ async function guardarProducto(){
     let precioCompraInput = document.getElementById("precioCompra");
     let precioInput = document.getElementById("precio");
     let imagenInput = document.getElementById("imagen");
-    let imagenCamaraInput = document.getElementById("imagenCamara");
-
+    
     if(
         !codigoInput ||
         !productoInput ||
@@ -526,8 +520,7 @@ async function guardarProducto(){
         !stockSucursalInput ||
         !precioCompraInput ||
         !precioInput ||
-        !imagenInput ||
-        !imagenCamaraInput
+        !imagenInput
     )
 
     {
@@ -535,9 +528,9 @@ async function guardarProducto(){
         return;
     }
 
-    let codigo = codigoInput.value;
-    let producto = productoInput.value;
-    let categoria = categoriaInput.value;
+    let codigo = codigoInput.value.trim();
+    let producto = productoInput.value.trim();
+    let categoria = categoriaInput.value.trim();
 
     let stockPrincipal = stockPrincipalInput.value;
     let stockSucursal = stockSucursalInput.value;
@@ -546,10 +539,8 @@ async function guardarProducto(){
     let precioCompra = precioCompraInput.value;
     let precio = precioInput.value;
 
-    let archivo =
-    imagenCamaraInput.files[0] ||
-    imagenInput.files[0];
-
+    let archivo = imagenInput.files[0];
+    
     if(
         codigo.trim() === "" ||
         producto.trim() === "" ||
@@ -655,28 +646,16 @@ async function guardarProducto(){
     document.getElementById("precioCompra").value = "";
     document.getElementById("precio").value = "";
     document.getElementById("imagen").value = "";
-    document.getElementById("imagenCamara").value = "";
     document.getElementById("nombreImagenProducto").innerHTML = "Ninguna imagen seleccionada";
 
 }
 
-function seleccionarImagenProducto(origen){
+function seleccionarImagenProducto(){
 
     let imagenInput = document.getElementById("imagen");
-    let imagenCamaraInput = document.getElementById("imagenCamara");
     let nombreImagenProducto = document.getElementById("nombreImagenProducto");
 
-    if(origen === "galeria"){
-        imagenCamaraInput.value = "";
-    }
-
-    if(origen === "camara"){
-        imagenInput.value = "";
-    }
-
-    let archivo =
-        imagenCamaraInput.files[0] ||
-        imagenInput.files[0];
+    let archivo = imagenInput.files[0];
 
     if(nombreImagenProducto){
         nombreImagenProducto.innerHTML = archivo
@@ -829,12 +808,6 @@ function mostrarCarrito(){
     document.getElementById("tituloCarrito").innerHTML =
         "🛒 Carrito (" + cantidadProductos + ")";
 
-let contadorFlotante = document.getElementById("contadorCarritoFlotante");
-
-if(contadorFlotante){
-    contadorFlotante.innerHTML = cantidadProductos;
-}
-
 actualizarResumenVenta();
 
 }
@@ -849,11 +822,6 @@ function actualizarResumenVenta(){
         total += Number(item.subtotal || 0);
     });
 
-    let contadorFlotante = document.getElementById("contadorCarritoFlotante");
-
-    if(contadorFlotante){
-        contadorFlotante.innerHTML = cantidadProductos;
-    }
 
     let resumenProductosCobro = document.getElementById("resumenProductosCobro");
 
@@ -1173,7 +1141,7 @@ transaction.update(productoRef, {
 sonidoVenta.currentTime = 0;
 
 sonidoVenta.play().catch(function(error){
-    console.log(error);
+    console.error("Error reproduciendo sonido de venta:", error);
 });
 
 setTimeout(function(){
@@ -1229,19 +1197,14 @@ function desbloquearSistema(){
 function apagarSonidoLogin(){
 
     let videoLaptop = document.getElementById("videoFondoLaptop");
-    let videoApp = document.getElementById("videoFondoApp");
     let boton = document.getElementById("btnSonido");
 
-    [videoLaptop, videoApp].forEach(function(video){
-
-        if(video){
-            video.muted = true;
-            video.volume = 0;
-            video.pause();
-            video.currentTime = 0;
-        }
-
-    });
+    if(videoLaptop){
+        videoLaptop.muted = true;
+        videoLaptop.volume = 0;
+        videoLaptop.pause();
+        videoLaptop.currentTime = 0;
+    }
 
     if(boton){
         boton.textContent = "🔊 Activar sonido";
@@ -2246,9 +2209,8 @@ function mostrarHistorialVentas(){
     let html = "";
 
     let rol = localStorage.getItem("rolActivo");
-    let vendedorActivo = localStorage.getItem("nombreActivo") || "";
-
-   let ventasFiltradas = historialVentas.filter(function(venta){
+    
+    let ventasFiltradas = historialVentas.filter(function(venta){
 
     if(rol === "vendedor"){
         return venta.fechaISO === obtenerFechaISO();
@@ -2284,13 +2246,11 @@ function mostrarHistorialVentas(){
     <td>
     ${
         venta.numeroBoleta && venta.numeroBoleta !== "SIN IMPRESION"
-        ? `<button onclick="reimprimirBoletaVenta(${indexReal})">🧾 Reimprimir</button>`
+        ? `<button onclick="reimprimirBoletaVenta(${indexReal})" title="Reimprimir boleta">🧾</button>`
         : ""
     }
 
-    <button onclick="anularVenta(${indexReal})">
-        ↩️ Anular
-    </button>
+    <button onclick="anularVenta(${indexReal})" title="Anular venta">↩️</button>
 </td>
 
 </tr>
@@ -2531,7 +2491,7 @@ function abrirConfiguracion(){
 async function guardarConfiguracion(){
 
     codigoAnulacion =
-        document.getElementById("nuevoCodigoAnulacion").value;
+    document.getElementById("nuevoCodigoAnulacion").value.trim();
 
     await setDoc(
     doc(db, "configuracion", "sistema"),
@@ -2566,7 +2526,7 @@ function controlarColumnaGanancia(){
 async function validarCodigoAdmin(){
 
     let codigoIngresado =
-        document.getElementById("codigoAdminInput").value;
+    document.getElementById("codigoAdminInput").value.trim();
 
     if(codigoIngresado !== codigoAnulacion){
         alert("Código incorrecto");
@@ -3069,8 +3029,7 @@ if(descuento > totalVenta){
     descuento = totalVenta;
 }
 
-document.getElementById("descuentoVenta").value =
-    descuento;
+input.value = descuento;
 
 return descuento;
 
@@ -3431,7 +3390,7 @@ async function abrirCaja(){
 async function registrarGasto(){
 
     let descripcion =
-        document.getElementById("descripcionGasto").value;
+            document.getElementById("descripcionGasto").value.trim();
 
     let monto =
         Number(
@@ -3605,7 +3564,7 @@ function cuadrarCaja(){
 
        if(venta.fechaISO === obtenerFechaISO()){
 
-            ventasHoy += venta.total;
+            ventasHoy += Number(venta.total || 0);
 
         }
 
@@ -3615,7 +3574,7 @@ function cuadrarCaja(){
 
     gastosCaja.forEach(function(gasto){
 
-        gastos += gasto.monto;
+        gastos += Number(gasto.monto || 0);
 
     });
 
@@ -4394,10 +4353,7 @@ window.activarNotificaciones = activarNotificaciones;
 
 async function toggleSonido(){
 
-   const video =
-    window.innerWidth <= 768
-    ? document.getElementById("videoFondoApp")
-    : document.getElementById("videoFondoLaptop");
+    const video = document.getElementById("videoFondoLaptop");
     const boton = document.getElementById("btnSonido");
 
     if(!video || !boton){
@@ -4560,8 +4516,6 @@ window.actualizarSistema = actualizarSistema;
 
 function abrirCobroVenta(){
 
-    document.body.classList.remove("carrito-app-abierto");
-
     if(carrito.length === 0){
 
         alert("⚠️ Agregue productos al carrito primero");
@@ -4621,277 +4575,6 @@ function cerrarDatosClienteBoleta(){
 window.abrirDatosClienteBoleta = abrirDatosClienteBoleta;
 window.cerrarDatosClienteBoleta = cerrarDatosClienteBoleta;
 
-function prepararCarritoVentanaFinal(){
-
-    const panel = document.querySelector(".panel-carrito");
-    const titulo = document.getElementById("tituloCarrito");
-    const resizeHandle = document.querySelector(".carrito-resize-handle");
-
-    if(!panel || !titulo){
-        return;
-    }
-
-    if(panel.dataset.fixFinalInit === "true"){
-        return;
-    }
-
-    panel.dataset.fixFinalInit = "true";
-
-    function esMovil(){
-        return window.innerWidth <= 768;
-    }
-
-    function limitar(valor, minimo, maximo){
-        return Math.min(Math.max(valor, minimo), maximo);
-    }
-
-    function aplicarEstado(){
-        let estado = null;
-
-        try{
-            estado = JSON.parse(localStorage.getItem("carritoVentanaEstado"));
-        }catch(error){
-            estado = null;
-        }
-
-        const anchoDefault = window.innerWidth - 24;
-        const altoDefault = Math.round(window.innerHeight * 0.42);
-
-        const ancho = limitar(
-            Number(estado?.w || anchoDefault),
-            240,
-            window.innerWidth - 24
-        );
-
-        const alto = limitar(
-            Number(estado?.h || altoDefault),
-            90,
-            Math.round(window.innerHeight * 0.75)
-        );
-
-        const x = limitar(
-            Number(estado?.x || 12),
-            8,
-            window.innerWidth - ancho - 8
-        );
-
-        const y = limitar(
-            Number(estado?.y || (window.innerHeight - alto - 86)),
-            68,
-            window.innerHeight - 86
-        );
-
-        panel.style.setProperty("--carrito-x", x + "px");
-        panel.style.setProperty("--carrito-y", y + "px");
-        panel.style.setProperty("--carrito-w", ancho + "px");
-        panel.style.setProperty("--carrito-h", alto + "px");
-    }
-
-    function guardarEstado(){
-        const rect = panel.getBoundingClientRect();
-
-        localStorage.setItem(
-            "carritoVentanaEstado",
-            JSON.stringify({
-                x: rect.left,
-                y: rect.top,
-                w: rect.width,
-                h: panel.offsetHeight
-            })
-        );
-    }
-
-    aplicarEstado();
-
-    let modo = null;
-    let inicioX = 0;
-    let inicioY = 0;
-    let rectInicial = null;
-
-    titulo.addEventListener("pointerdown", function(evento){
-
-        if(!esMovil()){
-            return;
-        }
-
-        modo = "mover";
-        inicioX = evento.clientX;
-        inicioY = evento.clientY;
-        rectInicial = panel.getBoundingClientRect();
-
-        panel.classList.add("carrito-arrastrando");
-
-        try{
-            titulo.setPointerCapture(evento.pointerId);
-        }catch(error){}
-
-    });
-
-    titulo.addEventListener("pointermove", function(evento){
-
-        if(modo !== "mover" || !rectInicial){
-            return;
-        }
-
-        evento.preventDefault();
-
-        const nuevoX = limitar(
-            rectInicial.left + evento.clientX - inicioX,
-            8,
-            window.innerWidth - rectInicial.width - 8
-        );
-
-        const nuevoY = limitar(
-            rectInicial.top + evento.clientY - inicioY,
-            68,
-            window.innerHeight - 86
-        );
-
-        panel.style.setProperty("--carrito-x", nuevoX + "px");
-        panel.style.setProperty("--carrito-y", nuevoY + "px");
-
-    });
-
-    function terminarMovimiento(evento){
-
-        if(modo !== "mover"){
-            return;
-        }
-
-        modo = null;
-        rectInicial = null;
-
-        panel.classList.remove("carrito-arrastrando");
-
-        try{
-            titulo.releasePointerCapture(evento.pointerId);
-        }catch(error){}
-
-        guardarEstado();
-
-    }
-
-    titulo.addEventListener("pointerup", terminarMovimiento);
-    titulo.addEventListener("pointercancel", terminarMovimiento);
-
-    if(resizeHandle){
-
-        resizeHandle.addEventListener("pointerdown", function(evento){
-
-            if(!esMovil()){
-                return;
-            }
-
-            modo = "resize";
-            inicioX = evento.clientX;
-            inicioY = evento.clientY;
-            rectInicial = panel.getBoundingClientRect();
-
-            panel.classList.add("carrito-redimensionando");
-
-            try{
-                resizeHandle.setPointerCapture(evento.pointerId);
-            }catch(error){}
-
-        });
-
-        resizeHandle.addEventListener("pointermove", function(evento){
-
-            if(modo !== "resize" || !rectInicial){
-                return;
-            }
-
-            evento.preventDefault();
-
-            const nuevoAncho = limitar(
-                rectInicial.width + evento.clientX - inicioX,
-                240,
-                window.innerWidth - rectInicial.left - 8
-            );
-
-            const nuevoAlto = limitar(
-                rectInicial.height + evento.clientY - inicioY,
-                90,
-                Math.round(window.innerHeight * 0.75)
-            );
-
-            panel.style.setProperty("--carrito-w", nuevoAncho + "px");
-            panel.style.setProperty("--carrito-h", nuevoAlto + "px");
-
-        });
-
-        function terminarResize(evento){
-
-            if(modo !== "resize"){
-                return;
-            }
-
-            modo = null;
-            rectInicial = null;
-
-            panel.classList.remove("carrito-redimensionando");
-
-            try{
-                resizeHandle.releasePointerCapture(evento.pointerId);
-            }catch(error){}
-
-            guardarEstado();
-
-        }
-
-        resizeHandle.addEventListener("pointerup", terminarResize);
-        resizeHandle.addEventListener("pointercancel", terminarResize);
-
-    }
-
-    window.addEventListener("resize", aplicarEstado);
-
-}
-
-window.abrirCarritoApp = function(){
-
-    const panel = document.querySelector(".panel-carrito");
-
-    if(!panel){
-        return;
-    }
-
-    prepararCarritoVentanaFinal();
-
-    document.body.classList.add("carrito-abierto");
-    document.body.classList.add("carrito-app-abierto");
-
-    panel.classList.add("carrito-visible");
-
-    panel.style.setProperty("display", "block", "important");
-    panel.style.setProperty("opacity", "1", "important");
-    panel.style.setProperty("pointer-events", "auto", "important");
-    panel.style.setProperty("transform", "translateY(0)", "important");
-
-};
-
-window.cerrarCarritoApp = function(){
-
-    const panel = document.querySelector(".panel-carrito");
-
-    document.body.classList.remove("carrito-abierto");
-    document.body.classList.remove("carrito-app-abierto");
-
-    if(panel){
-        panel.classList.remove("carrito-visible");
-        panel.style.removeProperty("opacity");
-        panel.style.removeProperty("pointer-events");
-        panel.style.removeProperty("transform");
-    }
-
-};
-
-document.addEventListener("DOMContentLoaded", prepararCarritoVentanaFinal);
-
-setTimeout(prepararCarritoVentanaFinal, 700);
-
-/* FIN CARRITOFIX1 */
-
 function toggleCategoriasMenu(){
     document.body.classList.toggle("categorias-menu-abierto");
 }
@@ -4901,7 +4584,7 @@ function cerrarCategoriasMenu(){
 }
 
 document.addEventListener("click", function(evento){
-    const menuCategorias = document.getElementById("categoriasMenuApp");
+    const menuCategorias = document.getElementById("categoriasMenu");
     const botonCategorias = document.querySelector(".btn-categorias-menu");
 
     if(!menuCategorias || !botonCategorias || !document.body.classList.contains("categorias-menu-abierto")){
