@@ -104,14 +104,35 @@ let cantidadRenderAnterior = 0;
 let modoRenderCatalogo = "completo";
 
 const estadoCatalogoBridge = {
+    get productos(){ return productos; },
+    set productos(valor){ productos = valor; },
+
     get productosVista(){ return productosVista; },
     set productosVista(valor){ productosVista = valor; },
+
+    get busquedaCatalogo(){ return busquedaCatalogo; },
+    set busquedaCatalogo(valor){ busquedaCatalogo = valor; },
+
+    get categoriaCatalogo(){ return categoriaCatalogo; },
+    set categoriaCatalogo(valor){ categoriaCatalogo = valor; },
+
+    get catalogoVersion(){ return catalogoVersion; },
+    set catalogoVersion(valor){ catalogoVersion = valor; },
+
+    get ultimaFirmaCatalogo(){ return ultimaFirmaCatalogo; },
+    set ultimaFirmaCatalogo(valor){ ultimaFirmaCatalogo = valor; },
+
+    get catalogoDirty(){ return catalogoDirty; },
+    set catalogoDirty(valor){ catalogoDirty = valor; },
 
     get cantidadRenderProductos(){ return cantidadRenderProductos; },
     set cantidadRenderProductos(valor){ cantidadRenderProductos = valor; },
 
     get cantidadRenderAnterior(){ return cantidadRenderAnterior; },
-    set cantidadRenderAnterior(valor){ cantidadRenderAnterior = valor; }
+    set cantidadRenderAnterior(valor){ cantidadRenderAnterior = valor; },
+
+    get modoRenderCatalogo(){ return modoRenderCatalogo; },
+    set modoRenderCatalogo(valor){ modoRenderCatalogo = valor; }
 };
 
 const CatalogoProductos = crearCatalogoProductos({
@@ -525,6 +546,8 @@ window.guardarProducto = guardarProducto;
 
 function editarProducto(idProducto){
 
+    window.editarProducto = editarProducto;
+
     localStorage.setItem(
         "scrollEditar",
         window.scrollY
@@ -567,6 +590,8 @@ document.getElementById("stockSucursal").value = stockTiendasEditar.sucursal;
 }
 
 async function eliminarProducto(idProducto){
+
+    window.eliminarProducto = eliminarProducto;
 
     let productoEliminar = productos.find(function(p){
         return p.id === idProducto;
@@ -727,6 +752,8 @@ function eliminarDelCarrito(index){
 }
 
 function agregarDirecto(idProducto){
+
+    window.agregarDirecto = agregarDirecto;
 
     let producto = productos.find(function(p){
         return p.id === idProducto;

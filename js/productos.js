@@ -6,12 +6,18 @@
 
 export function crearCatalogoProductos(deps){
 
-    const {
-        state,
-        obtenerStockTiendas,
-        obtenerStockTotal,
-        actualizarDashboard
-    } = deps;
+  const {
+    state,
+    obtenerStockTiendas,
+    obtenerStockTotal,
+    actualizarDashboard,
+
+    agregarDirecto,
+    abrirTransferenciaStock,
+    editarProducto,
+    eliminarProducto
+
+} = deps;
 
     function renderProductoCard(producto, rolActivo){
 
@@ -52,22 +58,22 @@ export function crearCatalogoProductos(deps){
                 `
             }
 
-            <button class="btn-agregar" onclick="agregarDirecto('${producto.id}')">
+            <button class="btn-agregar" onclick="window.agregarDirecto('${producto.id}')">
                 🛒 Agregar
             </button>
 
             ${
                 rolActivo === "admin"
                 ? `
-                    <button class="btn-transferir-stock" onclick="abrirTransferenciaStock('${producto.id}')">
+                    <button class="btn-transferir-stock" onclick="window.abrirTransferenciaStock('${producto.id}')">
                         🔄 Transferir
                     </button>
 
-                    <button onclick="editarProducto('${producto.id}')">
+                    <button onclick="window.editarProducto('${producto.id}')">
                         ✏️ Editar
                     </button>
 
-                    <button onclick="eliminarProducto('${producto.id}')">
+                    <button onclick="window.eliminarProducto('${producto.id}')">
                         🗑️ Eliminar
                     </button>
                 `
