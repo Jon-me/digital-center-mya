@@ -1,4 +1,28 @@
-// Modulo reservado para refactor profesional.
-// FASE 1: no contiene logica todavia.
+// =====================================================
+// DIGITAL CENTER M&A
+// STATE MODULE
+// =====================================================
 
-export {};
+export const AppState = {
+
+    productos: [],
+
+    productosVista: [],
+
+    busquedaCatalogo: "",
+
+    categoriaCatalogo: "todos",
+
+    catalogoVersion: 0,
+
+    ultimaFirmaCatalogo: "",
+
+    catalogoDirty: true,
+
+    cantidadRenderProductos: 24,
+
+    cantidadRenderAnterior: 0,
+
+    modoRenderCatalogo: "completo"
+
+};
