@@ -26,6 +26,8 @@ import {
 import { AppState } from "./js/state.js";
 import { crearCatalogoProductos } from "./js/productos.js";
 import { crearCarrito } from "./js/carrito.js";
+import { crearVentas } from "./js/ventas.js";
+import { construirHTMLBoleta } from "./js/boleta.js";
 
 let usuarios = [
 
@@ -148,6 +150,11 @@ const estadoCarritoBridge = {
     set productos(valor){ productos = valor; }
 };
 
+const estadoVentasBridge = {
+    get carrito(){ return carrito; },
+    set carrito(valor){ carrito = valor; }
+};
+
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
 
@@ -174,6 +181,32 @@ const Carrito = crearCarrito({
     actualizarDashboard
 });
 
+const tiendasSistema = {
+    principal: "Mercado",
+    sucursal: "Peluquería"
+};
+
+const Ventas = crearVentas({
+    state: estadoVentasBridge,
+
+    db,
+    collection,
+    doc,
+    getDoc,
+    runTransaction,
+
+    obtenerFechaISO,
+    obtenerStockTiendas,
+    tiendasSistema,
+
+    obtenerDescuento,
+    obtenerPagosMixtos,
+    calcularTotalPagado,
+    mostrarCarrito,
+
+    construirHTMLBoleta,
+});
+
 function detenerListenersFirebase(){
 
     listenersFirebaseActivos.forEach(function(unsubscribe){
@@ -186,11 +219,6 @@ function detenerListenersFirebase(){
     listenersFirebaseIniciados = false;
 
 }
-
-const tiendasSistema = {
-    principal: "Mercado",
-    sucursal: "Peluquería"
-};
 
 function obtenerStockTiendas(producto){
 
@@ -361,167 +389,7 @@ function calcularTotalPagado(){
 }
 
 async function finalizarVenta(numeroBoleta = "SIN IMPRESION"){
-
-    if(carrito.length === 0){
-        alert("El carrito está vacío");
-        return;
-    }
-
-    let total = 0;
-    let ganancia = 0;
-    let descuento = obtenerDescuento();
-    let metodoPago = "Pagos mixtos";
-let tiendaVenta =
-    document.getElementById("tiendaVenta").value || "principal";
-
-carrito.forEach(function(item){
-
-    total += item.subtotal;
-
-    ganancia +=
-        (item.precio - item.precioCompra) * item.cantidad;
-
-});
-
-let totalFinal = total - descuento;
-
-if(totalFinal < 0){
-    totalFinal = 0;
-}
-
-let pagos = obtenerPagosMixtos();
-
-let totalPagado =
-    pagos.efectivo +
-    pagos.yape +
-    pagos.plin +
-    pagos.tarjeta +
-    pagos.transferencia;
-
-if(Math.abs(totalPagado - totalFinal) > 0.01){
-
-    alert(
-        "⚠️ El pago no coincide con el total.\n\n" +
-        "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
-        "Pagado: S/ " + totalPagado.toFixed(2)
-    );
-
-    return;
-}
-
-let clienteNombre =
-    document.getElementById("clienteNombre").value || "CLIENTE GENERAL";
-
-let clienteDni =
-    document.getElementById("clienteDni").value || "-";
-
-let venta = {
-    numeroBoleta: numeroBoleta,
-    fecha: new Date().toLocaleDateString(),
-    fechaISO: obtenerFechaISO(),
-    hora: new Date().toLocaleTimeString(),
-    clienteNombre: clienteNombre,
-    clienteDni: clienteDni,
-    vendedor: localStorage.getItem("nombreActivo") || "Sin vendedor",
-    productos: JSON.parse(JSON.stringify(carrito)),
-    descuento: descuento,
-    metodoPago: metodoPago,
-    tiendaVenta: tiendaVenta,
-tiendaVentaNombre: tiendasSistema[tiendaVenta],
-    pagos: pagos,
-    total: totalFinal,
-    ganancia: ganancia - descuento
-};
-
-try{
-
-    await runTransaction(db, async function(transaction){
-
-        for(let item of carrito){
-
-            let productoRef = doc(db, "productos", item.id);
-            let productoSnap = await transaction.get(productoRef);
-
-            if(!productoSnap.exists()){
-                throw new Error("Producto no encontrado");
-            }
-
-            let productoData = productoSnap.data();
-           let stockTiendas = obtenerStockTiendas(productoData);
-let cantidadDescontar = Number(item.cantidad);
-
-if(stockTiendas[tiendaVenta] < cantidadDescontar){
-    throw new Error(
-        "Stock insuficiente en " +
-        tiendasSistema[tiendaVenta] +
-        " para: " +
-        item.producto
-    );
-}
-
-stockTiendas[tiendaVenta] -= cantidadDescontar;
-
-let nuevoStockTotal =
-    stockTiendas.principal +
-    stockTiendas.sucursal;
-
-transaction.update(productoRef, {
-    stock: nuevoStockTotal,
-    stockTiendas: stockTiendas
-});
-
-        }
-
-        let ventaRef = doc(collection(db, "ventas"));
-        transaction.set(ventaRef, venta);
-
-        if(numeroBoleta !== "SIN IMPRESION"){
-
-    let boletaRef = doc(collection(db, "boletas"));
-
-    transaction.set(boletaRef, {
-        ...venta,
-        estado: "activa",
-        creadaEn: new Date().toISOString()
-    });
-
-}
-    });
-
-} catch(error){
-
-    alert(error.message);
-    return;
-
-}
-
-sonidoVenta.currentTime = 0;
-
-sonidoVenta.play().catch(function(error){
-    console.error("Error reproduciendo sonido de venta:", error);
-});
-
-setTimeout(function(){
-
-    alert("✅ Venta realizada correctamente");
-
-}, 150);
-
-carrito = [];
-
-localStorage.removeItem("carrito");
-
-
-  document.getElementById("descuentoVenta").value = "";  
-  document.getElementById("pagoEfectivo").value = "";
-document.getElementById("pagoYape").value = "";
-document.getElementById("pagoPlin").value = "";
-document.getElementById("pagoTarjeta").value = "";
-document.getElementById("pagoTransferencia").value = "";
-
-calcularTotalPagado();
-  mostrarCarrito();
-
+    return await Ventas.finalizarVenta(numeroBoleta);
 }
 
 function desbloquearSistema(){
@@ -921,544 +789,11 @@ function actualizarDashboard(){
 }
 
 async function validarStockAntesDeImprimir(){
-
-    let tiendaVenta =
-        document.getElementById("tiendaVenta").value || "principal";
-
-    for(let item of carrito){
-
-        let productoRef = doc(db, "productos", item.id);
-        let productoSnap = await getDoc(productoRef);
-
-        if(!productoSnap.exists()){
-            alert("Producto no encontrado: " + item.producto);
-            return false;
-        }
-
-        let productoData = productoSnap.data();
-        let stockTiendas = obtenerStockTiendas(productoData);
-        let cantidad = Number(item.cantidad || 0);
-
-        if(stockTiendas[tiendaVenta] < cantidad){
-
-            alert(
-                "Stock insuficiente en " +
-                tiendasSistema[tiendaVenta] +
-                " para: " +
-                item.producto
-            );
-
-            return false;
-        }
-
-    }
-
-    return true;
-
+    return await Ventas.validarStockAntesDeImprimir();
 }
 
 async function imprimirBoleta(){
-
-    if(carrito.length === 0){
-        alert("El carrito está vacío");
-        return;
-    }
-
-    let fecha = new Date().toLocaleDateString();
-    let hora = new Date().toLocaleTimeString();
-    let total = 0;
-    let descuento = obtenerDescuento();
-    let metodoPago = "Pagos mixtos";
-carrito.forEach(function(item){
-    total += Number(item.subtotal);
-});
-
-let totalFinal = total - descuento;
-
-if(totalFinal < 0){
-    totalFinal = 0;
-}
-
-let pagos = obtenerPagosMixtos();
-
-let totalPagado =
-    pagos.efectivo +
-    pagos.yape +
-    pagos.plin +
-    pagos.tarjeta +
-    pagos.transferencia;
-
-if(Math.abs(totalPagado - totalFinal) > 0.01){
-
-    alert(
-        "⚠️ No puedes imprimir la boleta.\n\n" +
-        "El pago no coincide con el total.\n\n" +
-        "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
-        "Pagado: S/ " + totalPagado.toFixed(2)
-    );
-
-    return;
-}
-
-let stockDisponible = await validarStockAntesDeImprimir();
-
-if(!stockDisponible){
-    return;
-}
-
-    let numeroVenta = "";
-
-await runTransaction(db, async function(transaction){
-
-    let correlativoRef = doc(db, "configuracion", "boletas");
-    let correlativoSnap = await transaction.get(correlativoRef);
-
-    let ultimoNumero = 0;
-
-    if(correlativoSnap.exists()){
-        ultimoNumero = Number(correlativoSnap.data().ultimoNumero || 0);
-    }
-
-    let nuevoNumero = ultimoNumero + 1;
-
-    transaction.set(
-        correlativoRef,
-        {
-            ultimoNumero: nuevoNumero
-        },
-        { merge: true }
-    );
-
-    numeroVenta = String(nuevoNumero).padStart(6, "0");
-
-});
-
-let detallePagos = "";
-
-if(pagos.efectivo > 0){
-    detallePagos += `Efectivo: S/ ${pagos.efectivo.toFixed(2)}<br>`;
-}
-
-if(pagos.yape > 0){
-    detallePagos += `Yape: S/ ${pagos.yape.toFixed(2)}<br>`;
-}
-
-if(pagos.plin > 0){
-    detallePagos += `Plin: S/ ${pagos.plin.toFixed(2)}<br>`;
-}
-
-if(pagos.tarjeta > 0){
-    detallePagos += `Tarjeta: S/ ${pagos.tarjeta.toFixed(2)}<br>`;
-}
-
-if(pagos.transferencia > 0){
-    detallePagos += `Transferencia: S/ ${pagos.transferencia.toFixed(2)}<br>`;
-}
-
-if(detallePagos === ""){
-    detallePagos = metodoPago;
-}
-    let clienteNombre =
-    document.getElementById("clienteNombre").value || "CLIENTE GENERAL";
-
-let clienteDni =
-    document.getElementById("clienteDni").value || "-";
-
-    let contenido = `
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Boleta Digital Center M&A</title>
-
-<style>
-
-*{
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-
-    body{
-    font-family: Arial, sans-serif;
-    background: #e2e8f0;
-
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-
-    padding:30px;
-}
-
-    .boleta{
-        width: 260px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        position: relative;
-        overflow: hidden;
-
-    }
-
-    .marca-agua{
-        position: absolute;
-        top: 45%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-25deg);
-        font-size: 46px;
-        font-weight: bold;
-        color: rgba(37,99,235,0.08);
-        white-space: nowrap;
-        z-index: 0;
-    }
-
-    .contenido{
-        position: relative;
-        z-index: 1;
-    }
-
-    .logo-container{
-    text-align: center;
-    margin-bottom: 15px;
-    overflow: visible;
-}
-
-.logo-boleta{
-    width: 220px;
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto 10px auto;
-    object-fit: contain;
-}
-
-    h2{
-        text-align: center;
-        margin: 10px 0 5px;
-        font-size: 22px;
-        color: #0f172a;
-    }
-
-    .subtitulo{
-        text-align: center;
-        font-size: 12px;
-        color: #475569;
-        margin-bottom: 12px;
-    }
-
-    .linea{
-        border-top: 1px dashed #334155;
-        margin: 12px 0;
-    }
-
-    .datos{
-        font-size: 12px;
-        color: #334155;
-        line-height: 1.6;
-    }
-
-    .producto{
-        margin-bottom: 10px;
-        font-size: 13px;
-    }
-
-    .producto-nombre{
-        font-weight: bold;
-        color: #0f172a;
-    }
-
-    .producto-detalle{
-        display: flex;
-        justify-content: space-between;
-        color: #334155;
-        margin-top: 3px;
-    }
-
-    .total{
-        background: #0f172a;
-        color: white;
-        padding: 12px;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 20px;
-        font-weight: bold;
-        margin-top: 15px;
-    }
-
-    .gracias{
-        text-align: center;
-        font-size: 13px;
-        margin-top: 14px;
-        font-weight: bold;
-        color: #0f172a;
-    }
-
-    .footer{
-        text-align: center;
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 8px;
-    }
-
-    @media print{
-        body{
-            background: white;
-            padding: 0;
-        }
-
-        .boleta{
-            box-shadow: none;
-            border-radius: 0;
-            width: 280px;
-        }
-    }
-
-    .qr-container{
-
-    text-align: center;
-
-    margin-top: 20px;
-
-}
-
-.qr-container img{
-
-    border-radius: 10px;
-
-}
-
-.qr-container p{
-
-    font-size: 11px;
-
-    color: #475569;
-
-    margin-top: 5px;
-
-    font-weight: bold;
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="boleta">
-    <div class="marca-agua">DIGITAL CENTER M&A</div>
-
-    <div class="contenido">
-
-        <div class="logo-container">
-        <img src="logo-boleta.png" class="logo-boleta">
-        </div>
-        <h2>DIGITAL CENTER M&A</h2>
-        <div style="
-        text-align:center;
-        font-size:18px;
-        font-weight:bold;
-        letter-spacing:2px;
-        margin-bottom:10px;
-        ">
-        BOLETA DE VENTA
-        
-        </div>
-
-       <div class="subtitulo">
-
-    <strong>RUC:</strong> 10027914077<br>
-
-    <strong>Dirección:</strong><br>
-    Calle Chepa Santos 601<br>
-    Frente al Banco de la Nación<br>
-
-    <strong>WhatsApp:</strong>
-    +51 913267246<br>
-
-    Celulares • Accesorios • Servicio Técnico
-
-</div>
-
-        <div class="linea"></div>
-
-        <div class="datos">
-            <strong>BOLETA N°:</strong>
-            B001-${numeroVenta}
-            <br>
-            <strong>Fecha:</strong> ${fecha}
-            <br>
-            <strong>Hora:</strong> ${hora}
-            <br>
-            <strong>Atendido por:</strong> ${localStorage.getItem("nombreActivo") || "Vendedor"}
-            <br>
-           <strong>Cliente:</strong> ${clienteNombre}<br>
-<strong>DNI:</strong> ${clienteDni}<br>
-<strong>Método de Pago:</strong><br>
-${detallePagos}
-            </div>
-
-        <div class="linea"></div>
-`;
-
-    carrito.forEach(function(item){
-        contenido += `
-        <div class="producto">
-           <div class="producto-nombre">
-    ${item.nombreBoleta || item.producto}
-</div>
-            <div class="producto-detalle">
-                <span>${item.cantidad} x S/ ${item.precio.toFixed(2)}</span>
-                <span>S/ ${item.subtotal.toFixed(2)}</span>
-            </div>
-        </div>
-`;
-
-    });
-
-    contenido += `
-        <div class="linea"></div>
-
-        <div class="linea"></div>
-
-<div class="datos">
-    <strong>Subtotal:</strong> S/ ${total.toFixed(2)}
-
-    ${
-        descuento > 0
-        ? `<br><strong>Descuento:</strong> S/ ${descuento.toFixed(2)}`
-        : ""
-    }
-</div>
-
-<div class="total">
-  TOTAL: S/ ${totalFinal.toFixed(2)}
-</div>
-
-        <div class="gracias">
-            ¡Gracias por su compra!
-        </div>
-        <div class="qr-container">
-
-       <img
-src="qr-whatsapp.png"
-width="160"
->
-
-        <p>
-        📲 Soporte, garantías y consultas aquí
-        </p>
-        </div>
-
-       <div class="footer">
-
-    Gracias por confiar en nosotros ❤️
-
-    <br><br>
-
-    📍 Calle Chepa Santos 601
-    <br>
-
-    Frente al Banco de la Nación
-    <br>
-
-    📱 WhatsApp:
-    +51 913267246
-
-    <br><br>
-
-    Conserve esta boleta para cualquier garantía.
-
-</div>
-
-    </div>
-</div>
-
-</body>
-</html>
-`;
-
-    let iframe = document.createElement("iframe");
-
-iframe.style.position = "fixed";
-iframe.style.right = "0";
-iframe.style.bottom = "0";
-iframe.style.width = "0";
-iframe.style.height = "0";
-iframe.style.border = "0";
-
-document.body.appendChild(iframe);
-
-let documento = iframe.contentWindow.document;
-
-documento.open();
-documento.write(contenido);
-documento.close();
-
-function imprimirCuandoImagenesCarguen(){
-
-    let imagenes = iframe.contentDocument.images;
-    let totalImagenes = imagenes.length;
-    let cargadas = 0;
-
-    if(totalImagenes === 0){
-        imprimirAhora();
-        return;
-    }
-
-    for(let img of imagenes){
-
-        if(img.complete){
-            cargadas++;
-        } else {
-            img.onload = function(){
-                cargadas++;
-                if(cargadas === totalImagenes){
-                    imprimirAhora();
-                }
-            };
-
-            img.onerror = function(){
-                cargadas++;
-                if(cargadas === totalImagenes){
-                    imprimirAhora();
-                }
-            };
-        }
-
-    }
-
-    if(cargadas === totalImagenes){
-        imprimirAhora();
-    }
-
-}
-
-function imprimirAhora(){
-
-    setTimeout(function(){
-
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-
-        setTimeout(function(){
-            document.body.removeChild(iframe);
-
-            document.getElementById("clienteNombre").disabled = false;
-            document.getElementById("clienteDni").disabled = false;
-
-            document.getElementById("clienteNombre").focus();
-
-        }, 1000);
-
-    }, 300);
-
-}
-
-imprimirCuandoImagenesCarguen();
-
-return numeroVenta;
-
+    return await Ventas.imprimirBoleta();
 }
 
 async function finalizarEImprimir(){
