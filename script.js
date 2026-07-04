@@ -132,11 +132,28 @@ const estadoCatalogoBridge = {
     set cantidadRenderAnterior(valor){ cantidadRenderAnterior = valor; },
 
     get modoRenderCatalogo(){ return modoRenderCatalogo; },
-    set modoRenderCatalogo(valor){ modoRenderCatalogo = valor; }
+    set modoRenderCatalogo(valor){ modoRenderCatalogo = valor; },
+
+    get indiceEditar(){ return indiceEditar; },
+    set indiceEditar(valor){ indiceEditar = valor; }
+
 };
 
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
+
+    db,
+    storage,
+    collection,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    doc,
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject,
+
     obtenerStockTiendas,
     obtenerStockTotal,
     actualizarDashboard
@@ -256,383 +273,43 @@ function aplicarFiltrosCatalogo(){
 }
 
 function reiniciarRenderCatalogo(){
-
-    cantidadRenderProductos = 24;
-    cantidadRenderAnterior = 0;
-
-    modoRenderCatalogo = "completo";
-
-    ultimaFirmaCatalogo = "";
-    catalogoDirty = true;
-
+    CatalogoProductos.reiniciarRenderCatalogo();
 }
 
 function mostrarProductos(){
-
-    let tabla = document.getElementById("tablaProductos");
-
-    if(!tabla){
-        return;
-    }
-
-    if(!catalogoDirty){
-        return;
-    }
-
-    aplicarFiltrosCatalogo();
-
-let firmaCatalogo =
-    catalogoVersion +
-    "|" + cantidadRenderProductos +
-    "|" + busquedaCatalogo +
-    "|" + categoriaCatalogo +
-    "|" + localStorage.getItem("rolActivo");
-
-    if(firmaCatalogo === ultimaFirmaCatalogo){
-        catalogoDirty = false;
-        return;
-    }
-
-    ultimaFirmaCatalogo = firmaCatalogo;
-    catalogoDirty = false;
-
-    let rolActivo = localStorage.getItem("rolActivo");
-
-if (modoRenderCatalogo === "completo") {
-
-    CatalogoProductos.CatalogRenderer.renderInicial(
-        tabla,
-        rolActivo
-    );
-
-} else {
-
-    CatalogoProductos.CatalogRenderer.renderIncremental(
-        tabla,
-        rolActivo
-    );
-
-}
-
-modoRenderCatalogo = "completo";
-
-actualizarDashboard();
-
+    CatalogoProductos.mostrarProductos();
 }
 
 function cargarMasProductos(){
-
-    cantidadRenderProductos += 24;
-
-    modoRenderCatalogo = "incremental";
-
-    catalogoDirty = true;
-
-    mostrarProductos();
-
+    CatalogoProductos.cargarMasProductos();
 }
 
 async function subirImagenProductoStorage(archivo){
-
-    if(!archivo){
-        return "";
-    }
-
-    let nombreArchivo =
-        "productos/" +
-        Date.now() +
-        "_" +
-        archivo.name.replace(/\s+/g, "_");
-
-    let imagenRef = ref(storage, nombreArchivo);
-
-    await uploadBytes(imagenRef, archivo);
-
-    let urlImagen = await getDownloadURL(imagenRef);
-
-    return urlImagen;
-
+    return await CatalogoProductos.subirImagenProductoStorage(archivo);
 }
 
 async function eliminarImagenAnteriorStorage(urlImagen){
-
-    if(!urlImagen){
-        return;
-    }
-
-    if(!urlImagen.includes("firebasestorage.googleapis.com")){
-        return;
-    }
-
-    try{
-
-        let imagenRef = ref(storage, urlImagen);
-
-        await deleteObject(imagenRef);
-
-    }catch(error){
-        console.warn("No se pudo eliminar imagen anterior:", error);
-    }
-
+    return await CatalogoProductos.eliminarImagenAnteriorStorage(urlImagen);
 }
 
 async function guardarProducto(){
-
-    let codigoInput = document.getElementById("codigo");
-    let productoInput = document.getElementById("producto");
-    let categoriaInput = document.getElementById("categoria");
-    let stockPrincipalInput = document.getElementById("stockPrincipal");
-    let stockSucursalInput = document.getElementById("stockSucursal");
-    let precioCompraInput = document.getElementById("precioCompra");
-    let precioInput = document.getElementById("precio");
-    let imagenInput = document.getElementById("imagen");
-    
-    if(
-        !codigoInput ||
-        !productoInput ||
-        !categoriaInput ||
-        !stockPrincipalInput ||
-        !stockSucursalInput ||
-        !precioCompraInput ||
-        !precioInput ||
-        !imagenInput
-    )
-
-    {
-        alert("ERROR: Hay un input del formulario que no existe en el HTML.");
-        return;
-    }
-
-    let codigo = codigoInput.value.trim();
-    let producto = productoInput.value.trim();
-    let categoria = categoriaInput.value.trim();
-
-    let stockPrincipal = stockPrincipalInput.value;
-    let stockSucursal = stockSucursalInput.value;
-    let stock = Number(stockPrincipal || 0) + Number(stockSucursal || 0);
-
-    let precioCompra = precioCompraInput.value;
-    let precio = precioInput.value;
-
-    let archivo = imagenInput.files[0];
-    
-    if(
-        codigo.trim() === "" ||
-        producto.trim() === "" ||
-        categoria.trim() === "" ||
-        precioCompra === "" ||
-        precio === ""
-    ){
-        alert("Complete todos los campos del producto");
-        return;
-    }
-
-    if(
-        isNaN(Number(stockPrincipal || 0)) ||
-        isNaN(Number(stockSucursal || 0)) ||
-        isNaN(Number(precioCompra)) ||
-        isNaN(Number(precio))
-    ){
-        alert("Stock y precios deben ser números válidos");
-        return;
-    }
-
-    if(
-        !Number.isInteger(Number(stockPrincipal || 0)) ||
-        !Number.isInteger(Number(stockSucursal || 0))
-    ){
-        alert("El stock por tienda debe ser un número entero");
-        return;
-    }
-
-    if(
-        Number(stockPrincipal || 0) < 0 ||
-        Number(stockSucursal || 0) < 0 ||
-        Number(precioCompra) < 0 ||
-        Number(precio) < 0
-    ){
-        alert("Stock y precios no pueden ser negativos");
-        return;
-    }
-
-    let urlImagen = "";
-
-    try{
-
-    urlImagen = await subirImagenProductoStorage(archivo);
-
-}catch(error){
-
-    console.error(error);
-
-    alert(
-        "ERROR REAL:\n\n" +
-        error.name +
-        "\n\n" +
-        error.message
-    );
-
-    return;
-}
-    if(indiceEditar !== null && urlImagen === ""){
-        urlImagen = productos[indiceEditar].imagen || "";
-    }
-
-    let nuevoProducto = {
-        codigo: codigo,
-        producto: producto,
-        categoria: categoria,
-        stock: Number(stock),
-        stockTiendas: {
-            principal: Number(stockPrincipal || 0),
-            sucursal: Number(stockSucursal || 0)
-        },
-        precioCompra: Number(precioCompra),
-        precio: Number(precio),
-        imagen: urlImagen
-    };
-
-    if(indiceEditar !== null){
-
-        let productoEditar = productos[indiceEditar];
-
-        await updateDoc(
-            doc(db, "productos", productoEditar.id),
-            nuevoProducto
-        );
-
-        alert("✅ Producto editado correctamente");
-
-        indiceEditar = null;
-
-    } else {
-
-        await addDoc(collection(db, "productos"), nuevoProducto);
-
-        alert("✅ Producto guardado correctamente");
-
-    }
-
-    document.getElementById("codigo").value = "";
-    document.getElementById("producto").value = "";
-    document.getElementById("categoria").value = "";
-    document.getElementById("stockPrincipal").value = "";
-    document.getElementById("stockSucursal").value = "";
-    document.getElementById("precioCompra").value = "";
-    document.getElementById("precio").value = "";
-    document.getElementById("imagen").value = "";
-    document.getElementById("nombreImagenProducto").innerHTML = "Ninguna imagen seleccionada";
-
+    return await CatalogoProductos.guardarProducto();
 }
 
 function seleccionarImagenProducto(){
-
-    let imagenInput = document.getElementById("imagen");
-    let nombreImagenProducto = document.getElementById("nombreImagenProducto");
-
-    let archivo = imagenInput.files[0];
-
-    if(nombreImagenProducto){
-        nombreImagenProducto.innerHTML = archivo
-            ? archivo.name
-            : "Ninguna imagen seleccionada";
-    }
-
+    CatalogoProductos.seleccionarImagenProducto();
 }
 
-window.seleccionarImagenProducto = seleccionarImagenProducto;
-
-window.guardarProducto = guardarProducto;
-
 function editarProducto(idProducto){
-
-    window.editarProducto = editarProducto;
-
-    localStorage.setItem(
-        "scrollEditar",
-        window.scrollY
-    );
-
-    let productoEditar = productos.find(function(p){
-        return p.id === idProducto;
-    });
-
-    if(!productoEditar){
-        alert("Producto no encontrado");
-        return;
-    }
-
-    let zonaAdmin = document.getElementById("zonaAdmin");
-
-    if(zonaAdmin){
-        zonaAdmin.style.display = "grid";
-    }
-
-    document.getElementById("codigo").value = productoEditar.codigo;
-    document.getElementById("producto").value = productoEditar.producto;
-    document.getElementById("categoria").value = productoEditar.categoria;
-    let stockTiendasEditar = obtenerStockTiendas(productoEditar);
-
-document.getElementById("stockPrincipal").value = stockTiendasEditar.principal;
-document.getElementById("stockSucursal").value = stockTiendasEditar.sucursal;
-    document.getElementById("precioCompra").value = productoEditar.precioCompra || 0;
-    document.getElementById("precio").value = productoEditar.precio;
-
-    indiceEditar = productos.findIndex(function(p){
-        return p.id === idProducto;
-    });
-
-    document.getElementById("zonaAdmin").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
+    CatalogoProductos.editarProducto(idProducto);
 }
 
 async function eliminarProducto(idProducto){
-
-    window.eliminarProducto = eliminarProducto;
-
-    let productoEliminar = productos.find(function(p){
-        return p.id === idProducto;
-    });
-
-    if(!productoEliminar || !productoEliminar.id){
-        alert("Error: este producto no tiene ID de Firebase");
-        return;
-    }
-
-    if(confirm("¿Eliminar producto?")){
-
-        try{
-
-            await deleteDoc(
-                doc(db, "productos", productoEliminar.id)
-            );
-
-            alert("Producto eliminado correctamente");
-
-        } catch(error){
-
-            console.error("Error al eliminar:", error);
-            alert("No se pudo eliminar. Revisa la consola.");
-
-        }
-
-    }
-
+    await CatalogoProductos.eliminarProducto(idProducto);
 }
 
 function buscarProducto(){
-
-    let buscador = document.getElementById("buscador");
-
-    busquedaCatalogo = buscador ? buscador.value : "";
-
-   reiniciarRenderCatalogo();
-
-    mostrarProductos();
-
+    CatalogoProductos.buscarProducto();
 }
 
 function mostrarCarrito(){
@@ -1110,7 +787,7 @@ async function hidratarProductosDesdeIndexedDB(){
 
     productos = productosLocalDB;
 
-    ordenarProductosPorCodigo();
+    CatalogoProductos.ordenarProductosPorCodigo();
 
 catalogoVersion++;
 
@@ -2602,13 +2279,7 @@ async function anularGastoCaja(idGasto, autorizado = false){
 }
 
 function filtrarCategoria(categoria){
-
-    categoriaCatalogo = categoria || "todos";
-
-   reiniciarRenderCatalogo();
-
-    mostrarProductos();
-
+    CatalogoProductos.filtrarCategoria(categoria);
 }
 
 function actualizarReportes(){
@@ -3043,7 +2714,7 @@ onSnapshot(
             };
         });
 
-        ordenarProductosPorCodigo();
+        CatalogoProductos.ordenarProductosPorCodigo();
 
         catalogoVersion++;
 
@@ -4125,6 +3796,7 @@ window.iniciarSesion = iniciarSesion;
 window.cerrarSesion = cerrarSesion;
 window.buscarProducto = buscarProducto;
 window.filtrarCategoria = filtrarCategoria;
+window.seleccionarImagenProducto = seleccionarImagenProducto;
 window.guardarProducto = guardarProducto;
 window.agregarDirecto = agregarDirecto;
 window.editarProducto = editarProducto;
