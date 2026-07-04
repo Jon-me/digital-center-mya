@@ -27,7 +27,11 @@ import { AppState } from "./js/state.js";
 import { crearCatalogoProductos } from "./js/productos.js";
 import { crearCarrito } from "./js/carrito.js";
 import { crearVentas } from "./js/ventas.js";
-import { construirHTMLBoleta } from "./js/boleta.js";
+import { crearVentasHistorial } from "./js/ventas-historial.js";
+import {
+    construirHTMLBoleta,
+    construirHTMLReimpresionBoleta
+} from "./js/boleta.js";
 
 let usuarios = [
 
@@ -151,8 +155,16 @@ const estadoCarritoBridge = {
 };
 
 const estadoVentasBridge = {
+
     get carrito(){ return carrito; },
-    set carrito(valor){ carrito = valor; }
+    set carrito(valor){ carrito = valor; },
+
+    get productos(){ return productos; },
+    set productos(valor){ productos = valor; },
+
+    get historialVentas(){ return historialVentas; },
+    set historialVentas(valor){ historialVentas = valor; }
+
 };
 
 const CatalogoProductos = crearCatalogoProductos({
@@ -205,6 +217,20 @@ const Ventas = crearVentas({
     mostrarCarrito,
 
     construirHTMLBoleta,
+});
+
+const VentasHistorial = crearVentasHistorial({
+
+    state: estadoVentasBridge,
+
+    obtenerFechaISO,
+
+    tiendasSistema,
+
+    construirHTMLReimpresionBoleta,
+
+    imprimirHTML: Ventas.imprimirHTML
+
 });
 
 function detenerListenersFirebase(){
@@ -827,75 +853,15 @@ async function finalizarEImprimir(){
 window.finalizarEImprimir = finalizarEImprimir;
 
 function obtenerDetallePagosVenta(venta){
-
-    if(venta.pagos){
-
-        let detalle = "";
-
-        if(venta.pagos.efectivo > 0){
-            detalle += "Efectivo: S/ " + venta.pagos.efectivo.toFixed(2) + "<br>";
-        }
-
-        if(venta.pagos.yape > 0){
-            detalle += "Yape: S/ " + venta.pagos.yape.toFixed(2) + "<br>";
-        }
-
-        if(venta.pagos.plin > 0){
-            detalle += "Plin: S/ " + venta.pagos.plin.toFixed(2) + "<br>";
-        }
-
-        if(venta.pagos.tarjeta > 0){
-            detalle += "Tarjeta: S/ " + venta.pagos.tarjeta.toFixed(2) + "<br>";
-        }
-
-        if(venta.pagos.transferencia > 0){
-            detalle += "Transferencia: S/ " + venta.pagos.transferencia.toFixed(2);
-        }
-
-        return detalle || "No registrado";
-
-    }
-
-    return venta.metodoPago || "No registrado";
-
+    return VentasHistorial.obtenerDetallePagosVenta(venta);
 }
 
 function obtenerProductosVenta(venta){
-
-    if(!venta.productos || venta.productos.length === 0){
-        return "Sin productos";
-    }
-
-    return venta.productos.map(function(item){
-
-        return (item.nombreBoleta || item.producto) + " x " + item.cantidad;
-
-    }).join("<br>");
-
+    return VentasHistorial.obtenerProductosVenta(venta);
 }
 
 function obtenerCategoriasVenta(venta){
-
-    if(!venta.productos || venta.productos.length === 0){
-        return "Sin categoría";
-    }
-
-    return venta.productos.map(function(item){
-
-        if(item.categoria){
-            return item.categoria;
-        }
-
-        let productoEncontrado = productos.find(function(p){
-            return p.id === item.id;
-        });
-
-        return productoEncontrado
-            ? productoEncontrado.categoria
-            : "Sin categoría";
-
-    }).join("<br>");
-
+    return VentasHistorial.obtenerCategoriasVenta(venta);
 }
 
 function mostrarHistorialVentas(){
@@ -973,183 +939,7 @@ function mostrarHistorialVentas(){
 }
 
 function reimprimirBoletaVenta(index){
-
-    let venta = historialVentas[index];
-
-    if(!venta){
-        alert("No se encontró la venta");
-        return;
-    }
-
-    if(!venta.numeroBoleta || venta.numeroBoleta === "SIN IMPRESION"){
-        alert("Esta venta no tiene boleta para reimprimir");
-        return;
-    }
-
-    let detallePagos = obtenerDetallePagosVenta(venta);
-
-    let contenido = `
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Reimpresión ${venta.numeroBoleta}</title>
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:white;
-    padding:0;
-}
-.boleta{
-    width:280px;
-    margin:auto;
-    padding:15px;
-}
-.logo-boleta{
-    width:220px;
-    display:block;
-    margin:0 auto 10px auto;
-}
-h2{
-    text-align:center;
-    margin:5px 0;
-}
-.subtitulo,.datos,.footer{
-    font-size:12px;
-    line-height:1.5;
-}
-.linea{
-    border-top:1px dashed #000;
-    margin:10px 0;
-}
-.producto{
-    font-size:13px;
-    margin-bottom:8px;
-}
-.producto-nombre{
-    font-weight:bold;
-}
-.producto-detalle{
-    display:flex;
-    justify-content:space-between;
-}
-.total{
-    font-size:20px;
-    font-weight:bold;
-    text-align:center;
-    margin-top:12px;
-}
-.qr-container{
-    text-align:center;
-    margin-top:15px;
-}
-@media print{
-    body{ margin:0; }
-}
-</style>
-</head>
-<body>
-
-<div class="boleta">
-
-<img src="logo-boleta.png" class="logo-boleta">
-
-<h2>DIGITAL CENTER M&A</h2>
-
-<div style="text-align:center;font-weight:bold;">
-REIMPRESIÓN DE BOLETA
-</div>
-
-<div class="subtitulo" style="text-align:center;">
-<strong>RUC:</strong> 10027914077<br>
-Calle Chepa Santos 601<br>
-Frente al Banco de la Nación<br>
-WhatsApp: +51 913267246
-</div>
-
-<div class="linea"></div>
-
-<div class="datos">
-<strong>BOLETA N°:</strong> ${venta.numeroBoleta}<br>
-<strong>Fecha:</strong> ${venta.fecha}<br>
-<strong>Hora:</strong> ${venta.hora}<br>
-<strong>Atendido por:</strong> ${venta.vendedor || "Vendedor"}<br>
-<strong>Cliente:</strong> ${venta.clienteNombre || "CLIENTE GENERAL"}<br>
-<strong>DNI:</strong> ${venta.clienteDni || "-"}<br>
-<strong>Método de Pago:</strong><br>
-${detallePagos}
-</div>
-
-<div class="linea"></div>
-`;
-
-    if(venta.productos){
-        venta.productos.forEach(function(item){
-            contenido += `
-<div class="producto">
-    <div class="producto-nombre">${item.nombreBoleta || item.producto}</div>
-    <div class="producto-detalle">
-        <span>${item.cantidad} x S/ ${Number(item.precio || 0).toFixed(2)}</span>
-        <span>S/ ${Number(item.subtotal || 0).toFixed(2)}</span>
-    </div>
-</div>
-`;
-        });
-    }
-
-    contenido += `
-<div class="linea"></div>
-
-<div class="datos">
-<strong>Descuento:</strong> S/ ${Number(venta.descuento || 0).toFixed(2)}
-</div>
-
-<div class="total">
-TOTAL: S/ ${Number(venta.total || 0).toFixed(2)}
-</div>
-
-<div class="qr-container">
-<img src="qr-whatsapp.png" width="150">
-<p>Soporte, garantías y consultas aquí</p>
-</div>
-
-<div class="footer" style="text-align:center;">
-Conserve esta boleta para cualquier garantía.
-</div>
-
-</div>
-
-</body>
-</html>
-`;
-
-    let iframe = document.createElement("iframe");
-
-    iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
-    iframe.style.border = "0";
-
-    document.body.appendChild(iframe);
-
-    let documento = iframe.contentWindow.document;
-
-    documento.open();
-    documento.write(contenido);
-    documento.close();
-
-    setTimeout(function(){
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-
-        setTimeout(function(){
-            document.body.removeChild(iframe);
-        }, 1000);
-
-    }, 500);
-
+    VentasHistorial.reimprimirBoletaVenta(index);
 }
 
 function anularVenta(index){

@@ -275,3 +275,103 @@ h2{
 </html>
 `;
 }
+
+export function construirHTMLReimpresionBoleta(venta, detallePagos){
+
+    let productosHTML = "";
+
+    if(venta.productos){
+        venta.productos.forEach(function(item){
+            productosHTML += `
+<div class="producto">
+    <div class="producto-nombre">${item.nombreBoleta || item.producto}</div>
+    <div class="producto-detalle">
+        <span>${item.cantidad} x S/ ${Number(item.precio || 0).toFixed(2)}</span>
+        <span>S/ ${Number(item.subtotal || 0).toFixed(2)}</span>
+    </div>
+</div>
+`;
+        });
+    }
+
+    return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reimpresión ${venta.numeroBoleta}</title>
+<style>
+body{ font-family: Arial, sans-serif; background:white; padding:0; }
+.boleta{ width:280px; margin:auto; padding:15px; }
+.logo-boleta{ width:220px; display:block; margin:0 auto 10px auto; }
+h2{ text-align:center; margin:5px 0; }
+.subtitulo,.datos,.footer{ font-size:12px; line-height:1.5; }
+.linea{ border-top:1px dashed #000; margin:10px 0; }
+.producto{ font-size:13px; margin-bottom:8px; }
+.producto-nombre{ font-weight:bold; }
+.producto-detalle{ display:flex; justify-content:space-between; }
+.total{ font-size:20px; font-weight:bold; text-align:center; margin-top:12px; }
+.qr-container{ text-align:center; margin-top:15px; }
+@media print{ body{ margin:0; } }
+</style>
+</head>
+<body>
+
+<div class="boleta">
+<img src="logo-boleta.png" class="logo-boleta">
+
+<h2>DIGITAL CENTER M&A</h2>
+
+<div style="text-align:center;font-weight:bold;">
+REIMPRESIÓN DE BOLETA
+</div>
+
+<div class="subtitulo" style="text-align:center;">
+<strong>RUC:</strong> 10027914077<br>
+Calle Chepa Santos 601<br>
+Frente al Banco de la Nación<br>
+WhatsApp: +51 913267246
+</div>
+
+<div class="linea"></div>
+
+<div class="datos">
+<strong>BOLETA N°:</strong> ${venta.numeroBoleta}<br>
+<strong>Fecha:</strong> ${venta.fecha}<br>
+<strong>Hora:</strong> ${venta.hora}<br>
+<strong>Atendido por:</strong> ${venta.vendedor || "Vendedor"}<br>
+<strong>Cliente:</strong> ${venta.clienteNombre || "CLIENTE GENERAL"}<br>
+<strong>DNI:</strong> ${venta.clienteDni || "-"}<br>
+<strong>Método de Pago:</strong><br>
+${detallePagos}
+</div>
+
+<div class="linea"></div>
+
+${productosHTML}
+
+<div class="linea"></div>
+
+<div class="datos">
+<strong>Descuento:</strong> S/ ${Number(venta.descuento || 0).toFixed(2)}
+</div>
+
+<div class="total">
+TOTAL: S/ ${Number(venta.total || 0).toFixed(2)}
+</div>
+
+<div class="qr-container">
+<img src="qr-whatsapp.png" width="150">
+<p>Soporte, garantías y consultas aquí</p>
+</div>
+
+<div class="footer" style="text-align:center;">
+Conserve esta boleta para cualquier garantía.
+</div>
+
+</div>
+</body>
+</html>
+`;
+
+}
