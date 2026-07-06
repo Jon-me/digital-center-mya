@@ -7,6 +7,7 @@
 export function crearCaja(deps){
 
     const {
+
     state,
 
     db,
@@ -18,10 +19,7 @@ export function crearCaja(deps){
     runTransaction,
 
     obtenerFechaISO,
-    pedirAutorizacionAdmin,
-
-    mostrarGastosCaja,
-    actualizarCajaDiaria
+    pedirAutorizacionAdmin
 
 } = deps;
 
