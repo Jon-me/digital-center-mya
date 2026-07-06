@@ -36,6 +36,8 @@ import {
 import { crearCaja } from "./js/caja.js";
 import { crearDashboard } from "./js/dashboard.js";
 import { crearGarantias } from "./js/garantias.js";
+import { crearTransferencias } from "./js/transferencias.js";
+
 let usuarios = [
 
      {
@@ -206,6 +208,16 @@ const estadoGarantiasBridge = {
 
 };
 
+const estadoTransferenciasBridge = {
+
+    get productos(){ return productos; },
+    set productos(valor){ productos = valor; },
+
+    get productoTransferenciaActual(){ return productoTransferenciaActual; },
+    set productoTransferenciaActual(valor){ productoTransferenciaActual = valor; }
+
+};
+
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
 
@@ -313,6 +325,21 @@ const Garantias = crearGarantias({
     query,
     where,
     getDocs
+
+});
+
+const Transferencias = crearTransferencias({
+
+    state: estadoTransferenciasBridge,
+
+    db,
+    doc,
+    collection,
+    runTransaction,
+
+    obtenerStockTiendas,
+    tiendasSistema,
+    obtenerFechaISO
 
 });
 
@@ -1558,122 +1585,15 @@ async function actualizarGarantia(idBoleta, estado){
 }
 
 function abrirTransferenciaStock(idProducto){
-
-    let producto = productos.find(function(p){
-        return p.id === idProducto;
-    });
-
-    if(!producto){
-        alert("Producto no encontrado");
-        return;
-    }
-
-    productoTransferenciaActual = producto;
-
-    let stockTiendas = obtenerStockTiendas(producto);
-
-    document.getElementById("transferenciaProductoNombre").innerHTML =
-        producto.producto;
-
-    document.getElementById("stockTransferPrincipal").innerHTML =
-        stockTiendas.principal;
-
-    document.getElementById("stockTransferSucursal").innerHTML =
-        stockTiendas.sucursal;
-
-    document.getElementById("transferenciaOrigen").value = "principal";
-    document.getElementById("transferenciaDestino").value = "sucursal";
-    document.getElementById("transferenciaCantidad").value = "";
-
-    document.getElementById("modalTransferenciaStock").style.display = "flex";
-
+    Transferencias.abrirTransferenciaStock(idProducto);
 }
 
 function cerrarTransferenciaStock(){
-
-    document.getElementById("modalTransferenciaStock").style.display = "none";
-    productoTransferenciaActual = null;
-
+    Transferencias.cerrarTransferenciaStock();
 }
 
 async function confirmarTransferenciaStock(){
-
-    if(!productoTransferenciaActual){
-        alert("No hay producto seleccionado");
-        return;
-    }
-
-    let origen = document.getElementById("transferenciaOrigen").value;
-    let destino = document.getElementById("transferenciaDestino").value;
-    let cantidad = Number(document.getElementById("transferenciaCantidad").value);
-
-    if(origen === destino){
-        alert("Origen y destino no pueden ser iguales");
-        return;
-    }
-
-    if(!Number.isInteger(cantidad) || cantidad <= 0){
-        alert("Ingrese una cantidad válida");
-        return;
-    }
-
-    let productoRef = doc(db, "productos", productoTransferenciaActual.id);
-
-    try{
-
-        await runTransaction(db, async function(transaction){
-
-            let productoSnap = await transaction.get(productoRef);
-
-            if(!productoSnap.exists()){
-                throw new Error("Producto no encontrado");
-            }
-
-            let productoData = productoSnap.data();
-            let stockTiendas = obtenerStockTiendas(productoData);
-
-            if(stockTiendas[origen] < cantidad){
-                throw new Error("Stock insuficiente en " + tiendasSistema[origen]);
-            }
-
-            stockTiendas[origen] -= cantidad;
-            stockTiendas[destino] += cantidad;
-
-            let stockTotal = stockTiendas.principal + stockTiendas.sucursal;
-
-            transaction.update(productoRef, {
-                stock: stockTotal,
-                stockTiendas: stockTiendas
-            });
-
-            let transferenciaRef = doc(collection(db, "transferenciasStock"));
-
-            transaction.set(transferenciaRef, {
-                productoId: productoTransferenciaActual.id,
-                codigo: productoTransferenciaActual.codigo || "",
-                producto: productoTransferenciaActual.producto || "",
-                cantidad: cantidad,
-                origen: tiendasSistema[origen],
-                destino: tiendasSistema[destino],
-                fecha: new Date().toLocaleDateString(),
-                fechaISO: obtenerFechaISO(),
-                hora: new Date().toLocaleTimeString(),
-                usuario: localStorage.getItem("nombreActivo") || "Sin usuario"
-            });
-
-        });
-
-        alert("✅ Stock transferido correctamente");
-
-        cerrarTransferenciaStock();
-
-    } catch(error){
-
-        console.error("Error transfiriendo stock:", error);
-        alert(error.message || "No se pudo transferir stock");
-
-    }
-
+    return await Transferencias.confirmarTransferenciaStock();
 }
 
 function abrirPanelSeguro(ids){
