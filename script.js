@@ -37,6 +37,13 @@ import { crearCaja } from "./js/caja.js";
 import { crearDashboard } from "./js/dashboard.js";
 import { crearGarantias } from "./js/garantias.js";
 import { crearTransferencias } from "./js/transferencias.js";
+import {
+    obtenerFechaISO,
+    normalizarTexto,
+    obtenerStockTiendas,
+    obtenerStockTotal,
+    obtenerTextoBusquedaProducto
+} from "./js/core.js";
 
 let usuarios = [
 
@@ -356,73 +363,13 @@ function detenerListenersFirebase(){
 
 }
 
-function obtenerStockTiendas(producto){
-
-    if(producto.stockTiendas){
-        return {
-            principal: Number(producto.stockTiendas.principal || 0),
-            sucursal: Number(producto.stockTiendas.sucursal || 0)
-        };
-    }
-
-    return {
-        principal: Number(producto.stock || 0),
-        sucursal: 0
-    };
-
-}
-
-function obtenerStockTotal(producto){
-
-    let stockTiendas = obtenerStockTiendas(producto);
-
-    return stockTiendas.principal + stockTiendas.sucursal;
-
-}
-
 sonidoVenta.volume = 0.4;
-
-function obtenerFechaISO(){
-    let fecha = new Date();
-
-    let año = fecha.getFullYear();
-    let mes = String(fecha.getMonth() + 1).padStart(2, "0");
-    let dia = String(fecha.getDate()).padStart(2, "0");
-
-    return `${año}-${mes}-${dia}`;
-}
 
 function ordenarProductosPorCodigo(){
 
     productos.sort(function(a, b){
         return String(a.codigo || "").localeCompare(String(b.codigo || ""));
     });
-
-}
-
-function normalizarTexto(valor){
-
-    return String(valor || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-
-}
-
-function obtenerTextoBusquedaProducto(producto){
-
-    if(producto.textoBusqueda){
-        return producto.textoBusqueda;
-    }
-
-    producto.textoBusqueda = normalizarTexto(
-        (producto.producto || "") + " " +
-        (producto.codigo || "") + " " +
-        (producto.categoria || "")
-    );
-
-    return producto.textoBusqueda;
 
 }
 
