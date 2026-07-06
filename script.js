@@ -34,6 +34,7 @@ import {
 } from "./js/boleta.js";
 
 import { crearCaja } from "./js/caja.js";
+import { crearDashboard } from "./js/dashboard.js";
 
 let usuarios = [
 
@@ -185,6 +186,19 @@ const estadoCajaBridge = {
 
 };
 
+const estadoDashboardBridge = {
+
+    get historialVentas(){ return historialVentas; },
+    set historialVentas(valor){ historialVentas = valor; },
+
+    get productos(){ return productos; },
+    set productos(valor){ productos = valor; },
+
+    get carrito(){ return carrito; },
+    set carrito(valor){ carrito = valor; }
+
+};
+
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
 
@@ -268,6 +282,16 @@ const Caja = crearCaja({
 
     mostrarGastosCaja: () => Caja.mostrarGastosCaja(),
     actualizarCajaDiaria: () => Caja.actualizarCajaDiaria()
+
+});
+
+const Dashboard = crearDashboard({
+
+    state: estadoDashboardBridge,
+
+    obtenerFechaISO,
+    obtenerStockTotal,
+    obtenerDescuento
 
 });
 
@@ -806,50 +830,7 @@ window.addEventListener("pageshow", function(){
 });
 
 function actualizarDashboard(){
-
-    let totalProductos = document.getElementById("totalProductos");
-    let valorInventario = document.getElementById("valorInventario");
-    let productosCarrito = document.getElementById("productosCarrito");
-    let ventaActualElemento = document.getElementById("ventaActual");
-
-    if(!totalProductos || !valorInventario || !productosCarrito || !ventaActualElemento){
-        return;
-    }
-
-    totalProductos.innerHTML = productos.length;
-
-    let valorTotal = 0;
-
-    productos.forEach(function(producto){
-      valorTotal += obtenerStockTotal(producto) * Number(producto.precio || 0);
-    });
-
-    valorInventario.innerHTML =
-        "S/ " + valorTotal.toFixed(2);
-
-    let cantidadCarrito = 0;
-
-    carrito.forEach(function(item){
-        cantidadCarrito += Number(item.cantidad || 0);
-    });
-
-    productosCarrito.innerHTML = cantidadCarrito;
-
-    let ventaActual = 0;
-
-    carrito.forEach(function(item){
-        ventaActual += Number(item.subtotal || 0);
-    });
-
-    ventaActual = ventaActual - obtenerDescuento();
-
-    if(ventaActual < 0){
-        ventaActual = 0;
-    }
-
-    ventaActualElemento.innerHTML =
-        "S/ " + ventaActual.toFixed(2);
-
+    Dashboard.actualizarDashboard();
 }
 
 async function validarStockAntesDeImprimir(){
@@ -1215,286 +1196,15 @@ function filtrarCategoria(categoria){
 }
 
 function actualizarReportes(){
-
-    let ventasHoyElemento = document.getElementById("ventasHoy");
-    let gananciaHoyElemento = document.getElementById("gananciaHoy");
-    let ventasMesElemento = document.getElementById("ventasMes");
-    let gananciaMesElemento = document.getElementById("gananciaMes");
-    let ventasEfectivoElemento = document.getElementById("ventasEfectivo");
-    let ventasYapeElemento = document.getElementById("ventasYape");
-    let ventasPlinElemento = document.getElementById("ventasPlin");
-    let ventasTarjetaElemento = document.getElementById("ventasTarjeta");
-    let ventasTransferenciaElemento = document.getElementById("ventasTransferencia");
-
-    if(
-        !ventasHoyElemento ||
-        !gananciaHoyElemento ||
-        !ventasMesElemento ||
-        !gananciaMesElemento ||
-        !ventasEfectivoElemento ||
-        !ventasYapeElemento ||
-        !ventasPlinElemento ||
-        !ventasTarjetaElemento ||
-        !ventasTransferenciaElemento
-    ){
-        return;
-    }
-
-    let mesActual = new Date().getMonth();
-    let anioActual = new Date().getFullYear();
-
-    let ventasHoy = 0;
-    let gananciaHoy = 0;
-    let ventasMes = 0;
-    let gananciaMes = 0;
-
-    let ventasEfectivo = 0;
-    let ventasYape = 0;
-    let ventasPlin = 0;
-    let ventasTarjeta = 0;
-    let ventasTransferencia = 0;
-
-    historialVentas.forEach(function(venta){
-
-        if(venta.fechaISO === obtenerFechaISO()){
-
-            ventasHoy += Number(venta.total || 0);
-            gananciaHoy += Number(venta.ganancia || 0);
-
-            if(venta.pagos){
-
-                ventasEfectivo += Number(venta.pagos.efectivo || 0);
-                ventasYape += Number(venta.pagos.yape || 0);
-                ventasPlin += Number(venta.pagos.plin || 0);
-                ventasTarjeta += Number(venta.pagos.tarjeta || 0);
-                ventasTransferencia += Number(venta.pagos.transferencia || 0);
-
-            } else {
-
-                let metodo = venta.metodoPago || "No registrado";
-
-                if(metodo === "Efectivo"){
-                    ventasEfectivo += Number(venta.total || 0);
-                }
-
-                if(metodo === "Yape"){
-                    ventasYape += Number(venta.total || 0);
-                }
-
-                if(metodo === "Plin"){
-                    ventasPlin += Number(venta.total || 0);
-                }
-
-                if(metodo === "Tarjeta"){
-                    ventasTarjeta += Number(venta.total || 0);
-                }
-
-                if(metodo === "Transferencia"){
-                    ventasTransferencia += Number(venta.total || 0);
-                }
-
-            }
-
-        }
-
-        let fechaVenta = venta.fechaISO
-            ? new Date(venta.fechaISO + "T00:00:00")
-            : new Date(venta.fecha);
-
-        if(
-            fechaVenta.getMonth() === mesActual &&
-            fechaVenta.getFullYear() === anioActual
-        ){
-            ventasMes += Number(venta.total || 0);
-            gananciaMes += Number(venta.ganancia || 0);
-        }
-
-    });
-
-    ventasHoyElemento.innerHTML = "S/ " + ventasHoy.toFixed(2);
-    gananciaHoyElemento.innerHTML = "S/ " + gananciaHoy.toFixed(2);
-    ventasMesElemento.innerHTML = "S/ " + ventasMes.toFixed(2);
-    gananciaMesElemento.innerHTML = "S/ " + gananciaMes.toFixed(2);
-
-    ventasEfectivoElemento.innerHTML = "S/ " + ventasEfectivo.toFixed(2);
-    ventasYapeElemento.innerHTML = "S/ " + ventasYape.toFixed(2);
-    ventasPlinElemento.innerHTML = "S/ " + ventasPlin.toFixed(2);
-    ventasTarjetaElemento.innerHTML = "S/ " + ventasTarjeta.toFixed(2);
-    ventasTransferenciaElemento.innerHTML = "S/ " + ventasTransferencia.toFixed(2);
-
+    Dashboard.actualizarReportes();
 }
 
 function actualizarDashboardEjecutivo(){
-
-    let productoMasVendidoElemento = document.getElementById("productoMasVendido");
-    let mejorVendedorElemento = document.getElementById("mejorVendedor");
-    let gananciaRealDiaElemento = document.getElementById("gananciaRealDia");
-    let ticketPromedioElemento = document.getElementById("ticketPromedio");
-    let gananciaMesEjecutivaElemento = document.getElementById("gananciaMesEjecutiva");
-
-    if(
-        !productoMasVendidoElemento ||
-        !mejorVendedorElemento ||
-        !gananciaRealDiaElemento ||
-        !ticketPromedioElemento ||
-        !gananciaMesEjecutivaElemento
-    ){
-        return;
-    }
-
-    let productosVendidos = {};
-    let vendedores = {};
-
-    let gananciaDia = 0;
-    let gananciaMes = 0;
-    let totalVentasDia = 0;
-    let cantidadVentasDia = 0;
-
-    historialVentas.forEach(function(venta){
-
-        let fechaVenta = venta.fechaISO
-            ? new Date(venta.fechaISO + "T00:00:00")
-            : new Date(venta.fecha);
-
-        let hoyFecha = new Date();
-
-        if(
-            fechaVenta.getMonth() === hoyFecha.getMonth() &&
-            fechaVenta.getFullYear() === hoyFecha.getFullYear()
-        ){
-            gananciaMes += Number(venta.ganancia || 0);
-        }
-
-        if(venta.fechaISO === obtenerFechaISO()){
-
-            gananciaDia += Number(venta.ganancia || 0);
-            totalVentasDia += Number(venta.total || 0);
-            cantidadVentasDia++;
-
-            let vendedor = venta.vendedor || "Sin vendedor";
-
-            if(!vendedores[vendedor]){
-                vendedores[vendedor] = 0;
-            }
-
-            vendedores[vendedor] += Number(venta.total || 0);
-
-            if(venta.productos){
-
-                venta.productos.forEach(function(item){
-
-                    let producto = item.nombreBoleta || item.producto || "Sin producto";
-
-                    if(!productosVendidos[producto]){
-                        productosVendidos[producto] = 0;
-                    }
-
-                    productosVendidos[producto] += Number(item.cantidad || 0);
-
-                });
-
-            }
-
-        }
-
-    });
-
-    let productoTop = "-";
-    let cantidadTop = 0;
-
-    for(let producto in productosVendidos){
-        if(productosVendidos[producto] > cantidadTop){
-            productoTop = producto;
-            cantidadTop = productosVendidos[producto];
-        }
-    }
-
-    let vendedorTop = "-";
-    let montoTop = 0;
-
-    for(let vendedor in vendedores){
-        if(vendedores[vendedor] > montoTop){
-            vendedorTop = vendedor;
-            montoTop = vendedores[vendedor];
-        }
-    }
-
-    let ticketPromedio =
-        cantidadVentasDia > 0
-        ? totalVentasDia / cantidadVentasDia
-        : 0;
-
-    let nombreCorto =
-        productoTop.length > 15
-        ? productoTop.substring(0, 15) + "..."
-        : productoTop;
-
-    productoMasVendidoElemento.innerHTML =
-        productoTop === "-"
-        ? "-"
-        : nombreCorto + "<br><small>Vendidos: " + cantidadTop + "</small>";
-
-    mejorVendedorElemento.innerHTML =
-        vendedorTop === "-"
-        ? "-"
-        : vendedorTop + "<br><small>S/ " + montoTop.toFixed(2) + "</small>";
-
-    gananciaRealDiaElemento.innerHTML =
-        "S/ " + gananciaDia.toFixed(2);
-
-    ticketPromedioElemento.innerHTML =
-        "S/ " + ticketPromedio.toFixed(2);
-
-    gananciaMesEjecutivaElemento.innerHTML =
-        "S/ " + gananciaMes.toFixed(2);
-
+    Dashboard.actualizarDashboardEjecutivo();
 }
 
 function mostrarReporteVendedores(){
-
-    let tabla =
-        document.getElementById("reporteVendedoresTabla");
-
-    if(!tabla){
-        return;
-    }
-
-    let vendedores = {};
-    let html = "";
-
-    historialVentas.forEach(function(venta){
-
-        let nombre = venta.vendedor || "Sin vendedor";
-
-        if(!vendedores[nombre]){
-            vendedores[nombre] = {
-                ventas: 0,
-                total: 0,
-                ganancia: 0
-            };
-        }
-
-        vendedores[nombre].ventas += 1;
-        vendedores[nombre].total += venta.total;
-        vendedores[nombre].ganancia += venta.ganancia;
-
-    });
-
-    for(let nombre in vendedores){
-
-        html += `
-        <tr>
-            <td>${nombre}</td>
-            <td>${vendedores[nombre].ventas}</td>
-            <td>S/ ${vendedores[nombre].total.toFixed(2)}</td>
-            <td>S/ ${vendedores[nombre].ganancia.toFixed(2)}</td>
-        </tr>
-        `;
-
-    }
-
-    tabla.innerHTML = html;
-
+    Dashboard.mostrarReporteVendedores();
 }
 
 function obtenerDescuento(){
