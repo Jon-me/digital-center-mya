@@ -39,6 +39,7 @@ import { crearGarantias } from "./js/garantias.js";
 import { crearTransferencias } from "./js/transferencias.js";
 import { crearAuth } from "./js/auth.js";
 import { crearListeners } from "./js/listeners.js";
+import { crearBootstrap } from "./js/bootstrap.js";
 import {
     obtenerFechaISO,
     normalizarTexto,
@@ -451,6 +452,25 @@ const Listeners = crearListeners({
 
 });
 
+const Bootstrap = crearBootstrap({
+
+    localStorage,
+
+    apagarSonidoLogin,
+    mostrarCarrito,
+    controlarColumnaGanancia,
+    aplicarPermisos,
+    desbloquearSistema,
+    iniciarListenersFirebase,
+    hidratarProductosDesdeIndexedDB,
+
+    iniciarSesion,
+    calcularTotalPagado,
+    actualizarResumenVenta,
+    limpiarDescuentoSiCarritoVacio
+
+});
+
 function detenerListenersFirebase(){
 
     listenersFirebaseActivos.forEach(function(unsubscribe){
@@ -688,102 +708,11 @@ function cerrarSesion(){
     Auth.cerrarSesion();
 }
 
-// VERIFICAR SESIÓN ACTIVA AL RECARGAR
-if(localStorage.getItem("sesion") === "activa"){
-
-    document.getElementById("login").style.display = "none";
-
-    document.getElementById("sistema").style.display = "block";
-
-    apagarSonidoLogin();
-
-    document.body.classList.remove("rol-admin", "rol-vendedor");
-document.body.classList.add("rol-" + localStorage.getItem("rolActivo"));
-
-    if(localStorage.getItem("rolActivo") === "vendedor"){
-        document.getElementById("dashboardAdmin").style.display = "none";
-    } else {
-        document.getElementById("dashboardAdmin").style.display = "grid";
-    }
-
-           mostrarCarrito();
-
-controlarColumnaGanancia();
-
-aplicarPermisos();
-
-desbloquearSistema();
-
-iniciarListenersFirebase();
-
-setTimeout(async function(){
-
-await hidratarProductosDesdeIndexedDB();
-
-}, 300);
-
-} else {
-
-    document.getElementById("login").style.display = "block";
-
-    document.getElementById("sistema").style.display = "none";
-
-    document.getElementById("btnSonido").style.display = "block";
-
-    desbloquearSistema();
-
-}
-
-// ENTER SOLO PARA LOGIN
+// INICIALIZAR APLICACIÓN
 document.addEventListener("DOMContentLoaded", function(){
 
-    let descuentoInput = document.getElementById("descuentoVenta");
-["pagoEfectivo", "pagoYape", "pagoPlin", "pagoTarjeta", "pagoTransferencia"].forEach(function(id){
+    Bootstrap.iniciarAplicacion();
 
-    let input = document.getElementById(id);
-
-    if(input){
-        input.addEventListener("input", function(){
-            calcularTotalPagado();
-        });
-    }
-
-});
-
-    limpiarDescuentoSiCarritoVacio();
-
-    setTimeout(limpiarDescuentoSiCarritoVacio, 100);
-    setTimeout(limpiarDescuentoSiCarritoVacio, 500);
-
-    if(descuentoInput){
-        descuentoInput.addEventListener("input", function(){
-    actualizarResumenVenta();
-});
-    }
-
-   let inputUsuario = document.getElementById("usuario");
-let inputPassword = document.getElementById("password");
-
-if(inputUsuario){
-    inputUsuario.addEventListener("keydown", function(event){
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
-    });
-}
-
-if(inputPassword){
-    inputPassword.addEventListener("keydown", function(event){
-        if(event.key === "Enter"){
-            iniciarSesion();
-        }
-    });
-}
-
-});
-
-window.addEventListener("pageshow", function(){
-    limpiarDescuentoSiCarritoVacio();
 });
 
 function actualizarDashboard(){
