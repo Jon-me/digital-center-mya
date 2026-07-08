@@ -38,6 +38,7 @@ import { crearDashboard } from "./js/dashboard.js";
 import { crearGarantias } from "./js/garantias.js";
 import { crearTransferencias } from "./js/transferencias.js";
 import { crearAuth } from "./js/auth.js";
+import { crearListeners } from "./js/listeners.js";
 import {
     obtenerFechaISO,
     normalizarTexto,
@@ -131,6 +132,9 @@ const estadoCatalogoBridge = {
     get productosVista(){ return productosVista; },
     set productosVista(valor){ productosVista = valor; },
 
+    get catalogoDirty(){ return catalogoDirty; },
+    set catalogoDirty(valor){ catalogoDirty = valor; },
+
     get busquedaCatalogo(){ return busquedaCatalogo; },
     set busquedaCatalogo(valor){ busquedaCatalogo = valor; },
 
@@ -142,9 +146,6 @@ const estadoCatalogoBridge = {
 
     get ultimaFirmaCatalogo(){ return ultimaFirmaCatalogo; },
     set ultimaFirmaCatalogo(valor){ ultimaFirmaCatalogo = valor; },
-
-    get catalogoDirty(){ return catalogoDirty; },
-    set catalogoDirty(valor){ catalogoDirty = valor; },
 
     get cantidadRenderProductos(){ return cantidadRenderProductos; },
     set cantidadRenderProductos(valor){ cantidadRenderProductos = valor; },
@@ -240,6 +241,40 @@ const estadoAuthBridge = {
 
     get codigoAnulacion(){ return codigoAnulacion; },
     set codigoAnulacion(valor){ codigoAnulacion = valor; }
+
+};
+
+const estadoListenersBridge = {
+
+    get productos(){ return productos; },
+    set productos(valor){ productos = valor; },
+
+    get historialVentas(){ return historialVentas; },
+    set historialVentas(valor){ historialVentas = valor; },
+
+    get montoInicialCaja(){ return montoInicialCaja; },
+    set montoInicialCaja(valor){ montoInicialCaja = valor; },
+
+    get gastosCaja(){ return gastosCaja; },
+    set gastosCaja(valor){ gastosCaja = valor; },
+
+    get historialCajas(){ return historialCajas; },
+    set historialCajas(valor){ historialCajas = valor; },
+
+    get codigoAnulacion(){ return codigoAnulacion; },
+    set codigoAnulacion(valor){ codigoAnulacion = valor; },
+
+    get listenersFirebaseActivos(){ return listenersFirebaseActivos; },
+    set listenersFirebaseActivos(valor){ listenersFirebaseActivos = valor; },
+
+    get listenersFirebaseIniciados(){ return listenersFirebaseIniciados; },
+    set listenersFirebaseIniciados(valor){ listenersFirebaseIniciados = valor; },
+
+    get catalogoVersion(){ return catalogoVersion; },
+    set catalogoVersion(valor){ catalogoVersion = valor; },
+
+    get ultimaFirmaCatalogo(){ return ultimaFirmaCatalogo; },
+    set ultimaFirmaCatalogo(valor){ ultimaFirmaCatalogo = valor; }
 
 };
 
@@ -387,6 +422,32 @@ const Auth = crearAuth({
     sonidoVenta,
     location,
     localStorage
+
+});
+
+const Listeners = crearListeners({
+
+    state: estadoListenersBridge,
+
+    db,
+    collection,
+    doc,
+    onSnapshot,
+
+    obtenerFechaISO,
+
+    actualizarCajaDiaria,
+    mostrarGastosCaja,
+    mostrarHistorialCajas,
+    mostrarHistorialVentas,
+    actualizarReportes,
+    actualizarDashboardEjecutivo,
+    mostrarReporteVendedores,
+    guardarProductosIndexedDB,
+
+    reiniciarRenderCatalogo,
+    mostrarProductos,
+    ordenarProductosPorCodigo
 
 });
 
@@ -1155,185 +1216,17 @@ function iniciarListenersFirebase(){
 
     listenersFirebaseIniciados = true;
 
-listenersFirebaseActivos.push(
-onSnapshot(
-    collection(db, "productos"),
-    function(snapshot){
+Listeners.escucharProductos();
 
-        productos = snapshot.docs.map(function(documento){
-            return {
-                id: documento.id,
-                ...documento.data()
-            };
-        });
+Listeners.escucharVentas();
 
-        CatalogoProductos.ordenarProductosPorCodigo();
+Listeners.escucharConfiguracion();
 
-        catalogoVersion++;
+Listeners.escucharCaja();
 
-        ultimaFirmaCatalogo = "";
+Listeners.escucharGastos();
 
-        guardarProductosIndexedDB();
-
-        if(localStorage.getItem("sesion") === "activa"){
-          reiniciarRenderCatalogo();
-        mostrarProductos();
-        }
-
-    },
-
-    function(error){
-
-        console.error("Error en tiempo real productos:", error);
-
-        if(productos.length === 0){
-            hidratarProductosDesdeIndexedDB();
-        }
-
-    }
-)
-);
-
-listenersFirebaseActivos.push(
-onSnapshot(
-    collection(db, "ventas"),
-    function(snapshot){
-
-        historialVentas = [];
-
-        snapshot.forEach(function(documento){
-            historialVentas.push({
-                id: documento.id,
-                ...documento.data()
-            });
-        });
-
-        historialVentas.sort(function(a, b){
-            return String(b.fechaISO || "").localeCompare(String(a.fechaISO || ""));
-        });
-
-        if(localStorage.getItem("sesion") === "activa"){
-            mostrarHistorialVentas();
-            actualizarReportes();
-            actualizarDashboardEjecutivo();
-            mostrarReporteVendedores();
-            actualizarCajaDiaria();
-        }
-
-    },
-    function(error){
-        console.error("Error cargando ventas:", error);
-    }
-)
-);
-
-listenersFirebaseActivos.push(
-onSnapshot(doc(db, "configuracion", "sistema"), function(documento){
-
-    if(documento.exists()){
-
-        codigoAnulacion =
-            documento.data().codigoAnulacion || "9999";
-
-    }
-
-}
-)
-);
-
-listenersFirebaseActivos.push(
-onSnapshot(
-    doc(
-        db,
-        "cajas",
-        obtenerFechaISO()
-    ),
-    function(documento){
-
-        if(!documento.exists()){
-            return;
-        }
-
-        let datos = documento.data();
-
-        montoInicialCaja = datos.montoInicial || 0;
-
-       if(localStorage.getItem("sesion") === "activa"){
-    document.getElementById("cajaInicial").innerHTML =
-        "S/ " + montoInicialCaja.toFixed(2);
-
-    actualizarCajaDiaria();
-}
-
-    }
-)
-);
-
-listenersFirebaseActivos.push(
-onSnapshot(
-    collection(
-        db,
-        "cajas",
-        obtenerFechaISO(),
-        "gastos"
-    ),
-    function(snapshot){
-
-        gastosCaja = [];
-
-        snapshot.forEach(function(documento){
-
-            gastosCaja.push({
-                id: documento.id,
-                ...documento.data()
-            });
-
-        });
-
-       if(localStorage.getItem("sesion") === "activa"){
-
-    mostrarGastosCaja();
-    actualizarCajaDiaria();
-
-}
-
-    }
-)
-);
-
-listenersFirebaseActivos.push(
-onSnapshot(
-    collection(db, "cierresCaja"),
-
-    function(snapshot){
-
-        historialCajas = [];
-
-        snapshot.forEach(function(documento){
-
-            let caja = {
-                id: documento.id,
-                ...documento.data()
-            };
-
-            historialCajas.push(caja);
-
-        });
-
-        historialCajas.sort(function(a, b){
-            return (b.fecha || "").localeCompare(a.fecha || "");
-        });
-
-      if(localStorage.getItem("sesion") === "activa"){
-
-    mostrarHistorialCajas();
-
-}
-
-    }
-
-)
-);
+Listeners.escucharHistorialCierres();
 
 }
 
