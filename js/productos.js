@@ -87,18 +87,15 @@ export function crearCatalogoProductos(deps){
 
     function actualizarLimiteRender(){
 
-    let categoria =
-        normalizarTexto(state.categoriaCatalogo);
-
-    if(categoria === "todos"){
-
-        state.cantidadRenderProductos = 24;
+    if(state.modoRenderCatalogo === "incremental"){
         return;
-
     }
 
     state.cantidadRenderProductos =
-        state.productosVista.length;
+        CatalogEngine.obtenerLimiteRender(
+            state.categoriaCatalogo,
+            state.productosVista.length
+        );
 
 }
 
@@ -169,25 +166,35 @@ export function crearCatalogoProductos(deps){
 
     function renderBotonVerMas(){
 
-        if(state.productosVista.length <= state.cantidadRenderProductos){
-            return "";
-        }
+    return "";
 
-        return `
-            <button class="btn-cargar-mas-productos" onclick="window.cargarMasProductos()">
-                Ver más productos
-            </button>
-        `;
-    }
+}
 
-    function renderProductosRango(inicio, fin, rolActivo){
-        return state.productosVista
-            .slice(inicio, fin)
-            .map(function(producto){
-                return renderProductoCard(producto, rolActivo);
-            })
-            .join("");
-    }
+    function renderProductosRango(
+    inicio,
+    fin,
+    rolActivo
+){
+
+    let productosVisibles =
+        CatalogEngine.obtenerViewportProductos(
+            state.productosVista,
+            inicio,
+            fin - inicio
+        );
+
+    return productosVisibles
+        .map(function(producto){
+
+            return renderProductoCard(
+                producto,
+                rolActivo
+            );
+
+        })
+        .join("");
+
+}
 
     const CatalogRenderer = {
 
@@ -286,12 +293,38 @@ export function crearCatalogoProductos(deps){
 
     function cargarMasProductos(){
 
-        state.cantidadRenderProductos += 24;
-        state.modoRenderCatalogo = "incremental";
-        state.catalogoDirty = true;
+    state.cantidadRenderProductos =
+        CatalogEngine.obtenerSiguienteLimiteRender(
+            state.cantidadRenderProductos
+        );
 
-        mostrarProductos();
+    state.modoRenderCatalogo = "incremental";
+    state.catalogoDirty = true;
+
+    mostrarProductos();
+
+}
+
+function inicializarScrollCatalogo(){
+
+    let tabla = document.getElementById("tablaProductos");
+
+    if(!tabla){
+        return;
     }
+
+    tabla.addEventListener("scroll", function(){
+
+        if(
+            CatalogEngine.debeCargarMasPorScroll(tabla) &&
+            state.productosVista.length > state.cantidadRenderProductos
+        ){
+            cargarMasProductos();
+        }
+
+    });
+
+}
 
     function buscarProducto(){
 
@@ -598,6 +631,7 @@ async function eliminarProducto(idProducto){
         guardarProducto,
         seleccionarImagenProducto,
         editarProducto,
-        eliminarProducto
+        eliminarProducto,
+        inicializarScrollCatalogo
     };
 }

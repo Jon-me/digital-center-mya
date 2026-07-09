@@ -589,6 +589,10 @@ function cargarMasProductos(){
     CatalogoProductos.cargarMasProductos();
 }
 
+function inicializarScrollCatalogo(){
+    CatalogoProductos.inicializarScrollCatalogo();
+}
+
 async function subirImagenProductoStorage(archivo){
     return await CatalogoProductos.subirImagenProductoStorage(archivo);
 }
@@ -770,6 +774,7 @@ function cerrarSesion(){
 document.addEventListener("DOMContentLoaded", function(){
 
     Bootstrap.iniciarAplicacion();
+    inicializarScrollCatalogo();
 
 });
 

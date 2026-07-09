@@ -61,11 +61,69 @@ function ordenarProductos(lista){
 
 }
 
+function obtenerViewportProductos(
+    productos,
+    inicio,
+    cantidad
+){
+
+    return productos.slice(
+        inicio,
+        inicio + cantidad
+    );
+
+}
+
+function obtenerLimiteRender(
+    categoria,
+    cantidadProductos
+){
+
+    let categoriaNormalizada =
+        normalizarTexto(categoria);
+
+    if(categoriaNormalizada === "todos"){
+
+        return 24;
+
+    }
+
+    return cantidadProductos;
+
+}
+
+function obtenerSiguienteLimiteRender(
+    limiteActual,
+    incremento = 24
+){
+
+    return limiteActual + incremento;
+
+}
+
+function debeCargarMasPorScroll(elemento, margen = 250){
+
+    if(!elemento){
+        return false;
+    }
+
+    return (
+        elemento.scrollTop +
+        elemento.clientHeight >=
+        elemento.scrollHeight - margen
+    );
+
+}
+
     return {
 
     coincideCategoriaProducto,
     coincideBusquedaProducto,
-    ordenarProductos
+    ordenarProductos,
+    obtenerViewportProductos,
+    obtenerLimiteRender,
+    obtenerSiguienteLimiteRender,
+    debeCargarMasPorScroll
 
 };
 
