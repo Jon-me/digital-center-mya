@@ -105,9 +105,16 @@ export function crearCatalogoProductos(deps){
         let stockTotal = obtenerStockTotal(producto);
 
         return `
-        <div class="producto-card">
+        <div
+    class="producto-card"
+    data-producto-id="${producto.id}">
 
-            <img loading="lazy" src="${producto.imagen || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Sin imagen</text></svg>'}" />
+            <img
+    class="imagen-producto-lazy"
+    loading="lazy"
+    src="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%221100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Cargando...</text></svg>"
+    data-src="${producto.imagen || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Sin imagen</text></svg>'}"
+/>
 
             <h3>${producto.producto}</h3>
             <p>Código: ${producto.codigo}</p>
@@ -170,6 +177,155 @@ export function crearCatalogoProductos(deps){
 
 }
 
+function renderSkeletonCatalogo(cantidad = 12){
+
+    return Array.from({ length: cantidad }, function(){
+
+        return `
+            <div class="producto-card skeleton-card">
+
+                <div class="skeleton skeleton-img"></div>
+
+                <div class="skeleton skeleton-line grande"></div>
+
+                <div class="skeleton skeleton-line"></div>
+
+                <div class="skeleton skeleton-line corta"></div>
+
+                <div class="skeleton skeleton-btn"></div>
+
+            </div>
+        `;
+
+    }).join("");
+
+}
+
+const CONFIG_VIRTUAL_SCROLL_CATALOGO = {
+    alturaProducto: 260,
+    buffer: 6,
+    minimoProductosVirtual: 999999
+};
+
+const estadoVirtualCatalogo = {
+    activo: false,
+    inicio: 0,
+    fin: 0,
+    productos: []
+};
+
+function debeUsarVirtualScrollCatalogo(){
+    return state.productosVista.length >= CONFIG_VIRTUAL_SCROLL_CATALOGO.minimoProductosVirtual;
+}
+
+function calcularRangoVirtualCatalogo(scrollTop, altoContenedor, totalProductos){
+    let alturaProducto = CONFIG_VIRTUAL_SCROLL_CATALOGO.alturaProducto;
+    let buffer = CONFIG_VIRTUAL_SCROLL_CATALOGO.buffer;
+
+    let inicioVisible = Math.floor(scrollTop / alturaProducto);
+    let cantidadVisible = Math.ceil(altoContenedor / alturaProducto);
+
+    let inicio = Math.max(0, inicioVisible - buffer);
+    let fin = Math.min(totalProductos, inicioVisible + cantidadVisible + buffer);
+
+    return {
+        inicio,
+        fin
+    };
+}
+
+function renderVirtualCatalogo(tabla, rolActivo){
+
+    let totalProductos = state.productosVista.length;
+
+    let rango = calcularRangoVirtualCatalogo(
+        tabla.scrollTop,
+        tabla.clientHeight || window.innerHeight,
+        totalProductos
+    );
+
+    let html = renderProductosRango(
+        rango.inicio,
+        rango.fin,
+        rolActivo
+    );
+
+    let altura = CONFIG_VIRTUAL_SCROLL_CATALOGO.alturaProducto;
+
+    tabla.innerHTML = `
+        <div class="catalogo-spacer-virtual" style="height:${rango.inicio * altura}px;"></div>
+        ${html}
+        <div class="catalogo-spacer-virtual" style="height:${Math.max(0, (totalProductos - rango.fin) * altura)}px;"></div>
+    `;
+
+    estadoVirtualCatalogo.activo = true;
+    estadoVirtualCatalogo.inicio = rango.inicio;
+    estadoVirtualCatalogo.fin = rango.fin;
+    estadoVirtualCatalogo.productos = state.productosVista;
+}
+
+function actualizarVirtualCatalogo(tabla, rolActivo){
+
+    if(!estadoVirtualCatalogo.activo){
+        return;
+    }
+
+    let totalProductos = state.productosVista.length;
+
+    let rango = calcularRangoVirtualCatalogo(
+        tabla.scrollTop,
+        tabla.clientHeight || window.innerHeight,
+        totalProductos
+    );
+
+    if(
+        rango.inicio === estadoVirtualCatalogo.inicio &&
+        rango.fin === estadoVirtualCatalogo.fin
+    ){
+        return;
+    }
+
+    renderVirtualCatalogo(tabla, rolActivo);
+}
+
+let observerImagenes = null;
+
+function inicializarLazyImages(){
+
+    if(observerImagenes){
+        observerImagenes.disconnect();
+    }
+
+    observerImagenes = new IntersectionObserver(function(entries){
+
+        entries.forEach(function(entry){
+
+            if(!entry.isIntersecting){
+                return;
+            }
+
+            const imagen = entry.target;
+
+            imagen.src = imagen.dataset.src;
+
+            observerImagenes.unobserve(imagen);
+
+        });
+
+    },{
+        root: null,
+        rootMargin: "250px",
+        threshold: 0.01
+    });
+
+    document
+        .querySelectorAll(".imagen-producto-lazy")
+        .forEach(function(img){
+            observerImagenes.observe(img);
+        });
+
+}
+
     function renderProductosRango(
     inicio,
     fin,
@@ -198,48 +354,73 @@ export function crearCatalogoProductos(deps){
 
     const CatalogRenderer = {
 
-        renderIncremental: function(tabla, rolActivo){
+    renderIncremental: function(tabla, rolActivo){
 
-            let html = renderProductosRango(
-                state.cantidadRenderAnterior,
-                state.cantidadRenderProductos,
-                rolActivo
-            );
+        let html = renderProductosRango(
+            state.cantidadRenderAnterior,
+            state.cantidadRenderProductos,
+            rolActivo
+        );
 
-            let boton = tabla.querySelector(".btn-cargar-mas-productos");
+        let boton = tabla.querySelector(".btn-cargar-mas-productos");
 
-            if(boton){
-                boton.remove();
-            }
-
-            tabla.insertAdjacentHTML("beforeend", html);
-            tabla.insertAdjacentHTML("beforeend", renderBotonVerMas());
-
-            state.cantidadRenderAnterior = state.cantidadRenderProductos;
-        },
-
-        limpiar: function(tabla){
-            tabla.innerHTML = "";
-            state.cantidadRenderAnterior = 0;
-        },
-
-        renderInicial: function(tabla, rolActivo){
-
-            this.limpiar(tabla);
-
-            let html = renderProductosRango(
-                0,
-                state.cantidadRenderProductos,
-                rolActivo
-            );
-
-            html += renderBotonVerMas();
-
-            tabla.innerHTML = html;
-
-            state.cantidadRenderAnterior = state.cantidadRenderProductos;
+        if(boton){
+            boton.remove();
         }
-    };
+
+        tabla.insertAdjacentHTML("beforeend", html);
+        tabla.insertAdjacentHTML("beforeend", renderBotonVerMas());
+
+        state.cantidadRenderAnterior = state.cantidadRenderProductos;
+    },
+
+    limpiar: function(tabla){
+        tabla.innerHTML = "";
+        state.cantidadRenderAnterior = 0;
+    },
+
+    renderInicial: function(tabla, rolActivo){
+
+        this.limpiar(tabla);
+
+        let html = renderProductosRango(
+            0,
+            state.cantidadRenderProductos,
+            rolActivo
+        );
+
+        html += renderBotonVerMas();
+
+        tabla.innerHTML = html;
+
+        state.cantidadRenderAnterior = state.cantidadRenderProductos;
+    },
+
+    actualizarTarjeta: function(producto, rolActivo){
+
+        const tarjeta = document.querySelector(
+            `.producto-card[data-producto-id="${producto.id}"]`
+        );
+
+        if(!tarjeta){
+            return false;
+        }
+
+        const temporal = document.createElement("div");
+
+        temporal.innerHTML = renderProductoCard(
+            producto,
+            rolActivo
+        );
+
+        tarjeta.replaceWith(
+            temporal.firstElementChild
+        );
+
+        return true;
+    }
+
+};
 
     function reiniciarRenderCatalogo(){
 
@@ -279,13 +460,22 @@ export function crearCatalogoProductos(deps){
 
         let rolActivo = localStorage.getItem("rolActivo");
 
-        if(state.modoRenderCatalogo === "completo"){
-            CatalogRenderer.renderInicial(tabla, rolActivo);
-        } else {
-            CatalogRenderer.renderIncremental(tabla, rolActivo);
-        }
+        if(
+    state.modoRenderCatalogo === "completo" &&
+    debeUsarVirtualScrollCatalogo()
+){
+    renderVirtualCatalogo(tabla, rolActivo);
+} else if(state.modoRenderCatalogo === "completo"){
+    estadoVirtualCatalogo.activo = false;
+    CatalogRenderer.renderInicial(tabla, rolActivo);
+} else {
+    estadoVirtualCatalogo.activo = false;
+    CatalogRenderer.renderIncremental(tabla, rolActivo);
+}
 
         state.modoRenderCatalogo = "completo";
+        
+        inicializarLazyImages();
 
         actualizarDashboard();
 
@@ -294,9 +484,10 @@ export function crearCatalogoProductos(deps){
     function cargarMasProductos(){
 
     state.cantidadRenderProductos =
-        CatalogEngine.obtenerSiguienteLimiteRender(
-            state.cantidadRenderProductos
-        );
+    CatalogEngine.obtenerSiguienteLimiteRender(
+        state.cantidadRenderProductos,
+        state.productosVista.length
+    );
 
     state.modoRenderCatalogo = "incremental";
     state.catalogoDirty = true;
@@ -315,12 +506,19 @@ function inicializarScrollCatalogo(){
 
     tabla.addEventListener("scroll", function(){
 
-        if(
-            CatalogEngine.debeCargarMasPorScroll(tabla) &&
-            state.productosVista.length > state.cantidadRenderProductos
-        ){
-            cargarMasProductos();
+        let rolActivo = localStorage.getItem("rolActivo");
+
+        if(estadoVirtualCatalogo.activo){
+            actualizarVirtualCatalogo(tabla, rolActivo);
+            return;
         }
+
+        if(
+    CatalogEngine.debeCargarMasPorScroll(tabla) &&
+    state.cantidadRenderProductos < state.productosVista.length
+){
+    cargarMasProductos();
+}
 
     });
 

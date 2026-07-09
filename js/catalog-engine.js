@@ -79,25 +79,20 @@ function obtenerLimiteRender(
     cantidadProductos
 ){
 
-    let categoriaNormalizada =
-        normalizarTexto(categoria);
-
-    if(categoriaNormalizada === "todos"){
-
-        return 24;
-
-    }
-
-    return cantidadProductos;
+    return Math.min(48, cantidadProductos);
 
 }
 
 function obtenerSiguienteLimiteRender(
     limiteActual,
-    incremento = 24
+    totalProductos,
+    incremento = 48
 ){
 
-    return limiteActual + incremento;
+    return Math.min(
+        limiteActual + incremento,
+        totalProductos
+    );
 
 }
 
