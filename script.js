@@ -41,7 +41,7 @@ import { crearAuth } from "./js/auth.js";
 import { crearListeners } from "./js/listeners.js";
 import { crearBootstrap } from "./js/bootstrap.js";
 import { crearUI } from "./js/ui.js";
-import { crearNotifications } from "./js/notifications.js";
+import { crearNotifications } from "./js/notificaciones.js";
 import { crearIndexedDB } from "./js/indexeddb.js";
 import {
     obtenerFechaISO,
@@ -1101,6 +1101,12 @@ function limpiarDescuentoSiCarritoVacio(){
 function abrirDBProductos(){
 
     return IndexedDB.abrirDBProductos();
+
+}
+
+async function guardarProductosIndexedDB(){
+
+    return await IndexedDB.guardarProductosIndexedDB(productos);
 
 }
 
