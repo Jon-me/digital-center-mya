@@ -43,6 +43,7 @@ import { crearBootstrap } from "./js/bootstrap.js";
 import { crearUI } from "./js/ui.js";
 import { crearNotifications } from "./js/notificaciones.js";
 import { crearIndexedDB } from "./js/indexeddb.js";
+import { crearCatalogEngine } from "./js/catalog-engine.js";
 import {
     obtenerFechaISO,
     normalizarTexto,
@@ -300,8 +301,16 @@ const estadoUIBridge = {
 
 };
 
+const CatalogEngine = crearCatalogEngine({
+
+    normalizarTexto
+
+});
+
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
+
+    CatalogEngine,
 
     db,
     storage,
@@ -515,7 +524,8 @@ const Bootstrap = crearBootstrap({
     actualizarResumenVenta,
     limpiarDescuentoSiCarritoVacio,
 
-    inicializarMenuCategorias: UI.inicializarMenuCategorias
+    inicializarMenuCategorias: UI.inicializarMenuCategorias,
+    inicializarOnMessage: Notifications.inicializarOnMessage
 
 });
 
@@ -1301,8 +1311,6 @@ window.reimprimirBoletaVenta = reimprimirBoletaVenta;
 async function activarNotificaciones(){
     return await Notifications.activarNotificaciones();
 }
-
-Notifications.inicializarOnMessage();
 
 window.activarNotificaciones = activarNotificaciones;
 

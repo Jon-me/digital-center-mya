@@ -22,7 +22,8 @@ export function crearBootstrap(deps){
     calcularTotalPagado,
     actualizarResumenVenta,
     limpiarDescuentoSiCarritoVacio,
-    inicializarMenuCategorias
+    inicializarMenuCategorias,
+    inicializarOnMessage
 
 } = deps;
 
@@ -170,6 +171,8 @@ function iniciarAplicacion(){
     inicializarPageshow();
 
     inicializarMenuCategorias();
+
+    inicializarOnMessage();
 
     if(!restaurarSesion()){
 

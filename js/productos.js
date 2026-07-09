@@ -21,7 +21,8 @@ export function crearCatalogoProductos(deps){
     deleteObject,
     obtenerStockTiendas,
     obtenerStockTotal,
-    actualizarDashboard
+    actualizarDashboard,
+    CatalogEngine,
 } = deps;
 
     function normalizarTexto(valor){
@@ -48,33 +49,58 @@ export function crearCatalogoProductos(deps){
     }
 
     function ordenarProductosPorCodigo(){
-        state.productos.sort(function(a, b){
-            return String(a.codigo || "").localeCompare(String(b.codigo || ""));
-        });
-    }
+
+    state.productos =
+        CatalogEngine.ordenarProductos(
+            state.productos
+        );
+
+}
 
     function aplicarFiltrosCatalogo(){
 
-        let busqueda = normalizarTexto(state.busquedaCatalogo);
-        let categoria = normalizarTexto(state.categoriaCatalogo);
+    state.productosVista = state.productos.filter(function(producto){
 
-        state.productosVista = state.productos.filter(function(producto){
+        let coincideCategoria =
+            CatalogEngine.coincideCategoriaProducto(
+                producto,
+                state.categoriaCatalogo
+            );
 
-            let coincideCategoria =
-                categoria === "todos" ||
-                normalizarTexto(producto.categoria) === categoria;
+        if(!coincideCategoria){
+            return false;
+        }
 
-            if(!coincideCategoria){
-                return false;
-            }
+        return CatalogEngine.coincideBusquedaProducto(
+            producto,
+            state.busquedaCatalogo
+        );
 
-            if(busqueda === ""){
-                return true;
-            }
+    });
 
-            return obtenerTextoBusquedaProducto(producto).includes(busqueda);
-        });
+    state.productosVista =
+        CatalogEngine.ordenarProductos(
+            state.productosVista
+        );
+
+}
+
+    function actualizarLimiteRender(){
+
+    let categoria =
+        normalizarTexto(state.categoriaCatalogo);
+
+    if(categoria === "todos"){
+
+        state.cantidadRenderProductos = 24;
+        return;
+
     }
+
+    state.cantidadRenderProductos =
+        state.productosVista.length;
+
+}
 
     function renderProductoCard(producto, rolActivo){
 
@@ -210,13 +236,13 @@ export function crearCatalogoProductos(deps){
 
     function reiniciarRenderCatalogo(){
 
-        state.cantidadRenderProductos = 24;
-        state.cantidadRenderAnterior = 0;
-        state.modoRenderCatalogo = "completo";
-        state.ultimaFirmaCatalogo = "";
-        state.catalogoDirty = true;
-    }
+    state.cantidadRenderProductos = 24;
+    state.cantidadRenderAnterior = 0;
+    state.modoRenderCatalogo = "completo";
+    state.ultimaFirmaCatalogo = "";
+    state.catalogoDirty = true;
 
+}
     function mostrarProductos(){
 
         let tabla = document.getElementById("tablaProductos");
@@ -226,6 +252,8 @@ export function crearCatalogoProductos(deps){
         }
 
         aplicarFiltrosCatalogo();
+
+        actualizarLimiteRender();
 
         let firmaCatalogo =
             state.catalogoVersion +
@@ -253,6 +281,7 @@ export function crearCatalogoProductos(deps){
         state.modoRenderCatalogo = "completo";
 
         actualizarDashboard();
+
     }
 
     function cargarMasProductos(){
