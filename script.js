@@ -40,6 +40,9 @@ import { crearTransferencias } from "./js/transferencias.js";
 import { crearAuth } from "./js/auth.js";
 import { crearListeners } from "./js/listeners.js";
 import { crearBootstrap } from "./js/bootstrap.js";
+import { crearUI } from "./js/ui.js";
+import { crearNotifications } from "./js/notifications.js";
+import { crearIndexedDB } from "./js/indexeddb.js";
 import {
     obtenerFechaISO,
     normalizarTexto,
@@ -279,6 +282,24 @@ const estadoListenersBridge = {
 
 };
 
+const estadoUIBridge = {
+
+    get panelActivoModal(){
+        return panelActivoModal;
+    },
+    set panelActivoModal(valor){
+        panelActivoModal = valor;
+    },
+
+    get placeholderModal(){
+        return placeholderModal;
+    },
+    set placeholderModal(valor){
+        placeholderModal = valor;
+    }
+
+};
+
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
 
@@ -452,6 +473,31 @@ const Listeners = crearListeners({
 
 });
 
+const UI = crearUI({
+
+    localStorage,
+
+    state: estadoUIBridge
+
+});
+
+const IndexedDB = crearIndexedDB({});
+
+const Notifications = crearNotifications({
+
+    messaging,
+    vapidKey,
+
+    db,
+    doc,
+    setDoc,
+    getToken,
+    onMessage,
+
+    localStorage
+
+});
+
 const Bootstrap = crearBootstrap({
 
     localStorage,
@@ -467,7 +513,9 @@ const Bootstrap = crearBootstrap({
     iniciarSesion,
     calcularTotalPagado,
     actualizarResumenVenta,
-    limpiarDescuentoSiCarritoVacio
+    limpiarDescuentoSiCarritoVacio,
+
+    inicializarMenuCategorias: UI.inicializarMenuCategorias
 
 });
 
@@ -1052,88 +1100,13 @@ function limpiarDescuentoSiCarritoVacio(){
 
 function abrirDBProductos(){
 
-    return new Promise(function(resolve, reject){
-
-        let request = indexedDB.open("DigitalCenterMYA_DB", 1);
-
-        request.onupgradeneeded = function(event){
-
-            let dbLocal = event.target.result;
-
-            if(!dbLocal.objectStoreNames.contains("productos")){
-                dbLocal.createObjectStore("productos", { keyPath: "id" });
-            }
-
-        };
-
-        request.onsuccess = function(event){
-            resolve(event.target.result);
-        };
-
-        request.onerror = function(){
-            reject("No se pudo abrir IndexedDB");
-        };
-
-    });
-
-}
-
-async function guardarProductosIndexedDB(){
-
-    try{
-
-        let dbLocal = await abrirDBProductos();
-        let transaction = dbLocal.transaction(["productos"], "readwrite");
-        let store = transaction.objectStore("productos");
-
-        store.clear();
-
-        productos.forEach(function(producto){
-            store.put(producto);
-        });
-
-        transaction.oncomplete = function(){
-            dbLocal.close();
-        };
-
-    }catch(error){
-        console.warn("No se pudo guardar productos en IndexedDB:", error);
-    }
+    return IndexedDB.abrirDBProductos();
 
 }
 
 async function cargarProductosIndexedDB(){
 
-    try{
-
-        let dbLocal = await abrirDBProductos();
-
-        return new Promise(function(resolve, reject){
-
-            let transaction = dbLocal.transaction(["productos"], "readonly");
-
-            let store = transaction.objectStore("productos");
-
-            let request = store.getAll();
-
-            request.onsuccess = function(){
-                dbLocal.close();
-                resolve(request.result || []);
-            };
-
-            request.onerror = function(){
-                dbLocal.close();
-                reject("No se pudo leer productos desde IndexedDB");
-            };
-
-        });
-
-    }catch(error){
-
-        console.warn("No se pudo cargar productos desde IndexedDB:", error);
-        return [];
-
-    }
+    return await IndexedDB.cargarProductosIndexedDB();
 
 }
 
@@ -1216,45 +1189,60 @@ async function confirmarTransferenciaStock(){
 }
 
 function abrirPanelSeguro(ids){
-
-    for(let id of ids){
-        let panel = document.getElementById(id);
-
-        if(panel){
-            abrirModalPanel(id);
-            return;
-        }
-    }
-
-    alert("No se encontró el panel");
+    UI.abrirPanelSeguro(ids);
 }
 
 function toggleAgregarProducto(){
-    abrirPanelSeguro(["zonaAdmin", "panelAgregarProducto"]);
+    UI.abrirSeccion([
+        "zonaAdmin",
+        "panelAgregarProducto"
+    ]);
 }
 
 function toggleReporteVendedores(){
-    abrirPanelSeguro(["panelReporteVendedores", "reporteVendedores"]);
+
+    UI.abrirSeccion([
+        "panelReporteVendedores",
+        "reporteVendedores"
+    ]);
+
 }
 
 function toggleCajaDiaria(){
-    abrirPanelSeguro(["panelCajaDiaria", "cajaDiaria"]);
+
+    UI.abrirSeccion([
+        "panelCajaDiaria",
+        "cajaDiaria"
+    ]);
+
 }
 
 function toggleHistorialVentas(){
-    abrirPanelSeguro(["panelHistorialVentas", "historialVentas"]);
+    UI.abrirSeccion([
+        "panelHistorialVentas",
+        "historialVentas"
+    ]);
 }
 
 function toggleReportes(){
-    abrirPanelSeguro(["dashboardReportes", "panelReportes"]);
+    UI.abrirSeccion([
+        "dashboardReportes",
+        "panelReportes"
+    ]);
 }
 
 function toggleDashboardEjecutivo(){
-    abrirPanelSeguro(["dashboardEjecutivo", "panelDashboardEjecutivo"]);
+    UI.abrirSeccion([
+        "dashboardEjecutivo",
+        "panelDashboardEjecutivo"
+    ]);
 }
 
 function toggleGarantias(){
-    abrirPanelSeguro(["panelGarantias", "garantias"]);
+    UI.abrirSeccion([
+        "panelGarantias",
+        "garantias"
+    ]);
 }
 
 window.iniciarSesion = iniciarSesion;
@@ -1305,190 +1293,27 @@ window.cargarMasProductos = cargarMasProductos;
 window.reimprimirBoletaVenta = reimprimirBoletaVenta;
 
 async function activarNotificaciones(){
-
-    if(!("Notification" in window)){
-        alert("Este navegador no soporta notificaciones");
-        return;
-    }
-
-    if(!("serviceWorker" in navigator)){
-        alert("Este navegador no soporta service workers");
-        return;
-    }
-
-    try{
-
-        const permiso = await Notification.requestPermission();
-
-        if(permiso !== "granted"){
-            alert("Permiso de notificaciones denegado");
-            return;
-        }
-
-        const registration =
-    await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
-        scope: "/"
-    });
-
-await navigator.serviceWorker.ready;
-
-const token = await getToken(messaging, {
-    vapidKey: vapidKey,
-    serviceWorkerRegistration: registration
-});
-            await setDoc(
-                doc(db, "tokensNotificaciones", token),
-                {
-                    token: token,
-                    usuario: localStorage.getItem("nombreActivo") || "Sin usuario",
-                    fecha: new Date().toISOString()
-                }
-            );
-
-            alert("🔔 Notificaciones activadas correctamente");
-
-        }
-
-     catch(error){
-
-       console.error("Error activando notificaciones:", error);
-
-alert(
-    "ERROR REAL\n\n" +
-    (error.code || "sin-code") +
-    "\n\n" +
-    (error.message || error)
-);
-
+    return await Notifications.activarNotificaciones();
 }
 
-}
-
-onMessage(messaging, function(payload){
-
-    let titulo = payload.notification?.title || "Nueva notificación";
-    let cuerpo = payload.notification?.body || "Tienes una actualización";
-
-    alert(
-        "🔔 " + titulo + "\n\n" + cuerpo
-    );
-
-});
+Notifications.inicializarOnMessage();
 
 window.activarNotificaciones = activarNotificaciones;
 
 async function toggleSonido(){
 
-    const video = document.getElementById("videoFondoLaptop");
-    const boton = document.getElementById("btnSonido");
-
-    if(!video || !boton){
-        alert("No se encontró el video o el botón de sonido");
-        return;
-    }
-
-    try{
-
-        if(video.muted){
-
-            video.muted = false;
-            video.volume = 0.6;
-
-            await video.play();
-
-            boton.textContent = "🔇 Silenciar";
-
-        }else{
-
-            video.muted = true;
-
-            boton.textContent = "🔊 Activar sonido";
-
-        }
-
-    }catch(error){
-
-        console.error("Error activando sonido:", error);
-        alert("El navegador bloqueó el sonido. Toca otra vez el botón.");
-
-    }
+    return await Notifications.toggleSonido();
 
 }
 
 window.toggleSonido = toggleSonido;
 
 function abrirModalPanel(idPanel){
-
-    const rol = localStorage.getItem("rolActivo");
-
-const panelesSoloAdmin = [
-    "panelReportes",
-    "panelDashboardEjecutivo",
-    "panelReporteVendedores",
-    "zonaAdmin",
-    "panelGarantias"
-];
-
-if(
-    rol === "vendedor" &&
-    panelesSoloAdmin.includes(idPanel)
-){
-    return;
-}
-
-    let panel = document.getElementById(idPanel);
-    let modal = document.getElementById("modalPanel");
-    let contenido = document.getElementById("contenidoModalPanel");
-    let modalContenido = document.querySelector(".modal-contenido");
-
-    if(!panel || !modal || !contenido){
-        alert("Error abriendo panel");
-        return;
-    }
-
-    // Modal especial para Gestión de Productos
-    if(idPanel === "zonaAdmin"){
-
-    modalContenido.classList.add("modal-admin");
-
-    setTimeout(function(){
-        document.getElementById("codigo")?.focus();
-    }, 100);
-
-} else {
-
-        modalContenido.classList.remove("modal-admin");
-
-    }
-
-    placeholderModal = document.createComment("placeholder-" + idPanel);
-
-    panel.parentNode.insertBefore(placeholderModal, panel);
-
-    contenido.innerHTML = "";
-    contenido.appendChild(panel);
-
-    panel.style.display = "block";
-    modal.style.display = "flex";
-
-    panelActivoModal = panel;
+    UI.abrirModalPanel(idPanel);
 }
 
 function cerrarModalPanel(){
-
-    let modal = document.getElementById("modalPanel");
-
-    if(panelActivoModal && placeholderModal){
-        placeholderModal.parentNode.insertBefore(panelActivoModal, placeholderModal);
-        placeholderModal.remove();
-
-        panelActivoModal.style.display = "none";
-    }
-
-    panelActivoModal = null;
-    placeholderModal = null;
-
-    modal.style.display = "none";
+    UI.cerrarModalPanel();
 }
 
 window.abrirModalPanel = abrirModalPanel;
@@ -1602,31 +1427,12 @@ window.abrirDatosClienteBoleta = abrirDatosClienteBoleta;
 window.cerrarDatosClienteBoleta = cerrarDatosClienteBoleta;
 
 function toggleCategoriasMenu(){
-    document.body.classList.toggle("categorias-menu-abierto");
+    UI.toggleCategoriasMenu();
 }
 
 function cerrarCategoriasMenu(){
-    document.body.classList.remove("categorias-menu-abierto");
+    UI.cerrarCategoriasMenu();
 }
-
-document.addEventListener("click", function(evento){
-    const menuCategorias = document.getElementById("categoriasMenu");
-    const botonCategorias = document.querySelector(".btn-categorias-menu");
-
-    if(!menuCategorias || !botonCategorias || !document.body.classList.contains("categorias-menu-abierto")){
-        return;
-    }
-
-    if(!menuCategorias.contains(evento.target) && !botonCategorias.contains(evento.target)){
-        cerrarCategoriasMenu();
-    }
-});
-
-document.addEventListener("keydown", function(evento){
-    if(evento.key === "Escape"){
-        cerrarCategoriasMenu();
-    }
-});
 
 window.toggleCategoriasMenu = toggleCategoriasMenu;
 window.cerrarCategoriasMenu = cerrarCategoriasMenu;

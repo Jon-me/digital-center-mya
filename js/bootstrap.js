@@ -21,7 +21,8 @@ export function crearBootstrap(deps){
     iniciarSesion,
     calcularTotalPagado,
     actualizarResumenVenta,
-    limpiarDescuentoSiCarritoVacio
+    limpiarDescuentoSiCarritoVacio,
+    inicializarMenuCategorias
 
 } = deps;
 
@@ -168,6 +169,8 @@ function iniciarAplicacion(){
 
     inicializarPageshow();
 
+    inicializarMenuCategorias();
+
     if(!restaurarSesion()){
 
         document.getElementById("login").style.display = "block";
@@ -181,11 +184,13 @@ function iniciarAplicacion(){
 }
 
     return {
+
     sesionActiva,
     restaurarSesion,
     inicializarEventosLogin,
     inicializarPageshow,
     iniciarAplicacion
+
 };
 
 }
