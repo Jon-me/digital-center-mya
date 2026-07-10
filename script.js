@@ -326,13 +326,13 @@ const CatalogoProductos = crearCatalogoProductos({
 
     obtenerStockTiendas,
     obtenerStockTotal,
-    actualizarDashboard
+    actualizarDashboard: () => Dashboard.actualizarDashboard()
 });
 
 const Carrito = crearCarrito({
     state: estadoCarritoBridge,
     obtenerStockTotal,
-    actualizarDashboard
+    actualizarDashboard: () => Dashboard.actualizarDashboard()
 });
 
 const tiendasSistema = {
@@ -467,13 +467,13 @@ const Listeners = crearListeners({
 
     obtenerFechaISO,
 
-    actualizarCajaDiaria,
-    mostrarGastosCaja,
-    mostrarHistorialCajas,
+    actualizarCajaDiaria: Caja.actualizarCajaDiaria,
+mostrarGastosCaja: Caja.mostrarGastosCaja,
+mostrarHistorialCajas: Caja.mostrarHistorialCajas,
     mostrarHistorialVentas,
-    actualizarReportes,
-    actualizarDashboardEjecutivo,
-    mostrarReporteVendedores,
+    actualizarReportes: Dashboard.actualizarReportes,
+actualizarDashboardEjecutivo: Dashboard.actualizarDashboardEjecutivo,
+mostrarReporteVendedores: Dashboard.mostrarReporteVendedores,
     guardarProductosIndexedDB,
 
     reiniciarRenderCatalogo:
@@ -519,7 +519,7 @@ const Bootstrap = crearBootstrap({
     apagarSonidoLogin,
     mostrarCarrito: Carrito.mostrarCarrito,
     controlarColumnaGanancia,
-    aplicarPermisos,
+    aplicarPermisos: Auth.aplicarPermisos,
     desbloquearSistema,
     iniciarListenersFirebase,
     hidratarProductosDesdeIndexedDB,
@@ -653,14 +653,6 @@ try{
 
 }
 
-function aplicarPermisos(){
-    Auth.aplicarPermisos();
-}
-
-function cerrarSesion(){
-    Auth.cerrarSesion();
-}
-
 // INICIALIZAR APLICACIÓN
 document.addEventListener("DOMContentLoaded", function(){
 
@@ -668,10 +660,6 @@ document.addEventListener("DOMContentLoaded", function(){
 CatalogoProductos.inicializarScrollCatalogo();
 
 });
-
-function actualizarDashboard(){
-    Dashboard.actualizarDashboard();
-}
 
 async function finalizarEImprimir(){
 
@@ -851,10 +839,6 @@ async function validarCodigoAdmin(){
     return await Auth.validarCodigoAdmin();
 }
 
-function cerrarModalCodigo(){
-    Auth.cerrarModalCodigo();
-}
-
 function pedirAutorizacionAdmin(accion){
     Auth.pedirAutorizacionAdmin(accion);
 }
@@ -951,22 +935,6 @@ boletasAnular.forEach(function(idBoleta){
 
 }
 
-async function anularGastoCaja(idGasto, autorizado = false){
-    return await Caja.anularGastoCaja(idGasto, autorizado);
-}
-
-function actualizarReportes(){
-    Dashboard.actualizarReportes();
-}
-
-function actualizarDashboardEjecutivo(){
-    Dashboard.actualizarDashboardEjecutivo();
-}
-
-function mostrarReporteVendedores(){
-    Dashboard.mostrarReporteVendedores();
-}
-
 function abrirDBProductos(){
 
     return IndexedDB.abrirDBProductos();
@@ -1005,62 +973,6 @@ Listeners.escucharGastos();
 
 Listeners.escucharHistorialCierres();
 
-}
-
-async function abrirCaja(){
-    return await Caja.abrirCaja();
-}
-
-async function registrarGasto(){
-    return await Caja.registrarGasto();
-}
-
-function mostrarGastosCaja(){
-    Caja.mostrarGastosCaja();
-}
-
-function actualizarCajaDiaria(){
-    Caja.actualizarCajaDiaria();
-}
-
-function cuadrarCaja(){
-    Caja.cuadrarCaja();
-}
-
-function mostrarHistorialCajas(){
-    Caja.mostrarHistorialCajas();
-}
-
-async function borrarHistorialCierres(){
-    return await Caja.borrarHistorialCierres();
-}
-
-async function cerrarCaja(){
-    return await Caja.cerrarCaja();
-}
-
-async function anularCajaDelDia(autorizado = false){
-    return await Caja.anularCajaDelDia(autorizado);
-}
-
-async function buscarGarantia(){
-    return await Garantias.buscarGarantia();
-}
-
-async function actualizarGarantia(idBoleta, estado){
-    return await Garantias.actualizarGarantia(idBoleta, estado);
-}
-
-function abrirTransferenciaStock(idProducto){
-    Transferencias.abrirTransferenciaStock(idProducto);
-}
-
-function cerrarTransferenciaStock(){
-    Transferencias.cerrarTransferenciaStock();
-}
-
-async function confirmarTransferenciaStock(){
-    return await Transferencias.confirmarTransferenciaStock();
 }
 
 function abrirPanelSeguro(ids){
@@ -1121,7 +1033,7 @@ function toggleGarantias(){
 }
 
 window.iniciarSesion = iniciarSesion;
-window.cerrarSesion = cerrarSesion;
+window.cerrarSesion = Auth.cerrarSesion;
 window.buscarProducto = CatalogoProductos.buscarProducto;
 window.filtrarCategoria = CatalogoProductos.filtrarCategoria;
 window.seleccionarImagenProducto = CatalogoProductos.seleccionarImagenProducto;
@@ -1139,49 +1051,46 @@ window.toggleReporteVendedores = toggleReporteVendedores;
 window.abrirConfiguracion = abrirConfiguracion;
 window.guardarConfiguracion = guardarConfiguracion;
 window.validarCodigoAdmin = validarCodigoAdmin;
-window.cerrarModalCodigo = cerrarModalCodigo;
+window.cerrarModalCodigo =
+    Auth.cerrarModalCodigo;
 window.anularVenta = anularVenta;
 window.ejecutarAnulacion = ejecutarAnulacion;
 window.mostrarCarrito = Carrito.mostrarCarrito;
-window.actualizarDashboard = actualizarDashboard;
+window.actualizarDashboard = Dashboard.actualizarDashboard;
 window.toggleCajaDiaria = toggleCajaDiaria;
-window.abrirCaja = abrirCaja;
-window.registrarGasto = registrarGasto;
-window.cerrarCaja = cerrarCaja;
-window.anularGastoCaja = anularGastoCaja;
-window.anularCajaDelDia = anularCajaDelDia;
-window.cuadrarCaja = cuadrarCaja;
-window.mostrarHistorialCajas = mostrarHistorialCajas;
-window.borrarHistorialCierres = borrarHistorialCierres;
-window.actualizarDashboardEjecutivo = actualizarDashboardEjecutivo;
-window.buscarGarantia = buscarGarantia;
+window.abrirCaja = Caja.abrirCaja;
+window.registrarGasto = Caja.registrarGasto;
+window.cerrarCaja = Caja.cerrarCaja;
+window.anularGastoCaja = Caja.anularGastoCaja;
+window.anularCajaDelDia = Caja.anularCajaDelDia;
+window.cuadrarCaja = Caja.cuadrarCaja;
+window.mostrarHistorialCajas = Caja.mostrarHistorialCajas;
+window.borrarHistorialCierres = Caja.borrarHistorialCierres;
+window.actualizarDashboardEjecutivo =
+    Dashboard.actualizarDashboardEjecutivo;
+window.buscarGarantia = Garantias.buscarGarantia;
 window.toggleHistorialVentas = toggleHistorialVentas;
 window.toggleReportes = toggleReportes;
 window.toggleDashboardEjecutivo = toggleDashboardEjecutivo;
 window.toggleGarantias = toggleGarantias;
-window.actualizarGarantia = actualizarGarantia;
+window.actualizarGarantia = Garantias.actualizarGarantia;
 window.actualizarNombreBoletaCarrito =
     Carrito.actualizarNombreBoletaCarrito;
-window.abrirTransferenciaStock = abrirTransferenciaStock;
-window.cerrarTransferenciaStock = cerrarTransferenciaStock;
-window.confirmarTransferenciaStock = confirmarTransferenciaStock;
+window.abrirTransferenciaStock =
+    Transferencias.abrirTransferenciaStock;
+window.cerrarTransferenciaStock =
+    Transferencias.cerrarTransferenciaStock;
+window.confirmarTransferenciaStock =
+    Transferencias.confirmarTransferenciaStock;
 window.cargarMasProductos = CatalogoProductos.cargarMasProductos;
 window.reimprimirBoletaVenta =
     VentasHistorial.reimprimirBoletaVenta;
 
-async function activarNotificaciones(){
-    return await Notifications.activarNotificaciones();
-}
+window.activarNotificaciones =
+    Notifications.activarNotificaciones;
 
-window.activarNotificaciones = activarNotificaciones;
-
-async function toggleSonido(){
-
-    return await Notifications.toggleSonido();
-
-}
-
-window.toggleSonido = toggleSonido;
+window.toggleSonido =
+    Notifications.toggleSonido;
 
 function abrirModalPanel(idPanel){
     UI.abrirModalPanel(idPanel);
