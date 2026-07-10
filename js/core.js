@@ -15,6 +15,15 @@ export function obtenerFechaISO(){
     return `${año}-${mes}-${dia}`;
 }
 
+export function obtenerSucursalActiva(){
+
+    return (
+        localStorage.getItem("sucursalActiva") ||
+        "principal"
+    );
+
+}
+
 export function normalizarTexto(valor){
 
     return String(valor || "")

@@ -131,9 +131,20 @@ async function validarCodigoAdmin(){
 
 function aplicarPermisos(){
 
-    const centroControl = document.getElementById("centroControlAdmin");
+    const centroControl =
+        document.getElementById("centroControlAdmin");
 
-    let rol = localStorage.getItem("rolActivo");
+    const rol =
+        localStorage.getItem("rolActivo");
+
+    const selectorSucursalVenta =
+        document.getElementById("tiendaVenta");
+
+    const btnBorrarHistorial =
+        document.getElementById("btnBorrarHistorialCajas");
+
+    const columnaGanancia =
+        document.getElementById("columnaGanancia");
 
     if(rol === "vendedor"){
 
@@ -149,64 +160,90 @@ function aplicarPermisos(){
         document.getElementById("tituloDashboardEjecutivo").style.display = "none";
         document.getElementById("dashboardEjecutivo").style.display = "none";
 
-        let btnBorrarHistorial =
-            document.getElementById("btnBorrarHistorialCajas");
+        if(selectorSucursalVenta){
+
+            selectorSucursalVenta.value =
+                localStorage.getItem("sucursalActiva") ||
+                "principal";
+
+            selectorSucursalVenta.disabled = true;
+
+        }
 
         if(btnBorrarHistorial){
             btnBorrarHistorial.style.display = "none";
         }
 
-        let columnaGanancia =
-            document.getElementById("columnaGanancia");
-
         if(columnaGanancia){
             columnaGanancia.style.display = "none";
         }
 
-        document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
+        document
+            .querySelectorAll(".btn-toggle-producto")
+            .forEach(function(btn){
 
-            if(
-                btn.innerText.includes("Caja Diaria") ||
-                btn.innerText.includes("Historial de Ventas")
-            ){
-                btn.style.display = "inline-block";
-            }else{
+                if(
+                    btn.innerText.includes("Caja") ||
+                    btn.innerText.includes("Historial")
+                ){
+                    btn.style.display = "inline-block";
+                }else{
+                    btn.style.display = "none";
+                }
+
+            });
+
+        document
+            .querySelectorAll(
+                'button[onclick^="editarProducto"]'
+            )
+            .forEach(function(btn){
+
                 btn.style.display = "none";
-            }
 
-        });
+            });
 
-        document.querySelectorAll('button[onclick^="editarProducto"]').forEach(function(btn){
-            btn.style.display = "none";
-        });
+        document
+            .querySelectorAll(
+                'button[onclick^="eliminarProducto"]'
+            )
+            .forEach(function(btn){
 
-        document.querySelectorAll('button[onclick^="eliminarProducto"]').forEach(function(btn){
-            btn.style.display = "none";
-        });
+                btn.style.display = "none";
 
-    }else{
+            });
 
-        if(centroControl){
-            centroControl.style.display = "block";
-        }
+        return;
+    }
 
-        document.getElementById("dashboardAdmin").style.display = "grid";
-        document.getElementById("tituloReportes").style.display = "block";
-        document.getElementById("dashboardReportes").style.display = "grid";
-        document.getElementById("tituloDashboardEjecutivo").style.display = "block";
-        document.getElementById("dashboardEjecutivo").style.display = "grid";
+    if(centroControl){
+        centroControl.style.display = "block";
+    }
 
-        let btnBorrarHistorial =
-            document.getElementById("btnBorrarHistorialCajas");
+    document.getElementById("dashboardAdmin").style.display = "grid";
+    document.getElementById("tituloReportes").style.display = "block";
+    document.getElementById("dashboardReportes").style.display = "grid";
+    document.getElementById("tituloDashboardEjecutivo").style.display = "block";
+    document.getElementById("dashboardEjecutivo").style.display = "grid";
 
-        if(btnBorrarHistorial){
-            btnBorrarHistorial.style.display = "inline-block";
-        }
+    if(btnBorrarHistorial){
+        btnBorrarHistorial.style.display = "inline-block";
+    }
 
-        document.querySelectorAll(".btn-toggle-producto").forEach(function(btn){
+    if(columnaGanancia){
+        columnaGanancia.style.display = "table-cell";
+    }
+
+    document
+        .querySelectorAll(".btn-toggle-producto")
+        .forEach(function(btn){
+
             btn.style.display = "inline-block";
+
         });
 
+    if(selectorSucursalVenta){
+        selectorSucursalVenta.disabled = false;
     }
 
 }
@@ -219,6 +256,7 @@ function cerrarSesion(){
     localStorage.removeItem("usuarioActivo");
     localStorage.removeItem("nombreActivo");
     localStorage.removeItem("rolActivo");
+    localStorage.removeItem("sucursalActiva");
 
     location.reload();
 
@@ -230,7 +268,10 @@ function completarInicioSesion(usuarioEncontrado){
     localStorage.setItem("usuarioActivo", usuarioEncontrado.usuario);
     localStorage.setItem("nombreActivo", usuarioEncontrado.nombreCompleto);
     localStorage.setItem("rolActivo", usuarioEncontrado.rol);
-
+    localStorage.setItem(
+    "sucursalActiva",
+    usuarioEncontrado.sucursalId || "principal"
+);
     document.body.classList.remove("rol-admin", "rol-vendedor");
     document.body.classList.add("rol-" + usuarioEncontrado.rol);
 

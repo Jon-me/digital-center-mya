@@ -47,6 +47,7 @@ import { crearIndexedDB } from "./js/indexeddb.js";
 import { crearCatalogEngine } from "./js/catalog-engine.js";
 import {
     obtenerFechaISO,
+    obtenerSucursalActiva,
     normalizarTexto,
     obtenerStockTiendas,
     obtenerStockTotal,
@@ -56,25 +57,28 @@ import {
 
 let usuarios = [
 
-     {
+    {
         usuario: "Jonatan",
         password: "262214",
         rol: "admin",
-        nombreCompleto: "Jonatan Távara"
+        nombreCompleto: "Jonatan Távara",
+        sucursalId: "principal"
     },
 
-     {
+    {
         usuario: "Mercy",
         password: "251419",
         rol: "admin",
-        nombreCompleto: "Mercy Villegas"
+        nombreCompleto: "Mercy Villegas",
+        sucursalId: "principal"
     },
 
     {
         usuario: "David",
         password: "1234",
         rol: "vendedor",
-        nombreCompleto: "David S."
+        nombreCompleto: "David S.",
+        sucursalId: "sucursal"
     }
 
 ];
@@ -364,6 +368,7 @@ const tiendasSistema = {
 };
 
 const Ventas = crearVentas({
+
     state: estadoVentasBridge,
 
     db,
@@ -373,15 +378,26 @@ const Ventas = crearVentas({
     runTransaction,
 
     obtenerFechaISO,
+    obtenerSucursalActiva,
     obtenerStockTiendas,
-    tiendasSistema,
 
-    obtenerDescuento: Carrito.obtenerDescuento,
-obtenerPagosMixtos: Carrito.obtenerPagosMixtos,
-calcularTotalPagado: Carrito.calcularTotalPagado,
-mostrarCarrito: Carrito.mostrarCarrito,
+    obtenerNombreSucursal:
+        Sucursales.obtenerNombreSucursal,
 
-    construirHTMLBoleta,
+    obtenerDescuento:
+        Carrito.obtenerDescuento,
+
+    obtenerPagosMixtos:
+        Carrito.obtenerPagosMixtos,
+
+    calcularTotalPagado:
+        Carrito.calcularTotalPagado,
+
+    mostrarCarrito:
+        Carrito.mostrarCarrito,
+
+    construirHTMLBoleta
+
 });
 
 const VentasHistorial = crearVentasHistorial({
@@ -735,26 +751,63 @@ function cargarSucursalesEnCombos(){
     const comboDashboard =
         document.getElementById("dashboardSucursal");
 
+    const rolActivo =
+        localStorage.getItem("rolActivo");
+
+    const sucursalUsuario =
+        obtenerSucursalActiva();
+
+    const valorCaja =
+        rolActivo === "vendedor"
+            ? sucursalUsuario
+            : (
+                comboCaja?.value ||
+                localStorage.getItem("sucursalCajaActiva") ||
+                "principal"
+            );
+
+    const valorVenta =
+        rolActivo === "vendedor"
+            ? sucursalUsuario
+            : (
+                comboVenta?.value ||
+                sucursalUsuario
+            );
+
     Sucursales.cargarOpcionesEnSelect(
         comboCaja,
-        comboCaja
-            ? comboCaja.value
-            : localStorage.getItem("sucursalCajaActiva") || "principal"
+        valorCaja
     );
 
     Sucursales.cargarOpcionesEnSelect(
         comboVenta,
-        comboVenta ? comboVenta.value : ""
+        valorVenta
     );
+
+    if(comboCaja){
+
+        comboCaja.disabled =
+            rolActivo === "vendedor";
+
+    }
+
+    if(comboVenta){
+
+        comboVenta.disabled =
+            rolActivo === "vendedor";
+
+    }
 
     Sucursales.cargarOpcionesEnSelect(
         comboOrigen,
-        comboOrigen ? comboOrigen.value : "principal"
+        comboOrigen?.value ||
+        "principal"
     );
 
     Sucursales.cargarOpcionesEnSelect(
         comboDestino,
-        comboDestino ? comboDestino.value : "sucursal"
+        comboDestino?.value ||
+        "sucursal"
     );
 
     if(comboDashboard){
@@ -765,7 +818,8 @@ function cargarSucursalesEnCombos(){
             </option>
         `;
 
-        Sucursales.obtenerSucursales()
+        Sucursales
+            .obtenerSucursales()
             .forEach(function(sucursal){
 
                 comboDashboard.insertAdjacentHTML(
@@ -779,27 +833,48 @@ function cargarSucursalesEnCombos(){
 
             });
 
-        const valorGuardado =
-            localStorage.getItem("dashboardSucursal") ||
-            "empresa";
+        const valorDashboard =
+            rolActivo === "vendedor"
+                ? sucursalUsuario
+                : (
+                    localStorage.getItem(
+                        "dashboardSucursal"
+                    ) ||
+                    "empresa"
+                );
+
+        const existeValorDashboard =
+            Array.from(
+                comboDashboard.options
+            ).some(function(opcion){
+
+                return (
+                    opcion.value ===
+                    valorDashboard
+                );
+
+            });
 
         comboDashboard.value =
-            Array.from(comboDashboard.options)
-                .some(function(opcion){
-                    return opcion.value === valorGuardado;
-                })
-                ? valorGuardado
+            existeValorDashboard
+                ? valorDashboard
                 : "empresa";
+
+        comboDashboard.disabled =
+            rolActivo === "vendedor";
 
     }
 
     const contenedorStock =
-        document.getElementById("contenedorStockSucursales");
+        document.getElementById(
+            "contenedorStockSucursales"
+        );
 
     if(contenedorStock){
 
         contenedorStock.innerHTML =
-            Sucursales.renderizarFormularioStock();
+            Sucursales
+                .renderizarFormularioStock();
 
     }
 
@@ -807,12 +882,22 @@ function cargarSucursalesEnCombos(){
 
 function obtenerSucursalCajaActiva(){
 
+    const rol =
+        localStorage.getItem("rolActivo");
+
+    if(rol === "vendedor"){
+
+        return obtenerSucursalActiva();
+
+    }
+
     const comboCaja =
         document.getElementById("sucursalCaja");
 
     return (
         comboCaja?.value ||
         localStorage.getItem("sucursalCajaActiva") ||
+        obtenerSucursalActiva() ||
         "principal"
     );
 
@@ -829,6 +914,13 @@ function obtenerIdCajaActiva(){
 }
 
 function cambiarSucursalCaja(){
+
+    const rol =
+    localStorage.getItem("rolActivo");
+
+if(rol === "vendedor"){
+    return;
+}
 
     const sucursalId =
         obtenerSucursalCajaActiva();
@@ -847,6 +939,15 @@ function cambiarSucursalCaja(){
 }
 
 function obtenerDashboardSucursal(){
+
+    const rol =
+        localStorage.getItem("rolActivo");
+
+    if(rol === "vendedor"){
+
+        return obtenerSucursalActiva();
+
+    }
 
     return (
         document.getElementById("dashboardSucursal")?.value ||

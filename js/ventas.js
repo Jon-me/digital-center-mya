@@ -16,8 +16,10 @@ export function crearVentas(deps){
     runTransaction,
 
     obtenerFechaISO,
+    obtenerSucursalActiva,
     obtenerStockTiendas,
-    tiendasSistema,
+    obtenerNombreSucursal,
+
     obtenerDescuento,
     obtenerPagosMixtos,
     calcularTotalPagado,
@@ -25,40 +27,80 @@ export function crearVentas(deps){
     construirHTMLBoleta
 } = deps;
 
+function obtenerSucursalVenta(){
+
+    const rolActivo =
+        localStorage.getItem("rolActivo");
+
+    if(rolActivo === "vendedor"){
+        return obtenerSucursalActiva();
+    }
+
+    const selectorTienda =
+        document.getElementById("tiendaVenta");
+
+    return (
+        selectorTienda?.value ||
+        obtenerSucursalActiva() ||
+        "principal"
+    );
+
+}
+
     async function validarStockAntesDeImprimir(){
 
-        let tiendaVenta =
-            document.getElementById("tiendaVenta").value || "principal";
+    const tiendaVenta =
+        obtenerSucursalVenta();
 
-        for(let item of state.carrito){
+    const nombreSucursal =
+        obtenerNombreSucursal(tiendaVenta);
 
-            let productoRef = doc(db, "productos", item.id);
-            let productoSnap = await getDoc(productoRef);
+    for(const item of state.carrito){
 
-            if(!productoSnap.exists()){
-                alert("Producto no encontrado: " + item.producto);
-                return false;
-            }
+        const productoRef =
+            doc(db, "productos", item.id);
 
-            let productoData = productoSnap.data();
-            let stockTiendas = obtenerStockTiendas(productoData);
-            let cantidad = Number(item.cantidad || 0);
+        const productoSnap =
+            await getDoc(productoRef);
 
-            if(stockTiendas[tiendaVenta] < cantidad){
+        if(!productoSnap.exists()){
 
-                alert(
-                    "Stock insuficiente en " +
-                    tiendasSistema[tiendaVenta] +
-                    " para: " +
-                    item.producto
-                );
+            alert(
+                "Producto no encontrado: " +
+                item.producto
+            );
 
-                return false;
-            }
+            return false;
         }
 
-        return true;
+        const productoData =
+            productoSnap.data();
+
+        const stockTiendas =
+            obtenerStockTiendas(productoData);
+
+        const cantidad =
+            Number(item.cantidad || 0);
+
+        const stockDisponible =
+            Number(stockTiendas[tiendaVenta] || 0);
+
+        if(stockDisponible < cantidad){
+
+            alert(
+                "Stock insuficiente en " +
+                nombreSucursal +
+                " para: " +
+                item.producto
+            );
+
+            return false;
+        }
+
     }
+
+    return true;
+}
 
     function calcularTotalesBoleta(){
 
@@ -315,7 +357,9 @@ async function imprimirBoleta(){
     return numeroVenta;
 }
 
-async function finalizarVenta(numeroBoleta = "SIN IMPRESION"){
+async function finalizarVenta(
+    numeroBoleta = "SIN IMPRESION"
+){
 
     if(state.carrito.length === 0){
         alert("El carrito está vacío");
@@ -324,129 +368,280 @@ async function finalizarVenta(numeroBoleta = "SIN IMPRESION"){
 
     let total = 0;
     let ganancia = 0;
-    let descuento = obtenerDescuento();
-    let metodoPago = "Pagos mixtos";
 
-    let tiendaVenta =
-        document.getElementById("tiendaVenta").value || "principal";
+    const descuento =
+        obtenerDescuento();
+
+    const metodoPago =
+        "Pagos mixtos";
+
+    const tiendaVenta =
+        obtenerSucursalVenta();
+
+    const tiendaVentaNombre =
+        obtenerNombreSucursal(tiendaVenta);
 
     state.carrito.forEach(function(item){
 
-        total += Number(item.subtotal || 0);
+        total +=
+            Number(item.subtotal || 0);
 
         ganancia +=
-            (Number(item.precio || 0) - Number(item.precioCompra || 0)) *
+            (
+                Number(item.precio || 0) -
+                Number(item.precioCompra || 0)
+            ) *
             Number(item.cantidad || 0);
 
     });
 
-    let totalFinal = total - descuento;
+    let totalFinal =
+        total - descuento;
 
     if(totalFinal < 0){
         totalFinal = 0;
     }
 
-    let pagos = obtenerPagosMixtos();
+    const pagos =
+        obtenerPagosMixtos();
 
-    let totalPagado =
-        pagos.efectivo +
-        pagos.yape +
-        pagos.plin +
-        pagos.tarjeta +
-        pagos.transferencia;
+    const totalPagado =
+        Number(pagos.efectivo || 0) +
+        Number(pagos.yape || 0) +
+        Number(pagos.plin || 0) +
+        Number(pagos.tarjeta || 0) +
+        Number(pagos.transferencia || 0);
 
-    if(Math.abs(totalPagado - totalFinal) > 0.01){
+    if(
+        Math.abs(totalPagado - totalFinal) > 0.01
+    ){
 
         alert(
             "⚠️ El pago no coincide con el total.\n\n" +
-            "Total venta: S/ " + totalFinal.toFixed(2) + "\n" +
-            "Pagado: S/ " + totalPagado.toFixed(2)
+            "Total venta: S/ " +
+            totalFinal.toFixed(2) +
+            "\n" +
+            "Pagado: S/ " +
+            totalPagado.toFixed(2)
         );
 
         return;
     }
 
-    let clienteNombre =
-        document.getElementById("clienteNombre").value || "CLIENTE GENERAL";
+    const clienteNombreInput =
+        document.getElementById("clienteNombre");
 
-    let clienteDni =
-        document.getElementById("clienteDni").value || "-";
+    const clienteDniInput =
+        document.getElementById("clienteDni");
 
-    let venta = {
-        numeroBoleta: numeroBoleta,
-        fecha: new Date().toLocaleDateString(),
-        fechaISO: obtenerFechaISO(),
-        hora: new Date().toLocaleTimeString(),
-        clienteNombre: clienteNombre,
-        clienteDni: clienteDni,
-        vendedor: localStorage.getItem("nombreActivo") || "Sin vendedor",
-        productos: JSON.parse(JSON.stringify(state.carrito)),
-        descuento: descuento,
-        metodoPago: metodoPago,
-        tiendaVenta: tiendaVenta,
-        tiendaVentaNombre: tiendasSistema[tiendaVenta],
-        pagos: pagos,
-        total: totalFinal,
-        ganancia: ganancia - descuento
+    const clienteNombre =
+        clienteNombreInput?.value ||
+        "CLIENTE GENERAL";
+
+    const clienteDni =
+        clienteDniInput?.value ||
+        "-";
+
+    const venta = {
+
+        numeroBoleta:
+            numeroBoleta,
+
+        fecha:
+            new Date().toLocaleDateString(),
+
+        fechaISO:
+            obtenerFechaISO(),
+
+        hora:
+            new Date().toLocaleTimeString(),
+
+        clienteNombre:
+            clienteNombre,
+
+        clienteDni:
+            clienteDni,
+
+        vendedor:
+            localStorage.getItem("nombreActivo") ||
+            "Sin vendedor",
+
+        usuario:
+            localStorage.getItem("usuarioActivo") ||
+            "Sin usuario",
+
+        sucursalUsuario:
+            obtenerSucursalActiva(),
+
+        productos:
+            JSON.parse(
+                JSON.stringify(state.carrito)
+            ),
+
+        descuento:
+            descuento,
+
+        metodoPago:
+            metodoPago,
+
+        tiendaVenta:
+            tiendaVenta,
+
+        tiendaVentaNombre:
+            tiendaVentaNombre,
+
+        pagos:
+            pagos,
+
+        total:
+            totalFinal,
+
+        ganancia:
+            ganancia - descuento
+
     };
 
     try{
 
-        await runTransaction(db, async function(transaction){
+        await runTransaction(
+            db,
+            async function(transaction){
 
-            for(let item of state.carrito){
+                for(const item of state.carrito){
 
-                let productoRef = doc(db, "productos", item.id);
-                let productoSnap = await transaction.get(productoRef);
+                    const productoRef =
+                        doc(
+                            db,
+                            "productos",
+                            item.id
+                        );
 
-                if(!productoSnap.exists()){
-                    throw new Error("Producto no encontrado");
-                }
+                    const productoSnap =
+                        await transaction.get(
+                            productoRef
+                        );
 
-                let productoData = productoSnap.data();
-                let stockTiendas = obtenerStockTiendas(productoData);
-                let cantidadDescontar = Number(item.cantidad || 0);
+                    if(!productoSnap.exists()){
+                        throw new Error(
+                            "Producto no encontrado: " +
+                            item.producto
+                        );
+                    }
 
-                if(stockTiendas[tiendaVenta] < cantidadDescontar){
-                    throw new Error(
-                        "Stock insuficiente en " +
-                        tiendasSistema[tiendaVenta] +
-                        " para: " +
-                        item.producto
+                    const productoData =
+                        productoSnap.data();
+
+                    const stockTiendas =
+                        obtenerStockTiendas(
+                            productoData
+                        );
+
+                    const cantidadDescontar =
+                        Number(item.cantidad || 0);
+
+                    const stockDisponible =
+                        Number(
+                            stockTiendas[tiendaVenta] ||
+                            0
+                        );
+
+                    if(
+                        stockDisponible <
+                        cantidadDescontar
+                    ){
+
+                        throw new Error(
+                            "Stock insuficiente en " +
+                            tiendaVentaNombre +
+                            " para: " +
+                            item.producto
+                        );
+
+                    }
+
+                    stockTiendas[tiendaVenta] =
+                        stockDisponible -
+                        cantidadDescontar;
+
+                    const nuevoStockTotal =
+                        Object.values(stockTiendas)
+                            .reduce(function(
+                                acumulado,
+                                cantidad
+                            ){
+
+                                return (
+                                    acumulado +
+                                    Number(cantidad || 0)
+                                );
+
+                            }, 0);
+
+                    transaction.update(
+                        productoRef,
+                        {
+                            stock:
+                                nuevoStockTotal,
+
+                            stockTiendas:
+                                stockTiendas
+                        }
                     );
+
                 }
 
-                stockTiendas[tiendaVenta] -= cantidadDescontar;
+                const ventaRef =
+                    doc(collection(db, "ventas"));
 
-                let nuevoStockTotal =
-                    stockTiendas.principal +
-                    stockTiendas.sucursal;
+                transaction.set(
+                    ventaRef,
+                    venta
+                );
 
-                transaction.update(productoRef, {
-                    stock: nuevoStockTotal,
-                    stockTiendas: stockTiendas
-                });
+                if(
+                    numeroBoleta !==
+                    "SIN IMPRESION"
+                ){
+
+                    const boletaRef =
+                        doc(
+                            collection(
+                                db,
+                                "boletas"
+                            )
+                        );
+
+                    transaction.set(
+                        boletaRef,
+                        {
+                            ...venta,
+
+                            estado:
+                                "activa",
+
+                            creadaEn:
+                                new Date()
+                                    .toISOString()
+                        }
+                    );
+
+                }
+
             }
-
-            let ventaRef = doc(collection(db, "ventas"));
-            transaction.set(ventaRef, venta);
-
-            if(numeroBoleta !== "SIN IMPRESION"){
-
-                let boletaRef = doc(collection(db, "boletas"));
-
-                transaction.set(boletaRef, {
-                    ...venta,
-                    estado: "activa",
-                    creadaEn: new Date().toISOString()
-                });
-            }
-
-        });
+        );
 
     }catch(error){
 
-        alert(error.message);
+        console.error(
+            "Error finalizando venta:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "No se pudo realizar la venta"
+        );
+
         return;
     }
 
@@ -454,26 +649,39 @@ async function finalizarVenta(numeroBoleta = "SIN IMPRESION"){
 
     localStorage.removeItem("carrito");
 
-    let descuentoInput = document.getElementById("descuentoVenta");
-    let pagoEfectivo = document.getElementById("pagoEfectivo");
-    let pagoYape = document.getElementById("pagoYape");
-    let pagoPlin = document.getElementById("pagoPlin");
-    let pagoTarjeta = document.getElementById("pagoTarjeta");
-    let pagoTransferencia = document.getElementById("pagoTransferencia");
+    const camposLimpiar = [
+        "descuentoVenta",
+        "pagoEfectivo",
+        "pagoYape",
+        "pagoPlin",
+        "pagoTarjeta",
+        "pagoTransferencia"
+    ];
 
-    if(descuentoInput){ descuentoInput.value = ""; }
-    if(pagoEfectivo){ pagoEfectivo.value = ""; }
-    if(pagoYape){ pagoYape.value = ""; }
-    if(pagoPlin){ pagoPlin.value = ""; }
-    if(pagoTarjeta){ pagoTarjeta.value = ""; }
-    if(pagoTransferencia){ pagoTransferencia.value = ""; }
+    camposLimpiar.forEach(function(id){
+
+        const campo =
+            document.getElementById(id);
+
+        if(campo){
+            campo.value = "";
+        }
+
+    });
 
     calcularTotalPagado();
     mostrarCarrito();
 
     setTimeout(function(){
-        alert("✅ Venta realizada correctamente");
+
+        alert(
+            "✅ Venta realizada correctamente\n\n" +
+            "Sucursal: " +
+            tiendaVentaNombre
+        );
+
     }, 150);
+
 }
 
     return {
