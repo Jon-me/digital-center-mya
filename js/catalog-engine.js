@@ -78,29 +78,59 @@ function construirIndiceBusqueda(productos){
 
 function buscarEnIndice(indice, busquedaActual){
 
-    const tokensBusqueda = crearTokensBusqueda(busquedaActual);
+    const tokensBusqueda =
+        crearTokensBusqueda(busquedaActual);
 
     if(tokensBusqueda.length === 0){
         return null;
     }
 
-    const resultados = new Map();
+    let resultados = null;
 
     tokensBusqueda.forEach(function(tokenBuscado){
+
+        const coincidencias = new Map();
 
         indice.forEach(function(productos, tokenIndice){
 
             if(tokenIndice.includes(tokenBuscado)){
+
                 productos.forEach(function(producto){
-                    resultados.set(producto.id, producto);
+
+                    coincidencias.set(
+                        producto.id,
+                        producto
+                    );
+
                 });
+
             }
 
         });
 
+        if(resultados === null){
+
+            resultados = coincidencias;
+
+        }else{
+
+            resultados = new Map(
+
+                [...resultados].filter(function([id]){
+
+                    return coincidencias.has(id);
+
+                })
+
+            );
+
+        }
+
     });
 
-    return Array.from(resultados.values());
+    return Array.from(
+        resultados.values()
+    );
 
 }
 

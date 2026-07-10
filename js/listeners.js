@@ -15,6 +15,7 @@ export function crearListeners(deps){
         onSnapshot,
 
         obtenerFechaISO,
+        obtenerIdCajaActiva,
 
         actualizarCajaDiaria,
         mostrarGastosCaja,
@@ -31,120 +32,166 @@ export function crearListeners(deps){
         ordenarProductosPorCodigo,
     } = deps;
 
-    function escucharConfiguracion(){
+function escucharConfiguracion(){
 
-        state.listenersFirebaseActivos.push(
-            onSnapshot(
-                doc(db, "configuracion", "sistema"),
-                function(documento){
+    state.listenersFirebaseActivos.push(
+        onSnapshot(
+            doc(db, "configuracion", "sistema"),
+            function(documento){
 
-                    if(documento.exists()){
-                        state.codigoAnulacion =
-                            documento.data().codigoAnulacion || "9999";
+                if(documento.exists()){
+                    state.codigoAnulacion =
+                        documento.data().codigoAnulacion || "9999";
+                }
+
+            }
+        )
+    );
+
+}
+
+function escucharCaja(){
+
+    state.listenersFirebaseActivos.push(
+        onSnapshot(
+            doc(
+                db,
+                "cajas",
+                obtenerIdCajaActiva()
+            ),
+            function(documento){
+
+                if(!documento.exists()){
+
+                    state.montoInicialCaja = 0;
+
+                    const cajaInicial =
+                        document.getElementById("cajaInicial");
+
+                    if(cajaInicial){
+                        cajaInicial.innerHTML = "S/ 0.00";
                     }
+
+                    actualizarCajaDiaria();
+                    return;
+                }
+
+                const datos = documento.data();
+
+                state.montoInicialCaja =
+                    Number(datos.montoInicial || 0);
+
+                if(localStorage.getItem("sesion") === "activa"){
+
+                    const cajaInicial =
+                        document.getElementById("cajaInicial");
+
+                    if(cajaInicial){
+                        cajaInicial.innerHTML =
+                            "S/ " +
+                            state.montoInicialCaja.toFixed(2);
+                    }
+
+                    actualizarCajaDiaria();
 
                 }
-            )
-        );
 
-    }
+            },
+            function(error){
 
-    function escucharCaja(){
+                console.error(
+                    "Error escuchando caja:",
+                    error
+                );
 
-        state.listenersFirebaseActivos.push(
-            onSnapshot(
-                doc(db, "cajas", obtenerFechaISO()),
-                function(documento){
+            }
+        )
+    );
 
-                    if(!documento.exists()){
-                        return;
-                    }
+}
 
-                    let datos = documento.data();
+function escucharGastos(){
 
-                    state.montoInicialCaja =
-                        datos.montoInicial || 0;
+    state.listenersFirebaseActivos.push(
+        onSnapshot(
+            collection(
+                db,
+                "cajas",
+                obtenerIdCajaActiva(),
+                "gastos"
+            ),
+            function(snapshot){
 
-                    if(localStorage.getItem("sesion") === "activa"){
+                state.gastosCaja = [];
 
-                        document.getElementById("cajaInicial").innerHTML =
-                            "S/ " + state.montoInicialCaja.toFixed(2);
+                snapshot.forEach(function(documento){
 
-                        actualizarCajaDiaria();
-
-                    }
-
-                }
-            )
-        );
-
-    }
-
-    function escucharGastos(){
-
-        state.listenersFirebaseActivos.push(
-            onSnapshot(
-                collection(
-                    db,
-                    "cajas",
-                    obtenerFechaISO(),
-                    "gastos"
-                ),
-                function(snapshot){
-
-                    state.gastosCaja = [];
-
-                    snapshot.forEach(function(documento){
-
-                        state.gastosCaja.push({
-                            id: documento.id,
-                            ...documento.data()
-                        });
-
+                    state.gastosCaja.push({
+                        id: documento.id,
+                        ...documento.data()
                     });
 
-                    if(localStorage.getItem("sesion") === "activa"){
-                        mostrarGastosCaja();
-                        actualizarCajaDiaria();
-                    }
+                });
 
+                if(localStorage.getItem("sesion") === "activa"){
+                    mostrarGastosCaja();
+                    actualizarCajaDiaria();
                 }
-            )
-        );
 
-    }
+            },
+            function(error){
 
-    function escucharHistorialCierres(){
+                console.error(
+                    "Error escuchando gastos de caja:",
+                    error
+                );
 
-        state.listenersFirebaseActivos.push(
-            onSnapshot(
-                collection(db, "cierresCaja"),
-                function(snapshot){
+            }
+        )
+    );
 
-                    state.historialCajas = [];
+}
 
-                    snapshot.forEach(function(documento){
+function escucharHistorialCierres(){
 
-                        state.historialCajas.push({
-                            id: documento.id,
-                            ...documento.data()
-                        });
+    state.listenersFirebaseActivos.push(
+        onSnapshot(
+            collection(db, "cierresCaja"),
+            function(snapshot){
 
+                state.historialCajas = [];
+
+                snapshot.forEach(function(documento){
+
+                    state.historialCajas.push({
+                        id: documento.id,
+                        ...documento.data()
                     });
 
-                    state.historialCajas.sort(function(a, b){
-                        return (b.fecha || "").localeCompare(a.fecha || "");
-                    });
+                });
 
-                    if(localStorage.getItem("sesion") === "activa"){
-                        mostrarHistorialCajas();
-                    }
+                state.historialCajas.sort(function(a, b){
+                    return (b.fecha || "")
+                        .localeCompare(a.fecha || "");
+                });
 
+                if(localStorage.getItem("sesion") === "activa"){
+                    mostrarHistorialCajas();
                 }
-            )
-        );
 
-    }
+            },
+            function(error){
+
+                console.error(
+                    "Error escuchando historial de cierres:",
+                    error
+                );
+
+            }
+        )
+    );
+
+}
 
     function escucharVentas(){
 

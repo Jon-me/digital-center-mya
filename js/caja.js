@@ -19,7 +19,10 @@ export function crearCaja(deps){
     runTransaction,
 
     obtenerFechaISO,
-    pedirAutorizacionAdmin
+    obtenerSucursalCajaActiva,
+    obtenerIdCajaActiva,
+    obtenerNombreSucursal,
+    pedirAutorizacionAdmin,
 
 } = deps;
 
@@ -34,9 +37,17 @@ export function crearCaja(deps){
         return;
     }
 
-    let fechaCaja = obtenerFechaISO();
+    const fechaCaja =
+    obtenerFechaISO();
 
-    let cajaRef = doc(db, "cajas", fechaCaja);
+    const sucursalId =
+        obtenerSucursalCajaActiva();
+
+    const cajaId =
+        obtenerIdCajaActiva();
+
+    const cajaRef =
+        doc(db, "cajas", cajaId);
 
     try{
 
@@ -49,12 +60,27 @@ export function crearCaja(deps){
             }
 
             transaction.set(cajaRef,{
-                fecha: fechaCaja,
-                montoInicial: state.montoInicialCaja,
-                abierta: true,
-                abiertaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
-                horaApertura: new Date().toLocaleTimeString()
-            });
+
+    fecha: fechaCaja,
+
+    sucursalId: sucursalId,
+
+    sucursalNombre:
+        obtenerNombreSucursal(sucursalId),
+
+    montoInicial:
+        state.montoInicialCaja,
+
+    abierta: true,
+
+    abiertaPor:
+        localStorage.getItem("nombreActivo") ||
+        "Sin usuario",
+
+    horaApertura:
+        new Date().toLocaleTimeString()
+
+});
 
         });
 
@@ -85,17 +111,39 @@ async function registrarGasto(){
         return;
     }
 
-    let fechaCaja = obtenerFechaISO();
+const fechaCaja =
+    obtenerFechaISO();
 
-    await addDoc(
-        collection(db, "cajas", fechaCaja, "gastos"),
-        {
-            hora: new Date().toLocaleTimeString(),
-            descripcion: descripcion,
-            monto: monto,
-            registradoPor: localStorage.getItem("nombreActivo") || "Sin usuario"
-        }
-    );
+const sucursalId =
+    obtenerSucursalCajaActiva();
+
+const cajaId =
+    obtenerIdCajaActiva();
+
+await addDoc(
+    collection(db, "cajas", cajaId, "gastos"),
+    {
+
+        descripcion: descripcion,
+
+        monto: monto,
+
+        fecha: new Date().toLocaleDateString(),
+
+        fechaISO: fechaCaja,
+
+        sucursalId: sucursalId,
+
+        sucursalNombre:
+            obtenerNombreSucursal(sucursalId),
+
+        hora: new Date().toLocaleTimeString(),
+
+        registradoPor:
+            localStorage.getItem("nombreActivo")
+
+    }
+);
 
     document.getElementById("descripcionGasto").value = "";
     document.getElementById("montoGasto").value = "";
@@ -135,6 +183,12 @@ function mostrarGastosCaja(){
 
 function actualizarCajaDiaria(){
 
+    const fechaActual =
+        obtenerFechaISO();
+
+    const sucursalActiva =
+        obtenerSucursalCajaActiva();
+
     let ventasHoy = 0;
 
     let cajaEfectivo = 0;
@@ -145,86 +199,161 @@ function actualizarCajaDiaria(){
 
     state.historialVentas.forEach(function(venta){
 
-        if(venta.fechaISO === obtenerFechaISO()){
+        const perteneceFecha =
+            venta.fechaISO === fechaActual;
 
-            ventasHoy += Number(venta.total || 0);
+        const perteneceSucursal =
+            (venta.tiendaVenta || "principal") === sucursalActiva;
 
-            if(venta.pagos){
-
-                cajaEfectivo += Number(venta.pagos.efectivo || 0);
-                cajaYape += Number(venta.pagos.yape || 0);
-                cajaPlin += Number(venta.pagos.plin || 0);
-                cajaTarjeta += Number(venta.pagos.tarjeta || 0);
-                cajaTransferencia += Number(venta.pagos.transferencia || 0);
-
-            } else {
-
-                let metodo = venta.metodoPago || "No registrado";
-
-                if(metodo === "Efectivo"){ cajaEfectivo += Number(venta.total || 0); }
-                if(metodo === "Yape"){ cajaYape += Number(venta.total || 0); }
-                if(metodo === "Plin"){ cajaPlin += Number(venta.total || 0); }
-                if(metodo === "Tarjeta"){ cajaTarjeta += Number(venta.total || 0); }
-                if(metodo === "Transferencia"){ cajaTransferencia += Number(venta.total || 0); }
-
-            }
+        if(!perteneceFecha || !perteneceSucursal){
+            return;
         }
+
+        ventasHoy += Number(venta.total || 0);
+
+        if(venta.pagos){
+
+            cajaEfectivo +=
+                Number(venta.pagos.efectivo || 0);
+
+            cajaYape +=
+                Number(venta.pagos.yape || 0);
+
+            cajaPlin +=
+                Number(venta.pagos.plin || 0);
+
+            cajaTarjeta +=
+                Number(venta.pagos.tarjeta || 0);
+
+            cajaTransferencia +=
+                Number(venta.pagos.transferencia || 0);
+
+        }else{
+
+            const metodo =
+                venta.metodoPago || "No registrado";
+
+            if(metodo === "Efectivo"){
+                cajaEfectivo += Number(venta.total || 0);
+            }
+
+            if(metodo === "Yape"){
+                cajaYape += Number(venta.total || 0);
+            }
+
+            if(metodo === "Plin"){
+                cajaPlin += Number(venta.total || 0);
+            }
+
+            if(metodo === "Tarjeta"){
+                cajaTarjeta += Number(venta.total || 0);
+            }
+
+            if(metodo === "Transferencia"){
+                cajaTransferencia += Number(venta.total || 0);
+            }
+
+        }
+
     });
 
-    let gastos = 0;
+    const gastos =
+        state.gastosCaja.reduce(function(total, gasto){
 
-    state.gastosCaja.forEach(function(gasto){
-        gastos += Number(gasto.monto || 0);
-    });
+            return total + Number(gasto.monto || 0);
 
-    let esperado =
-        state.montoInicialCaja +
+        }, 0);
+
+    const esperado =
+        Number(state.montoInicialCaja || 0) +
         ventasHoy -
         gastos;
 
-    document.getElementById("cajaVentas").innerHTML = "S/ " + ventasHoy.toFixed(2);
-    document.getElementById("cajaEfectivo").innerHTML = "S/ " + cajaEfectivo.toFixed(2);
-    document.getElementById("cajaYape").innerHTML = "S/ " + cajaYape.toFixed(2);
-    document.getElementById("cajaPlin").innerHTML = "S/ " + cajaPlin.toFixed(2);
-    document.getElementById("cajaTarjeta").innerHTML = "S/ " + cajaTarjeta.toFixed(2);
-    document.getElementById("cajaTransferencia").innerHTML = "S/ " + cajaTransferencia.toFixed(2);
-    document.getElementById("cajaGastos").innerHTML = "S/ " + gastos.toFixed(2);
-    document.getElementById("cajaEsperada").innerHTML = "S/ " + esperado.toFixed(2);
+    document.getElementById("cajaVentas").innerHTML =
+        "S/ " + ventasHoy.toFixed(2);
+
+    document.getElementById("cajaEfectivo").innerHTML =
+        "S/ " + cajaEfectivo.toFixed(2);
+
+    document.getElementById("cajaYape").innerHTML =
+        "S/ " + cajaYape.toFixed(2);
+
+    document.getElementById("cajaPlin").innerHTML =
+        "S/ " + cajaPlin.toFixed(2);
+
+    document.getElementById("cajaTarjeta").innerHTML =
+        "S/ " + cajaTarjeta.toFixed(2);
+
+    document.getElementById("cajaTransferencia").innerHTML =
+        "S/ " + cajaTransferencia.toFixed(2);
+
+    document.getElementById("cajaGastos").innerHTML =
+        "S/ " + gastos.toFixed(2);
+
+    document.getElementById("cajaEsperada").innerHTML =
+        "S/ " + esperado.toFixed(2);
 
 }
 
 function mostrarHistorialCajas(){
 
-    let tabla = document.getElementById("historialCajasTabla");
+    const tabla =
+        document.getElementById("historialCajasTabla");
 
     if(!tabla){
         return;
     }
 
+    const sucursalActiva =
+        obtenerSucursalCajaActiva();
+
+    const cierresSucursal =
+        state.historialCajas.filter(function(caja){
+
+            return (
+                (caja.sucursalId || "principal") ===
+                sucursalActiva
+            );
+
+        });
+
     let html = "";
 
-    state.historialCajas.forEach(function(caja){
+    cierresSucursal.forEach(function(caja){
 
         html += `
         <tr>
             <td>${caja.fecha || "-"}</td>
             <td>${caja.cerradaPor || "-"}</td>
-            <td>S/ ${(caja.ventasDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.efectivoDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.yapeDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.plinDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.tarjetaDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.transferenciaDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.gastosDia || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.cajaEsperada || 0).toFixed(2)}</td>
-            <td>S/ ${(caja.dineroReal || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.ventasDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.efectivoDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.yapeDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.plinDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.tarjetaDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.transferenciaDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.gastosDia || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.cajaEsperada || 0).toFixed(2)}</td>
+            <td>S/ ${Number(caja.dineroReal || 0).toFixed(2)}</td>
             <td>${caja.resultadoCuadre || "-"}</td>
         </tr>
         `;
 
     });
 
+    if(html === ""){
+
+        html = `
+        <tr>
+            <td colspan="12" style="text-align:center;">
+                No hay cierres registrados para esta sucursal.
+            </td>
+        </tr>
+        `;
+
+    }
+
     tabla.innerHTML = html;
+
 }
 
 async function cerrarCaja(){
@@ -242,7 +371,11 @@ async function cerrarCaja(){
 
     state.historialVentas.forEach(function(venta){
 
-        if(venta.fechaISO === fechaCaja){
+        if(
+    venta.fechaISO === fechaCaja &&
+    (venta.tiendaVenta || "principal") ===
+        obtenerSucursalCajaActiva()
+){
 
             ventasHoy += Number(venta.total || 0);
 
@@ -298,7 +431,17 @@ async function cerrarCaja(){
     }
 
     let cierre = {
+
         fecha: fechaCaja,
+
+        sucursalId:
+    obtenerSucursalCajaActiva(),
+
+sucursalNombre:
+    obtenerNombreSucursal(
+        obtenerSucursalCajaActiva()
+    ),
+
         cerradaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
         horaCierre: new Date().toLocaleTimeString(),
 
@@ -316,7 +459,11 @@ async function cerrarCaja(){
     };
 
     await setDoc(
-        doc(db, "cajas", fechaCaja),
+        doc(
+    db,
+    "cajas",
+    obtenerIdCajaActiva()
+),
         {
             abierta: false,
             ...cierre
@@ -370,11 +517,22 @@ function cuadrarCaja(){
 
     let ventasHoy = 0;
 
-    state.historialVentas.forEach(function(venta){
-        if(venta.fechaISO === obtenerFechaISO()){
-            ventasHoy += Number(venta.total || 0);
-        }
-    });
+    const fechaActual =
+    obtenerFechaISO();
+
+const sucursalActiva =
+    obtenerSucursalCajaActiva();
+
+state.historialVentas.forEach(function(venta){
+
+    if(
+        venta.fechaISO === fechaActual &&
+        (venta.tiendaVenta || "principal") === sucursalActiva
+    ){
+        ventasHoy += Number(venta.total || 0);
+    }
+
+});
 
     let gastos = 0;
 
@@ -420,14 +578,12 @@ async function anularGastoCaja(idGasto, autorizado = false){
     if(!confirm("¿Anular este gasto?")){
         return;
     }
-
-    let fechaCaja = obtenerFechaISO();
-
+    
     await deleteDoc(
         doc(
             db,
             "cajas",
-            fechaCaja,
+            obtenerIdCajaActiva(),
             "gastos",
             idGasto
         )
@@ -449,7 +605,20 @@ async function borrarHistorialCierres(){
         return;
     }
 
-    for(let caja of state.historialCajas){
+    const sucursalActiva =
+    obtenerSucursalCajaActiva();
+
+const cierresSucursal =
+    state.historialCajas.filter(function(caja){
+
+        return (
+            (caja.sucursalId || "principal") ===
+            sucursalActiva
+        );
+
+    });
+
+for(const caja of cierresSucursal){
 
         if(caja.id){
 
@@ -460,7 +629,15 @@ async function borrarHistorialCierres(){
         }
     }
 
-    state.historialCajas = [];
+    state.historialCajas =
+    state.historialCajas.filter(function(caja){
+
+        return (
+            (caja.sucursalId || "principal") !==
+            sucursalActiva
+        );
+
+    });
 
     mostrarHistorialCajas();
 
@@ -494,7 +671,7 @@ async function anularCajaDelDia(autorizado = false){
                 doc(
                     db,
                     "cajas",
-                    fechaCaja,
+                    obtenerIdCajaActiva(),
                     "gastos",
                     gasto.id
                 )
@@ -503,17 +680,35 @@ async function anularCajaDelDia(autorizado = false){
         }
     }
 
-    await setDoc(
-        doc(db, "cajas", fechaCaja),
-        {
-            fecha: fechaCaja,
-            montoInicial: 0,
-            abierta: false,
-            anulada: true,
-            anuladaPor: localStorage.getItem("nombreActivo") || "Sin usuario",
-            horaAnulacion: new Date().toLocaleTimeString()
-        }
-    );
+await setDoc(
+    doc(
+        db,
+        "cajas",
+        obtenerIdCajaActiva()
+    ),
+    {
+        fecha: fechaCaja,
+
+        sucursalId:
+            obtenerSucursalCajaActiva(),
+
+        sucursalNombre:
+            obtenerNombreSucursal(
+                obtenerSucursalCajaActiva()
+            ),
+
+        montoInicial: 0,
+        abierta: false,
+        anulada: true,
+
+        anuladaPor:
+            localStorage.getItem("nombreActivo") ||
+            "Sin usuario",
+
+        horaAnulacion:
+            new Date().toLocaleTimeString()
+    }
+);
 
     state.montoInicialCaja = 0;
     state.gastosCaja = [];

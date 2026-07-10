@@ -411,10 +411,21 @@ const Caja = crearCaja({
     runTransaction,
 
     obtenerFechaISO,
+
+    obtenerSucursalCajaActiva,
+
+    obtenerIdCajaActiva,
+
+    obtenerNombreSucursal:
+        Sucursales.obtenerNombreSucursal,
+
     pedirAutorizacionAdmin,
 
-    mostrarGastosCaja: () => Caja.mostrarGastosCaja(),
-    actualizarCajaDiaria: () => Caja.actualizarCajaDiaria()
+    mostrarGastosCaja:
+        () => Caja.mostrarGastosCaja(),
+
+    actualizarCajaDiaria:
+        () => Caja.actualizarCajaDiaria()
 
 });
 
@@ -490,6 +501,9 @@ const Listeners = crearListeners({
     onSnapshot,
 
     obtenerFechaISO,
+
+    obtenerSucursalCajaActiva,
+    obtenerIdCajaActiva,
 
     actualizarCajaDiaria: Caja.actualizarCajaDiaria,
 mostrarGastosCaja: Caja.mostrarGastosCaja,
@@ -701,6 +715,16 @@ function cargarSucursalesEnCombos(){
     const comboDestino =
         document.getElementById("transferenciaDestino");
 
+    const comboCaja =
+    document.getElementById("sucursalCaja");
+
+Sucursales.cargarOpcionesEnSelect(
+    comboCaja,
+    comboCaja
+        ? comboCaja.value
+        : localStorage.getItem("sucursalCajaActiva") || "principal"
+);
+
     Sucursales.cargarOpcionesEnSelect(
         comboVenta,
         comboVenta ? comboVenta.value : ""
@@ -725,6 +749,47 @@ if(contenedorStock){
         Sucursales.renderizarFormularioStock();
 
 }
+
+}
+
+function obtenerSucursalCajaActiva(){
+
+    const comboCaja =
+        document.getElementById("sucursalCaja");
+
+    return (
+        comboCaja?.value ||
+        localStorage.getItem("sucursalCajaActiva") ||
+        "principal"
+    );
+
+}
+
+function obtenerIdCajaActiva(){
+
+    return (
+        obtenerSucursalCajaActiva() +
+        "__" +
+        obtenerFechaISO()
+    );
+
+}
+
+function cambiarSucursalCaja(){
+
+    const sucursalId =
+        obtenerSucursalCajaActiva();
+
+    localStorage.setItem(
+        "sucursalCajaActiva",
+        sucursalId
+    );
+
+    detenerListenersFirebase();
+    iniciarListenersFirebase();
+
+    Caja.actualizarCajaDiaria();
+    Caja.mostrarHistorialCajas();
 
 }
 
@@ -965,9 +1030,13 @@ let tiendaVenta =
 
 stockTiendas[tiendaVenta] += Number(item.cantidad);
 
-let stockTotal =
-    stockTiendas.principal +
-    stockTiendas.sucursal;
+const stockTotal =
+    Object.values(stockTiendas)
+        .reduce(function(total, cantidad){
+
+            return total + Number(cantidad || 0);
+
+        }, 0);
 
 transaction.update(productoRef, {
     stock: stockTotal,
@@ -1159,6 +1228,9 @@ window.activarNotificaciones =
 
 window.toggleSonido =
     Notifications.toggleSonido;
+
+window.cambiarSucursalCaja =
+    cambiarSucursalCaja;
 
 function abrirModalPanel(idPanel){
     UI.abrirModalPanel(idPanel);
