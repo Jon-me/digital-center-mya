@@ -57,23 +57,39 @@ export function crearCatalogoProductos(deps){
 
 }
 
+let indiceBusquedaCatalogo = null;
+
+function reconstruirIndiceBusquedaCatalogo(){
+
+    indiceBusquedaCatalogo =
+        CatalogEngine.construirIndiceBusqueda(
+            state.productos
+        );
+
+}
+
     function aplicarFiltrosCatalogo(){
 
-    state.productosVista = state.productos.filter(function(producto){
+    if(!indiceBusquedaCatalogo){
+        reconstruirIndiceBusquedaCatalogo();
+    }
 
-        let coincideCategoria =
-            CatalogEngine.coincideCategoriaProducto(
-                producto,
-                state.categoriaCatalogo
-            );
+    let resultadosBusqueda = null;
 
-        if(!coincideCategoria){
-            return false;
-        }
-
-        return CatalogEngine.coincideBusquedaProducto(
-            producto,
+    if(state.busquedaCatalogo && state.busquedaCatalogo.trim() !== ""){
+        resultadosBusqueda = CatalogEngine.buscarEnIndice(
+            indiceBusquedaCatalogo,
             state.busquedaCatalogo
+        );
+    }
+
+    let baseProductos = resultadosBusqueda || state.productos;
+
+    state.productosVista = baseProductos.filter(function(producto){
+
+        return CatalogEngine.coincideCategoriaProducto(
+            producto,
+            state.categoriaCatalogo
         );
 
     });
@@ -429,6 +445,7 @@ function inicializarLazyImages(){
     state.modoRenderCatalogo = "completo";
     state.ultimaFirmaCatalogo = "";
     state.catalogoDirty = true;
+    indiceBusquedaCatalogo = null;
 
 }
     function mostrarProductos(){

@@ -31,6 +31,79 @@ export function crearCatalogEngine(deps){
 
     }
 
+    function crearTokensBusqueda(texto){
+
+    return normalizarTexto(texto)
+        .split(/\s+/)
+        .filter(function(token){
+            return token.length > 0;
+        });
+
+}
+
+function crearTextoBusquedaProducto(producto){
+
+    return [
+        producto.producto,
+        producto.codigo,
+        producto.categoria
+    ].join(" ");
+
+}
+
+function construirIndiceBusqueda(productos){
+
+    const indice = new Map();
+
+    productos.forEach(function(producto){
+
+        const texto = crearTextoBusquedaProducto(producto);
+        const tokens = crearTokensBusqueda(texto);
+
+        tokens.forEach(function(token){
+
+            if(!indice.has(token)){
+                indice.set(token, []);
+            }
+
+            indice.get(token).push(producto);
+
+        });
+
+    });
+
+    return indice;
+
+}
+
+function buscarEnIndice(indice, busquedaActual){
+
+    const tokensBusqueda = crearTokensBusqueda(busquedaActual);
+
+    if(tokensBusqueda.length === 0){
+        return null;
+    }
+
+    const resultados = new Map();
+
+    tokensBusqueda.forEach(function(tokenBuscado){
+
+        indice.forEach(function(productos, tokenIndice){
+
+            if(tokenIndice.includes(tokenBuscado)){
+                productos.forEach(function(producto){
+                    resultados.set(producto.id, producto);
+                });
+            }
+
+        });
+
+    });
+
+    return Array.from(resultados.values());
+
+}
+
     function coincideBusquedaProducto(producto, busquedaActual){
 
     let busqueda =
@@ -118,7 +191,11 @@ function debeCargarMasPorScroll(elemento, margen = 250){
     obtenerViewportProductos,
     obtenerLimiteRender,
     obtenerSiguienteLimiteRender,
-    debeCargarMasPorScroll
+    debeCargarMasPorScroll,
+    crearTokensBusqueda,
+    crearTextoBusquedaProducto,
+    construirIndiceBusqueda,
+    buscarEnIndice
 
 };
 

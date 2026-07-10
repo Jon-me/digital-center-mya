@@ -476,9 +476,14 @@ const Listeners = crearListeners({
     mostrarReporteVendedores,
     guardarProductosIndexedDB,
 
-    reiniciarRenderCatalogo,
-    mostrarProductos,
-    ordenarProductosPorCodigo
+    reiniciarRenderCatalogo:
+    CatalogoProductos.reiniciarRenderCatalogo,
+
+mostrarProductos:
+    CatalogoProductos.mostrarProductos,
+
+ordenarProductosPorCodigo:
+    CatalogoProductos.ordenarProductosPorCodigo
 
 });
 
@@ -543,83 +548,6 @@ function detenerListenersFirebase(){
 }
 
 sonidoVenta.volume = 0.4;
-
-function ordenarProductosPorCodigo(){
-
-    productos.sort(function(a, b){
-        return String(a.codigo || "").localeCompare(String(b.codigo || ""));
-    });
-
-}
-
-function aplicarFiltrosCatalogo(){
-
-    let busqueda = normalizarTexto(busquedaCatalogo);
-    let categoria = normalizarTexto(categoriaCatalogo);
-
-    productosVista = productos.filter(function(producto){
-
-        let coincideCategoria =
-            categoria === "todos" ||
-            normalizarTexto(producto.categoria) === categoria;
-
-        if(!coincideCategoria){
-            return false;
-        }
-
-        if(busqueda === ""){
-            return true;
-        }
-
-        return obtenerTextoBusquedaProducto(producto).includes(busqueda);
-
-    });
-
-}
-
-function reiniciarRenderCatalogo(){
-    CatalogoProductos.reiniciarRenderCatalogo();
-}
-
-function mostrarProductos(){
-    CatalogoProductos.mostrarProductos();
-}
-
-function cargarMasProductos(){
-    CatalogoProductos.cargarMasProductos();
-}
-
-function inicializarScrollCatalogo(){
-    CatalogoProductos.inicializarScrollCatalogo();
-}
-
-async function subirImagenProductoStorage(archivo){
-    return await CatalogoProductos.subirImagenProductoStorage(archivo);
-}
-
-async function eliminarImagenAnteriorStorage(urlImagen){
-    return await CatalogoProductos.eliminarImagenAnteriorStorage(urlImagen);
-}
-
-async function guardarProducto(){
-    return await CatalogoProductos.guardarProducto();
-}
-
-function seleccionarImagenProducto(){
-    CatalogoProductos.seleccionarImagenProducto();
-}
-
-function editarProducto(idProducto){
-    CatalogoProductos.editarProducto(idProducto);
-}
-
-async function eliminarProducto(idProducto){
-    await CatalogoProductos.eliminarProducto(idProducto);
-}
-
-function buscarProducto(){
-    CatalogoProductos.buscarProducto();
-}
 
 function mostrarCarrito(){
     Carrito.mostrarCarrito();
@@ -703,9 +631,9 @@ catalogoVersion++;
 
 ultimaFirmaCatalogo = "";
 
-reiniciarRenderCatalogo();
+CatalogoProductos.reiniciarRenderCatalogo();
 
-    mostrarProductos();
+CatalogoProductos.mostrarProductos();
 
 }
 
@@ -774,7 +702,7 @@ function cerrarSesion(){
 document.addEventListener("DOMContentLoaded", function(){
 
     Bootstrap.iniciarAplicacion();
-    inicializarScrollCatalogo();
+CatalogoProductos.inicializarScrollCatalogo();
 
 });
 
@@ -1089,10 +1017,6 @@ async function anularGastoCaja(idGasto, autorizado = false){
     return await Caja.anularGastoCaja(idGasto, autorizado);
 }
 
-function filtrarCategoria(categoria){
-    CatalogoProductos.filtrarCategoria(categoria);
-}
-
 function actualizarReportes(){
     Dashboard.actualizarReportes();
 }
@@ -1268,13 +1192,13 @@ function toggleGarantias(){
 
 window.iniciarSesion = iniciarSesion;
 window.cerrarSesion = cerrarSesion;
-window.buscarProducto = buscarProducto;
-window.filtrarCategoria = filtrarCategoria;
-window.seleccionarImagenProducto = seleccionarImagenProducto;
-window.guardarProducto = guardarProducto;
+window.buscarProducto = CatalogoProductos.buscarProducto;
+window.filtrarCategoria = CatalogoProductos.filtrarCategoria;
+window.seleccionarImagenProducto = CatalogoProductos.seleccionarImagenProducto;
+window.guardarProducto = CatalogoProductos.guardarProducto;
 window.agregarDirecto = agregarDirecto;
-window.editarProducto = editarProducto;
-window.eliminarProducto = eliminarProducto;
+window.editarProducto = CatalogoProductos.editarProducto;
+window.eliminarProducto = CatalogoProductos.eliminarProducto;
 window.eliminarDelCarrito = eliminarDelCarrito;
 window.cancelarVenta = cancelarVenta;
 window.finalizarVenta = finalizarVenta;
@@ -1310,7 +1234,7 @@ window.actualizarNombreBoletaCarrito = actualizarNombreBoletaCarrito;
 window.abrirTransferenciaStock = abrirTransferenciaStock;
 window.cerrarTransferenciaStock = cerrarTransferenciaStock;
 window.confirmarTransferenciaStock = confirmarTransferenciaStock;
-window.cargarMasProductos = cargarMasProductos;
+window.cargarMasProductos = CatalogoProductos.cargarMasProductos;
 window.reimprimirBoletaVenta = reimprimirBoletaVenta;
 
 async function activarNotificaciones(){
