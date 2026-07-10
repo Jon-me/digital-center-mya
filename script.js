@@ -353,10 +353,10 @@ const Ventas = crearVentas({
     obtenerStockTiendas,
     tiendasSistema,
 
-    obtenerDescuento,
-    obtenerPagosMixtos,
-    calcularTotalPagado,
-    mostrarCarrito,
+    obtenerDescuento: Carrito.obtenerDescuento,
+obtenerPagosMixtos: Carrito.obtenerPagosMixtos,
+calcularTotalPagado: Carrito.calcularTotalPagado,
+mostrarCarrito: Carrito.mostrarCarrito,
 
     construirHTMLBoleta,
 });
@@ -401,7 +401,7 @@ const Dashboard = crearDashboard({
 
     obtenerFechaISO,
     obtenerStockTotal,
-    obtenerDescuento
+    obtenerDescuento: Carrito.obtenerDescuento
 
 });
 
@@ -446,7 +446,7 @@ const Auth = crearAuth({
     detenerListenersFirebase,
     iniciarListenersFirebase,
     hidratarProductosDesdeIndexedDB,
-    mostrarCarrito,
+    mostrarCarrito: Carrito.mostrarCarrito,
     controlarColumnaGanancia,
     apagarSonidoLogin,
 
@@ -517,7 +517,7 @@ const Bootstrap = crearBootstrap({
     localStorage,
 
     apagarSonidoLogin,
-    mostrarCarrito,
+    mostrarCarrito: Carrito.mostrarCarrito,
     controlarColumnaGanancia,
     aplicarPermisos,
     desbloquearSistema,
@@ -525,9 +525,9 @@ const Bootstrap = crearBootstrap({
     hidratarProductosDesdeIndexedDB,
 
     iniciarSesion,
-    calcularTotalPagado,
-    actualizarResumenVenta,
-    limpiarDescuentoSiCarritoVacio,
+    calcularTotalPagado: Carrito.calcularTotalPagado,
+actualizarResumenVenta: Carrito.actualizarResumenVenta,
+limpiarDescuentoSiCarritoVacio: Carrito.limpiarDescuentoSiCarritoVacio,
 
     inicializarMenuCategorias: UI.inicializarMenuCategorias,
     inicializarOnMessage: Notifications.inicializarOnMessage
@@ -548,43 +548,6 @@ function detenerListenersFirebase(){
 }
 
 sonidoVenta.volume = 0.4;
-
-function mostrarCarrito(){
-    Carrito.mostrarCarrito();
-}
-
-function actualizarResumenVenta(){
-    Carrito.actualizarResumenVenta();
-}
-
-
-function actualizarNombreBoletaCarrito(index, valor){
-    Carrito.actualizarNombreBoletaCarrito(index, valor);
-}
-
-function eliminarDelCarrito(index){
-    Carrito.eliminarDelCarrito(index);
-}
-
-function agregarDirecto(idProducto){
-    Carrito.agregarDirecto(idProducto);
-}
-
-function cancelarVenta(){
-    Carrito.cancelarVenta();
-}
-
-function obtenerPagosMixtos(){
-    return Carrito.obtenerPagosMixtos();
-}
-
-function calcularTotalPagado(){
-    return Carrito.calcularTotalPagado();
-}
-
-async function finalizarVenta(numeroBoleta = "SIN IMPRESION"){
-    return await Ventas.finalizarVenta(numeroBoleta);
-}
 
 function desbloquearSistema(){
     Auth.desbloquearSistema();
@@ -710,14 +673,6 @@ function actualizarDashboard(){
     Dashboard.actualizarDashboard();
 }
 
-async function validarStockAntesDeImprimir(){
-    return await Ventas.validarStockAntesDeImprimir();
-}
-
-async function imprimirBoleta(){
-    return await Ventas.imprimirBoleta();
-}
-
 async function finalizarEImprimir(){
 
     if(carrito.length === 0){
@@ -725,14 +680,13 @@ async function finalizarEImprimir(){
         return;
     }
 
-    let numeroBoleta = await imprimirBoleta();
+    let numeroBoleta = await Ventas.imprimirBoleta();
 
-    if(!numeroBoleta){
-        return;
-    }
+if(!numeroBoleta){
+    return;
+}
 
-    await finalizarVenta("B001-" + numeroBoleta);
-
+await Ventas.finalizarVenta("B001-" + numeroBoleta);
     cerrarDatosClienteBoleta();
 
     if(typeof cerrarModalPanel === "function"){
@@ -747,18 +701,6 @@ async function finalizarEImprimir(){
 }
 
 window.finalizarEImprimir = finalizarEImprimir;
-
-function obtenerDetallePagosVenta(venta){
-    return VentasHistorial.obtenerDetallePagosVenta(venta);
-}
-
-function obtenerProductosVenta(venta){
-    return VentasHistorial.obtenerProductosVenta(venta);
-}
-
-function obtenerCategoriasVenta(venta){
-    return VentasHistorial.obtenerCategoriasVenta(venta);
-}
 
 function mostrarHistorialVentas(){
 
@@ -792,12 +734,12 @@ function mostrarHistorialVentas(){
 <tr>
     <td>${venta.fecha}</td>
     <td>${venta.hora}</td>
-    <td>${obtenerProductosVenta(venta)}</td>
-    <td>${obtenerCategoriasVenta(venta)}</td>
+    <td>${VentasHistorial.obtenerProductosVenta(venta)}</td>
+    <td>${VentasHistorial.obtenerCategoriasVenta(venta)}</td>
    <td>${venta.vendedor || "Sin vendedor"}</td>
 <td>${venta.tiendaVentaNombre || tiendasSistema[venta.tiendaVenta] || "Mercado"}</td>
 <td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
-    <td>${obtenerDetallePagosVenta(venta)}</td>
+    <td>${VentasHistorial.obtenerDetallePagosVenta(venta)}</td>
 
     ${
         rol === "admin"
@@ -832,10 +774,6 @@ function mostrarHistorialVentas(){
 
     tabla.innerHTML = html;
 
-}
-
-function reimprimirBoletaVenta(index){
-    VentasHistorial.reimprimirBoletaVenta(index);
 }
 
 function anularVenta(index){
@@ -1029,14 +967,6 @@ function mostrarReporteVendedores(){
     Dashboard.mostrarReporteVendedores();
 }
 
-function obtenerDescuento(){
-    return Carrito.obtenerDescuento();
-}
-
-function limpiarDescuentoSiCarritoVacio(){
-    Carrito.limpiarDescuentoSiCarritoVacio();
-}
-
 function abrirDBProductos(){
 
     return IndexedDB.abrirDBProductos();
@@ -1196,14 +1126,14 @@ window.buscarProducto = CatalogoProductos.buscarProducto;
 window.filtrarCategoria = CatalogoProductos.filtrarCategoria;
 window.seleccionarImagenProducto = CatalogoProductos.seleccionarImagenProducto;
 window.guardarProducto = CatalogoProductos.guardarProducto;
-window.agregarDirecto = agregarDirecto;
+window.agregarDirecto = Carrito.agregarDirecto;
 window.editarProducto = CatalogoProductos.editarProducto;
 window.eliminarProducto = CatalogoProductos.eliminarProducto;
-window.eliminarDelCarrito = eliminarDelCarrito;
-window.cancelarVenta = cancelarVenta;
-window.finalizarVenta = finalizarVenta;
+window.eliminarDelCarrito = Carrito.eliminarDelCarrito;
+window.cancelarVenta = Carrito.cancelarVenta;
+window.finalizarVenta = Ventas.finalizarVenta;
 window.finalizarEImprimir = finalizarEImprimir;
-window.imprimirBoleta = imprimirBoleta;
+window.imprimirBoleta = Ventas.imprimirBoleta;
 window.toggleAgregarProducto = toggleAgregarProducto;
 window.toggleReporteVendedores = toggleReporteVendedores;
 window.abrirConfiguracion = abrirConfiguracion;
@@ -1212,7 +1142,7 @@ window.validarCodigoAdmin = validarCodigoAdmin;
 window.cerrarModalCodigo = cerrarModalCodigo;
 window.anularVenta = anularVenta;
 window.ejecutarAnulacion = ejecutarAnulacion;
-window.mostrarCarrito = mostrarCarrito;
+window.mostrarCarrito = Carrito.mostrarCarrito;
 window.actualizarDashboard = actualizarDashboard;
 window.toggleCajaDiaria = toggleCajaDiaria;
 window.abrirCaja = abrirCaja;
@@ -1230,12 +1160,14 @@ window.toggleReportes = toggleReportes;
 window.toggleDashboardEjecutivo = toggleDashboardEjecutivo;
 window.toggleGarantias = toggleGarantias;
 window.actualizarGarantia = actualizarGarantia;
-window.actualizarNombreBoletaCarrito = actualizarNombreBoletaCarrito;
+window.actualizarNombreBoletaCarrito =
+    Carrito.actualizarNombreBoletaCarrito;
 window.abrirTransferenciaStock = abrirTransferenciaStock;
 window.cerrarTransferenciaStock = cerrarTransferenciaStock;
 window.confirmarTransferenciaStock = confirmarTransferenciaStock;
 window.cargarMasProductos = CatalogoProductos.cargarMasProductos;
-window.reimprimirBoletaVenta = reimprimirBoletaVenta;
+window.reimprimirBoletaVenta =
+    VentasHistorial.reimprimirBoletaVenta;
 
 async function activarNotificaciones(){
     return await Notifications.activarNotificaciones();
