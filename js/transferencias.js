@@ -16,7 +16,7 @@ export function crearTransferencias(deps){
         runTransaction,
 
         obtenerStockTiendas,
-        tiendasSistema,
+        obtenerNombreSucursal,
         obtenerFechaISO
 
     } = deps;
@@ -45,8 +45,18 @@ export function crearTransferencias(deps){
     document.getElementById("stockTransferSucursal").innerHTML =
         stockTiendas.sucursal;
 
-    document.getElementById("transferenciaOrigen").value = "principal";
-    document.getElementById("transferenciaDestino").value = "sucursal";
+    const sucursalesActivas =
+    Array.from(
+        document.getElementById("transferenciaOrigen").options
+    ).map(function(opcion){
+        return opcion.value;
+    });
+
+document.getElementById("transferenciaOrigen").value =
+    sucursalesActivas[0] || "";
+
+document.getElementById("transferenciaDestino").value =
+    sucursalesActivas[1] || sucursalesActivas[0] || "";
     document.getElementById("transferenciaCantidad").value = "";
 
     document.getElementById("modalTransferenciaStock").style.display = "flex";
@@ -102,25 +112,34 @@ async function confirmarTransferenciaStock(){
 
             const productoData = productoSnap.data();
 
-            const stockTiendas =
-                obtenerStockTiendas(productoData);
+           const stockTiendas =
+    obtenerStockTiendas(productoData);
 
-            if(stockTiendas[origen] < cantidad){
+stockTiendas[origen] =
+    Number(stockTiendas[origen] || 0);
+
+stockTiendas[destino] =
+    Number(stockTiendas[destino] || 0);
+
+if(stockTiendas[origen] < cantidad){
                 throw new Error(
-                    "Stock insuficiente en " +
-                    tiendasSistema[origen]
-                );
+    "Stock insuficiente en " +
+    obtenerNombreSucursal(origen)
+);
             }
 
             stockTiendas[origen] -= cantidad;
-            stockTiendas[destino] += cantidad;
+stockTiendas[destino] += cantidad;
 
-            transaction.update(productoRef,{
-                stock:
-                    stockTiendas.principal +
-                    stockTiendas.sucursal,
-                stockTiendas
-            });
+const stockTotal = Object.values(stockTiendas)
+    .reduce(function(total, stockSucursal){
+        return total + Number(stockSucursal || 0);
+    }, 0);
+
+transaction.update(productoRef, {
+    stock: stockTotal,
+    stockTiendas
+});
 
             transaction.set(
                 doc(collection(db,"transferenciasStock")),
@@ -129,8 +148,11 @@ async function confirmarTransferenciaStock(){
                     codigo: state.productoTransferenciaActual.codigo || "",
                     producto: state.productoTransferenciaActual.producto || "",
                     cantidad,
-                    origen: tiendasSistema[origen],
-                    destino: tiendasSistema[destino],
+                    origenId: origen,
+origen: obtenerNombreSucursal(origen),
+
+destinoId: destino,
+destino: obtenerNombreSucursal(destino),
                     fecha: new Date().toLocaleDateString(),
                     fechaISO: obtenerFechaISO(),
                     hora: new Date().toLocaleTimeString(),

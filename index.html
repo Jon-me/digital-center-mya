@@ -779,23 +779,12 @@ Ganancia
 
        <div class="stock-tiendas-form">
 
-    <h3>🏪 Stock por tienda</h3>
+    <h3>🏪 Stock por sucursal</h3>
 
-    <input
-        id="stockPrincipal"
-        type="number"
-        min="0"
-        step="1"
-        placeholder="Stock Mercado"
-    >
+    <div id="contenedorStockSucursales">
+        <p>Cargando sucursales...</p>
+    </div>
 
-    <input
-        id="stockSucursal"
-        type="number"
-        min="0"
-        step="1"
-        placeholder="Stock Peluquería"
-    >
 </div>
 
         <input
@@ -862,9 +851,9 @@ Ganancia
         Guardar Configuración
     </button>
 
-        </div>
+</div>
 
-    </div>
+</div><!-- FIN zonaAdmin -->
 
 <div id="modalTransferenciaStock" class="modal-transferencia" style="display:none;">
 
@@ -950,13 +939,6 @@ Ganancia
     style="display:none;"
 ></div>
 
-<div id="modalPanel" class="modal-panel" style="display:none;">
-    <div class="modal-contenido">
-        <button class="cerrar-modal" onclick="cerrarModalPanel()">X</button>
-        <div id="contenidoModalPanel"></div>
-    </div>
-</div>
-
 <div id="modalDatosClienteBoleta" class="modal-boleta-cliente" style="display:none;">
 
     <div class="modal-boleta-contenido">
@@ -975,6 +957,13 @@ Ganancia
 
     </div>
 
+</div>
+
+<div id="modalPanel" class="modal-panel" style="display:none;">
+    <div class="modal-contenido">
+        <button class="cerrar-modal" onclick="cerrarModalPanel()">X</button>
+        <div id="contenidoModalPanel"></div>
+    </div>
 </div>
 
 <script type="module" src="script.js?v=DESKTOP1"></script>

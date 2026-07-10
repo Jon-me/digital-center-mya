@@ -26,24 +26,55 @@ export function normalizarTexto(valor){
 
 export function obtenerStockTiendas(producto){
 
-    if(producto.stockTiendas){
-        return {
-            principal: Number(producto.stockTiendas.principal || 0),
-            sucursal: Number(producto.stockTiendas.sucursal || 0)
-        };
+    const stockTiendas = {};
+
+    if(
+        producto &&
+        producto.stockTiendas &&
+        typeof producto.stockTiendas === "object"
+    ){
+
+        Object.entries(producto.stockTiendas)
+            .forEach(function([idSucursal, cantidad]){
+
+                stockTiendas[idSucursal] =
+                    Number(cantidad || 0);
+
+            });
+
     }
 
-    return {
-        principal: Number(producto.stock || 0),
-        sucursal: 0
-    };
+    if(Object.keys(stockTiendas).length === 0){
+
+        stockTiendas.principal =
+            Number(producto?.stock || 0);
+
+        stockTiendas.sucursal = 0;
+
+    }
+
+    if(!Object.prototype.hasOwnProperty.call(stockTiendas, "principal")){
+        stockTiendas.principal = 0;
+    }
+
+    if(!Object.prototype.hasOwnProperty.call(stockTiendas, "sucursal")){
+        stockTiendas.sucursal = 0;
+    }
+
+    return stockTiendas;
 }
 
 export function obtenerStockTotal(producto){
 
-    let stockTiendas = obtenerStockTiendas(producto);
+    const stockTiendas =
+        obtenerStockTiendas(producto);
 
-    return stockTiendas.principal + stockTiendas.sucursal;
+    return Object.values(stockTiendas)
+        .reduce(function(total, cantidad){
+
+            return total + Number(cantidad || 0);
+
+        }, 0);
 }
 
 export function obtenerTextoBusquedaProducto(producto){

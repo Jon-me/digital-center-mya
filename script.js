@@ -37,6 +37,7 @@ import { crearCaja } from "./js/caja.js";
 import { crearDashboard } from "./js/dashboard.js";
 import { crearGarantias } from "./js/garantias.js";
 import { crearTransferencias } from "./js/transferencias.js";
+import { crearSucursales } from "./js/sucursales.js";
 import { crearAuth } from "./js/auth.js";
 import { crearListeners } from "./js/listeners.js";
 import { crearBootstrap } from "./js/bootstrap.js";
@@ -307,6 +308,19 @@ const CatalogEngine = crearCatalogEngine({
 
 });
 
+const Sucursales = crearSucursales({
+
+    db,
+    collection,
+    addDoc,
+    setDoc,
+    deleteDoc,
+    updateDoc,
+    doc,
+    onSnapshot
+
+});
+
 const CatalogoProductos = crearCatalogoProductos({
     state: estadoCatalogoBridge,
 
@@ -325,8 +339,17 @@ const CatalogoProductos = crearCatalogoProductos({
     deleteObject,
 
     obtenerStockTiendas,
-    obtenerStockTotal,
-    actualizarDashboard: () => Dashboard.actualizarDashboard()
+obtenerStockTotal,
+
+renderizarStockHTML:
+    Sucursales.renderizarStockHTML,
+
+    renderizarFormularioStock:
+    Sucursales.renderizarFormularioStock,
+
+actualizarDashboard:
+    () => Dashboard.actualizarDashboard()
+
 });
 
 const Carrito = crearCarrito({
@@ -429,8 +452,9 @@ const Transferencias = crearTransferencias({
     runTransaction,
 
     obtenerStockTiendas,
-    tiendasSistema,
-    obtenerFechaISO
+obtenerNombreSucursal:
+    Sucursales.obtenerNombreSucursal,
+obtenerFechaISO
 
 });
 
@@ -657,9 +681,52 @@ try{
 document.addEventListener("DOMContentLoaded", function(){
 
     Bootstrap.iniciarAplicacion();
-CatalogoProductos.inicializarScrollCatalogo();
+
+    CatalogoProductos.inicializarScrollCatalogo();
+
+    Sucursales.iniciarListener();
+
+    Sucursales.alCargar(cargarSucursalesEnCombos);
 
 });
+
+function cargarSucursalesEnCombos(){
+
+    const comboVenta =
+        document.getElementById("tiendaVenta");
+
+    const comboOrigen =
+        document.getElementById("transferenciaOrigen");
+
+    const comboDestino =
+        document.getElementById("transferenciaDestino");
+
+    Sucursales.cargarOpcionesEnSelect(
+        comboVenta,
+        comboVenta ? comboVenta.value : ""
+    );
+
+    Sucursales.cargarOpcionesEnSelect(
+        comboOrigen,
+        comboOrigen ? comboOrigen.value : "principal"
+    );
+
+    Sucursales.cargarOpcionesEnSelect(
+        comboDestino,
+        comboDestino ? comboDestino.value : "sucursal"
+    );
+
+    const contenedorStock =
+    document.getElementById("contenedorStockSucursales");
+
+if(contenedorStock){
+
+    contenedorStock.innerHTML =
+        Sucursales.renderizarFormularioStock();
+
+}
+
+}
 
 async function finalizarEImprimir(){
 
@@ -725,7 +792,8 @@ function mostrarHistorialVentas(){
     <td>${VentasHistorial.obtenerProductosVenta(venta)}</td>
     <td>${VentasHistorial.obtenerCategoriasVenta(venta)}</td>
    <td>${venta.vendedor || "Sin vendedor"}</td>
-<td>${venta.tiendaVentaNombre || tiendasSistema[venta.tiendaVenta] || "Mercado"}</td>
+<td>${venta.tiendaVentaNombre ||
+Sucursales.obtenerNombreSucursal(venta.tiendaVenta)}</td>
 <td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
     <td>${VentasHistorial.obtenerDetallePagosVenta(venta)}</td>
 

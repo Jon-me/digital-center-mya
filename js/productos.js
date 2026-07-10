@@ -7,23 +7,25 @@
 export function crearCatalogoProductos(deps){
 
     const {
-    state,
-    db,
-    storage,
-    collection,
-    addDoc,
-    deleteDoc,
-    updateDoc,
-    doc,
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject,
-    obtenerStockTiendas,
-    obtenerStockTotal,
-    actualizarDashboard,
-    CatalogEngine,
-} = deps;
+        state,
+        db,
+        storage,
+        collection,
+        addDoc,
+        deleteDoc,
+        updateDoc,
+        doc,
+        ref,
+        uploadBytes,
+        getDownloadURL,
+        deleteObject,
+        obtenerStockTiendas,
+        obtenerStockTotal,
+        renderizarStockHTML,
+        renderizarFormularioStock,
+        actualizarDashboard,
+        CatalogEngine,
+    } = deps;
 
     function normalizarTexto(valor){
         return String(valor || "")
@@ -137,18 +139,14 @@ function reconstruirIndiceBusquedaCatalogo(){
             <p>Categoría: ${producto.categoria}</p>
 
             <div class="stock-tiendas-card">
-                <p class="stock-total">Stock Total: ${stockTotal}</p>
 
-                <div class="stock-tienda">
-                    <span>🏬 Mercado</span>
-                    <strong>${stockTiendas.principal}</strong>
-                </div>
+    <p class="stock-total">
+        Stock Total: ${stockTotal}
+    </p>
 
-                <div class="stock-tienda">
-                    <span>✂️ Peluquería</span>
-                    <strong>${stockTiendas.sucursal}</strong>
-                </div>
-            </div>
+    ${renderizarStockHTML(stockTiendas)}
+
+</div>
 
             ${
                 rolActivo === "admin"
@@ -596,23 +594,70 @@ async function eliminarImagenAnteriorStorage(urlImagen){
     }
 }
 
+function obtenerStockFormulario(){
+
+    const stockTiendas = {};
+
+    document
+        .querySelectorAll(".stock-sucursal-input")
+        .forEach(function(input){
+
+            const idSucursal =
+                input.dataset.sucursalId;
+
+            const cantidad =
+                Number(input.value || 0);
+
+            if(!idSucursal){
+                return;
+            }
+
+            if(
+                !Number.isInteger(cantidad) ||
+                cantidad < 0
+            ){
+                throw new Error(
+                    "El stock de cada sucursal debe ser un número entero mayor o igual a cero"
+                );
+            }
+
+            stockTiendas[idSucursal] = cantidad;
+
+        });
+
+    if(Object.keys(stockTiendas).length === 0){
+        throw new Error(
+            "No se encontraron sucursales para registrar el stock"
+        );
+    }
+
+    return stockTiendas;
+}
+
 async function guardarProducto(){
 
-    let codigoInput = document.getElementById("codigo");
-    let productoInput = document.getElementById("producto");
-    let categoriaInput = document.getElementById("categoria");
-    let stockPrincipalInput = document.getElementById("stockPrincipal");
-    let stockSucursalInput = document.getElementById("stockSucursal");
-    let precioCompraInput = document.getElementById("precioCompra");
-    let precioInput = document.getElementById("precio");
-    let imagenInput = document.getElementById("imagen");
+    const codigoInput =
+        document.getElementById("codigo");
+
+    const productoInput =
+        document.getElementById("producto");
+
+    const categoriaInput =
+        document.getElementById("categoria");
+
+    const precioCompraInput =
+        document.getElementById("precioCompra");
+
+    const precioInput =
+        document.getElementById("precio");
+
+    const imagenInput =
+        document.getElementById("imagen");
 
     if(
         !codigoInput ||
         !productoInput ||
         !categoriaInput ||
-        !stockPrincipalInput ||
-        !stockSucursalInput ||
         !precioCompraInput ||
         !precioInput ||
         !imagenInput
@@ -621,18 +666,23 @@ async function guardarProducto(){
         return;
     }
 
-    let codigo = codigoInput.value.trim();
-    let producto = productoInput.value.trim();
-    let categoria = categoriaInput.value.trim();
+    const codigo =
+        codigoInput.value.trim();
 
-    let stockPrincipal = stockPrincipalInput.value;
-    let stockSucursal = stockSucursalInput.value;
-    let stock = Number(stockPrincipal || 0) + Number(stockSucursal || 0);
+    const producto =
+        productoInput.value.trim();
 
-    let precioCompra = precioCompraInput.value;
-    let precio = precioInput.value;
+    const categoria =
+        categoriaInput.value.trim();
 
-    let archivo = imagenInput.files[0];
+    const precioCompra =
+        precioCompraInput.value;
+
+    const precio =
+        precioInput.value;
+
+    const archivo =
+        imagenInput.files[0];
 
     if(
         codigo === "" ||
@@ -646,69 +696,115 @@ async function guardarProducto(){
     }
 
     if(
-        isNaN(Number(stockPrincipal || 0)) ||
-        isNaN(Number(stockSucursal || 0)) ||
         isNaN(Number(precioCompra)) ||
         isNaN(Number(precio))
     ){
-        alert("Stock y precios deben ser números válidos");
+        alert("Los precios deben ser números válidos");
         return;
     }
 
     if(
-        !Number.isInteger(Number(stockPrincipal || 0)) ||
-        !Number.isInteger(Number(stockSucursal || 0))
-    ){
-        alert("El stock por tienda debe ser un número entero");
-        return;
-    }
-
-    if(
-        Number(stockPrincipal || 0) < 0 ||
-        Number(stockSucursal || 0) < 0 ||
         Number(precioCompra) < 0 ||
         Number(precio) < 0
     ){
-        alert("Stock y precios no pueden ser negativos");
+        alert("Los precios no pueden ser negativos");
         return;
+    }
+
+    let stockFormulario;
+
+    try{
+
+        stockFormulario =
+            obtenerStockFormulario();
+
+    }catch(error){
+
+        alert(error.message);
+        return;
+
     }
 
     let urlImagen = "";
 
     try{
-        urlImagen = await subirImagenProductoStorage(archivo);
+
+        urlImagen =
+            await subirImagenProductoStorage(archivo);
+
     }catch(error){
+
         console.error(error);
+
         alert(
             "ERROR REAL:\n\n" +
             error.name +
             "\n\n" +
             error.message
         );
+
         return;
     }
 
-    if(state.indiceEditar !== null && urlImagen === ""){
-        urlImagen = state.productos[state.indiceEditar].imagen || "";
+    if(
+        state.indiceEditar !== null &&
+        urlImagen === ""
+    ){
+        urlImagen =
+            state.productos[state.indiceEditar].imagen || "";
     }
 
-    let nuevoProducto = {
-        codigo: codigo,
-        producto: producto,
-        categoria: categoria,
-        stock: Number(stock),
-        stockTiendas: {
-            principal: Number(stockPrincipal || 0),
-            sucursal: Number(stockSucursal || 0)
-        },
-        precioCompra: Number(precioCompra),
-        precio: Number(precio),
-        imagen: urlImagen
+    let stockTiendas = {
+        ...stockFormulario
     };
 
     if(state.indiceEditar !== null){
 
-        let productoEditar = state.productos[state.indiceEditar];
+        const productoAnterior =
+            state.productos[state.indiceEditar];
+
+        const stockAnterior =
+            obtenerStockTiendas(productoAnterior);
+
+        stockTiendas = {
+            ...stockAnterior,
+            ...stockFormulario
+        };
+
+    }
+
+    const stockTotal =
+        Object.values(stockTiendas)
+            .reduce(function(total, cantidad){
+
+                return total + Number(cantidad || 0);
+
+            }, 0);
+
+    const nuevoProducto = {
+
+        codigo,
+        producto,
+        categoria,
+
+        stock: stockTotal,
+        stockTiendas,
+
+        precioCompra:
+            Number(precioCompra),
+
+        precio:
+            Number(precio),
+
+        imagen:
+            urlImagen
+
+    };
+
+    if(state.indiceEditar !== null){
+
+        const productoEditar =
+            state.productos[state.indiceEditar];
 
         await updateDoc(
             doc(db, "productos", productoEditar.id),
@@ -719,26 +815,36 @@ async function guardarProducto(){
 
         state.indiceEditar = null;
 
-    } else {
+    }else{
 
-        await addDoc(collection(db, "productos"), nuevoProducto);
+        await addDoc(
+            collection(db, "productos"),
+            nuevoProducto
+        );
 
         alert("✅ Producto guardado correctamente");
+
     }
 
     codigoInput.value = "";
     productoInput.value = "";
     categoriaInput.value = "";
-    stockPrincipalInput.value = "";
-    stockSucursalInput.value = "";
     precioCompraInput.value = "";
     precioInput.value = "";
     imagenInput.value = "";
 
-    let nombreImagenProducto = document.getElementById("nombreImagenProducto");
+    document
+        .querySelectorAll(".stock-sucursal-input")
+        .forEach(function(input){
+            input.value = "0";
+        });
+
+    const nombreImagenProducto =
+        document.getElementById("nombreImagenProducto");
 
     if(nombreImagenProducto){
-        nombreImagenProducto.innerHTML = "Ninguna imagen seleccionada";
+        nombreImagenProducto.innerHTML =
+            "Ninguna imagen seleccionada";
     }
 }
 
@@ -783,8 +889,17 @@ function editarProducto(idProducto){
 
     let stockTiendasEditar = obtenerStockTiendas(productoEditar);
 
-    document.getElementById("stockPrincipal").value = stockTiendasEditar.principal;
-    document.getElementById("stockSucursal").value = stockTiendasEditar.sucursal;
+    const contenedorStock =
+    document.getElementById("contenedorStockSucursales");
+
+if(contenedorStock){
+
+    contenedorStock.innerHTML =
+        renderizarFormularioStock(
+            stockTiendasEditar
+        );
+
+}
     document.getElementById("precioCompra").value = productoEditar.precioCompra || 0;
     document.getElementById("precio").value = productoEditar.precio;
 
