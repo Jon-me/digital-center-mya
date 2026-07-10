@@ -28,6 +28,8 @@
     rel="stylesheet"
 >
 
+</head>
+
 <body>
 
 <video autoplay muted loop playsinline id="videoFondoLaptop">
@@ -534,45 +536,82 @@ Ganancia
 
 <div id="panelDashboardEjecutivo" style="display:none;">
 
-<h2 id="tituloDashboardEjecutivo">
-    🧠 Dashboard Ejecutivo
-</h2>
+    <h2 id="tituloDashboardEjecutivo">
+        🧠 Dashboard Ejecutivo
+    </h2>
 
-<div class="dashboard" id="dashboardEjecutivo">
+    <div class="selector-dashboard-sucursal">
 
-    <div class="dashboard-card">
-        <h2 id="productoMasVendido">-</h2>
-        <p>Producto Más Vendido</p>
+        <label for="dashboardSucursal">
+            🏪 Dashboard
+        </label>
+
+        <select
+            id="dashboardSucursal"
+            onchange="cambiarSucursalDashboard()">
+
+            <option value="empresa">
+                🌎 Toda la empresa
+            </option>
+
+        </select>
+
     </div>
 
-    <div class="dashboard-card">
-        <h2 id="mejorVendedor">-</h2>
-        <p>👑 Mejor Vendedor</p>
+    <div class="dashboard" id="dashboardEjecutivo">
+
+        <div class="dashboard-card">
+            <h2 id="productoMasVendido">-</h2>
+            <p>Producto Más Vendido</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="mejorVendedor">-</h2>
+            <p>👑 Mejor Vendedor</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="gananciaRealDia">S/ 0</h2>
+            <p>💰 Ganancia Real del Día</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="ticketPromedio">S/ 0</h2>
+            <p>🧾 Ticket Promedio</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="gananciaMesEjecutiva">S/ 0</h2>
+            <p>📈 Ganancia del Mes</p>
+        </div>
+
     </div>
 
-    <div class="dashboard-card">
-        <h2 id="gananciaRealDia">S/ 0</h2>
-        <p>💰 Ganancia Real del Día</p>
-    </div>
+<div class="ranking-sucursales-panel">
 
-    <div class="dashboard-card">
-        <h2 id="ticketPromedio">S/ 0</h2>
-        <p>🧾 Ticket Promedio</p>
-    </div>
+    <h3>🏆 Ranking de Sucursales</h3>
 
-    <div class="dashboard-card">
-    <h2 id="gananciaMesEjecutiva">S/ 0</h2>
-    <p>📈 Ganancia del Mes</p>
+    <div id="rankingSucursales">
+        <p>Sin datos disponibles.</p>
     </div>
 
 </div>
 
+<div class="ranking-productos-panel">
+
+    <h3>📦 Top 5 Productos</h3>
+
+    <div id="rankingProductos">
+        <p>Sin ventas registradas.</p>
+    </div>
+
 </div>
+
+</div><!-- FIN panelDashboardEjecutivo -->
 
 <div id="panelReporteVendedores" style="display:none;">
 
-<h3>👤 Reporte por Vendedor</h3>
-
+    <h3>👤 Reporte por Vendedor</h3>
 <table>
     <thead>
         <tr>
@@ -974,13 +1013,19 @@ Ganancia
 
 <div id="modalPanel" class="modal-panel" style="display:none;">
     <div class="modal-contenido">
-        <button class="cerrar-modal" onclick="cerrarModalPanel()">X</button>
+        <button
+            class="cerrar-modal"
+            onclick="cerrarModalPanel()">
+            X
+        </button>
+
         <div id="contenidoModalPanel"></div>
     </div>
 </div>
 
+</div><!-- FIN sistema -->
+
 <script type="module" src="script.js?v=DESKTOP1"></script>
 
 </body>
-
 </html>

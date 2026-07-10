@@ -6,12 +6,20 @@
 
 export function crearDashboard(deps){
 
-    const {
+const {
 
     state,
 
     obtenerFechaISO,
+
+    obtenerDashboardSucursal,
+
+    obtenerStockTiendas,
+
     obtenerStockTotal,
+
+    obtenerNombreSucursal,
+
     obtenerDescuento
 
 } = deps;
@@ -44,13 +52,29 @@ function calcularIndicadoresDashboard(){
 
     const hoy = obtenerFechaISO();
 
+    const sucursalDashboard =
+    obtenerDashboardSucursal();
+
     const mesActual = new Date().getMonth();
     const anioActual = new Date().getFullYear();
 
-    state.historialVentas.forEach(function(venta){
+state.historialVentas.forEach(function(venta){
 
-        const total = Number(venta.total || 0);
-        const ganancia = Number(venta.ganancia || 0);
+    const sucursalVenta =
+        venta.tiendaVenta || "principal";
+
+    if(
+        sucursalDashboard !== "empresa" &&
+        sucursalVenta !== sucursalDashboard
+    ){
+        return;
+    }
+
+    const total =
+        Number(venta.total || 0);
+
+    const ganancia =
+        Number(venta.ganancia || 0);
 
         const fechaVenta = venta.fechaISO
             ? new Date(venta.fechaISO + "T00:00:00")
@@ -306,17 +330,45 @@ function actualizarIndicadoresInventario(){
         return;
     }
 
-    totalProductos.innerHTML = state.productos.length;
+    const sucursalDashboard =
+        obtenerDashboardSucursal();
 
+    let cantidadProductos = 0;
     let valorTotal = 0;
 
     state.productos.forEach(function(producto){
 
+        let stockVista = 0;
+
+        if(sucursalDashboard === "empresa"){
+
+            stockVista =
+                obtenerStockTotal(producto);
+
+        }else{
+
+            const stockTiendas =
+                obtenerStockTiendas(producto);
+
+            stockVista =
+                Number(
+                    stockTiendas[sucursalDashboard] || 0
+                );
+
+        }
+
+        if(stockVista > 0){
+            cantidadProductos++;
+        }
+
         valorTotal +=
-            obtenerStockTotal(producto) *
-            Number(producto.precio || 0);
+            stockVista *
+            Number(producto.precioCompra || 0);
 
     });
+
+    totalProductos.innerHTML =
+        cantidadProductos;
 
     valorInventario.innerHTML =
         "S/ " + valorTotal.toFixed(2);
@@ -364,12 +416,272 @@ function actualizarDashboard(){
 
 }
 
+function calcularRankingSucursales(){
+
+    const ranking = new Map();
+
+    state.historialVentas.forEach(function(venta){
+
+        if(venta.fechaISO !== obtenerFechaISO()){
+            return;
+        }
+
+        const sucursal =
+            venta.tiendaVenta || "principal";
+
+        if(!ranking.has(sucursal)){
+
+            ranking.set(sucursal,{
+                ventas:0,
+                ganancia:0,
+                tickets:0
+            });
+
+        }
+
+        const datos =
+            ranking.get(sucursal);
+
+        datos.ventas +=
+            Number(venta.total || 0);
+
+        datos.ganancia +=
+            Number(venta.ganancia || 0);
+
+        datos.tickets++;
+
+    });
+
+    return [...ranking.entries()]
+        .sort(function(a,b){
+
+            return b[1].ventas - a[1].ventas;
+
+        });
+
+}
+
+function mostrarRankingSucursales(){
+
+    const contenedor =
+        document.getElementById("rankingSucursales");
+
+    if(!contenedor){
+        return;
+    }
+
+    const ranking =
+        calcularRankingSucursales();
+
+    if(ranking.length === 0){
+
+        contenedor.innerHTML =
+            "<p>Sin ventas registradas hoy.</p>";
+
+        return;
+    }
+
+    const medallas = [
+        "🥇",
+        "🥈",
+        "🥉"
+    ];
+
+    let html = "";
+
+    ranking.forEach(function([sucursalId, datos], index){
+
+        const ticketPromedio =
+            datos.tickets > 0
+                ? datos.ventas / datos.tickets
+                : 0;
+
+        html += `
+            <div class="ranking-sucursal-item">
+
+                <div class="ranking-posicion">
+                    ${medallas[index] || "#" + (index + 1)}
+                </div>
+
+                <div class="ranking-info">
+
+<strong>
+    ${obtenerNombreSucursal(sucursalId)}
+</strong>
+
+                    <small>
+                        ${datos.tickets} ventas ·
+                        Ticket S/ ${ticketPromedio.toFixed(2)}
+                    </small>
+
+                </div>
+
+                <div class="ranking-montos">
+
+                    <strong>
+                        S/ ${datos.ventas.toFixed(2)}
+                    </strong>
+
+                    <small>
+                        Ganancia S/ ${datos.ganancia.toFixed(2)}
+                    </small>
+
+                </div>
+
+            </div>
+        `;
+
+    });
+
+    contenedor.innerHTML = html;
+
+}
+
+function calcularRankingProductos(){
+
+    const ranking = new Map();
+
+    const sucursalDashboard =
+        obtenerDashboardSucursal();
+
+    state.historialVentas.forEach(function(venta){
+
+        if(venta.fechaISO !== obtenerFechaISO()){
+            return;
+        }
+
+        const sucursalVenta =
+            venta.tiendaVenta || "principal";
+
+        if(
+            sucursalDashboard !== "empresa" &&
+            sucursalVenta !== sucursalDashboard
+        ){
+            return;
+        }
+
+        const productosVenta =
+            Array.isArray(venta.productos)
+                ? venta.productos
+                : [];
+
+        productosVenta.forEach(function(item){
+
+            const nombreProducto =
+                item.nombreBoleta ||
+                item.producto ||
+                "Sin producto";
+
+            const cantidad =
+                Number(item.cantidad || 0);
+
+            if(!ranking.has(nombreProducto)){
+                ranking.set(nombreProducto, 0);
+            }
+
+            ranking.set(
+                nombreProducto,
+                ranking.get(nombreProducto) + cantidad
+            );
+
+        });
+
+    });
+
+    return Array.from(ranking.entries())
+        .sort(function(a, b){
+            return b[1] - a[1];
+        })
+        .slice(0, 5);
+
+}
+
+function mostrarRankingProductos(){
+
+    const panel =
+        document.getElementById("rankingProductos");
+
+    if(!panel){
+        return;
+    }
+
+    const ranking =
+        calcularRankingProductos();
+
+    if(ranking.length===0){
+
+        panel.innerHTML =
+            "<p>Sin ventas registradas.</p>";
+
+        return;
+
+    }
+
+    const iconos=[
+        "🥇",
+        "🥈",
+        "🥉",
+        "4️⃣",
+        "5️⃣"
+    ];
+
+    let html="";
+
+    ranking.forEach(function(item,index){
+
+        html+=`
+
+        <div class="ranking-sucursal-item">
+
+            <div class="ranking-posicion">
+
+                ${iconos[index]}
+
+            </div>
+
+            <div class="ranking-info">
+
+                <strong>
+
+                    ${item[0]}
+
+                </strong>
+
+            </div>
+
+            <div class="ranking-montos">
+
+                <strong>
+
+                    ${item[1]}
+
+                </strong>
+
+<small>
+    unidades vendidas
+</small>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    panel.innerHTML=html;
+
+}
+
     return {
 
     actualizarDashboard,
     actualizarReportes,
     actualizarDashboardEjecutivo,
-    mostrarReporteVendedores
+    mostrarReporteVendedores,
+    calcularRankingSucursales,
+    mostrarRankingSucursales,
+    mostrarRankingProductos
 
 };
 

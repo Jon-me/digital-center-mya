@@ -20,11 +20,15 @@ export function crearListeners(deps){
         actualizarCajaDiaria,
         mostrarGastosCaja,
         mostrarHistorialCajas,
+
         actualizarReportes,
         actualizarDashboardEjecutivo,
+        mostrarRankingSucursales,
+        mostrarRankingProductos,
         mostrarReporteVendedores,
+
         guardarProductosIndexedDB,
-        
+
         reiniciarRenderCatalogo,
         mostrarProductos,
 
@@ -220,6 +224,8 @@ function escucharHistorialCierres(){
                     mostrarHistorialVentas();
                     actualizarReportes();
                     actualizarDashboardEjecutivo();
+                    mostrarRankingSucursales();
+                    mostrarRankingProductos();
                     mostrarReporteVendedores();
                     actualizarCajaDiaria();
 

@@ -434,8 +434,16 @@ const Dashboard = crearDashboard({
     state: estadoDashboardBridge,
 
     obtenerFechaISO,
+    obtenerDashboardSucursal,
+
+    obtenerStockTiendas,
     obtenerStockTotal,
-    obtenerDescuento: Carrito.obtenerDescuento
+
+    obtenerNombreSucursal:
+        Sucursales.obtenerNombreSucursal,
+
+    obtenerDescuento:
+        Carrito.obtenerDescuento
 
 });
 
@@ -511,8 +519,14 @@ mostrarHistorialCajas: Caja.mostrarHistorialCajas,
     mostrarHistorialVentas,
     actualizarReportes: Dashboard.actualizarReportes,
 actualizarDashboardEjecutivo: Dashboard.actualizarDashboardEjecutivo,
+mostrarRankingSucursales:
+    Dashboard.mostrarRankingSucursales,
+mostrarRankingProductos:
+    Dashboard.mostrarRankingProductos,
+
 mostrarReporteVendedores: Dashboard.mostrarReporteVendedores,
-    guardarProductosIndexedDB,
+    
+guardarProductosIndexedDB,
 
     reiniciarRenderCatalogo:
     CatalogoProductos.reiniciarRenderCatalogo,
@@ -716,14 +730,17 @@ function cargarSucursalesEnCombos(){
         document.getElementById("transferenciaDestino");
 
     const comboCaja =
-    document.getElementById("sucursalCaja");
+        document.getElementById("sucursalCaja");
 
-Sucursales.cargarOpcionesEnSelect(
-    comboCaja,
-    comboCaja
-        ? comboCaja.value
-        : localStorage.getItem("sucursalCajaActiva") || "principal"
-);
+    const comboDashboard =
+        document.getElementById("dashboardSucursal");
+
+    Sucursales.cargarOpcionesEnSelect(
+        comboCaja,
+        comboCaja
+            ? comboCaja.value
+            : localStorage.getItem("sucursalCajaActiva") || "principal"
+    );
 
     Sucursales.cargarOpcionesEnSelect(
         comboVenta,
@@ -740,15 +757,51 @@ Sucursales.cargarOpcionesEnSelect(
         comboDestino ? comboDestino.value : "sucursal"
     );
 
+    if(comboDashboard){
+
+        comboDashboard.innerHTML = `
+            <option value="empresa">
+                🌎 Toda la empresa
+            </option>
+        `;
+
+        Sucursales.obtenerSucursales()
+            .forEach(function(sucursal){
+
+                comboDashboard.insertAdjacentHTML(
+                    "beforeend",
+                    `
+                        <option value="${sucursal.id}">
+                            ${sucursal.nombre}
+                        </option>
+                    `
+                );
+
+            });
+
+        const valorGuardado =
+            localStorage.getItem("dashboardSucursal") ||
+            "empresa";
+
+        comboDashboard.value =
+            Array.from(comboDashboard.options)
+                .some(function(opcion){
+                    return opcion.value === valorGuardado;
+                })
+                ? valorGuardado
+                : "empresa";
+
+    }
+
     const contenedorStock =
-    document.getElementById("contenedorStockSucursales");
+        document.getElementById("contenedorStockSucursales");
 
-if(contenedorStock){
+    if(contenedorStock){
 
-    contenedorStock.innerHTML =
-        Sucursales.renderizarFormularioStock();
+        contenedorStock.innerHTML =
+            Sucursales.renderizarFormularioStock();
 
-}
+    }
 
 }
 
@@ -790,6 +843,31 @@ function cambiarSucursalCaja(){
 
     Caja.actualizarCajaDiaria();
     Caja.mostrarHistorialCajas();
+
+}
+
+function obtenerDashboardSucursal(){
+
+    return (
+        document.getElementById("dashboardSucursal")?.value ||
+        localStorage.getItem("dashboardSucursal") ||
+        "empresa"
+    );
+
+}
+
+function cambiarSucursalDashboard(){
+
+    localStorage.setItem(
+        "dashboardSucursal",
+        obtenerDashboardSucursal()
+    );
+
+    Dashboard.actualizarDashboard();
+    Dashboard.actualizarReportes();
+    Dashboard.actualizarDashboardEjecutivo();
+    Dashboard.mostrarRankingSucursales();
+    Dashboard.mostrarRankingProductos();
 
 }
 
@@ -1231,6 +1309,9 @@ window.toggleSonido =
 
 window.cambiarSucursalCaja =
     cambiarSucursalCaja;
+
+window.cambiarSucursalDashboard =
+    cambiarSucursalDashboard;
 
 function abrirModalPanel(idPanel){
     UI.abrirModalPanel(idPanel);

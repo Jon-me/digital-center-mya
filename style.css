@@ -3396,3 +3396,102 @@ body.rol-vendedor .producto-card .btn-agregar{
 #historialVentasTabla td:last-child button:hover{
     transform: scale(1.08) !important;
 }
+
+.ranking-sucursales-panel{
+    margin-top: 24px;
+    padding: 22px;
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(96, 165, 250, 0.28);
+}
+
+.ranking-sucursales-panel h3{
+    margin: 0 0 18px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.ranking-sucursal-item{
+    display: grid;
+    grid-template-columns: 55px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.82);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.ranking-posicion{
+    font-size: 28px;
+    text-align: center;
+}
+
+.ranking-info{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ranking-info strong{
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.ranking-info small{
+    color: #cbd5e1;
+}
+
+.ranking-montos{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.ranking-montos strong{
+    color: #ffffff;
+    font-size: 17px;
+}
+
+.ranking-montos small{
+    color: #94a3b8;
+}
+
+@media (max-width: 600px){
+
+    .ranking-sucursal-item{
+        grid-template-columns: 42px 1fr;
+    }
+
+    .ranking-montos{
+        grid-column: 2;
+        align-items: flex-start;
+    }
+
+}
+
+.ranking-productos-panel{
+
+    margin-top:24px;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:rgba(15,23,42,.92);
+
+    border:1px solid rgba(96,165,250,.28);
+
+}
+
+.ranking-productos-panel h3{
+
+    margin:0 0 18px;
+
+    color:white;
+
+    text-align:center;
+
+}
