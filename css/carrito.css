@@ -1,0 +1,737 @@
+/* =========================================================
+   DIGITAL CENTER M&A — CARRITO
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   LAYOUT PRINCIPAL DEL POS
+========================================================= */
+
+.zona-pos{
+    display: grid;
+
+    grid-template-columns:
+        var(--cart-column-width)
+        minmax(0, 1fr);
+
+    gap: 25px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   PANEL DEL CARRITO
+========================================================= */
+
+.panel-carrito{
+    position: sticky;
+    top: var(--space-5);
+
+    padding: var(--panel-padding);
+
+    overflow: hidden;
+
+    background: var(--surface-panel);
+
+    border: var(--border-panel);
+
+    border-radius: 15px;
+
+    box-shadow: var(--shadow-panel);
+
+    transition:
+        border-color var(--transition-slow),
+        box-shadow var(--transition-slow);
+}
+
+.panel-carrito:hover{
+    border-color:
+        rgba(96, 165, 250, 0.55);
+
+    box-shadow:
+        var(--shadow-panel-hover);
+}
+
+/* =========================================================
+   TABLA DEL CARRITO
+========================================================= */
+
+.panel-carrito table{
+    table-layout: auto;
+    width: 100%;
+    font-size: 14px;
+}
+
+.panel-carrito th,
+.panel-carrito td{
+    padding: 10px 6px;
+    text-align: center;
+}
+
+.panel-carrito th:last-child,
+.panel-carrito td:last-child{
+    width: 45px;
+}
+
+#carritoTabla button{
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+/* =========================================================
+   TOTAL DE VENTA
+========================================================= */
+
+#totalVenta{
+
+    margin-top: 25px;
+
+    text-align: center;
+
+    font-size: 58px;
+
+    font-weight: 900;
+
+    color: #22c55e;
+
+    text-shadow:
+        0 0 10px rgba(34,197,94,.70),
+        0 0 25px rgba(34,197,94,.50);
+
+    animation:
+        brilloDinero
+        2.5s
+        ease-in-out
+        infinite;
+
+}
+
+@keyframes brilloDinero{
+
+    0%{
+
+        text-shadow:
+            0 0 10px rgba(34,197,94,.70),
+            0 0 25px rgba(34,197,94,.50);
+
+    }
+
+    50%{
+
+        text-shadow:
+            0 0 18px rgba(34,197,94,1),
+            0 0 40px rgba(34,197,94,.80);
+
+    }
+
+    100%{
+
+        text-shadow:
+            0 0 10px rgba(34,197,94,.70),
+            0 0 25px rgba(34,197,94,.50);
+
+    }
+
+}
+
+/* =========================================================
+   ACCIONES DE VENTA
+========================================================= */
+
+.acciones-venta{
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+    margin-bottom: 20px;
+
+}
+
+.acciones-venta button{
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #2563eb
+        ) !important;
+
+    border:
+        1px solid
+        rgba(96,165,250,.8) !important;
+
+    box-shadow:
+        0 0 15px rgba(37,99,235,.55),
+        inset 0 0 12px rgba(96,165,250,.15) !important;
+
+    color: white !important;
+
+    font-weight: 700;
+
+    border-radius: 12px;
+
+    transition: all .3s ease;
+
+}
+
+.acciones-venta button:hover{
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e40af,
+            #2563eb
+        ) !important;
+
+    box-shadow:
+        0 0 25px rgba(96,165,250,.95),
+        inset 0 0 15px rgba(255,255,255,.12) !important;
+
+    transform:
+        translateY(-3px)
+        scale(1.03);
+
+}
+
+button[onclick="cancelarVenta()"]{
+
+    background:
+        linear-gradient(
+            135deg,
+            #020617,
+            #991b1b
+        ) !important;
+
+    border:
+        1px solid
+        rgba(248,113,113,.9) !important;
+
+    box-shadow:
+        0 0 16px rgba(239,68,68,.55) !important;
+
+}
+
+/* =========================================================
+   PANEL DE COBRO
+========================================================= */
+
+#panelCobroVenta{
+    padding: var(--panel-padding);
+}
+
+.titulo-cobro{
+    margin-bottom: 22px !important;
+
+    font-size: 30px !important;
+}
+
+.cobro-top{
+    display: grid !important;
+
+    grid-template-columns:
+        1fr 1.4fr !important;
+
+    gap: 24px !important;
+
+    margin-bottom: 30px !important;
+}
+
+.cobro-descuento,
+.resumen-cobro{
+    height: 140px !important;
+
+    overflow: hidden !important;
+
+    background:
+        var(--surface-input) !important;
+
+    border:
+        1px solid
+        rgba(37, 99, 235, 0.75) !important;
+
+    border-radius:
+        var(--radius-2xl) !important;
+}
+
+/* =========================================================
+   DESCUENTO
+========================================================= */
+
+.cobro-descuento{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 24px !important;
+
+    padding:
+        20px 28px !important;
+}
+
+.cobro-descuento-info{
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.cobro-descuento-info label{
+    margin-bottom: 10px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    font-size: 18px !important;
+
+    font-weight:
+        var(--font-weight-semibold);
+}
+
+.cobro-icono{
+    font-size: 42px !important;
+
+    text-align: center !important;
+}
+
+.input-descuento-wrap{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    width: 360px !important;
+    max-width: 360px !important;
+    height: 50px !important;
+
+    padding:
+        0 16px !important;
+
+    background:
+        var(--surface-input) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.75) !important;
+
+    border-radius:
+        var(--radius-md) !important;
+}
+
+.input-descuento-wrap strong{
+    min-width: 35px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    font-size: 18px !important;
+}
+
+.input-descuento-wrap input,
+#descuentoVenta{
+    width: 100% !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        transparent !important;
+
+    border:
+        none !important;
+
+    outline:
+        none !important;
+
+    box-shadow:
+        none !important;
+
+    font-size:
+        18px !important;
+
+    text-align:
+        right !important;
+}
+
+.input-descuento-wrap input::-webkit-outer-spin-button,
+.input-descuento-wrap input::-webkit-inner-spin-button{
+    margin: 0 !important;
+
+    -webkit-appearance:
+        none !important;
+}
+
+
+/* =========================================================
+   RESUMEN DEL COBRO
+========================================================= */
+
+.resumen-cobro{
+    display: grid !important;
+
+    grid-template-columns:
+        1fr 1fr !important;
+
+    gap: 16px !important;
+
+    padding:
+        16px !important;
+}
+
+.resumen-card{
+    display: grid !important;
+
+    grid-template-columns:
+        70px minmax(0, 1fr) !important;
+
+    align-items:
+        center !important;
+
+    gap:
+        18px !important;
+
+    min-width:
+        0 !important;
+
+    padding:
+        18px 22px !important;
+
+    overflow:
+        hidden !important;
+
+    background:
+        rgba(15, 23, 42, 0.75) !important;
+
+    border:
+        1px solid
+        var(--border-color-default) !important;
+
+    border-radius:
+        var(--radius-xl) !important;
+}
+
+.resumen-icono{
+    font-size:
+        42px !important;
+
+    text-align:
+        center !important;
+}
+
+.resumen-info{
+    min-width:
+        0 !important;
+}
+
+.resumen-info p{
+    margin:
+        0 0 5px 0 !important;
+
+    color:
+        var(--color-brand-400) !important;
+
+    font-size:
+        var(--font-size-base) !important;
+}
+
+.resumen-info h3{
+    margin:
+        0 !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    font-size:
+        var(--font-size-3xl) !important;
+
+    line-height:
+        1 !important;
+}
+
+.resumen-info small{
+    color:
+        var(--color-text-soft) !important;
+
+    font-size:
+        var(--font-size-sm) !important;
+}
+
+.total-card h2{
+    margin:
+        0 !important;
+
+    color:
+        var(--color-success-500) !important;
+
+    font-size:
+        clamp(28px, 2.2vw, 40px) !important;
+
+    line-height:
+        1.1 !important;
+
+    white-space:
+        nowrap !important;
+
+    text-shadow:
+        0 0 18px
+        rgba(34, 197, 94, 0.80) !important;
+}
+
+/* =========================================================
+   PAGOS MIXTOS
+========================================================= */
+
+.zona-pagos-vip{
+    display: grid !important;
+
+    grid-template-columns:
+        1fr 285px !important;
+
+    gap: 22px !important;
+
+    padding: 22px 26px 18px 26px !important;
+
+    background:
+        rgba(2,6,23,.78) !important;
+
+    border-bottom:
+        1px solid rgba(37,99,235,.45) !important;
+}
+
+.pagos-grid-vip{
+
+    display: grid !important;
+
+    grid-template-columns:
+        1fr 1fr !important;
+
+    gap: 12px 14px !important;
+
+}
+
+.metodo-pago-card{
+
+    position: relative;
+
+    width:100%;
+
+    height:72px !important;
+
+    display:grid !important;
+
+    grid-template-columns:
+        72px 1fr 150px !important;
+
+    align-items:center !important;
+
+    gap:16px !important;
+
+    padding:0 22px !important;
+
+    border-radius:12px !important;
+
+    background:
+        rgba(2,6,23,.65) !important;
+
+    box-sizing:border-box !important;
+
+}
+
+.metodo-pago-card strong{
+
+    color:white !important;
+
+    font-size:17px !important;
+
+}
+
+.logo-pago{
+
+    width:54px !important;
+
+    height:54px !important;
+
+    object-fit:contain !important;
+
+    border-radius:50% !important;
+
+    box-shadow:
+        0 0 18px rgba(59,130,246,.45) !important;
+
+}
+
+.tarjeta .logo-pago{
+
+    width:62px !important;
+
+    height:42px !important;
+
+    border-radius:0 !important;
+
+    object-fit:contain !important;
+
+    box-shadow:none !important;
+
+}
+
+.metodo-pago-card input{
+
+    width:100% !important;
+
+    padding:0 !important;
+
+    border:none !important;
+
+    outline:none !important;
+
+    background:transparent !important;
+
+    box-shadow:none !important;
+
+    text-align:right !important;
+
+    color:white !important;
+
+    font-size:17px !important;
+
+}
+
+.metodo-pago-card input::placeholder{
+
+    color:rgba(255,255,255,.85) !important;
+
+}
+
+/* =========================================================
+   COLORES MÉTODOS DE PAGO
+========================================================= */
+
+.metodo-pago-card.efectivo{
+    border: 1px solid rgba(34,197,94,.8) !important;
+}
+
+.metodo-pago-card.yape{
+    border: 1px solid rgba(168,85,247,.85) !important;
+}
+
+.metodo-pago-card.plin{
+    border: 1px solid rgba(6,182,212,.85) !important;
+}
+
+.metodo-pago-card.tarjeta{
+    border: 1px solid rgba(37,99,235,.9) !important;
+}
+
+.metodo-pago-card.transferencia{
+    border: 1px solid rgba(59,130,246,.8) !important;
+}
+
+/* =========================================================
+   RESUMEN DE PAGOS
+========================================================= */
+
+.total-pagado-vip{
+
+    display:flex !important;
+
+    flex-direction:column !important;
+
+    align-items:center !important;
+
+    text-align:center !important;
+
+    padding:24px 20px !important;
+
+    background:rgba(2,6,23,.72) !important;
+
+    border:1px solid rgba(37,99,235,.75) !important;
+
+    border-radius:14px !important;
+
+    box-shadow:
+        0 0 24px rgba(37,99,235,.18) !important;
+
+}
+
+.total-pagado-vip span{
+
+    display:block !important;
+
+    margin-bottom:12px !important;
+
+    font-size:54px !important;
+
+}
+
+.total-pagado-vip p{
+
+    width:100% !important;
+
+    margin:0 0 8px 0 !important;
+
+    text-align:center !important;
+
+    color:white !important;
+
+    font-size:15px !important;
+
+    font-weight:600 !important;
+
+}
+
+.total-pagado-vip h2,
+.total-pagado-vip h3{
+
+    width:100% !important;
+
+    text-align:center !important;
+
+}
+
+#totalPagado{
+
+    margin:0 !important;
+
+    color:#2f8cff !important;
+
+    font-size:38px !important;
+
+    text-shadow:
+        0 0 14px rgba(47,140,255,.75) !important;
+
+}
+
+.linea-total-vip{
+
+    width:100% !important;
+
+    height:1px !important;
+
+    margin:26px 0 !important;
+
+    background:rgba(96,165,250,.35) !important;
+
+}
+
+#totalPendienteCobro{
+
+    margin:0 !important;
+
+    color:#ff4b55 !important;
+
+    font-size:38px !important;
+
+    text-shadow:
+        0 0 14px rgba(255,75,85,.55) !important;
+
+}

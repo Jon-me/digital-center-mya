@@ -1,0 +1,376 @@
+/* =========================================================
+   DIGITAL CENTER M&A — CATÁLOGO
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   PANEL DE PRODUCTOS
+========================================================= */
+
+.panel-productos{
+    width: 100%;
+
+    padding: var(--panel-padding);
+
+    background:
+        var(--surface-panel) !important;
+
+    border:
+        var(--border-panel) !important;
+
+    border-radius:
+        var(--radius-2xl);
+
+    box-shadow:
+        var(--shadow-panel) !important;
+
+    backdrop-filter:
+        var(--blur-md);
+}
+
+/* =========================================================
+   GRID DE PRODUCTOS
+========================================================= */
+
+.productos-grid{
+    display: grid !important;
+
+    grid-template-columns:
+        repeat(
+            var(--catalog-grid-columns),
+            minmax(210px, 1fr)
+        ) !important;
+
+    grid-auto-rows: auto !important;
+
+    gap: 22px !important;
+
+    height:
+        var(--catalog-scroll-height) !important;
+
+    padding:
+        5px 14px 25px 5px !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    align-items: stretch !important;
+}
+
+
+/* =========================================================
+   SCROLL DEL CATÁLOGO
+========================================================= */
+
+.productos-grid::-webkit-scrollbar{
+    width: 10px;
+}
+
+.productos-grid::-webkit-scrollbar-track{
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    border-radius:
+        var(--radius-2xl);
+}
+
+.productos-grid::-webkit-scrollbar-thumb{
+    background:
+        var(--color-brand-600);
+
+    border-radius:
+        var(--radius-2xl);
+}
+
+/* =========================================================
+   TARJETA DE PRODUCTO
+========================================================= */
+
+.producto-card{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+
+    min-height: 720px !important;
+    height: auto !important;
+
+    padding: 14px !important;
+
+    overflow: visible !important;
+
+    background:
+        var(--gradient-panel) !important;
+
+    border:
+        1px solid
+        var(--border-color-default) !important;
+
+    border-radius:
+        var(--radius-lg) !important;
+
+    box-shadow:
+        0 0 18px
+        rgba(15, 23, 42, 0.75) !important;
+}
+
+.producto-card:hover{
+    transform: none !important;
+
+    box-shadow:
+        0 0 28px
+        rgba(96, 165, 250, 0.65) !important;
+}
+
+.producto-card.agregado{
+    animation:
+        efectoAgregarCarrito
+        0.35s
+        ease;
+}
+
+@keyframes efectoAgregarCarrito{
+
+    0%{
+        transform: scale(1);
+
+        box-shadow:
+            0 0 18px
+            rgba(37, 99, 235, 0.35);
+    }
+
+    50%{
+        transform: scale(0.96);
+
+        border-color:
+            rgba(34, 197, 94, 0.95);
+
+        box-shadow:
+            0 0 35px
+            rgba(34, 197, 94, 0.95);
+    }
+
+    100%{
+        transform: scale(1);
+
+        box-shadow:
+            0 0 18px
+            rgba(37, 99, 235, 0.35);
+    }
+}
+
+/* =========================================================
+   CONTENIDO DE TARJETA
+========================================================= */
+
+.producto-card img{
+    width: 100% !important;
+    height: 150px !important;
+
+    object-fit: contain !important;
+
+    background:
+        var(--color-text-primary) !important;
+
+    border-radius:
+        var(--radius-sm) !important;
+
+    flex-shrink: 0 !important;
+}
+
+.producto-card h3{
+    min-height: 88px !important;
+    max-height: 88px !important;
+
+    padding-right: 6px !important;
+
+    overflow-y: auto !important;
+}
+
+.producto-card h3::-webkit-scrollbar{
+    width: 5px;
+}
+
+.producto-card h3::-webkit-scrollbar-thumb{
+    background:
+        var(--color-brand-600);
+
+    border-radius:
+        var(--radius-2xl);
+}
+
+.producto-card p{
+    margin:
+        4px 0 !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    font-size:
+        var(--font-size-sm) !important;
+
+    line-height:
+        1.25 !important;
+}
+
+.producto-card .btn-agregar{
+    margin-top:
+        auto !important;
+}
+
+/* =========================================================
+   CATEGORÍAS
+========================================================= */
+
+.categorias-scroll-wrap{
+    width:100%;
+
+    margin:14px 0 18px 0;
+
+    overflow:hidden;
+}
+
+.categorias-pos,
+.categorias-scroll{
+
+    width:100%;
+
+    display:flex;
+
+    flex-wrap:nowrap;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:4px 4px 10px 4px;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    scroll-snap-type:x mandatory;
+
+    scroll-behavior:smooth;
+
+    -webkit-overflow-scrolling:touch;
+
+    overscroll-behavior-x:contain;
+
+}
+
+.categorias-scroll::-webkit-scrollbar,
+.categorias-pos::-webkit-scrollbar{
+
+    height:4px;
+
+}
+
+.categorias-scroll::-webkit-scrollbar-track,
+.categorias-pos::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.categorias-scroll::-webkit-scrollbar-thumb,
+.categorias-pos::-webkit-scrollbar-thumb{
+
+    background:rgba(96,165,250,.55);
+
+    border-radius:999px;
+
+}
+
+.categoria-card{
+    width: 84px;
+    min-width: 84px;
+    height: 78px;
+
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 7px 8px;
+    border-radius: 20px;
+
+    background: rgba(2,6,23,0.72) !important;
+    border: 1px solid rgba(96,165,250,0.38) !important;
+
+    box-shadow:
+        0 0 14px rgba(37,99,235,0.24),
+        inset 0 0 14px rgba(96,165,250,0.08) !important;
+
+    color: white !important;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease,
+        background .22s ease;
+}
+
+.categoria-card:hover,
+.categoria-card:active{
+    transform: translateY(-2px) scale(1.04);
+
+    border-color: rgba(96,165,250,0.95) !important;
+
+    box-shadow:
+        0 0 22px rgba(96,165,250,0.75),
+        inset 0 0 16px rgba(96,165,250,0.16) !important;
+}
+
+.categoria-icon-ring{
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(circle at 35% 25%, rgba(96,165,250,0.48), rgba(15,23,42,0.92));
+
+    border: 1px solid rgba(96,165,250,0.58);
+
+    box-shadow:
+        0 0 13px rgba(37,99,235,0.48),
+        inset 0 0 10px rgba(255,255,255,0.08);
+}
+
+.icono-categoria{
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin: 0;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.categoria-activa{
+    border-color: rgba(34,197,94,0.9) !important;
+
+    box-shadow:
+        0 0 22px rgba(34,197,94,0.55),
+        inset 0 0 16px rgba(34,197,94,0.14) !important;
+}
+
+.categoria-activa .categoria-icon-ring{
+    border-color: rgba(34,197,94,0.9);
+    box-shadow:
+        0 0 16px rgba(34,197,94,0.58),
+        inset 0 0 12px rgba(34,197,94,0.16);
+}
