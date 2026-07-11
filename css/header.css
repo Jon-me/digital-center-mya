@@ -1,0 +1,571 @@
+/* =========================================================
+   DIGITAL CENTER M&A
+   HEADER
+========================================================= */
+
+.barra-superior{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    width:100%;
+
+    margin-bottom:25px;
+}
+
+/* HERO */
+
+.hero-banner{
+
+    min-height:140px;
+
+    margin-bottom:30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(15,23,42,.08);
+
+    backdrop-filter:var(--blur-md);
+    -webkit-backdrop-filter:var(--blur-md);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    border-radius:25px;
+
+    box-shadow:
+        var(--shadow-md);
+
+}
+
+.hero-banner h1{
+
+    margin:0;
+
+    font-family:var(--font-family-brand);
+
+    font-size:70px;
+
+    font-weight:900;
+
+    letter-spacing:4px;
+
+    color:white;
+
+    animation:brilloLogo 3s ease-in-out infinite;
+
+    text-shadow:
+        0 0 8px rgba(37,99,235,.9),
+        0 0 20px rgba(124,58,237,.6);
+
+}
+
+/* LOGO */
+
+.logo-ma-dios{
+    position: relative;
+
+    width: 112px;
+    height: 82px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: var(--font-family-brand);
+    font-weight: 900;
+    letter-spacing: -10px;
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(96, 165, 250, 0.85)
+        );
+}
+
+.logo-ma-dios::before{
+    content: "";
+
+    position: absolute;
+    inset: 6px 12px;
+
+    border-radius: 22px;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(125, 211, 252, 0.34),
+            transparent 48%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(30, 64, 175, 0.28),
+            rgba(124, 58, 237, 0.18)
+        );
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.35);
+
+    transform: skewX(-8deg);
+
+    pointer-events: none;
+}
+
+.logo-ma-m,
+.logo-ma-a{
+    position: relative;
+    z-index: 2;
+
+    font-size: 58px;
+    line-height: 1;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #60a5fa 48%,
+            #2563eb 100%
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+    text-shadow: none;
+}
+
+.logo-ma-a{
+    margin-left: -8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #67e8f9 45%,
+            #a855f7 100%
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    transform: skewX(-8deg);
+}
+
+/* BOTONES HEADER */
+
+.barra-superior button{
+
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #2563eb
+    ) !important;
+
+    border: 1px solid rgba(96,165,250,.8) !important;
+
+    box-shadow:
+        0 0 15px rgba(37,99,235,.55),
+        inset 0 0 12px rgba(96,165,250,.15) !important;
+
+    color: white !important;
+
+    font-weight: 700;
+
+    border-radius: 12px;
+
+    transition: all .3s ease;
+
+}
+
+.barra-superior button:hover{
+
+    background: linear-gradient(
+        135deg,
+        #1e40af,
+        #2563eb
+    ) !important;
+
+    box-shadow:
+        0 0 25px rgba(96,165,250,.95),
+        inset 0 0 15px rgba(255,255,255,.12) !important;
+
+    transform:
+        translateY(-3px)
+        scale(1.03);
+
+}
+
+/* CONTENEDOR HEADER */
+
+.desktop-header-pro,
+.header-dios-pro{
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 32px;
+
+    margin-bottom: 22px;
+
+}
+
+.header-dios-bg{
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+}
+
+.header-dios-grid{
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+}
+
+/* =========================================================
+   HEADER PRINCIPAL
+   DIGITAL CENTER M&A
+   Versión: HEADERDIOS1
+========================================================= */
+
+.header-actions-dios{
+    position: relative;
+    z-index: 3;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    gap: 22px !important;
+    margin: 0 0 24px 0 !important;
+}
+
+.header-actions-dios button{
+    min-height: 60px !important;
+    padding: 10px 24px !important;
+    border-radius: 24px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 14px !important;
+
+    background:
+        radial-gradient(circle at 30% 0%, rgba(96,165,250,0.32), transparent 48%),
+        linear-gradient(135deg, rgba(2,6,23,0.96), rgba(29,78,216,0.90)) !important;
+
+    border: 1px solid rgba(125,211,252,0.76) !important;
+    color: white !important;
+
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+
+    box-shadow:
+        0 0 24px rgba(37,99,235,0.60),
+        inset 0 0 18px rgba(147,197,253,0.11) !important;
+}
+
+.btn-action-icon{
+    font-size: 26px;
+    color: #67e8f9;
+    text-shadow: 0 0 14px rgba(34,211,238,.9);
+}
+
+.hero-dios{
+    position: relative;
+    z-index: 2;
+
+    min-height: 270px !important;
+    margin: 0 auto 22px auto !important;
+    padding: 34px 34px 28px 34px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 18px !important;
+
+    background:
+        radial-gradient(circle at 50% 100%, rgba(37,99,235,0.26), transparent 38%),
+        linear-gradient(145deg, rgba(2,6,23,0.80), rgba(15,23,42,0.54)) !important;
+
+    border: 1px solid rgba(96,165,250,0.40) !important;
+    border-radius: 34px !important;
+
+    box-shadow:
+        0 0 34px rgba(37,99,235,0.36),
+        inset 0 0 34px rgba(96,165,250,0.07) !important;
+}
+
+.hero-dios-shield{
+    width: 48px;
+    height: 48px;
+    border-radius: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #dbeafe;
+    font-size: 22px;
+    background: linear-gradient(135deg, rgba(14,165,233,.28), rgba(37,99,235,.18));
+    border: 1px solid rgba(125,211,252,.58);
+    box-shadow: 0 0 22px rgba(59,130,246,.45);
+}
+
+.hero-dios h1{
+    margin: 0 !important;
+    width: 100%;
+
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: nowrap;
+
+    font-family: Georgia, 'Times New Roman', serif !important;
+    font-style: italic;
+    font-weight: 800 !important;
+    font-size: clamp(58px, 6.4vw, 108px) !important;
+    line-height: .90 !important;
+    letter-spacing: -2px !important;
+
+    color: white !important;
+    animation: none !important;
+    text-shadow:
+        0 0 12px rgba(96,165,250,.75),
+        0 0 34px rgba(37,99,235,.42) !important;
+}
+
+.brand-word-digital,
+.brand-word-center,
+.brand-word-ma{
+    display: inline-block;
+    background: linear-gradient(180deg, #ffffff 0%, #dbeafe 38%, #3b82f6 80%, #a855f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.brand-word-center{
+    background: linear-gradient(180deg, #ffffff 0%, #7dd3fc 42%, #2563eb 84%, #a855f7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.brand-word-ma{
+    font-family: 'Brush Script MT', 'Segoe Script', cursive !important;
+    font-size: 1.05em;
+    font-weight: 700 !important;
+    color: #bfdbfe !important;
+    background: none !important;
+    text-shadow:
+        0 0 12px rgba(96,165,250,.95),
+        0 0 28px rgba(168,85,247,.62) !important;
+}
+
+.hero-dios-line{
+    width: min(760px, 84%);
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(96,165,250,.88), transparent);
+    box-shadow: 0 0 18px rgba(59,130,246,.82);
+}
+
+.hero-dios-features{
+    width: min(820px, 94%);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.hero-dios-features span{
+    min-height: 50px;
+    padding: 8px 10px;
+    border-radius: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: rgba(241,245,249,.92);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .5px;
+
+    background: rgba(2,6,23,.46);
+    border: 1px solid rgba(96,165,250,.25);
+    box-shadow: inset 0 0 14px rgba(96,165,250,.06);
+}
+
+.search-dios-wrap{
+    position: relative;
+    z-index: 2;
+    width: min(960px, 92%);
+    margin: 0 auto !important;
+}
+
+.search-dios-wrap::before{
+    display: none !important;
+}
+
+.search-dios-wrap #buscador{
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 68px !important;
+    margin: 0 !important;
+    padding: 0 82px !important;
+
+    text-align: left !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    letter-spacing: .3px !important;
+
+    color: white !important;
+    background:
+        radial-gradient(circle at 8% 50%, rgba(96,165,250,.20), transparent 20%),
+        linear-gradient(135deg, rgba(2,6,23,.84), rgba(15,23,42,.66)) !important;
+
+    border: 1px solid rgba(96,165,250,.34) !important;
+    border-radius: 999px !important;
+
+    box-shadow:
+        0 0 24px rgba(37,99,235,.26),
+        inset 0 0 20px rgba(96,165,250,.06) !important;
+}
+
+.search-dios-icon,
+.search-dios-filter{
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #7dd3fc;
+    font-size: 31px;
+    background: rgba(15,23,42,.74);
+    border: 1px solid rgba(96,165,250,.33);
+    box-shadow: 0 0 18px rgba(37,99,235,.42);
+    pointer-events: none;
+}
+
+.search-dios-icon{
+    left: 8px;
+}
+
+.search-dios-filter{
+    right: 8px;
+    font-size: 23px;
+}
+
+/* FIN HEADERDIOS1
+
+/* =========================================================
+   BUSCADOR PRINCIPAL
+========================================================= */
+
+#buscador{
+    display: block;
+
+    width: 100%;
+    max-width: 650px;
+
+    margin: 20px auto 30px auto;
+    padding: 15px 20px;
+
+    color: var(--color-text-primary);
+
+    font-size: var(--font-size-lg);
+    text-align: center;
+
+    background: rgba(15, 23, 42, 0.20);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.15);
+
+    border-radius: 15px;
+
+    box-shadow:
+        var(--shadow-md);
+
+    backdrop-filter: var(--blur-md);
+
+    transition:
+        transform var(--transition-slow),
+        border-color var(--transition-slow),
+        box-shadow var(--transition-slow);
+}
+
+#buscador::placeholder{
+    color: rgba(255, 255, 255, 0.70);
+}
+
+#buscador:focus{
+    transform: scale(1.02);
+
+    border-color:
+        rgba(37, 99, 235, 0.80);
+
+    box-shadow:
+        0 0 15px rgba(37, 99, 235, 0.40),
+        0 0 35px rgba(96, 165, 250, 0.25);
+}
+
+/* =========================================================
+   ESTADOS Y ANIMACIONES DEL HEADER
+========================================================= */
+
+.btn-actualizar-sistema:hover{
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-brand-800),
+            var(--color-brand-600)
+        ) !important;
+
+    box-shadow:
+        0 0 25px rgba(96, 165, 250, 0.95),
+        inset 0 0 15px rgba(255, 255, 255, 0.12) !important;
+}
+
+@keyframes brilloLogo{
+
+    0%{
+        text-shadow:
+            0 0 8px rgba(37, 99, 235, 0.90),
+            0 0 20px rgba(124, 58, 237, 0.60);
+    }
+
+    50%{
+        text-shadow:
+            0 0 15px rgba(96, 165, 250, 1),
+            0 0 35px rgba(124, 58, 237, 0.90);
+    }
+
+    100%{
+        text-shadow:
+            0 0 8px rgba(37, 99, 235, 0.90),
+            0 0 20px rgba(124, 58, 237, 0.60);
+    }
+}

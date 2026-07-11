@@ -1,0 +1,122 @@
+/* =========================================================
+   DIGITAL CENTER M&A — BASE
+   FASE 25 — ARQUITECTURA CSS ENTERPRISE
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   NORMALIZACIÓN GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   DOCUMENTO
+========================================================= */
+
+body {
+    margin: 0;
+    padding: var(--space-5);
+
+    font-family: var(--font-family-base);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-background-primary),
+            var(--color-background-secondary)
+        );
+}
+
+
+/* =========================================================
+   ENCABEZADOS GLOBALES
+========================================================= */
+
+h1 {
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+
+    color: var(--color-text-primary);
+
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+h2,
+h3 {
+    color: var(--color-text-primary);
+}
+
+
+/* =========================================================
+   ESTADOS DE FOCO GLOBALES
+========================================================= */
+
+input:focus {
+    border-color: var(--color-brand-600);
+
+    box-shadow:
+        0 0 5px rgba(37, 99, 235, 0.40);
+}
+
+/* =========================================================
+   BOTONES GLOBALES
+========================================================= */
+
+button {
+    padding: var(--space-3) var(--space-5);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-brand-800),
+            var(--color-brand-600)
+        );
+
+    color: var(--color-text-primary);
+
+    border:
+        var(--border-width-default)
+        solid
+        rgba(96, 165, 250, 0.60);
+
+    border-radius: var(--radius-md);
+
+    box-shadow:
+        var(--shadow-brand-soft);
+
+    font-family: inherit;
+    font-weight: var(--font-weight-bold);
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition-base),
+        background var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
+}
+
+button:hover {
+    transform:
+        translateY(-3px)
+        scale(1.03);
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-brand-800),
+            var(--color-brand-600)
+        ) !important;
+
+    box-shadow:
+        0 0 20px rgba(96, 165, 250, 0.85),
+        inset 0 0 15px rgba(255, 255, 255, 0.12) !important;
+}

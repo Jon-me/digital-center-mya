@@ -1,0 +1,25 @@
+/* =========================================================
+   DIGITAL CENTER M&A — LAYOUT
+   FASE 25 — ARQUITECTURA CSS ENTERPRISE
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
+
+.container {
+    width: 100%;
+    max-width: var(--layout-max-width);
+
+    margin-inline: auto;
+    padding: 30px;
+
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-2xl);
+
+    box-shadow: none;
+    backdrop-filter: none;
+}
