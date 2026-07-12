@@ -1,0 +1,62 @@
+/* =========================================================
+   DIGITAL CENTER M&A — CAJA
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   CAMPOS DE CAJA
+========================================================= */
+
+#panelCajaDiaria input{
+    width: 100% !important;
+    max-width: 700px !important;
+
+    margin:
+        10px 8px 12px 0 !important;
+
+    padding:
+        14px 18px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        var(--surface-input) !important;
+
+    border:
+        var(--border-input) !important;
+
+    border-radius:
+        var(--radius-md) !important;
+
+    font-size:
+        var(--font-size-base) !important;
+
+    outline:
+        none !important;
+
+    box-shadow:
+        var(--shadow-input) !important;
+
+    transition:
+        transform var(--transition-slow),
+        border-color var(--transition-slow),
+        box-shadow var(--transition-slow) !important;
+}
+
+#panelCajaDiaria input::placeholder{
+    color:
+        var(--color-text-soft) !important;
+}
+
+#panelCajaDiaria input:focus{
+    transform:
+        scale(1.01);
+
+    border-color:
+        rgba(37, 99, 235, 0.90) !important;
+
+    box-shadow:
+        var(--shadow-input-focus) !important;
+}

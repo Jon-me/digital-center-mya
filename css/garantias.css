@@ -1,0 +1,145 @@
+/* =========================================================
+   DIGITAL CENTER M&A — GARANTÍAS
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   PANEL PRINCIPAL
+========================================================= */
+
+.garantias-panel{
+    margin-top: 30px;
+    padding: var(--panel-padding);
+
+    background:
+        var(--surface-glass);
+
+    border:
+        1px solid rgba(59, 130, 246, 0.35);
+
+    border-radius:
+        var(--radius-2xl);
+
+    backdrop-filter:
+        var(--blur-md);
+}
+
+
+/* =========================================================
+   BUSCADOR DE GARANTÍAS
+========================================================= */
+
+#inputGarantia{
+    width: 100%;
+    max-width: 500px;
+
+    margin-bottom: 12px;
+    padding: 14px 18px;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        rgba(2, 6, 23, 0.65) !important;
+
+    border:
+        var(--border-input) !important;
+
+    border-radius:
+        var(--radius-md) !important;
+
+    box-shadow:
+        var(--shadow-input);
+
+    font-size:
+        var(--font-size-base);
+
+    outline:
+        none;
+
+    transition:
+        transform var(--transition-slow),
+        border-color var(--transition-slow),
+        box-shadow var(--transition-slow);
+}
+
+#inputGarantia::placeholder{
+    color:
+        var(--color-text-soft);
+}
+
+#inputGarantia:focus{
+    transform:
+        scale(1.01);
+
+    border-color:
+        rgba(37, 99, 235, 0.90) !important;
+
+    box-shadow:
+        var(--shadow-input-focus);
+}
+
+
+/* =========================================================
+   RESULTADO DE GARANTÍA
+========================================================= */
+
+.garantia-card{
+    margin-top: 15px;
+    padding: 18px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        var(--gradient-panel);
+
+    border:
+        1px solid rgba(37, 99, 235, 0.80);
+
+    border-radius:
+        var(--radius-xl);
+
+    box-shadow:
+        0 0 18px rgba(37, 99, 235, 0.35);
+}
+
+.acciones-garantia{
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.garantia-card textarea{
+    width: 100%;
+    min-height: 90px;
+
+    margin-top: 10px;
+    padding: 12px;
+
+    resize: vertical;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        var(--surface-input);
+
+    border:
+        1px solid rgba(96, 165, 250, 0.45);
+
+    border-radius:
+        var(--radius-md);
+
+    outline:
+        none;
+}
+
+.garantia-card textarea::placeholder{
+    color:
+        var(--color-text-faint);
+}

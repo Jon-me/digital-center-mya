@@ -1,0 +1,317 @@
+/* =========================================================
+   DIGITAL CENTER M&A — DASHBOARD
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   GRID DE INDICADORES
+========================================================= */
+
+.dashboard{
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(200px, 1fr)
+        );
+
+    gap:
+        var(--panel-gap);
+
+    margin-bottom:
+        30px;
+}
+
+
+/* =========================================================
+   TARJETAS DEL DASHBOARD
+========================================================= */
+
+.dashboard-card{
+    background:
+        var(--surface-panel) !important;
+
+    border:
+        var(--border-panel) !important;
+
+    box-shadow:
+        var(--shadow-panel) !important;
+}
+
+.dashboard-card h2{
+    margin:
+        0;
+
+    font-size:
+        var(--font-size-2xl);
+
+    transition:
+        transform var(--transition-slow);
+}
+
+.dashboard-card p{
+    margin-top:
+        10px;
+
+    font-size:
+        var(--font-size-base);
+}
+
+.dashboard-card:hover h2{
+    transform:
+        scale(1.05);
+}
+
+/* =========================================================
+   DASHBOARD DE REPORTES
+========================================================= */
+
+#dashboardReportes{
+    margin-bottom:
+        35px;
+}
+
+#dashboardReportes .dashboard-card{
+    background:
+        var(--gradient-brand) !important;
+}
+
+/* =========================================================
+   RANKING DE SUCURSALES
+========================================================= */
+
+.ranking-sucursales-panel{
+    margin-top: 24px;
+    padding: 22px;
+
+    background:
+        var(--color-surface-primary);
+
+    border:
+        var(--border-panel);
+
+    border-radius:
+        var(--radius-2xl);
+}
+
+.ranking-sucursales-panel h3{
+    margin:
+        0 0 18px;
+
+    color:
+        var(--color-text-primary);
+
+    text-align:
+        center;
+}
+
+.ranking-sucursal-item{
+    display: grid;
+
+    grid-template-columns:
+        55px minmax(0, 1fr) auto;
+
+    align-items:
+        center;
+
+    gap:
+        14px;
+
+    margin-bottom:
+        12px;
+
+    padding:
+        14px 16px;
+
+    background:
+        var(--color-surface-secondary);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.18);
+
+    border-radius:
+        var(--radius-lg);
+}
+
+.ranking-posicion{
+    font-size:
+        28px;
+
+    text-align:
+        center;
+}
+
+.ranking-info{
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+}
+
+.ranking-info strong{
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        var(--font-size-base);
+}
+
+.ranking-info small{
+    color:
+        var(--color-text-muted);
+}
+
+.ranking-montos{
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-end;
+
+    gap:
+        4px;
+}
+
+.ranking-montos strong{
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        17px;
+}
+
+.ranking-montos small{
+    color:
+        var(--color-text-subtle);
+}
+
+/* =========================================================
+   RANKING DE PRODUCTOS
+========================================================= */
+
+.ranking-productos-panel{
+    margin-top:
+        24px;
+
+    padding:
+        22px;
+
+    background:
+        var(--color-surface-primary);
+
+    border:
+        var(--border-panel);
+
+    border-radius:
+        var(--radius-2xl);
+}
+
+.ranking-productos-panel h3{
+    margin:
+        0 0 18px;
+
+    color:
+        var(--color-text-primary);
+
+    text-align:
+        center;
+}
+
+/* =========================================================
+   SELECTOR DE SUCURSAL
+========================================================= */
+
+.selector-dashboard-sucursal{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:18px;
+
+    margin-bottom:28px;
+
+}
+
+.selector-dashboard-sucursal label{
+
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        18px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+}
+
+.selector-dashboard-sucursal select{
+
+    min-width:260px;
+
+    padding:
+        12px 18px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        var(--surface-input);
+
+    border:
+        var(--border-input);
+
+    border-radius:
+        var(--radius-lg);
+
+    outline:none;
+
+    font-size:
+        var(--font-size-base);
+
+    transition:
+        var(--transition-base);
+
+}
+
+.selector-dashboard-sucursal select:hover{
+
+    border-color:
+        var(--border-color-focus);
+
+}
+
+.selector-dashboard-sucursal select:focus{
+
+    border-color:
+        var(--border-color-focus);
+
+    box-shadow:
+        0 0 18px rgba(59,130,246,.45);
+
+}
+
+/* =========================================================
+   DASHBOARD EJECUTIVO
+========================================================= */
+
+#tituloDashboardEjecutivo{
+    margin-bottom: 28px;
+}
+
+#dashboardEjecutivo{
+    margin-bottom: 30px;
+}

@@ -735,3 +735,17 @@ button[onclick="cancelarVenta()"]{
         0 0 14px rgba(255,75,85,.55) !important;
 
 }
+
+/* =========================================================
+   ACCIONES RÁPIDAS DEL COBRO
+========================================================= */
+
+.acciones-cobro-rapido{
+    justify-content: center !important;
+
+    gap:
+        18px !important;
+
+    margin-top:
+        28px !important;
+}
