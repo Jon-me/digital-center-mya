@@ -1,0 +1,122 @@
+/* =========================================================
+   DIGITAL CENTER M&A — VENTAS
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   ACCIONES DEL HISTORIAL DE VENTAS
+========================================================= */
+
+#historialVentasTabla td:last-child{
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    min-width:
+        88px !important;
+
+    gap:
+        6px !important;
+
+    white-space:
+        nowrap !important;
+}
+
+#historialVentasTabla td:last-child button{
+    display:
+        inline-flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    width:
+        36px !important;
+
+    min-width:
+        36px !important;
+
+    max-width:
+        36px !important;
+
+    height:
+        36px !important;
+
+    min-height:
+        36px !important;
+
+    max-height:
+        36px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 !important;
+
+    border-radius:
+        var(--radius-sm) !important;
+
+    font-size:
+        18px !important;
+
+    line-height:
+        1 !important;
+
+    transition:
+        transform var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base) !important;
+}
+
+
+/* REIMPRIMIR */
+
+#historialVentasTabla td:last-child button[title="Reimprimir boleta"]{
+    background:
+        var(--gradient-brand) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.90) !important;
+
+    box-shadow:
+        0 0 12px
+        rgba(37, 99, 235, 0.55) !important;
+}
+
+
+/* ANULAR */
+
+#historialVentasTabla td:last-child button[title="Anular venta"]{
+    background:
+        linear-gradient(
+            135deg,
+            #991b1b,
+            #dc2626
+        ) !important;
+
+    border:
+        1px solid
+        rgba(248, 113, 113, 0.90) !important;
+
+    box-shadow:
+        0 0 12px
+        rgba(239, 68, 68, 0.55) !important;
+}
+
+
+/* INTERACCIÓN */
+
+#historialVentasTabla td:last-child button:hover{
+    transform:
+        scale(1.08) !important;
+}

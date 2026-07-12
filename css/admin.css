@@ -1,0 +1,1021 @@
+/* =========================================================
+   DIGITAL CENTER M&A — ADMINISTRACIÓN
+   Entorno: escritorio
+========================================================= */
+
+
+/* =========================================================
+   PANEL PRINCIPAL
+========================================================= */
+
+#zonaAdmin{
+    display: none;
+
+    margin:
+        25px 0;
+
+    padding:
+        25px;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius:
+        var(--radius-xl);
+}
+
+#zonaAdmin h2{
+    margin-top:
+        0;
+}
+
+#zonaAdmin br{
+    display:
+        none;
+}
+
+#zonaAdmin input{
+    display:
+        block;
+}
+
+#zonaAdmin button{
+    display:
+        block;
+
+    margin:
+        12px auto;
+}
+
+
+/* =========================================================
+   INPUTS DE ADMINISTRACIÓN
+========================================================= */
+
+#zonaAdmin input[type="text"],
+#zonaAdmin input[type="number"],
+#zonaAdmin input[type="password"],
+#panelConfiguracion input{
+    width:
+        100% !important;
+
+    max-width:
+        700px !important;
+
+    margin:
+        10px 8px 12px 0 !important;
+
+    padding:
+        14px 18px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        var(--surface-input) !important;
+
+    border:
+        var(--border-input) !important;
+
+    border-radius:
+        var(--radius-md) !important;
+
+    font-size:
+        var(--font-size-base) !important;
+
+    outline:
+        none !important;
+
+    box-shadow:
+        var(--shadow-input) !important;
+
+    transition:
+        transform var(--transition-slow),
+        border-color var(--transition-slow),
+        box-shadow var(--transition-slow) !important;
+}
+
+#zonaAdmin input::placeholder,
+#panelConfiguracion input::placeholder{
+    color:
+        var(--color-text-soft) !important;
+}
+
+#zonaAdmin input:focus,
+#panelConfiguracion input:focus{
+    transform:
+        scale(1.01);
+
+    border-color:
+        rgba(37, 99, 235, 0.90) !important;
+
+    box-shadow:
+        var(--shadow-input-focus) !important;
+}
+
+/* =========================================================
+   SELECTOR DE IMAGEN DEL PRODUCTO
+========================================================= */
+
+.imagen-producto-panel{
+    width: 100%;
+    max-width: 700px;
+
+    margin:
+        10px 0 14px 0;
+
+    padding:
+        14px;
+
+    background:
+        var(--surface-input);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.38);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        0 0 16px rgba(37, 99, 235, 0.24),
+        inset 0 0 14px rgba(96, 165, 250, 0.08);
+}
+
+.input-imagen-producto-oculto{
+    position: absolute !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    opacity: 0 !important;
+
+    pointer-events: none !important;
+}
+
+.imagen-producto-botones{
+    display: grid;
+
+    grid-template-columns:
+        1fr;
+
+    gap:
+        12px;
+}
+
+.btn-imagen-producto{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height:
+        46px;
+
+    gap:
+        8px;
+
+    padding:
+        12px 14px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        var(--gradient-brand);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.75);
+
+    border-radius:
+        var(--radius-lg);
+
+    box-shadow:
+        0 0 15px rgba(37, 99, 235, 0.45),
+        inset 0 0 12px rgba(96, 165, 250, 0.14);
+
+    font-size:
+        15px;
+
+    font-weight:
+        var(--font-weight-black);
+
+    text-align:
+        center;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
+}
+
+.btn-imagen-producto:hover,
+.btn-imagen-producto:active{
+    transform:
+        translateY(-2px)
+        scale(1.02);
+
+    border-color:
+        rgba(96, 165, 250, 0.95);
+
+    box-shadow:
+        0 0 22px rgba(96, 165, 250, 0.75),
+        inset 0 0 14px rgba(255, 255, 255, 0.12);
+}
+
+.nombre-imagen-producto{
+    margin:
+        10px 0 0 0;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--color-text-soft);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.25;
+
+    text-align:
+        center;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+/* =========================================================
+   STOCK POR SUCURSAL
+========================================================= */
+
+.stock-tiendas-form{
+    width: 100%;
+    max-width: 700px;
+
+    margin:
+        15px auto 20px auto;
+
+    padding:
+        18px;
+
+    background:
+        var(--surface-input);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.45);
+
+    border-radius:
+        var(--radius-xl);
+
+    box-shadow:
+        0 0 18px rgba(37, 99, 235, 0.25),
+        inset 0 0 18px rgba(96, 165, 250, 0.08);
+}
+
+.stock-tiendas-form h3{
+    margin:
+        0 0 12px 0;
+
+    color:
+        var(--color-text-primary);
+
+    text-align:
+        center;
+}
+
+.stock-tiendas-card{
+    margin:
+        10px 0;
+
+    padding:
+        10px 12px;
+
+    background:
+        rgba(15, 23, 42, 0.85);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.35);
+
+    border-radius:
+        var(--radius-md);
+}
+
+.stock-total{
+    color:
+        var(--color-success-500) !important;
+
+    font-size:
+        15px !important;
+
+    font-weight:
+        var(--font-weight-black) !important;
+
+    text-shadow:
+        0 0 10px
+        rgba(34, 197, 94, 0.45);
+}
+
+.stock-tienda{
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+
+    margin:
+        5px 0;
+
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        13px;
+}
+
+.stock-tienda strong{
+    color:
+        var(--color-brand-400);
+}
+
+.btn-transferir-stock{
+    flex-shrink:
+        0 !important;
+
+    margin-top:
+        8px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #064e3b,
+            #16a34a
+        ) !important;
+
+    border:
+        1px solid
+        rgba(74, 222, 128, 0.75) !important;
+
+    box-shadow:
+        0 0 14px rgba(34, 197, 94, 0.45),
+        inset 0 0 14px rgba(255, 255, 255, 0.08) !important;
+}
+
+.btn-transferir-stock:hover{
+    border-color:
+        rgba(134, 239, 172, 1) !important;
+
+    box-shadow:
+        0 0 22px rgba(34, 197, 94, 0.75),
+        inset 0 0 14px rgba(255, 255, 255, 0.12) !important;
+}
+
+/* =========================================================
+   CENTRO DE CONTROL PREMIUM
+========================================================= */
+
+.centro-control-premium{
+    position: relative !important;
+
+    width: 100% !important;
+
+    margin:
+        18px 0 24px 0 !important;
+
+    padding:
+        18px !important;
+
+    overflow:
+        hidden !important;
+
+    background:
+        radial-gradient(
+            circle at 12% 8%,
+            rgba(96, 165, 250, 0.30),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 16%,
+            rgba(59, 130, 246, 0.22),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(2, 6, 23, 0.96),
+            rgba(15, 23, 42, 0.90)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.46) !important;
+
+    border-radius:
+        30px !important;
+
+    box-shadow:
+        0 0 28px rgba(37, 99, 235, 0.34),
+        0 20px 55px rgba(0, 0, 0, 0.46),
+        inset 0 0 32px rgba(96, 165, 250, 0.08) !important;
+}
+
+.centro-control-premium::before{
+    content: "";
+
+    position:
+        absolute !important;
+
+    inset:
+        1px !important;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.06) !important;
+
+    border-radius:
+        29px !important;
+
+    pointer-events:
+        none !important;
+}
+
+
+/* =========================================================
+   ELEMENTOS DECORATIVOS
+========================================================= */
+
+.centro-control-orbita{
+    position:
+        absolute !important;
+
+    top:
+        -52px !important;
+
+    right:
+        -58px !important;
+
+    width:
+        150px !important;
+
+    height:
+        150px !important;
+
+    background:
+        rgba(37, 99, 235, 0.18) !important;
+
+    border-radius:
+        var(--radius-circle) !important;
+
+    filter:
+        blur(2px) !important;
+
+    pointer-events:
+        none !important;
+}
+
+.centro-control-orbita-2{
+    top:
+        52% !important;
+
+    right:
+        auto !important;
+
+    left:
+        -48px !important;
+
+    width:
+        110px !important;
+
+    height:
+        110px !important;
+
+    background:
+        rgba(14, 165, 233, 0.12) !important;
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.premium-header{
+    position:
+        relative !important;
+
+    z-index:
+        2 !important;
+
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    gap:
+        14px !important;
+
+    margin-bottom:
+        16px !important;
+}
+
+.control-logo-premium{
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    width:
+        58px !important;
+
+    min-width:
+        58px !important;
+
+    height:
+        58px !important;
+
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgba(255, 255, 255, 0.28),
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            #2563eb,
+            #1e40af 60%,
+            #0f172a
+        ) !important;
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.72) !important;
+
+    border-radius:
+        21px !important;
+
+    box-shadow:
+        0 0 22px rgba(96, 165, 250, 0.76),
+        inset 0 0 15px rgba(255, 255, 255, 0.10) !important;
+}
+
+.control-logo-premium span{
+    font-size:
+        29px !important;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(255, 255, 255, 0.42)
+        );
+}
+
+.control-header-texto{
+    min-width:
+        0 !important;
+}
+
+.control-eyebrow{
+    display:
+        inline-flex !important;
+
+    align-items:
+        center !important;
+
+    margin-bottom:
+        4px !important;
+
+    padding:
+        4px 9px !important;
+
+    color:
+        rgba(191, 219, 254, 0.96) !important;
+
+    background:
+        rgba(37, 99, 235, 0.22) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.36) !important;
+
+    border-radius:
+        var(--radius-pill) !important;
+
+    font-size:
+        10px !important;
+
+    font-weight:
+        var(--font-weight-black) !important;
+
+    letter-spacing:
+        0.6px !important;
+
+    text-transform:
+        uppercase !important;
+}
+
+.premium-header h3{
+    margin:
+        0 !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    font-size:
+        clamp(25px, 3vw, 40px) !important;
+
+    line-height:
+        1.02 !important;
+
+    letter-spacing:
+        -0.8px !important;
+
+    text-shadow:
+        0 0 16px
+        rgba(96, 165, 250, 0.35) !important;
+}
+
+.premium-header p{
+    max-width:
+        580px !important;
+
+    margin:
+        6px 0 0 0 !important;
+
+    color:
+        var(--color-text-muted) !important;
+
+    font-size:
+        12px !important;
+
+    line-height:
+        1.25 !important;
+}
+
+/* =========================================================
+   GRID DEL CENTRO DE CONTROL
+========================================================= */
+
+.premium-grid{
+    position:
+        relative !important;
+
+    z-index:
+        2 !important;
+
+    display:
+        grid !important;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr)) !important;
+
+    gap:
+        12px !important;
+}
+
+
+/* =========================================================
+   TARJETAS PREMIUM
+========================================================= */
+
+.premium-grid .premium-card{
+    position:
+        relative !important;
+
+    isolation:
+        isolate !important;
+
+    display:
+        flex !important;
+
+    flex-direction:
+        column !important;
+
+    align-items:
+        flex-start !important;
+
+    justify-content:
+        flex-start !important;
+
+    width:
+        100% !important;
+
+    min-height:
+        132px !important;
+
+    height:
+        132px !important;
+
+    gap:
+        5px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        68px 14px 14px !important;
+
+    overflow:
+        hidden !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        radial-gradient(
+            circle at 18% 12%,
+            rgba(255, 255, 255, 0.20),
+            transparent 16%
+        ),
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(96, 165, 250, 0.34),
+            transparent 44%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(15, 23, 42, 0.98),
+            rgba(30, 64, 175, 0.86)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.54) !important;
+
+    border-radius:
+        25px !important;
+
+    box-shadow:
+        0 0 18px rgba(37, 99, 235, 0.35),
+        0 13px 25px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 0 18px rgba(255, 255, 255, 0.045) !important;
+
+    text-align:
+        left !important;
+
+    transform:
+        translateZ(0) !important;
+}
+
+.premium-grid .premium-card::before{
+    content:
+        "";
+
+    position:
+        absolute !important;
+
+    inset:
+        0 !important;
+
+    z-index:
+        -1 !important;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent,
+            rgba(255, 255, 255, 0.10),
+            transparent
+        ) !important;
+
+    transform:
+        translateX(-130%) !important;
+
+    transition:
+        transform 0.55s ease !important;
+}
+
+.premium-grid .premium-card:hover::before,
+.premium-grid .premium-card:active::before{
+    transform:
+        translateX(130%) !important;
+}
+
+.premium-grid .premium-card:hover{
+    transform:
+        translateY(-2px)
+        scale(1.015) !important;
+
+    border-color:
+        rgba(147, 197, 253, 0.90) !important;
+
+    box-shadow:
+        0 0 28px rgba(96, 165, 250, 0.70),
+        0 16px 30px rgba(0, 0, 0, 0.36),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+.premium-grid .premium-card:active{
+    transform:
+        scale(0.975) !important;
+}
+
+
+/* =========================================================
+   CONTENIDO DE TARJETAS
+========================================================= */
+
+.premium-grid .control-icono{
+    position:
+        absolute !important;
+
+    top:
+        14px !important;
+
+    left:
+        14px !important;
+
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    width:
+        46px !important;
+
+    height:
+        46px !important;
+
+    background:
+        rgba(2, 6, 23, 0.34) !important;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.13) !important;
+
+    border-radius:
+        17px !important;
+
+    box-shadow:
+        inset 0 0 12px rgba(255, 255, 255, 0.06) !important;
+
+    font-size:
+        25px !important;
+
+    line-height:
+        1 !important;
+}
+
+.premium-grid .premium-card strong{
+    display:
+        block !important;
+
+    margin-top:
+        0 !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    font-size:
+        15px !important;
+
+    line-height:
+        1.1 !important;
+
+    letter-spacing:
+        -0.4px !important;
+
+    text-shadow:
+        0 0 12px rgba(0, 0, 0, 0.42) !important;
+}
+
+.premium-grid .premium-card small{
+    color:
+        rgba(226, 232, 240, 0.74) !important;
+
+    font-size:
+        12px !important;
+
+    line-height:
+        1.2 !important;
+
+    font-weight:
+        var(--font-weight-bold) !important;
+}
+
+.premium-grid .premium-card em{
+    display:
+        block !important;
+
+    margin-top:
+        2px !important;
+
+    color:
+        rgba(147, 197, 253, 0.82) !important;
+
+    font-size:
+        10px !important;
+
+    line-height:
+        1.15 !important;
+
+    font-style:
+        normal !important;
+
+    font-weight:
+        var(--font-weight-black) !important;
+
+    letter-spacing:
+        0.45px !important;
+
+    text-transform:
+        uppercase !important;
+}
+
+
+/* =========================================================
+   VARIANTES
+========================================================= */
+
+.premium-grid .control-caja{
+    border-color:
+        rgba(34, 197, 94, 0.62) !important;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(34, 197, 94, 0.20),
+            transparent 44%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(6, 78, 59, 0.45),
+            rgba(30, 64, 175, 0.88)
+        ) !important;
+}
+
+.premium-grid .control-garantias{
+    grid-column:
+        span 2 !important;
+
+    justify-content:
+        center !important;
+
+    min-height:
+        108px !important;
+
+    height:
+        108px !important;
+
+    gap:
+        6px !important;
+
+    padding:
+        18px 18px 18px 96px !important;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(14, 165, 233, 0.34),
+            transparent 40%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(15, 23, 42, 0.96),
+            rgba(30, 64, 175, 0.92)
+        ) !important;
+}
+
+.premium-grid .control-garantias .control-icono{
+    top:
+        50% !important;
+
+    left:
+        22px !important;
+
+    transform:
+        translateY(-50%) !important;
+}
+
+.premium-grid .control-garantias strong,
+.premium-grid .control-garantias small,
+.premium-grid .control-garantias em{
+    position:
+        relative !important;
+
+    z-index:
+        2 !important;
+}

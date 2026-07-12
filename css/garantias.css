@@ -143,3 +143,223 @@
     color:
         var(--color-text-faint);
 }
+
+/* =========================================================
+   ACCIONES DE GARANTÍA
+========================================================= */
+
+.acciones-garantia button{
+    min-width: 190px;
+    min-height: 46px;
+
+    padding:
+        12px 18px;
+
+    color:
+        var(--color-text-primary) !important;
+
+    border-radius:
+        var(--radius-md) !important;
+
+    font-size:
+        var(--font-size-base);
+
+    font-weight:
+        var(--font-weight-bold);
+
+    transition:
+        transform var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
+}
+
+
+/* APROBAR */
+
+.acciones-garantia button[onclick*="'Aprobada'"]{
+    background:
+        linear-gradient(
+            135deg,
+            #064e3b,
+            #16a34a
+        ) !important;
+
+    border:
+        1px solid
+        rgba(74, 222, 128, 0.80) !important;
+
+    box-shadow:
+        0 0 16px
+        rgba(34, 197, 94, 0.45) !important;
+}
+
+.acciones-garantia button[onclick*="'Aprobada'"]:hover{
+    transform:
+        translateY(-2px)
+        scale(1.02);
+
+    border-color:
+        rgba(134, 239, 172, 1) !important;
+
+    box-shadow:
+        0 0 24px
+        rgba(34, 197, 94, 0.80) !important;
+}
+
+
+/* RECHAZAR */
+
+.acciones-garantia button[onclick*="'Rechazada'"]{
+    background:
+        linear-gradient(
+            135deg,
+            #450a0a,
+            #b91c1c
+        ) !important;
+
+    border:
+        1px solid
+        rgba(248, 113, 113, 0.90) !important;
+
+    box-shadow:
+        0 0 16px
+        rgba(239, 68, 68, 0.50) !important;
+}
+
+.acciones-garantia button[onclick*="'Rechazada'"]:hover{
+    transform:
+        translateY(-2px)
+        scale(1.02);
+
+    border-color:
+        rgba(252, 165, 165, 1) !important;
+
+    box-shadow:
+        0 0 24px
+        rgba(239, 68, 68, 0.85) !important;
+}
+
+/* =========================================================
+   CABECERA Y BÚSQUEDA
+========================================================= */
+
+.garantias-panel > h2{
+    margin:
+        0 0 20px 0;
+
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        var(--font-size-2xl);
+}
+
+.garantias-panel > button{
+    min-height:
+        46px;
+
+    margin-left:
+        8px;
+
+    padding:
+        12px 20px;
+
+    font-weight:
+        var(--font-weight-bold);
+}
+
+
+/* =========================================================
+   CONTENEDOR DE RESULTADOS
+========================================================= */
+
+#resultadoGarantia{
+    margin-top:
+        18px;
+}
+
+#resultadoGarantia > p{
+    margin:
+        12px 0 0 0;
+
+    padding:
+        14px 16px;
+
+    color:
+        var(--color-text-soft);
+
+    background:
+        rgba(15, 23, 42, 0.72);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.25);
+
+    border-radius:
+        var(--radius-md);
+}
+
+
+/* =========================================================
+   INFORMACIÓN DE LA GARANTÍA
+========================================================= */
+
+.garantia-card h3{
+    margin:
+        0 0 16px 0;
+
+    color:
+        var(--color-brand-300);
+
+    font-size:
+        var(--font-size-xl);
+}
+
+.garantia-card p{
+    margin:
+        8px 0;
+
+    color:
+        var(--color-text-soft);
+
+    line-height:
+        1.5;
+}
+
+.garantia-card p strong{
+    color:
+        var(--color-text-primary);
+}
+
+.garantia-card hr{
+    height:
+        1px;
+
+    margin:
+        18px 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(96, 165, 250, 0.65),
+            transparent
+        );
+
+    border:
+        none;
+}
+
+
+/* =========================================================
+   OBSERVACIÓN
+========================================================= */
+
+.garantia-card textarea:focus{
+    border-color:
+        var(--border-color-focus);
+
+    box-shadow:
+        0 0 16px
+        rgba(59, 130, 246, 0.40);
+}

@@ -650,3 +650,153 @@
             scale(1);
     }
 }
+
+/* =========================================================
+   MODAL GLOBAL DE DATOS DEL CLIENTE
+========================================================= */
+
+#modalDatosClienteBoleta.modal-boleta-cliente{
+    position:
+        fixed !important;
+
+    inset:
+        0 !important;
+
+    display:
+        none;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    width:
+        100vw !important;
+
+    height:
+        100vh !important;
+
+    padding:
+        18px !important;
+
+    background:
+        rgba(2, 6, 23, 0.78) !important;
+
+    backdrop-filter:
+        blur(12px) !important;
+
+    -webkit-backdrop-filter:
+        blur(12px) !important;
+
+    z-index:
+        300000 !important;
+}
+
+#modalDatosClienteBoleta .modal-boleta-contenido{
+    position:
+        relative !important;
+
+    width:
+        min(92vw, 420px) !important;
+
+    padding:
+        24px !important;
+
+    text-align:
+        center !important;
+
+    background:
+        var(--gradient-panel) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.75) !important;
+
+    border-radius:
+        var(--radius-2xl) !important;
+
+    box-shadow:
+        0 0 35px rgba(37, 99, 235, 0.65),
+        inset 0 0 18px rgba(96, 165, 250, 0.10) !important;
+}
+
+#modalDatosClienteBoleta .cerrar-boleta-cliente{
+    position:
+        absolute !important;
+
+    top:
+        12px !important;
+
+    right:
+        12px !important;
+
+    width:
+        38px !important;
+
+    height:
+        38px !important;
+
+    padding:
+        0 !important;
+
+    border-radius:
+        var(--radius-circle) !important;
+}
+
+#modalDatosClienteBoleta h2{
+    margin:
+        10px 0 18px 0 !important;
+
+    font-size:
+        22px !important;
+}
+
+#modalDatosClienteBoleta input{
+    width:
+        100% !important;
+
+    margin:
+        10px 0 !important;
+
+    padding:
+        14px 16px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        rgba(2, 6, 23, 0.85) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.55) !important;
+
+    border-radius:
+        var(--radius-lg) !important;
+
+    font-size:
+        var(--font-size-base) !important;
+
+    outline:
+        none !important;
+}
+
+#modalDatosClienteBoleta input:focus{
+    border-color:
+        var(--border-color-focus) !important;
+
+    box-shadow:
+        var(--shadow-input-focus) !important;
+}
+
+#modalDatosClienteBoleta .btn-finalizar-boleta{
+    width:
+        100% !important;
+
+    min-height:
+        50px !important;
+
+    margin-top:
+        14px !important;
+}
