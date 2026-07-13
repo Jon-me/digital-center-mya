@@ -45,6 +45,7 @@ import { crearUI } from "./js/ui.js";
 import { crearNotifications } from "./js/notificaciones.js";
 import { crearIndexedDB } from "./js/indexeddb.js";
 import { crearCatalogEngine } from "./js/catalog-engine.js";
+import { crearHTMLLoader } from "./js/html-loader.js";
 import {
     obtenerFechaISO,
     obtenerSucursalActiva,
@@ -565,6 +566,19 @@ const UI = crearUI({
 
 const IndexedDB = crearIndexedDB({});
 
+const HTMLLoader = crearHTMLLoader();
+
+const fragmentosHTML = [
+
+    {
+        nombre: "centro-control",
+        ruta: "html/centro-control.html?v=HTML26-2",
+        selector: "#htmlCentroControl",
+        modo: "replace-element"
+    }
+
+];
+
 const Notifications = crearNotifications({
 
     messaging,
@@ -721,18 +735,98 @@ try{
 
 }
 
+// =====================================================
 // INICIALIZAR APLICACIÓN
-document.addEventListener("DOMContentLoaded", function(){
+// El Bootstrap inicia únicamente después de montar
+// y validar todos los fragmentos HTML.
+// =====================================================
 
-    Bootstrap.iniciarAplicacion();
+document.addEventListener(
+    "DOMContentLoaded",
+    iniciarAplicacionCompleta
+);
 
-    CatalogoProductos.inicializarScrollCatalogo();
+async function iniciarAplicacionCompleta(){
 
-    Sucursales.iniciarListener();
+    try{
 
-    Sucursales.alCargar(cargarSucursalesEnCombos);
+        await HTMLLoader.cargarFragmentos(
+            fragmentosHTML
+        );
 
-});
+        HTMLLoader.validarElementosCriticos([
+            "#login",
+            "#sistema",
+            "#btnSonido",
+            "#usuario",
+            "#password",
+            "#carritoTabla",
+            "#tablaProductos",
+            "#centroControlAdmin",
+            "#modalPanel",
+            "#contenidoModalPanel"
+        ]);
+
+        Bootstrap.iniciarAplicacion();
+
+        CatalogoProductos
+            .inicializarScrollCatalogo();
+
+        Sucursales.iniciarListener();
+
+        Sucursales.alCargar(
+            cargarSucursalesEnCombos
+        );
+
+    }catch(error){
+
+        console.error(
+            "Error crítico inicializando Digital Center M&A:",
+            error
+        );
+
+        mostrarErrorInicializacion(error);
+
+    }
+
+}
+
+function mostrarErrorInicializacion(error){
+
+    const mensaje =
+        error instanceof Error
+            ? error.message
+            : "Error desconocido durante la inicialización.";
+
+    document.body.innerHTML = `
+        <main class="error-inicializacion-sistema">
+            <h1>⚠️ No se pudo iniciar el sistema</h1>
+
+            <p>
+                Digital Center M&A encontró un problema
+                cargando su interfaz.
+            </p>
+
+            <pre>${escaparHTML(mensaje)}</pre>
+
+            <button type="button" onclick="window.location.reload()">
+                Reintentar
+            </button>
+        </main>
+    `;
+
+}
+
+function escaparHTML(valor){
+
+    return String(valor || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
 
 function cargarSucursalesEnCombos(){
 
