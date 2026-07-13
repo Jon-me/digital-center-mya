@@ -566,18 +566,70 @@ const UI = crearUI({
 
 const IndexedDB = crearIndexedDB({});
 
-const HTMLLoader = crearHTMLLoader();
+const HTMLLoader = crearHTMLLoader({
 
-const fragmentosHTML = [
+    directorioBase: "html",
 
-    {
-        nombre: "centro-control",
-        ruta: "html/centro-control.html?v=HTML26-2",
-        selector: "#htmlCentroControl",
-        modo: "replace-element"
-    }
+    version: "HTML26-13",
 
-];
+    modoPredeterminado: "replace-element"
+
+});
+
+HTMLLoader.registrarFragmento(
+    "centro-control",
+    "#htmlCentroControl"
+);
+
+HTMLLoader.registrarFragmento(
+    "categorias",
+    "#htmlCategorias"
+);
+
+HTMLLoader.registrarFragmento(
+    "historial",
+    "#htmlHistorial"
+);
+
+HTMLLoader.registrarFragmento(
+    "garantias",
+    "#htmlGarantias"
+);
+
+HTMLLoader.registrarFragmento(
+    "reporte-vendedores",
+    "#htmlReporteVendedores"
+);
+
+HTMLLoader.registrarFragmento(
+    "reportes",
+    "#htmlReportes"
+);
+
+HTMLLoader.registrarFragmento(
+    "dashboard",
+    "#htmlDashboard"
+);
+
+HTMLLoader.registrarFragmento(
+    "caja",
+    "#htmlCaja"
+);
+
+HTMLLoader.registrarFragmento(
+    "admin",
+    "#htmlAdmin"
+);
+
+HTMLLoader.registrarFragmento(
+    "transferencias",
+    "#htmlTransferencias"
+);
+
+HTMLLoader.registrarFragmento(
+    "ventas",
+    "#htmlVentas"
+);
 
 const Notifications = crearNotifications({
 
@@ -750,23 +802,117 @@ async function iniciarAplicacionCompleta(){
 
     try{
 
-        await HTMLLoader.cargarFragmentos(
-            fragmentosHTML
-        );
+await HTMLLoader
+    .cargarFragmentosRegistrados();
 
-        HTMLLoader.validarElementosCriticos([
-            "#login",
-            "#sistema",
-            "#btnSonido",
-            "#usuario",
-            "#password",
-            "#carritoTabla",
-            "#tablaProductos",
-            "#centroControlAdmin",
-            "#modalPanel",
-            "#contenidoModalPanel"
-        ]);
+HTMLLoader.validarElementosCriticos([
 
+    "#login",
+    "#sistema",
+    "#btnSonido",
+    "#usuario",
+    "#password",
+
+    "#carritoTabla",
+    "#tablaProductos",
+
+    "#centroControlAdmin",
+    "#categoriasMenu",
+
+    "#panelHistorialVentas",
+    "#historialVentasTabla",
+    "#columnaGanancia",
+
+    "#panelGarantias",
+    "#inputGarantia",
+    "#resultadoGarantia",
+
+    "#panelReporteVendedores",
+    "#reporteVendedoresTabla",
+
+    "#panelReportes",
+    "#dashboardAdmin",
+    "#dashboardReportes",
+    "#totalProductos",
+    "#valorInventario",
+    "#productosCarrito",
+    "#ventaActual",
+    "#ventasHoy",
+    "#gananciaHoy",
+    "#ventasMes",
+    "#gananciaMes",
+    "#ventasEfectivo",
+    "#ventasYape",
+    "#ventasPlin",
+    "#ventasTarjeta",
+    "#ventasTransferencia",
+
+    "#panelDashboardEjecutivo",
+    "#tituloDashboardEjecutivo",
+    "#dashboardSucursal",
+    "#dashboardEjecutivo",
+    "#productoMasVendido",
+    "#mejorVendedor",
+    "#gananciaRealDia",
+    "#ticketPromedio",
+    "#gananciaMesEjecutiva",
+    "#rankingSucursales",
+    "#rankingProductos",
+
+    "#panelCajaDiaria",
+    "#sucursalCaja",
+    "#cajaInicial",
+    "#cajaVentas",
+    "#cajaEfectivo",
+    "#cajaYape",
+    "#cajaPlin",
+    "#cajaTarjeta",
+    "#cajaTransferencia",
+    "#cajaGastos",
+    "#cajaEsperada",
+    "#montoInicialCaja",
+    "#descripcionGasto",
+    "#montoGasto",
+    "#tablaGastosCaja",
+    "#dineroRealCaja",
+    "#resultadoCuadreCaja",
+    "#btnBorrarHistorialCajas",
+    "#historialCajasTabla", 
+
+    "#tituloCarrito",
+    "#carritoTabla",
+    "#totalVenta",
+
+    "#panelCobroVenta",
+    "#descuentoVenta",
+    "#resumenProductosCobro",
+    "#resumenTotalCobro",
+
+    "#tiendaVenta",
+
+    "#pagosMixtos",
+    "#pagoEfectivo",
+    "#pagoYape",
+    "#pagoPlin",
+    "#pagoTarjeta",
+    "#pagoTransferencia",
+
+    "#totalPagado",
+    "#totalPendienteCobro",
+
+    "#tablaProductos",
+
+    "#modalTransferenciaStock",
+    "#transferenciaProductoNombre",
+    "#stockTransferPrincipal",
+    "#stockTransferSucursal",
+    "#transferenciaOrigen",
+    "#transferenciaDestino",
+    "#transferenciaCantidad",
+
+    "#modalPanel",
+    "#contenidoModalPanel"
+]);
         Bootstrap.iniciarAplicacion();
 
         CatalogoProductos

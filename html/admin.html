@@ -1,0 +1,87 @@
+<div id="zonaAdmin" style="display:none;">
+
+        <h2>Agregar Producto</h2>
+
+        <input id="codigo" type="text" placeholder="Código de Producto">
+
+        <input id="producto" type="text" placeholder="Nombre del Producto">
+
+        <input id="categoria" type="text" placeholder="Categoría">
+
+       <div class="stock-tiendas-form">
+
+    <h3>🏪 Stock por sucursal</h3>
+
+    <div id="contenedorStockSucursales">
+        <p>Cargando sucursales...</p>
+    </div>
+
+</div>
+
+        <input
+    id="precioCompra"
+    type="number"
+    min="0"
+    step="0.01"
+    placeholder="Precio Compra"
+>
+
+       <input
+    id="precio"
+    type="number"
+    min="0"
+    step="0.01"
+    placeholder="Precio Venta"
+>
+
+        <div class="imagen-producto-panel">
+
+            <input
+                id="imagen"
+                type="file"
+                accept="image/*"
+                class="input-imagen-producto-oculto"
+                onchange="window.seleccionarImagenProducto()"
+            >
+
+            <div class="imagen-producto-botones imagen-producto-botones-desktop">
+                <label for="imagen" class="btn-imagen-producto">
+                    📁 Subir imagen
+                </label>
+            </div>
+
+            <p id="nombreImagenProducto" class="nombre-imagen-producto">
+                Ninguna imagen seleccionada
+            </p>
+
+        </div>
+
+       <button type="button" id="btnGuardarProducto" onclick="window.guardarProducto()">
+    Guardar Producto
+</button>
+
+<button onclick="abrirConfiguracion()">
+    ⚙️ Configuración
+</button>
+
+<button onclick="activarNotificaciones()">
+    🔔 Activar Notificaciones
+</button>
+
+<div id="panelConfiguracion" style="display:none;">
+
+    <h2>⚙️ Configuración</h2>
+
+    <input
+        id="nuevoCodigoAnulacion"
+        type="text"
+        placeholder="Código de Anulación"
+    >
+
+    <button onclick="guardarConfiguracion()">
+        Guardar Configuración
+    </button>
+
+</div>
+
+</div><!-- FIN zonaAdmin -->

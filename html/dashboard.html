@@ -1,0 +1,73 @@
+<div id="panelDashboardEjecutivo" style="display:none;">
+
+    <h2 id="tituloDashboardEjecutivo">
+        🧠 Dashboard Ejecutivo
+    </h2>
+
+    <div class="selector-dashboard-sucursal">
+
+        <label for="dashboardSucursal">
+            🏪 Dashboard
+        </label>
+
+        <select
+            id="dashboardSucursal"
+            onchange="cambiarSucursalDashboard()"
+        >
+            <option value="empresa">
+                🌎 Toda la empresa
+            </option>
+        </select>
+
+    </div>
+
+    <div class="dashboard" id="dashboardEjecutivo">
+
+        <div class="dashboard-card">
+            <h2 id="productoMasVendido">-</h2>
+            <p>Producto Más Vendido</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="mejorVendedor">-</h2>
+            <p>👑 Mejor Vendedor</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="gananciaRealDia">S/ 0</h2>
+            <p>💰 Ganancia Real del Día</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="ticketPromedio">S/ 0</h2>
+            <p>🧾 Ticket Promedio</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="gananciaMesEjecutiva">S/ 0</h2>
+            <p>📈 Ganancia del Mes</p>
+        </div>
+
+    </div>
+
+    <div class="ranking-sucursales-panel">
+
+        <h3>🏆 Ranking de Sucursales</h3>
+
+        <div id="rankingSucursales">
+            <p>Sin datos disponibles.</p>
+        </div>
+
+    </div>
+
+    <div class="ranking-productos-panel">
+
+        <h3>📦 Top 5 Productos</h3>
+
+        <div id="rankingProductos">
+            <p>Sin ventas registradas.</p>
+        </div>
+
+    </div>
+
+</div>

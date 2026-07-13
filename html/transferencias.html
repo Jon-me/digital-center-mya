@@ -1,0 +1,79 @@
+<div
+    id="modalTransferenciaStock"
+    class="modal-transferencia"
+    style="display:none;"
+>
+
+    <div class="modal-transferencia-contenido">
+
+        <button
+            type="button"
+            class="cerrar-transferencia"
+            onclick="cerrarTransferenciaStock()"
+        >
+            X
+        </button>
+
+        <h2>🔄 Transferir Stock</h2>
+
+        <h3 id="transferenciaProductoNombre">
+            Producto
+        </h3>
+
+        <div class="resumen-stock-transferencia">
+
+            <p>
+                🏬 Mercado:
+                <strong id="stockTransferPrincipal">0</strong>
+            </p>
+
+            <p>
+                ✂️ Peluquería:
+                <strong id="stockTransferSucursal">0</strong>
+            </p>
+
+        </div>
+
+        <select id="transferenciaOrigen">
+
+            <option value="principal">
+                Mercado
+            </option>
+
+            <option value="sucursal">
+                Peluquería
+            </option>
+
+        </select>
+
+        <select id="transferenciaDestino">
+
+            <option value="sucursal">
+                Peluquería
+            </option>
+
+            <option value="principal">
+                Mercado
+            </option>
+
+        </select>
+
+        <input
+            id="transferenciaCantidad"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="Cantidad a transferir"
+        >
+
+        <button
+            type="button"
+            class="btn-confirmar-transferencia"
+            onclick="confirmarTransferenciaStock()"
+        >
+            ✅ Confirmar Transferencia
+        </button>
+
+    </div>
+
+</div>

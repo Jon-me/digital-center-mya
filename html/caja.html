@@ -1,0 +1,192 @@
+<div id="panelCajaDiaria" style="display:none;">
+
+    <h2>💰 Caja Diaria</h2>
+
+    <div class="selector-sucursal-caja">
+
+        <label for="sucursalCaja">
+            🏪 Caja de la sucursal
+        </label>
+
+        <select
+            id="sucursalCaja"
+            onchange="cambiarSucursalCaja()"
+        ></select>
+
+    </div>
+
+    <div class="dashboard">
+
+        <div class="dashboard-card">
+            <h2 id="cajaInicial">S/ 0</h2>
+            <p>💵 Caja Inicial</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaVentas">S/ 0</h2>
+            <p>🛒 Ventas del Día</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaEfectivo">S/ 0</h2>
+            <p>💵 Efectivo</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaYape">S/ 0</h2>
+            <p>📱 Yape</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaPlin">S/ 0</h2>
+            <p>🟢 Plin</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaTarjeta">S/ 0</h2>
+            <p>💳 Tarjeta</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaTransferencia">S/ 0</h2>
+            <p>🏦 Transferencia</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaGastos">S/ 0</h2>
+            <p>📉 Gastos</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 id="cajaEsperada">S/ 0</h2>
+            <p>✅ Caja Esperada</p>
+        </div>
+
+    </div>
+
+    <h3>Abrir Caja</h3>
+
+    <input
+        id="montoInicialCaja"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Monto inicial S/"
+    >
+
+    <button
+        type="button"
+        onclick="abrirCaja()"
+    >
+        Abrir Caja
+    </button>
+
+    <h3>Registrar Gasto</h3>
+
+    <input
+        id="descripcionGasto"
+        type="text"
+        placeholder="Descripción del gasto"
+    >
+
+    <input
+        id="montoGasto"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Monto gasto S/"
+    >
+
+    <button
+        type="button"
+        onclick="registrarGasto()"
+    >
+        Registrar Gasto
+    </button>
+
+    <h3>Gastos del Día</h3>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+
+        <tbody id="tablaGastosCaja"></tbody>
+
+    </table>
+
+    <h3>Cuadre Real de Caja</h3>
+
+    <input
+        id="dineroRealCaja"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Dinero físico contado S/"
+    >
+
+    <button
+        type="button"
+        onclick="cuadrarCaja()"
+    >
+        🧮 Cuadrar Caja
+    </button>
+
+    <h3 id="resultadoCuadreCaja">
+        Resultado: -
+    </h3>
+
+    <button
+        type="button"
+        onclick="cerrarCaja()"
+    >
+        🔒 Cerrar Caja
+    </button>
+
+    <button
+        type="button"
+        onclick="anularCajaDelDia()"
+    >
+        🗑️ Anular Caja del Día
+    </button>
+
+    <h3>📚 Historial de Cierres</h3>
+
+    <button
+        type="button"
+        id="btnBorrarHistorialCajas"
+        onclick="borrarHistorialCierres()"
+    >
+        🗑️ Borrar Historial de Cierres
+    </button>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Cerró</th>
+                <th>Ventas</th>
+                <th>Efectivo</th>
+                <th>Yape</th>
+                <th>Plin</th>
+                <th>Tarjeta</th>
+                <th>Transferencia</th>
+                <th>Gastos</th>
+                <th>Esperado</th>
+                <th>Real</th>
+                <th>Resultado</th>
+            </tr>
+        </thead>
+
+        <tbody id="historialCajasTabla"></tbody>
+
+    </table>
+
+</div>
