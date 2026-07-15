@@ -1,0 +1,51 @@
+<video
+    autoplay
+    muted
+    loop
+    playsinline
+    id="videoFondoLaptop"
+>
+    <source
+        src="./video-login.mp4?v=LAPTOP1"
+        type="video/mp4"
+    >
+</video>
+
+<button
+    type="button"
+    id="btnSonido"
+    onclick="toggleSonido()"
+>
+    🔊 Activar sonido
+</button>
+
+<div
+    id="login"
+    class="login-desktop-final"
+    style="display: none;"
+>
+
+    <h2>Iniciar Sesión</h2>
+
+    <input
+        type="text"
+        id="usuario"
+        placeholder="Usuario"
+        autocomplete="off"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+        autocomplete="off"
+    >
+
+    <button
+        type="button"
+        onclick="iniciarSesion()"
+    >
+        Entrar
+    </button>
+
+</div>

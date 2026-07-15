@@ -570,7 +570,7 @@ const HTMLLoader = crearHTMLLoader({
 
     directorioBase: "html",
 
-    version: "HTML26-13",
+    version: "HTML26-16",
 
     modoPredeterminado: "replace-element"
 
@@ -629,6 +629,21 @@ HTMLLoader.registrarFragmento(
 HTMLLoader.registrarFragmento(
     "ventas",
     "#htmlVentas"
+);
+
+HTMLLoader.registrarFragmento(
+    "modales",
+    "#htmlModales"
+);
+
+HTMLLoader.registrarFragmento(
+    "header",
+    "#htmlHeader"
+);
+
+HTMLLoader.registrarFragmento(
+    "login",
+    "#htmlLogin"
 );
 
 const Notifications = crearNotifications({
@@ -807,6 +822,7 @@ await HTMLLoader
 
 HTMLLoader.validarElementosCriticos([
 
+    "#videoFondoLaptop",
     "#login",
     "#sistema",
     "#btnSonido",
@@ -818,6 +834,10 @@ HTMLLoader.validarElementosCriticos([
 
     "#centroControlAdmin",
     "#categoriasMenu",
+
+    "#buscador",
+    ".btn-categorias-menu",
+    ".desktop-header-pro",
 
     "#panelHistorialVentas",
     "#historialVentasTabla",
@@ -909,6 +929,14 @@ HTMLLoader.validarElementosCriticos([
     "#transferenciaOrigen",
     "#transferenciaDestino",
     "#transferenciaCantidad",
+    
+    "#modalCodigo",
+    "#codigoAdminInput",
+    "#fondoModal",
+
+    "#modalDatosClienteBoleta",
+    "#clienteNombre",
+    "#clienteDni",
 
     "#modalPanel",
     "#contenidoModalPanel"

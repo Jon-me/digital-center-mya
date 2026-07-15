@@ -1,0 +1,97 @@
+<div id="modalCodigo" style="display:none;">
+
+    <h3>🔐 Autorización Admin</h3>
+
+    <input
+        type="password"
+        id="codigoAdminInput"
+        placeholder="Ingrese Código"
+        autocomplete="off"
+    >
+
+    <button
+        type="button"
+        onclick="validarCodigoAdmin()"
+    >
+        Aceptar
+    </button>
+
+    <button
+        type="button"
+        onclick="cerrarModalCodigo()"
+    >
+        Cancelar
+    </button>
+
+</div>
+
+<div
+    id="fondoModal"
+    style="display:none;"
+></div>
+
+<div
+    id="modalDatosClienteBoleta"
+    class="modal-boleta-cliente"
+    style="display:none;"
+>
+
+    <div class="modal-boleta-contenido">
+
+        <button
+            type="button"
+            class="cerrar-boleta-cliente"
+            onclick="cerrarDatosClienteBoleta()"
+        >
+            X
+        </button>
+
+        <h2>👤 Datos del Cliente</h2>
+
+        <input
+            id="clienteNombre"
+            type="text"
+            placeholder="👤 Nombre del Cliente"
+            autocomplete="off"
+        >
+
+        <input
+            id="clienteDni"
+            type="text"
+            placeholder="🪪 DNI del Cliente"
+            autocomplete="off"
+        >
+
+        <button
+            type="button"
+            class="btn-finalizar-boleta"
+            onclick="finalizarEImprimir()"
+        >
+            🧾 Finalizar + Imprimir
+        </button>
+
+    </div>
+
+</div>
+
+<div
+    id="modalPanel"
+    class="modal-panel"
+    style="display:none;"
+>
+
+    <div class="modal-contenido">
+
+        <button
+            type="button"
+            class="cerrar-modal"
+            onclick="cerrarModalPanel()"
+        >
+            X
+        </button>
+
+        <div id="contenidoModalPanel"></div>
+
+    </div>
+
+</div>

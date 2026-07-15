@@ -1,0 +1,83 @@
+<section
+    class="desktop-header-pro header-dios-pro"
+    aria-label="Encabezado principal"
+>
+
+    <div class="header-dios-bg"></div>
+    <div class="header-dios-grid"></div>
+
+    <div class="barra-superior desktop-actions-pro header-actions-dios">
+
+        <button
+            type="button"
+            onclick="cerrarSesion()"
+            class="btn-session-pro"
+        >
+            <span class="btn-action-icon">↪</span>
+            <span>Cerrar Sesión</span>
+        </button>
+
+        <div class="logo-ma-dios" aria-label="Logo M&A">
+            <span class="logo-ma-m">M</span>
+            <span class="logo-ma-a">A</span>
+        </div>
+
+        <button
+            type="button"
+            onclick="actualizarSistema()"
+            class="btn-actualizar-sistema btn-update-pro"
+        >
+            <span class="btn-action-icon">↻</span>
+            <span>Actualizar Sistema</span>
+        </button>
+
+    </div>
+
+    <div class="hero-banner hero-banner-pro hero-dios">
+
+        <div class="hero-dios-shield">✦</div>
+
+        <h1>
+            <span class="brand-word-digital">Digital</span>
+            <span class="brand-word-center">Center</span>
+            <span class="brand-word-ma">M&A</span>
+        </h1>
+
+        <div class="hero-dios-line"></div>
+
+        <div class="hero-dios-features">
+            <span>🛒 Ventas</span>
+            <span>📦 Inventario</span>
+            <span>💳 Caja</span>
+            <span>🛡️ Control</span>
+        </div>
+
+    </div>
+
+    <div class="search-pro-wrap search-dios-wrap">
+
+        <span class="search-dios-icon">⌕</span>
+
+        <input
+            type="text"
+            id="buscador"
+            placeholder="Buscar producto..."
+            onkeyup="buscarProducto()"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        >
+
+        <button
+            type="button"
+            class="search-dios-filter btn-categorias-menu"
+            onclick="toggleCategoriasMenu()"
+            aria-label="Abrir categorías"
+        >
+            ☰
+        </button>
+
+    </div>
+
+</section>
