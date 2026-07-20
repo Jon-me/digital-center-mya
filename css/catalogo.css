@@ -1,125 +1,283 @@
 /* =========================================================
    DIGITAL CENTER M&A — CATÁLOGO
+   FASE 28.2 — TRANSFORMERS ENTERPRISE LIMPIO
    Entorno: escritorio
 ========================================================= */
 
-
 /* =========================================================
-   PANEL DE PRODUCTOS
+   PANEL DEL CATÁLOGO
 ========================================================= */
 
-.panel-productos{
-    width: 100%;
+.panel-productos,
+.productos-premium-panel{
+    position: relative;
 
-    padding: var(--panel-padding);
+    width: 100%;
+    min-width: 0;
+
+    padding: 12px;
+
+    overflow: hidden;
 
     background:
-        var(--surface-panel) !important;
+        radial-gradient(
+            circle at 50% -8%,
+            rgba(37, 99, 235, 0.18),
+            transparent 28%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(3, 13, 30, 0.99),
+            rgba(1, 7, 18, 1)
+        ) !important;
 
-    border:
-        var(--border-panel) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
 
-    border-radius:
-        var(--radius-2xl);
+    clip-path:
+        polygon(
+            2.4% 0,
+            97.6% 0,
+            100% 3.2%,
+            100% 96.8%,
+            97.6% 100%,
+            2.4% 100%,
+            0 96.8%,
+            0 3.2%
+        );
 
     box-shadow:
-        var(--shadow-panel) !important;
+        inset 0 0 0 2px rgba(56, 189, 248, 0.58),
+        inset 0 0 0 5px rgba(8, 18, 36, 0.98),
+        inset 0 0 0 7px rgba(71, 85, 105, 0.46),
+        inset 0 0 34px rgba(37, 99, 235, 0.08),
+        0 22px 54px rgba(0, 0, 0, 0.44),
+        0 0 24px rgba(37, 99, 235, 0.16) !important;
+}
 
-    backdrop-filter:
-        var(--blur-md);
+.panel-productos::before,
+.productos-premium-panel::before{
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+
+    width: 38%;
+    height: 5px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(56, 189, 248, 0.28),
+            #38bdf8,
+            #dbeafe,
+            #38bdf8,
+            rgba(56, 189, 248, 0.28),
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px rgba(56, 189, 248, 0.70),
+        0 0 24px rgba(37, 99, 235, 0.44);
+
+    pointer-events: none;
+}
+
+.panel-productos::after,
+.productos-premium-panel::after{
+    content: "";
+
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+
+    width: 26%;
+    height: 4px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #38bdf8,
+            #dbeafe,
+            #38bdf8,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px rgba(56, 189, 248, 0.62);
+
+    pointer-events: none;
 }
 
 /* =========================================================
    GRID DE PRODUCTOS
 ========================================================= */
 
-.productos-grid{
+.productos-grid,
+.productos-premium-panel .productos-grid{
     display: grid !important;
 
     grid-template-columns:
-        repeat(
-            var(--catalog-grid-columns),
-            minmax(210px, 1fr)
-        ) !important;
+        repeat(5, minmax(0, 1fr)) !important;
 
-    grid-auto-rows: auto !important;
+    grid-auto-rows: max-content !important;
 
-    gap: 22px !important;
+    gap: 10px !important;
 
     height:
         var(--catalog-scroll-height) !important;
 
     padding:
-        5px 14px 25px 5px !important;
+        8px 10px 18px 8px !important;
 
     overflow-y: auto !important;
     overflow-x: hidden !important;
 
-    align-items: stretch !important;
-}
+    align-items: start !important;
 
+    background: transparent !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+}
 
 /* =========================================================
    SCROLL DEL CATÁLOGO
 ========================================================= */
 
 .productos-grid::-webkit-scrollbar{
-    width: 10px;
+    width: 7px;
 }
 
 .productos-grid::-webkit-scrollbar-track{
     background:
-        rgba(255, 255, 255, 0.08);
+        rgba(15, 23, 42, 0.82);
 
-    border-radius:
-        var(--radius-2xl);
+    border-radius: 999px;
 }
 
 .productos-grid::-webkit-scrollbar-thumb{
     background:
-        var(--color-brand-600);
+        linear-gradient(
+            180deg,
+            #38bdf8,
+            #2563eb
+        );
 
-    border-radius:
-        var(--radius-2xl);
+    border-radius: 999px;
+
+    box-shadow:
+        0 0 10px rgba(37, 99, 235, 0.42);
 }
 
 /* =========================================================
    TARJETA DE PRODUCTO
 ========================================================= */
 
-.producto-card{
+.producto-card,
+.productos-premium-panel .producto-card{
+    position: relative;
+
+    min-width: 0;
+    min-height: 520px;
+    height: auto;
+
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
 
-    min-height: 720px !important;
-    height: auto !important;
+    padding: 10px !important;
 
-    padding: 14px !important;
+    overflow: hidden !important;
 
-    overflow: visible !important;
+    color: #f8fafc;
 
     background:
-        var(--gradient-panel) !important;
+        linear-gradient(
+            180deg,
+            rgba(5, 17, 38, 0.99),
+            rgba(1, 8, 20, 1)
+        ) !important;
 
-    border:
-        1px solid
-        var(--border-color-default) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
 
-    border-radius:
-        var(--radius-lg) !important;
+    clip-path:
+        polygon(
+            5% 0,
+            95% 0,
+            100% 4%,
+            100% 96%,
+            95% 100%,
+            5% 100%,
+            0 96%,
+            0 4%
+        );
 
     box-shadow:
-        0 0 18px
-        rgba(15, 23, 42, 0.75) !important;
+        inset 0 0 0 1px rgba(56, 189, 248, 0.58),
+        inset 0 0 0 3px rgba(15, 23, 42, 0.98),
+        inset 0 0 18px rgba(37, 99, 235, 0.06),
+        0 12px 26px rgba(0, 0, 0, 0.30) !important;
+
+    transition:
+        transform 170ms ease,
+        box-shadow 170ms ease,
+        filter 170ms ease;
 }
 
-.producto-card:hover{
-    transform: none !important;
+.producto-card::before,
+.producto-card::after{
+    content: "";
+
+    position: absolute;
+    left: 50%;
+
+    width: 48%;
+    height: 3px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(56, 189, 248, 0.75),
+            transparent
+        );
 
     box-shadow:
-        0 0 28px
-        rgba(96, 165, 250, 0.65) !important;
+        0 0 9px rgba(56, 189, 248, 0.40);
+
+    pointer-events: none;
+}
+
+.producto-card::before{
+    top: 0;
+}
+
+.producto-card::after{
+    bottom: 0;
+}
+
+.producto-card:hover,
+.productos-premium-panel .producto-card:hover{
+    transform: translateY(-3px) !important;
+
+    filter: brightness(1.05);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(125, 211, 252, 0.88),
+        inset 0 0 0 3px rgba(15, 23, 42, 0.98),
+        inset 0 0 24px rgba(37, 99, 235, 0.10),
+        0 16px 30px rgba(0, 0, 0, 0.36),
+        0 0 18px rgba(37, 99, 235, 0.20) !important;
 }
 
 .producto-card.agregado{
@@ -133,516 +291,849 @@
 
     0%{
         transform: scale(1);
-
-        box-shadow:
-            0 0 18px
-            rgba(37, 99, 235, 0.35);
     }
 
     50%{
-        transform: scale(0.96);
-
-        border-color:
-            rgba(34, 197, 94, 0.95);
+        transform: scale(0.97);
 
         box-shadow:
-            0 0 35px
-            rgba(34, 197, 94, 0.95);
+            inset 0 0 0 1px rgba(74, 222, 128, 0.90),
+            0 0 26px rgba(34, 197, 94, 0.50);
     }
 
     100%{
         transform: scale(1);
-
-        box-shadow:
-            0 0 18px
-            rgba(37, 99, 235, 0.35);
     }
+
 }
 
 /* =========================================================
-   CONTENIDO DE TARJETA
+   IMAGEN DEL PRODUCTO
 ========================================================= */
 
-.producto-card img{
+.producto-card img,
+.productos-premium-panel .producto-card img{
     width: 100% !important;
-    height: 150px !important;
+    height: 152px !important;
+
+    padding: 4px !important;
 
     object-fit: contain !important;
 
     background:
-        var(--color-text-primary) !important;
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f1f5f9
+        ) !important;
 
-    border-radius:
-        var(--radius-sm) !important;
+    border:
+        1px solid rgba(148, 163, 184, 0.72) !important;
+
+    border-radius: 5px !important;
 
     flex-shrink: 0 !important;
 }
 
-.producto-card h3{
-    min-height: 88px !important;
-    max-height: 88px !important;
+/* =========================================================
+   NOMBRE Y METADATOS
+========================================================= */
 
-    padding-right: 6px !important;
+.producto-card h3{
+    min-height: 58px !important;
+    max-height: 58px !important;
+
+    margin:
+        10px 0 7px !important;
+
+    padding:
+        0 2px !important;
 
     overflow-y: auto !important;
+
+    color: #ffffff !important;
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif !important;
+
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+
+    letter-spacing: -0.1px;
+
+    text-transform: uppercase;
 }
 
 .producto-card h3::-webkit-scrollbar{
-    width: 5px;
+    width: 3px;
 }
 
 .producto-card h3::-webkit-scrollbar-thumb{
-    background:
-        var(--color-brand-600);
+    background: #2563eb;
 
-    border-radius:
-        var(--radius-2xl);
+    border-radius: 999px;
 }
 
 .producto-card p{
     margin:
-        4px 0 !important;
+        2px 0 !important;
 
     color:
-        var(--color-text-primary) !important;
+        rgba(226, 232, 240, 0.82) !important;
 
-    font-size:
-        var(--font-size-sm) !important;
-
-    line-height:
-        1.25 !important;
+    font-size: 9px !important;
+    line-height: 1.28 !important;
 }
 
-.producto-card .btn-agregar{
-    margin-top:
-        auto !important;
+.producto-card > p:nth-of-type(1),
+.producto-card > p:nth-of-type(2){
+    color:
+        rgba(203, 213, 225, 0.76) !important;
 }
 
 /* =========================================================
-   CATEGORÍAS
+   STOCK POR SUCURSAL
 ========================================================= */
 
-.categorias-scroll-wrap{
-    width:100%;
+.stock-tiendas-card{
+    margin:
+        8px 0 7px !important;
 
-    margin:14px 0 18px 0;
+    padding:
+        8px !important;
 
-    overflow:hidden;
+    background:
+        rgba(3, 12, 28, 0.72) !important;
+
+    border:
+        1px solid rgba(56, 189, 248, 0.22) !important;
+
+    border-radius: 4px !important;
+
+    box-shadow:
+        inset 0 0 12px rgba(37, 99, 235, 0.04);
+}
+
+.stock-tiendas-card p{
+    color:
+        rgba(148, 163, 184, 0.88) !important;
+}
+
+.stock-tiendas-card .stock-total{
+    color: #7dd3fc !important;
+
+    font-weight: 900 !important;
+}
+
+/* Precio de venta destacado */
+.producto-card > p:last-of-type{
+    color: #4ade80 !important;
+
+    font-weight: 900 !important;
+}
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.producto-card-acciones{
+    display: grid;
+    grid-template-columns: 1fr;
+
+    width: 100%;
+
+    gap: 7px;
+
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.producto-card-acciones button{
+    min-height: 34px !important;
+
+    margin: 0 !important;
+    padding:
+        0 8px !important;
+
+    border-radius: 0 !important;
+
+    clip-path:
+        polygon(
+            5% 0,
+            95% 0,
+            100% 18%,
+            100% 82%,
+            95% 100%,
+            5% 100%,
+            0 82%,
+            0 18%
+        );
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif !important;
+
+    font-size: 9px !important;
+    font-weight: 900 !important;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition:
+        transform 150ms ease,
+        filter 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.producto-card-acciones button:hover{
+    transform: translateY(-1px);
+
+    filter: brightness(1.10);
+}
+
+.producto-card .btn-agregar{
+    width: 100%;
+
+    color: #ffffff !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #1d70ff,
+            #0b3ec2
+        ) !important;
+
+    border:
+        1px solid rgba(147, 197, 253, 0.78) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.20),
+        0 0 12px rgba(37, 99, 235, 0.20) !important;
+}
+
+.producto-card-acciones-secundarias{
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        36px
+        36px;
+
+    width: 100%;
+
+    gap: 6px;
+
+    align-items: stretch;
+}
+
+.producto-card .btn-transferir-stock{
+    grid-column: 1;
+
+    width: 100%;
+    min-width: 0;
+
+    color: #fde68a !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(113, 63, 18, 0.94),
+            rgba(45, 25, 5, 0.99)
+        ) !important;
+
+    border:
+        1px solid rgba(245, 158, 11, 0.66) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 0 10px rgba(245, 158, 11, 0.12) !important;
+}
+
+.producto-card .btn-editar-producto{
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+
+    padding: 0 !important;
+
+    color: #bae6fd !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(7, 89, 133, 0.94),
+            rgba(3, 35, 55, 0.99)
+        ) !important;
+
+    border:
+        1px solid rgba(14, 165, 233, 0.70) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 10px rgba(14, 165, 233, 0.16) !important;
+}
+
+.producto-card .btn-eliminar-producto{
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+
+    padding: 0 !important;
+
+    color: #fecaca !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(127, 29, 29, 0.94),
+            rgba(45, 6, 6, 0.99)
+        ) !important;
+
+    border:
+        1px solid rgba(239, 68, 68, 0.68) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 0 10px rgba(239, 68, 68, 0.14) !important;
+}
+
+/* =========================================================
+   SKELETON
+========================================================= */
+
+.skeleton-card{
+    pointer-events: none;
+
+    overflow: hidden;
+}
+
+.skeleton{
+    position: relative;
+
+    overflow: hidden;
+
+    background: #243447;
+
+    border-radius: 5px;
+}
+
+.skeleton::after{
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: -150%;
+
+    width: 150%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.18),
+            transparent
+        );
+
+    animation:
+        skeletonLoading
+        1.2s
+        infinite;
+}
+
+@keyframes skeletonLoading{
+
+    100%{
+        left: 150%;
+    }
+
+}
+
+.skeleton-img{
+    width: 100%;
+    height: 152px;
+
+    margin-bottom: 12px;
+}
+
+.skeleton-line{
+    height: 14px;
+
+    margin-bottom: 9px;
+}
+
+.skeleton-line.grande{
+    width: 85%;
+}
+
+.skeleton-line.corta{
+    width: 45%;
+}
+
+.skeleton-btn{
+    width: 100%;
+    height: 34px;
+
+    margin-top: 14px;
+}
+
+/* =========================================================
+   VARIANTE VENDEDOR
+========================================================= */
+
+body.rol-vendedor .producto-card{
+    min-height: 440px !important;
+}
+
+body.rol-vendedor .producto-card h3{
+    min-height: 58px !important;
+    max-height: 58px !important;
+
+    font-size: 13px !important;
+}
+
+/* =========================================================
+   BREAKPOINTS
+========================================================= */
+
+@media (max-width: 1500px){
+
+    .productos-grid,
+    .productos-premium-panel .productos-grid{
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr)) !important;
+    }
+
+}
+
+@media (max-width: 1180px){
+
+    .productos-grid,
+    .productos-premium-panel .productos-grid{
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+
+/* =========================================================
+   CATEGORÍAS TRANSFORMERS
+   FASE 27.6 — APERTURA Y CIERRE SIN SALTOS
+========================================================= */
+
+/*
+   Se usa grid-template-rows en lugar de max-height.
+   De este modo la fila interna conserva su ancho y posición
+   durante toda la animación y no salta hacia la izquierda.
+*/
+
+#categoriasMenu{
+    display: grid !important;
+    grid-template-rows: 1fr;
+
+    width: min(1060px, 92%) !important;
+
+    margin: 18px auto 24px !important;
+
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+
+    overflow: hidden !important;
+
+    transition:
+        grid-template-rows 300ms ease,
+        opacity 180ms ease,
+        transform 300ms ease,
+        margin 300ms ease,
+        visibility 0s linear 0s;
+}
+
+#categoriasMenu > .categorias-pos{
+    min-height: 0;
+}
+
+body:not(.categorias-menu-abierto) #categoriasMenu{
+    grid-template-rows: 0fr;
+
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(-8px);
+
+    pointer-events: none;
+
+    transition:
+        grid-template-rows 300ms ease,
+        opacity 150ms ease,
+        transform 300ms ease,
+        margin 300ms ease,
+        visibility 0s linear 300ms;
 }
 
 .categorias-pos,
 .categorias-scroll{
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    justify-content: center !important;
 
-    width:100%;
+    width: 100% !important;
+    min-width: 0;
 
-    display:flex;
+    gap: 14px !important;
 
-    flex-wrap:nowrap;
+    padding: 8px 4px 16px !important;
 
-    align-items:center;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
 
-    gap:12px;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
 
-    padding:4px 4px 10px 4px;
-
-    overflow-x:auto;
-
-    overflow-y:hidden;
-
-    scroll-snap-type:x mandatory;
-
-    scroll-behavior:smooth;
-
-    -webkit-overflow-scrolling:touch;
-
-    overscroll-behavior-x:contain;
-
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .categorias-scroll::-webkit-scrollbar,
 .categorias-pos::-webkit-scrollbar{
-
-    height:4px;
-
+    height: 4px;
 }
 
 .categorias-scroll::-webkit-scrollbar-track,
 .categorias-pos::-webkit-scrollbar-track{
-
-    background:transparent;
-
+    background: transparent;
 }
 
 .categorias-scroll::-webkit-scrollbar-thumb,
 .categorias-pos::-webkit-scrollbar-thumb{
+    background:
+        rgba(56, 189, 248, 0.42);
 
-    background:rgba(96,165,250,.55);
-
-    border-radius:999px;
-
+    border-radius: 999px;
 }
 
 .categoria-card{
-    width: 84px;
-    min-width: 84px;
-    height: 78px;
+    position: relative !important;
 
-    flex: 0 0 auto;
-    scroll-snap-align: start;
+    flex: 0 0 128px !important;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    width: 128px !important;
+    min-width: 128px !important;
+    height: 118px !important;
 
-    padding: 7px 8px;
-    border-radius: 20px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    background: rgba(2,6,23,0.72) !important;
-    border: 1px solid rgba(96,165,250,0.38) !important;
+    gap: 10px !important;
+
+    padding: 14px 12px 12px !important;
+
+    color:
+        rgba(248, 250, 252, 0.96) !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(7, 18, 38, 0.98),
+            rgba(2, 8, 20, 0.99)
+        ) !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    clip-path:
+        polygon(
+            14% 0,
+            86% 0,
+            100% 14%,
+            100% 86%,
+            86% 100%,
+            14% 100%,
+            0 86%,
+            0 14%
+        );
 
     box-shadow:
-        0 0 14px rgba(37,99,235,0.24),
-        inset 0 0 14px rgba(96,165,250,0.08) !important;
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 22px rgba(37, 99, 235, 0.06),
+        0 14px 26px rgba(0, 0, 0, 0.28),
+        0 0 0 2px rgba(51, 65, 85, 0.72),
+        0 0 0 4px rgba(15, 23, 42, 0.92) !important;
 
-    color: white !important;
-    font-size: 10px;
-    font-weight: 900;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.15px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+
+    cursor: pointer;
 
     transition:
-        transform .22s ease,
-        box-shadow .22s ease,
-        border-color .22s ease,
-        background .22s ease;
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        filter 180ms ease !important;
+}
+
+.categoria-card::before,
+.categoria-card::after{
+    content: "";
+
+    position: absolute;
+    left: 50%;
+
+    width: 46%;
+    height: 3px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(56, 189, 248, 0.90),
+            transparent
+        );
+
+    box-shadow:
+        0 0 10px rgba(56, 189, 248, 0.54);
+
+    opacity: 0.72;
+
+    pointer-events: none;
+}
+
+.categoria-card::before{
+    top: 0;
+}
+
+.categoria-card::after{
+    bottom: 0;
 }
 
 .categoria-card:hover,
 .categoria-card:active{
-    transform: translateY(-2px) scale(1.04);
+    transform:
+        translateY(-3px)
+        scale(1.025) !important;
 
-    border-color: rgba(96,165,250,0.95) !important;
+    filter:
+        brightness(1.10) !important;
 
     box-shadow:
-        0 0 22px rgba(96,165,250,0.75),
-        inset 0 0 16px rgba(96,165,250,0.16) !important;
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 24px rgba(37, 99, 235, 0.10),
+        0 18px 32px rgba(0, 0, 0, 0.34),
+        0 0 0 2px rgba(96, 165, 250, 0.62),
+        0 0 20px rgba(37, 99, 235, 0.28) !important;
 }
 
 .categoria-icon-ring{
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(circle at 35% 25%, rgba(96,165,250,0.48), rgba(15,23,42,0.92));
-
-    border: 1px solid rgba(96,165,250,0.58);
-
-    box-shadow:
-        0 0 13px rgba(37,99,235,0.48),
-        inset 0 0 10px rgba(255,255,255,0.08);
-}
-
-.icono-categoria{
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    margin: 0;
-    vertical-align: middle;
-    flex-shrink: 0;
-}
-
-.categoria-activa{
-    border-color: rgba(34,197,94,0.9) !important;
-
-    box-shadow:
-        0 0 22px rgba(34,197,94,0.55),
-        inset 0 0 16px rgba(34,197,94,0.14) !important;
-}
-
-.categoria-activa .categoria-icon-ring{
-    border-color: rgba(34,197,94,0.9);
-    box-shadow:
-        0 0 16px rgba(34,197,94,0.58),
-        inset 0 0 12px rgba(34,197,94,0.16);
-}
-
-/* ==============================
-   PRODUCTOS PREMIUM + AJUSTE ICONOS
-   DIGITAL CENTER M&A
-   Versión: PRODUCTOSPREMIUM1S
-============================== */
-
-/* Panel premium de productos */
-.productos-premium-panel{
-    position: relative !important;
-    overflow: hidden !important;
-    padding: 18px !important;
-    border-radius: 30px !important;
-
-    background:
-        radial-gradient(circle at 12% 0%, rgba(96,165,250,0.30), transparent 28%),
-        radial-gradient(circle at 100% 10%, rgba(34,197,94,0.14), transparent 34%),
-        linear-gradient(145deg, rgba(2,6,23,0.96), rgba(15,23,42,0.90)) !important;
-
-    border: 1px solid rgba(96,165,250,0.46) !important;
-
-    box-shadow:
-        0 0 28px rgba(37,99,235,0.34),
-        0 20px 55px rgba(0,0,0,0.42),
-        inset 0 0 32px rgba(96,165,250,0.08) !important;
-}
-
-.productos-premium-panel::before{
-    content: "" !important;
-    position: absolute !important;
-    inset: 1px !important;
-    border-radius: 29px !important;
-    border: 1px solid rgba(255,255,255,0.06) !important;
-    pointer-events: none !important;
-}
-
-.productos-premium-orbita{
-    position: absolute !important;
-    width: 160px !important;
-    height: 160px !important;
-    right: -70px !important;
-    top: -64px !important;
-    border-radius: 50% !important;
-    background: rgba(37,99,235,0.18) !important;
-    filter: blur(2px) !important;
-    pointer-events: none !important;
-}
-
-.productos-premium-header{
-    position: relative !important;
-    z-index: 2 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-
-    margin-bottom: 14px !important;
-}
-
-.productos-premium-logo{
-    width: 58px !important;
-    height: 58px !important;
-    min-width: 58px !important;
-    border-radius: 21px !important;
+    width: 54px !important;
+    height: 54px !important;
 
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 
-    background:
-        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.28), transparent 25%),
-        linear-gradient(145deg, #1d4ed8, #2563eb 60%, #0f172a) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
 
-    border: 1px solid rgba(147,197,253,0.72) !important;
+    clip-path:
+        polygon(
+            18% 0,
+            82% 0,
+            100% 18%,
+            100% 82%,
+            82% 100%,
+            18% 100%,
+            0 82%,
+            0 18%
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(148, 163, 184, 0.80),
+            rgba(51, 65, 85, 0.72) 22%,
+            rgba(2, 6, 23, 0.96) 44%,
+            rgba(2, 6, 23, 0.96) 58%,
+            rgba(51, 65, 85, 0.72) 80%,
+            rgba(148, 163, 184, 0.80)
+        ) !important;
 
     box-shadow:
-        0 0 22px rgba(96,165,250,0.76),
-        inset 0 0 15px rgba(255,255,255,0.10) !important;
+        inset 0 0 0 2px rgba(2, 6, 23, 0.94),
+        0 0 12px rgba(37, 99, 235, 0.18) !important;
 }
 
-.productos-premium-logo span{
-    font-size: 29px !important;
-    filter: drop-shadow(0 0 8px rgba(255,255,255,0.42));
-}
+.icono-categoria{
+    width: 32px !important;
+    height: 32px !important;
 
-.productos-premium-texto{
-    min-width: 0 !important;
-}
-
-.productos-eyebrow{
-    display: inline-flex !important;
-    align-items: center !important;
-    margin-bottom: 4px !important;
-    padding: 4px 9px !important;
-
-    border-radius: 999px !important;
-    background: rgba(37,99,235,0.22) !important;
-    border: 1px solid rgba(96,165,250,0.36) !important;
-
-    color: rgba(191,219,254,0.96) !important;
-    font-size: 10px !important;
-    font-weight: 900 !important;
-    letter-spacing: .6px !important;
-    text-transform: uppercase !important;
-}
-
-.productos-premium-texto h3{
     margin: 0 !important;
-    color: white !important;
-    font-size: clamp(25px, 5.4vw, 40px) !important;
-    line-height: 1.02 !important;
-    letter-spacing: -0.8px !important;
-    text-shadow: 0 0 16px rgba(96,165,250,0.35) !important;
+
+    object-fit: contain !important;
+
+    flex-shrink: 0;
+
+    filter:
+        drop-shadow(
+            0 4px 8px
+            rgba(0, 0, 0, 0.38)
+        );
 }
 
-.productos-premium-texto p{
-    margin: 6px 0 0 0 !important;
-    max-width: 640px !important;
-    color: rgba(226,232,240,0.72) !important;
-    font-size: 12px !important;
-    line-height: 1.25 !important;
+.categoria-activa{
+    color: #ffffff !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 28px rgba(37, 99, 235, 0.14),
+        0 18px 32px rgba(0, 0, 0, 0.34),
+        0 0 0 2px rgba(56, 189, 248, 0.88),
+        0 0 24px rgba(56, 189, 248, 0.36) !important;
 }
 
-.productos-premium-resumen{
-    position: relative !important;
-    z-index: 2 !important;
-
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-
-    margin-bottom: 14px !important;
-}
-
-.producto-mini-stat{
-    min-height: 52px !important;
-    padding: 10px 12px !important;
-    border-radius: 18px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-
+.categoria-activa::before,
+.categoria-activa::after{
     background:
-        radial-gradient(circle at 100% 0%, rgba(96,165,250,0.22), transparent 44%),
-        rgba(2,6,23,0.48) !important;
-
-    border: 1px solid rgba(96,165,250,0.34) !important;
-
-    box-shadow:
-        0 0 14px rgba(37,99,235,0.22),
-        inset 0 0 12px rgba(255,255,255,0.04) !important;
-}
-
-.producto-mini-stat span{
-    font-size: 20px !important;
-}
-
-.producto-mini-stat strong{
-    color: rgba(255,255,255,0.88) !important;
-    font-size: 11px !important;
-    line-height: 1.1 !important;
-    font-weight: 900 !important;
-}
-
-.productos-premium-panel .productos-grid{
-    position: relative !important;
-    z-index: 2 !important;
-
-    border-radius: 22px !important;
-    padding: 8px 14px 26px 8px !important;
-
-    background: rgba(2,6,23,0.28) !important;
-    border: 1px solid rgba(96,165,250,0.16) !important;
-}
-
-/* Pequeño refinamiento premium para las tarjetas de productos dentro del nuevo panel */
-.productos-premium-panel .producto-card{
-    border-radius: 22px !important;
-    border-color: rgba(96,165,250,0.38) !important;
+        linear-gradient(
+            90deg,
+            transparent,
+            #7dd3fc,
+            #38bdf8,
+            #7dd3fc,
+            transparent
+        );
 
     box-shadow:
-        0 0 18px rgba(37,99,235,0.24),
-        0 14px 24px rgba(0,0,0,0.34),
-        inset 0 0 14px rgba(255,255,255,0.035) !important;
+        0 0 13px rgba(56, 189, 248, 0.82);
+
+    opacity: 1;
 }
 
-.productos-premium-panel .producto-card img{
-    border-radius: 18px !important;
+.categoria-activa .categoria-icon-ring{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(226, 232, 240, 0.92),
+            rgba(100, 116, 139, 0.78) 20%,
+            rgba(15, 23, 42, 0.98) 44%,
+            rgba(15, 23, 42, 0.98) 58%,
+            rgba(71, 85, 105, 0.80) 80%,
+            rgba(203, 213, 225, 0.90)
+        ) !important;
+
+    box-shadow:
+        inset 0 0 0 2px rgba(2, 6, 23, 0.94),
+        0 0 18px rgba(56, 189, 248, 0.42) !important;
 }
 
-/* FIN PRODUCTOS PREMIUM
-============================== */
+@media (prefers-reduced-motion: reduce){
 
-/* PRODUCTOS PREMIUM2 */
-.productos-premium-panel{
- background:linear-gradient(145deg,rgba(2,6,23,.95),rgba(30,64,175,.18)) !important;
- border:1px solid rgba(96,165,250,.45)!important;
- border-radius:28px!important;
- box-shadow:0 0 28px rgba(37,99,235,.35), inset 0 0 24px rgba(96,165,250,.08)!important;
- padding:18px!important;
-}
-.productos-premium-panel .productos-grid{
- height:70vh!important;
- background:transparent!important;
- border:none!important;
- padding:4px!important;
+    #categoriasMenu,
+    .categoria-card{
+        transition: none !important;
+    }
+
 }
 
 /* =========================================================
-   AJUSTES COMPLEMENTARIOS DEL CATÁLOGO
+   FASE 29.3.1 — ACCIONES SECUNDARIAS COMPACTAS
+   Corrige el texto cortado del botón TRANSFERIR.
 ========================================================= */
 
-.icono-pantalla{
-    width:
-        50px;
+.producto-card-acciones-secundarias{
+    grid-template-columns:
+        minmax(78px, 1fr)
+        30px
+        30px !important;
 
-    height:
-        50px;
+    gap:
+        4px !important;
 }
 
-.producto-card button{
-    flex-shrink:
+.producto-card .btn-transferir-stock{
+    min-width:
+        0 !important;
+
+    padding:
+        0
+        4px !important;
+
+    overflow:
+        hidden;
+
+    font-size:
+        7px !important;
+
+    letter-spacing:
+        -0.15px !important;
+
+    text-overflow:
+        clip;
+
+    white-space:
+        nowrap;
+}
+
+.producto-card .btn-editar-producto,
+.producto-card .btn-eliminar-producto{
+    width:
+        30px !important;
+
+    min-width:
+        30px !important;
+
+    max-width:
+        30px !important;
+
+    padding:
         0 !important;
 }
 
-
 /* =========================================================
-   VARIANTE COMPACTA PARA VENDEDORES
+   FASE 29.3.3 — ALTURA UNIFICADA DEL CATÁLOGO
+   El panel de productos queda alineado con el carrito.
 ========================================================= */
 
-body.rol-vendedor .producto-card{
-    min-height:
-        560px !important;
-}
-
-body.rol-vendedor .producto-card img{
+.panel-productos,
+.productos-premium-panel{
     height:
-        140px !important;
-}
+        var(--pos-panel-height, 710px) !important;
 
-body.rol-vendedor .producto-card h3{
     min-height:
-        80px !important;
+        var(--pos-panel-height, 710px) !important;
 
     max-height:
-        80px !important;
+        var(--pos-panel-height, 710px) !important;
+}
 
-    font-size:
+.productos-grid,
+.productos-premium-panel .productos-grid{
+    height:
+        100% !important;
+
+    max-height:
+        100% !important;
+
+    padding-bottom:
         18px !important;
-}
-
-body.rol-vendedor .producto-card p{
-    margin:
-        4px 0 !important;
-
-    font-size:
-        13px !important;
-}
-
-body.rol-vendedor .stock-tiendas-card{
-    margin-top:
-        10px !important;
-
-    padding:
-        12px !important;
-}
-
-body.rol-vendedor .producto-card .btn-agregar{
-    margin-top:
-        auto !important;
 }

@@ -1,36 +1,101 @@
 <div class="zona-pos">
 
-    <div class="panel-carrito">
+    <aside class="panel-carrito carrito-enterprise">
 
-<h3 id="tituloCarrito">
-    🛒 Carrito (0)
-</h3>
+        <span class="carrito-corner carrito-corner-tl" aria-hidden="true"></span>
+        <span class="carrito-corner carrito-corner-tr" aria-hidden="true"></span>
+        <span class="carrito-corner carrito-corner-bl" aria-hidden="true"></span>
+        <span class="carrito-corner carrito-corner-br" aria-hidden="true"></span>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                    <th></th>
-                </tr>
-            </thead>
+        <div class="carrito-rail carrito-rail-left" aria-hidden="true"></div>
+        <div class="carrito-rail carrito-rail-right" aria-hidden="true"></div>
 
-            <tbody id="carritoTabla"></tbody>
-        </table>
+        <header class="carrito-enterprise-header">
+            <div class="carrito-enterprise-titulo">
+                <span class="carrito-enterprise-icono" aria-hidden="true">🛒</span>
+                <div>
+                    <small>Módulo de venta</small>
+                    <h3 id="tituloCarrito">Carrito (0)</h3>
+                </div>
+            </div>
 
-        <h2 id="totalVenta">
-            Total: S/ 0
-        </h2>
+            <span class="carrito-enterprise-estado">Activo</span>
+        </header>
 
-       <button onclick="abrirCobroVenta()">
-    💳 Cobrar Venta
-</button>
+        <div class="carrito-enterprise-stats">
+            <article>
+                <span>Productos</span>
+                <strong id="carritoProductosUnicos">0</strong>
+            </article>
 
-<div class="carrito-resize-handle" title="Redimensionar carrito"></div>
+            <article>
+                <span>Artículos</span>
+                <strong id="carritoTotalArticulos">0</strong>
+            </article>
 
-</div>
+            <article>
+                <span>Subtotal</span>
+                <strong id="carritoSubtotal">S/ 0.00</strong>
+            </article>
+        </div>
+
+        <div class="carrito-tabla-wrap">
+            <table class="carrito-tabla-enterprise">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cant.</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                        <th aria-label="Eliminar"></th>
+                    </tr>
+                </thead>
+                <tbody id="carritoTabla"></tbody>
+            </table>
+        </div>
+
+        <section class="carrito-resumen-enterprise">
+            <div class="carrito-resumen-item">
+                <span>Subtotal</span>
+                <strong id="carritoResumenSubtotal">S/ 0.00</strong>
+            </div>
+
+            <div class="carrito-resumen-separador" aria-hidden="true"></div>
+
+            <div class="carrito-resumen-item carrito-resumen-descuento">
+                <span>Descuento</span>
+                <strong id="carritoResumenDescuento">- S/ 0.00</strong>
+            </div>
+
+            <div class="carrito-resumen-separador" aria-hidden="true"></div>
+
+            <div class="carrito-resumen-item">
+                <span>Total artículos</span>
+                <strong id="carritoResumenArticulos">0</strong>
+            </div>
+        </section>
+
+        <section class="carrito-total-enterprise">
+            <div class="carrito-total-contenido">
+                <small>Total a pagar</small>
+                <h2 id="totalVenta">S/ 0.00</h2>
+            </div>
+        </section>
+
+        <div class="carrito-acciones-enterprise">
+            <button type="button" class="btn-cobrar-enterprise" onclick="abrirCobroVenta()">
+                <span aria-hidden="true">▣</span>
+                Cobrar venta
+            </button>
+
+            <button type="button" class="btn-cancelar-enterprise" onclick="cancelarVenta()">
+                <span aria-hidden="true">×</span>
+                Cancelar venta
+            </button>
+        </div>
+
+        <div class="carrito-resize-handle" title="Redimensionar carrito"></div>
+    </aside>
 
 <div id="panelCobroVenta" style="display:none;">
 

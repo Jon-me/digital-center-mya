@@ -1,7 +1,13 @@
 /* =========================================================
    DIGITAL CENTER M&A — BASE
-   FASE 25 — ARQUITECTURA CSS ENTERPRISE
+   FASE 29.1 — REFINAMIENTO PREMIUM
    Entorno: escritorio
+
+   Objetivo:
+   - Reducir ruido visual global.
+   - Evitar que todos los botones compitan por atención.
+   - Mejorar foco, contraste y movimiento.
+   - Mantener compatibilidad con los módulos actuales.
 ========================================================= */
 
 
@@ -9,20 +15,26 @@
    NORMALIZACIÓN GLOBAL
 ========================================================= */
 
-* {
+*,
+*::before,
+*::after{
     box-sizing: border-box;
 }
 
+html{
+    color-scheme: dark;
+}
 
-/* =========================================================
-   DOCUMENTO
-========================================================= */
+body{
+    min-width: 1080px;
 
-body {
     margin: 0;
     padding: var(--space-5);
 
+    color: var(--color-text-primary);
+
     font-family: var(--font-family-base);
+    line-height: var(--line-height-base);
 
     background:
         linear-gradient(
@@ -30,6 +42,10 @@ body {
             var(--color-background-primary),
             var(--color-background-secondary)
         );
+
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 
@@ -37,97 +53,166 @@ body {
    ENCABEZADOS GLOBALES
 ========================================================= */
 
-h1 {
-    margin-block-start: 0.67em;
-    margin-block-end: 0.67em;
-
-    color: var(--color-text-primary);
-
-    font-size: var(--font-size-4xl);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: 2px;
-    text-align: center;
-}
-
+h1,
 h2,
-h3 {
+h3{
     color: var(--color-text-primary);
 }
 
+h1{
+    margin-block:
+        0.67em;
 
-/* =========================================================
-   ESTADOS DE FOCO GLOBALES
-========================================================= */
+    font-size:
+        var(--font-size-4xl);
 
-input:focus {
-    border-color: var(--color-brand-600);
+    font-weight:
+        var(--font-weight-bold);
 
-    box-shadow:
-        0 0 5px rgba(37, 99, 235, 0.40);
+    letter-spacing:
+        1px;
+
+    text-align:
+        center;
 }
 
+
 /* =========================================================
-   BOTONES GLOBALES
+   ELEMENTOS INTERACTIVOS
 ========================================================= */
 
-button {
-    padding: var(--space-3) var(--space-5);
+button,
+input,
+select,
+textarea{
+    font: inherit;
+}
+
+button{
+    min-height:
+        var(--control-height-sm);
+
+    padding:
+        var(--space-3)
+        var(--space-5);
+
+    color:
+        var(--color-text-primary);
 
     background:
         linear-gradient(
-            135deg,
-            var(--color-brand-800),
-            var(--color-brand-600)
+            180deg,
+            rgba(30, 58, 138, 0.96),
+            rgba(29, 78, 216, 0.92)
         );
-
-    color: var(--color-text-primary);
 
     border:
         var(--border-width-default)
         solid
-        rgba(96, 165, 250, 0.60);
+        rgba(96, 165, 250, 0.48);
 
-    border-radius: var(--radius-md);
+    border-radius:
+        var(--radius-md);
 
     box-shadow:
-        var(--shadow-brand-soft);
+        0 6px 16px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
-    font-family: inherit;
-    font-weight: var(--font-weight-bold);
+    font-weight:
+        var(--font-weight-bold);
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
     transition:
-        transform var(--transition-base),
-        background var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+        transform var(--duration-fast) var(--ease-standard),
+        filter var(--duration-fast) var(--ease-standard),
+        background var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard);
 }
 
-button:hover {
+button:hover{
     transform:
-        translateY(-3px)
-        scale(1.03);
+        translateY(-1px);
 
-    background:
-        linear-gradient(
-            135deg,
-            var(--color-brand-800),
-            var(--color-brand-600)
-        ) !important;
+    filter:
+        brightness(1.06);
+
+    border-color:
+        rgba(147, 197, 253, 0.70);
 
     box-shadow:
-        0 0 20px rgba(96, 165, 250, 0.85),
-        inset 0 0 15px rgba(255, 255, 255, 0.12) !important;
+        0 9px 22px rgba(0, 0, 0, 0.27),
+        0 0 0 1px rgba(59, 130, 246, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
+button:active{
+    transform:
+        translateY(0);
+
+    filter:
+        brightness(0.98);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{
+    outline:
+        none;
+
+    box-shadow:
+        var(--focus-ring);
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled{
+    opacity:
+        var(--opacity-disabled);
+
+    cursor:
+        not-allowed;
+}
+
+
 /* =========================================================
-   OVERLAY GLOBAL
+   FOCO DE CAMPOS
+========================================================= */
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:
+        var(--border-color-focus);
+
+    outline:
+        none;
+}
+
+
+/* =========================================================
+   SELECCIÓN
+========================================================= */
+
+::selection{
+    color:
+        #ffffff;
+
+    background:
+        rgba(37, 99, 235, 0.72);
+}
+
+
+/* =========================================================
+   OVERLAY ATMOSFÉRICO GLOBAL
 ========================================================= */
 
 body::before{
-    content:
-        "";
+    content: "";
 
     position:
         fixed;
@@ -136,11 +221,40 @@ body::before{
         0;
 
     background:
-        rgba(0, 0, 0, 0.25);
+        linear-gradient(
+            180deg,
+            rgba(1, 6, 15, 0.32),
+            rgba(1, 6, 15, 0.46)
+        );
 
     pointer-events:
         none;
 
     z-index:
         -1;
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+@media (prefers-reduced-motion: reduce){
+
+    *,
+    *::before,
+    *::after{
+        scroll-behavior:
+            auto !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+
 }

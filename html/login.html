@@ -1,21 +1,8 @@
-<video
-    autoplay
-    muted
-    loop
-    playsinline
-    id="videoFondoLaptop"
->
-    <source
-        src="./video-login.mp4?v=LAPTOP1"
-        type="video/mp4"
-    >
+<video autoplay muted loop playsinline id="videoFondoLaptop">
+    <source src="./video-login.mp4?v=LAPTOP1" type="video/mp4">
 </video>
 
-<button
-    type="button"
-    id="btnSonido"
-    onclick="toggleSonido()"
->
+<button type="button" id="btnSonido" onclick="toggleSonido()">
     🔊 Activar sonido
 </button>
 
@@ -25,27 +12,100 @@
     style="display: none;"
 >
 
-    <h2>Iniciar Sesión</h2>
+    <div class="login-frame">
 
-    <input
-        type="text"
-        id="usuario"
-        placeholder="Usuario"
-        autocomplete="off"
-    >
+        <div class="login-brand">
+            <img
+                src="./logo-login-transformer.png?v=LOGIN27-5"
+                alt="Digital Center M&A"
+                class="login-brand-logo"
+            >
+        </div>
 
-    <input
-        type="password"
-        id="password"
-        placeholder="Contraseña"
-        autocomplete="off"
-    >
+        <div class="login-form">
 
-    <button
-        type="button"
-        onclick="iniciarSesion()"
-    >
-        Entrar
-    </button>
+            <label class="login-field">
+
+                <span
+                    class="login-field-icon"
+                    aria-hidden="true"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+
+                <input
+                    type="text"
+                    id="usuario"
+                    placeholder="Usuario"
+                    autocomplete="username"
+                    aria-label="Usuario"
+                >
+
+            </label>
+
+            <label class="login-field">
+
+                <span
+                    class="login-field-icon"
+                    aria-hidden="true"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <rect
+                            x="5"
+                            y="10"
+                            width="14"
+                            height="10"
+                            rx="2"
+                        ></rect>
+
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                </span>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Contraseña"
+                    autocomplete="current-password"
+                    aria-label="Contraseña"
+                >
+
+            </label>
+
+            <button
+                type="button"
+                class="login-submit"
+                onclick="iniciarSesion()"
+            >
+                <span>Entrar</span>
+
+                <span
+                    class="login-submit-arrow"
+                    aria-hidden="true"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <path d="M5 12h14"></path>
+                        <path d="m13 6 6 6-6 6"></path>
+                    </svg>
+                </span>
+            </button>
+
+        </div>
+
+        <div class="login-security">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+                <path d="m9 12 2 2 4-4"></path>
+            </svg>
+
+            <span>Acceso seguro y privado</span>
+
+        </div>
+
+    </div>
 
 </div>

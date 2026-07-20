@@ -1,100 +1,451 @@
 /* =========================================================
-   DIGITAL CENTER M&A — LOGIN
-   Entorno: escritorio
+   DIGITAL CENTER M&A — LOGIN TRANSFORMER
+   FASE 27.5
+   PANEL LIMPIO, METÁLICO Y COMPACTO
+========================================================= */
+
+/* =========================================================
+   PANEL PRINCIPAL
 ========================================================= */
 
 #login{
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
+    z-index: 20;
 
-    width: 100%;
-    max-width: 300px;
+    width: min(390px, calc(100vw - 40px));
 
-    padding: 18px 20px;
+    padding: 1px;
 
-    text-align: center;
+    border-radius: 25px;
 
     background:
-        rgba(15, 23, 42, 0.15);
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.45);
-
-    border-radius: var(--radius-4xl);
+        linear-gradient(
+            135deg,
+            rgba(37, 99, 235, 0.92),
+            rgba(96, 165, 250, 0.34) 36%,
+            rgba(15, 23, 42, 0.28) 64%,
+            rgba(37, 99, 235, 0.90)
+        );
 
     box-shadow:
-        0 25px 60px
-        rgba(0, 0, 0, 0.45);
-
-    backdrop-filter: var(--blur-lg);
-    -webkit-backdrop-filter: var(--blur-lg);
+        0 34px 90px rgba(0, 0, 0, 0.64),
+        0 12px 34px rgba(0, 0, 0, 0.38),
+        0 0 24px rgba(37, 99, 235, 0.12);
 
     transform:
         translate(-50%, -50%);
+
+    isolation:
+        isolate;
+
+    overflow:
+        hidden;
 }
 
-#login h2{
-    margin-bottom: 12px;
+#login::before{
+    content: "";
 
-    color: var(--color-text-primary);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
 
-    font-size: var(--font-size-xl);
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(37, 99, 235, 0.13),
+            transparent 35%
+        );
+
+    pointer-events:
+        none;
+}
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.login-frame{
+    position: relative;
+    z-index: 2;
+
+    padding:
+        28px 28px 24px;
+
+    color:
+        var(--color-text-primary);
+
+    text-align:
+        center;
+
+    border-radius:
+        24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(6, 13, 27, 0.97),
+            rgba(2, 7, 17, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 46px rgba(2, 6, 23, 0.48);
+
+    backdrop-filter:
+        blur(18px)
+        saturate(115%);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(115%);
+}
+
+/* =========================================================
+   MARCA
+========================================================= */
+
+.login-brand{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 132px;
+
+    margin-bottom: 20px;
+}
+
+.login-brand-logo{
+    display: block;
+
+    width: min(320px, 100%);
+    height: auto;
+
+    object-fit:
+        contain;
+
+    filter:
+        drop-shadow(
+            0 12px 24px
+            rgba(0, 0, 0, 0.42)
+        );
+}
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.login-form{
+    display: grid;
+
+    gap: 14px;
+}
+
+.login-field{
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 58px;
+
+    background:
+        rgba(1, 6, 16, 0.66);
+
+    border:
+        1px solid
+        rgba(100, 116, 139, 0.42);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+
+    transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.login-field:focus-within{
+    background:
+        rgba(1, 6, 16, 0.86);
+
+    border-color:
+        rgba(59, 130, 246, 0.88);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.13),
+        0 12px 28px rgba(0, 0, 0, 0.22);
+
+    transform:
+        translateY(-1px);
+}
+
+.login-field-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    min-width: 58px;
+    height: 56px;
+
+    color:
+        #2f8cff;
+
+    border-right:
+        1px solid
+        rgba(100, 116, 139, 0.36);
+}
+
+.login-field-icon svg,
+.login-security svg,
+.login-submit-arrow svg{
+    fill:
+        none;
+
+    stroke:
+        currentColor;
+
+    stroke-linecap:
+        round;
+
+    stroke-linejoin:
+        round;
+}
+
+.login-field-icon svg{
+    width: 22px;
+    height: 22px;
+
+    stroke-width:
+        1.8;
 }
 
 #login input{
     display: block;
 
-    width: 85%;
-    max-width: 280px;
+    width: 100%;
+    min-width: 0;
+    height: 56px;
 
-    margin:
-        0 auto 10px auto;
-
-    padding:
-        9px 14px;
+    margin: 0;
+    padding: 0 18px;
 
     color:
-        var(--color-text-primary);
-
-    font-size: 15px;
+        rgba(248, 250, 252, 0.96);
 
     background:
-        rgba(255, 255, 255, 0.05);
+        transparent;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.35);
+        0;
 
     border-radius:
-        var(--radius-xs);
+        0;
 
-    box-shadow: none;
+    box-shadow:
+        none;
+
+    outline:
+        none;
+
+    font-family:
+        inherit;
+
+    font-size:
+        16px;
+
+    font-weight:
+        var(--font-weight-medium);
+}
+
+#login input:focus{
+    border:
+        0;
+
+    box-shadow:
+        none;
 }
 
 #login input::placeholder{
     color:
-        var(--color-text-soft);
-}
+        rgba(203, 213, 225, 0.62);
 
-#login button{
-    display: block;
-
-    width: 85%;
-    max-width: 280px;
-
-    margin:
-        5px auto 0 auto;
-
-    padding: 10px;
-
-    border-radius:
-        var(--radius-xs);
+    opacity:
+        1;
 }
 
 /* =========================================================
-   VIDEO DE FONDO DEL LOGIN — ESCRITORIO
+   BOTÓN
+========================================================= */
+
+#login .login-submit{
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 56px;
+
+    margin-top: 2px;
+    padding: 0 56px;
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            180deg,
+            #1e9bff,
+            #0878f5 52%,
+            #0759d8
+        );
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.72);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        0 14px 34px rgba(8, 105, 237, 0.32),
+        0 0 18px rgba(14, 165, 233, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.26);
+
+    font-family:
+        inherit;
+
+    font-size:
+        17px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        filter 160ms ease;
+}
+
+#login .login-submit:hover{
+    transform:
+        translateY(-1px);
+
+    filter:
+        brightness(1.08);
+
+    border-color:
+        rgba(219, 234, 254, 0.94);
+
+    box-shadow:
+        0 17px 38px rgba(8, 105, 237, 0.40),
+        0 0 20px rgba(14, 165, 233, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+#login .login-submit:active{
+    transform:
+        translateY(0);
+}
+
+.login-submit-arrow{
+    position:
+        absolute;
+
+    right:
+        18px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    width:
+        24px;
+
+    height:
+        24px;
+
+    color:
+        rgba(255, 255, 255, 0.96);
+
+    transition:
+        transform 160ms ease;
+}
+
+.login-submit:hover .login-submit-arrow{
+    transform:
+        translateX(2px);
+}
+
+.login-submit-arrow svg{
+    width:
+        21px;
+
+    height:
+        21px;
+
+    stroke-width:
+        2;
+}
+
+/* =========================================================
+   SEGURIDAD
+========================================================= */
+
+.login-security{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    margin-top: 22px;
+
+    color:
+        rgba(203, 213, 225, 0.66);
+
+    font-size:
+        12px;
+
+    font-weight:
+        var(--font-weight-medium);
+
+    letter-spacing:
+        0.1px;
+}
+
+.login-security svg{
+    width: 18px;
+    height: 18px;
+
+    color:
+        #2088ff;
+
+    stroke-width:
+        1.8;
+}
+
+/* =========================================================
+   VIDEO DE FONDO — SIN CAMBIOS
 ========================================================= */
 
 #videoFondoLaptop{
@@ -121,7 +472,7 @@
 }
 
 /* =========================================================
-   CONTROL DE SONIDO DEL LOGIN
+   CONTROL DE SONIDO
 ========================================================= */
 
 #btnSonido{
@@ -138,44 +489,70 @@
         9999;
 
     padding:
-        10px 15px;
+        9px 13px;
 
     color:
         var(--color-text-primary);
 
     background:
-        rgba(0, 0, 0, 0.55);
+        rgba(2, 6, 23, 0.68);
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.20);
+        rgba(148, 163, 184, 0.24);
 
     border-radius:
-        var(--radius-md);
+        10px;
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.24);
 
     backdrop-filter:
-        blur(10px);
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
 
     font-size:
-        14px;
+        12px;
+
+    font-weight:
+        var(--font-weight-semibold);
 
     cursor:
         pointer;
 
     transition:
-        transform var(--transition-base),
-        border-color var(--transition-base),
-        box-shadow var(--transition-base);
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
 }
 
 #btnSonido:hover{
     transform:
-        translateY(-2px);
+        translateY(-1px);
+
+    background:
+        rgba(15, 23, 42, 0.82);
 
     border-color:
-        rgba(96, 165, 250, 0.70);
+        rgba(96, 165, 250, 0.56);
+}
 
-    box-shadow:
-        0 0 16px
-        rgba(37, 99, 235, 0.45);
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+@media (prefers-reduced-motion: reduce){
+
+    #login *,
+    #login *::before,
+    #login *::after{
+        animation:
+            none !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+
 }

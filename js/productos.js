@@ -117,75 +117,170 @@ function reconstruirIndiceBusquedaCatalogo(){
 
 }
 
-    function renderProductoCard(producto, rolActivo){
+function renderProductoCard(producto, rolActivo){
 
-        let stockTiendas = obtenerStockTiendas(producto);
-        let stockTotal = obtenerStockTotal(producto);
+    const stockTiendas =
+        obtenerStockTiendas(producto);
 
-        return `
+    const stockTotal =
+        obtenerStockTotal(producto);
+
+    return `
         <div
-    class="producto-card"
-    data-producto-id="${producto.id}">
+            class="producto-card"
+            data-producto-id="${producto.id}"
+        >
 
             <img
-    class="imagen-producto-lazy"
-    loading="lazy"
-    src="data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%221100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Cargando...</text></svg>"
-    data-src="${producto.imagen || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ffffff%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%230f172a%22 font-size=%2220%22 font-family=%22Arial%22>Sin imagen</text></svg>'}"
-/>
+                class="imagen-producto-lazy"
+                loading="lazy"
 
-            <h3>${producto.producto}</h3>
-            <p>Código: ${producto.codigo}</p>
-            <p>Categoría: ${producto.categoria}</p>
+                src="data:image/svg+xml;utf8,
+                <svg xmlns=%22http://www.w3.org/2000/svg%22
+                width=%22300%22
+                height=%22180%22>
+
+                    <rect
+                        width=%22100%25%22
+                        height=%22100%25%22
+                        fill=%22%23ffffff%22
+                    />
+
+                    <text
+                        x=%2250%25%22
+                        y=%2250%25%22
+                        text-anchor=%22middle%22
+                        dominant-baseline=%22middle%22
+                        fill=%22%230f172a%22
+                        font-size=%2220%22
+                        font-family=%22Arial%22
+                    >
+                        Cargando...
+                    </text>
+
+                </svg>"
+
+                data-src="${
+                    producto.imagen ||
+                    `data:image/svg+xml;utf8,
+                    <svg xmlns=%22http://www.w3.org/2000/svg%22
+                    width=%22300%22
+                    height=%22180%22>
+
+                        <rect
+                            width=%22100%25%22
+                            height=%22100%25%22
+                            fill=%22%23ffffff%22
+                        />
+
+                        <text
+                            x=%2250%25%22
+                            y=%2250%25%22
+                            text-anchor=%22middle%22
+                            dominant-baseline=%22middle%22
+                            fill=%22%230f172a%22
+                            font-size=%2220%22
+                            font-family=%22Arial%22
+                        >
+                            Sin imagen
+                        </text>
+
+                    </svg>`
+                }"
+            >
+
+            <h3>
+                ${producto.producto}
+            </h3>
+
+            <p>
+                Código: ${producto.codigo}
+            </p>
+
+            <p>
+                Categoría: ${producto.categoria}
+            </p>
 
             <div class="stock-tiendas-card">
 
-    <p class="stock-total">
-        Stock Total: ${stockTotal}
-    </p>
+                <p class="stock-total">
+                    Stock Total: ${stockTotal}
+                </p>
 
-    ${renderizarStockHTML(stockTiendas)}
+                ${renderizarStockHTML(stockTiendas)}
 
-</div>
-
-            ${
-                rolActivo === "admin"
-                ? `
-                    <p>Compra: S/ ${producto.precioCompra || 0}</p>
-                    <p>Venta: S/ ${producto.precio}</p>
-                `
-                : `
-                    <p>Precio: S/ ${producto.precio}</p>
-                `
-            }
-
-            <button class="btn-agregar" onclick="window.agregarDirecto('${producto.id}')">
-                🛒 Agregar
-            </button>
+            </div>
 
             ${
                 rolActivo === "admin"
-                ? `
-                    <button class="btn-transferir-stock" onclick="window.abrirTransferenciaStock('${producto.id}')">
-                        🔄 Transferir
-                    </button>
+                    ? `
+                        <p>
+                            Compra: S/ ${producto.precioCompra || 0}
+                        </p>
 
-                    <button onclick="window.editarProducto('${producto.id}')">
-                        ✏️ Editar
-                    </button>
-
-                    <button onclick="window.eliminarProducto('${producto.id}')">
-                        🗑️ Eliminar
-                    </button>
-                `
-                : ""
+                        <p>
+                            Venta: S/ ${producto.precio}
+                        </p>
+                    `
+                    : `
+                        <p>
+                            Precio: S/ ${producto.precio}
+                        </p>
+                    `
             }
+
+            <div class="producto-card-acciones">
+
+                <button
+                    class="btn-agregar"
+                    onclick="window.agregarDirecto('${producto.id}')"
+                >
+                    🛒 Agregar
+                </button>
+
+                ${
+                    rolActivo === "admin"
+                        ? `
+                            <div class="producto-card-acciones-secundarias">
+
+                                <button
+                                    class="btn-transferir-stock"
+                                    onclick="window.abrirTransferenciaStock('${producto.id}')"
+                                >
+                                    Transferir
+                                </button>
+
+                                <button
+                                    class="btn-editar-producto"
+                                    onclick="window.editarProducto('${producto.id}')"
+                                    title="Editar producto"
+                                    aria-label="Editar producto"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    class="btn-eliminar-producto"
+                                    onclick="window.eliminarProducto('${producto.id}')"
+                                    title="Eliminar producto"
+                                    aria-label="Eliminar producto"
+                                >
+                                    🗑
+                                </button>
+
+                            </div>
+                        `
+                        : ""
+                }
+
+            </div>
 
         </div>
-        `;
-    }
+    `;
 
-    function renderBotonVerMas(){
+}
+
+function renderBotonVerMas(){
 
     return "";
 

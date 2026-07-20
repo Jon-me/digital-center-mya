@@ -275,44 +275,15 @@ tr:hover{
 }
 
 /* =========================================================
-   BOTONES AZULES NEÓN
+   BOTONES COMPARTIDOS
+   El catálogo define sus botones en catalogo.css
 ========================================================= */
-
-.btn-toggle-producto,
-#tablaProductos button,
-.btn-agregar{
-    background:
-        linear-gradient(
-            135deg,
-            var(--color-background-primary),
-            var(--color-brand-700)
-        ) !important;
-
-    border:
-        1px solid
-        rgba(96, 165, 250, 0.65) !important;
-
-    box-shadow:
-        0 0 12px rgba(37, 99, 235, 0.45),
-        inset 0 0 12px rgba(96, 165, 250, 0.15) !important;
-}
-
-.btn-toggle-producto:hover,
-#tablaProductos button:hover,
-.btn-agregar:hover{
-    background:
-        var(--gradient-brand) !important;
-
-    box-shadow:
-        var(--shadow-button-hover) !important;
-}
 
 /* =========================================================
    BOTÓN CRÍTICO
 ========================================================= */
 
-.btn-danger,
-#tablaProductos button[onclick*="eliminarProducto"]{
+.btn-danger{
     background:
         linear-gradient(
             135deg,
@@ -332,8 +303,7 @@ tr:hover{
         rgba(239, 68, 68, 0.65) !important;
 }
 
-.btn-danger:hover,
-#tablaProductos button[onclick*="eliminarProducto"]:hover{
+.btn-danger:hover:hover{
     background:
         linear-gradient(
             135deg,

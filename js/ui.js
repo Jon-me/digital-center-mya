@@ -201,6 +201,8 @@ function inicializarMenuCategorias(){
 
     );
 
+    cerrarCategoriasMenu();
+
 }
 
     return{
