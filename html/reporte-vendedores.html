@@ -1,20 +1,103 @@
 <div id="panelReporteVendedores" style="display:none;">
 
-    <h3>👤 Reporte por Vendedor</h3>
+    <section class="vendedores-apple-panel">
 
-    <table>
+        <header class="vendedores-apple-header">
 
-        <thead>
-            <tr>
-                <th>Vendedor</th>
-                <th>Ventas</th>
-                <th>Total Vendido</th>
-                <th>Ganancia</th>
-            </tr>
-        </thead>
+            <div class="vendedores-apple-title">
+                <span class="vendedores-apple-icon">👥</span>
 
-        <tbody id="reporteVendedoresTabla"></tbody>
+                <div>
+                    <small>RENDIMIENTO COMERCIAL</small>
+                    <h2>Reporte por Vendedor</h2>
+                </div>
+            </div>
 
-    </table>
+            <div class="vendedores-periodo">
+                <small>VISTA ACUMULADA</small>
+                <strong>Historial completo</strong>
+            </div>
+
+        </header>
+
+        <section class="vendedores-kpis">
+
+            <article class="vendedor-kpi">
+                <span>👥</span>
+
+                <div>
+                    <small>Vendedores activos</small>
+                    <strong id="resumenVendedoresActivos">0</strong>
+                </div>
+            </article>
+
+            <article class="vendedor-kpi vendedor-kpi-ventas">
+                <span>🧾</span>
+
+                <div>
+                    <small>Total de ventas</small>
+                    <strong id="resumenVentasVendedores">0</strong>
+                </div>
+            </article>
+
+            <article class="vendedor-kpi vendedor-kpi-total">
+                <span>💳</span>
+
+                <div>
+                    <small>Total vendido</small>
+                    <strong id="resumenTotalVendido">S/ 0.00</strong>
+                </div>
+            </article>
+
+            <article class="vendedor-kpi vendedor-kpi-ganancia">
+                <span>📈</span>
+
+                <div>
+                    <small>Ganancia acumulada</small>
+                    <strong id="resumenGananciaVendedores">S/ 0.00</strong>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="vendedores-ranking-panel">
+
+            <header class="vendedores-ranking-header">
+
+                <div>
+                    <small>LEADERBOARD</small>
+                    <h3>Ranking comercial</h3>
+                </div>
+
+                <span class="vendedores-ranking-badge">
+                    Ordenado por ventas
+                </span>
+
+            </header>
+
+            <div id="reporteVendedoresLista" class="vendedores-ranking-list"></div>
+
+            <div class="vendedores-tabla-wrap">
+
+                <table class="vendedores-tabla">
+
+                    <thead>
+                        <tr>
+                            <th>Vendedor</th>
+                            <th>Ventas</th>
+                            <th>Total vendido</th>
+                            <th>Ganancia</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="reporteVendedoresTabla"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </section>
 
 </div>

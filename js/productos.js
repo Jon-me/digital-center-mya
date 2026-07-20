@@ -729,6 +729,144 @@ function obtenerStockFormulario(){
     return stockTiendas;
 }
 
+function actualizarModoFormularioProducto(modo){
+
+    const editando =
+        modo === "editar";
+
+    const titulo =
+        document.getElementById(
+            "tituloFormularioProducto"
+        );
+
+    const botonGuardar =
+        document.getElementById(
+            "btnGuardarProducto"
+        );
+
+    const botonCancelar =
+        document.getElementById(
+            "btnCancelarEdicionProducto"
+        );
+
+    if(titulo){
+
+        titulo.textContent =
+            editando
+                ? "Editar Producto"
+                : "Agregar Producto";
+
+    }
+
+    if(botonGuardar){
+
+        const texto =
+            botonGuardar.querySelector(
+                "span"
+            );
+
+        if(texto){
+
+            texto.textContent =
+                editando
+                    ? "Actualizar Producto"
+                    : "Guardar Producto";
+
+        }
+
+    }
+
+    if(botonCancelar){
+
+        botonCancelar.style.display =
+            editando
+                ? "inline-flex"
+                : "none";
+
+    }
+
+}
+
+function limpiarFormularioProducto(){
+
+    const idsCampos = [
+        "codigo",
+        "producto",
+        "categoria",
+        "precioCompra",
+        "precio",
+        "imagen"
+    ];
+
+    idsCampos.forEach(function(idCampo){
+
+        const campo =
+            document.getElementById(
+                idCampo
+            );
+
+        if(campo){
+
+            campo.value = "";
+
+        }
+
+    });
+
+    document
+        .querySelectorAll(
+            ".stock-sucursal-input"
+        )
+        .forEach(function(input){
+
+            input.value = "0";
+
+        });
+
+    const nombreImagen =
+        document.getElementById(
+            "nombreImagenProducto"
+        );
+
+    if(nombreImagen){
+
+        nombreImagen.textContent =
+            "Ninguna imagen seleccionada";
+
+    }
+
+    actualizarVistaPreviaProducto(
+        ""
+    );
+
+    state.indiceEditar = null;
+
+    actualizarModoFormularioProducto(
+        "agregar"
+    );
+
+}
+
+function prepararNuevoProducto(){
+
+    limpiarFormularioProducto();
+
+    setTimeout(function(){
+
+        document
+            .getElementById("codigo")
+            ?.focus();
+
+    }, 80);
+
+}
+
+function cancelarEdicionProducto(){
+
+    prepararNuevoProducto();
+
+}
+
 async function guardarProducto(){
 
     const codigoInput =
@@ -910,102 +1048,276 @@ async function guardarProducto(){
 
         state.indiceEditar = null;
 
-    }else{
+        }else{
 
         await addDoc(
             collection(db, "productos"),
             nuevoProducto
         );
 
-        alert("✅ Producto guardado correctamente");
+        alert(
+            "✅ Producto guardado correctamente"
+        );
 
     }
 
-    codigoInput.value = "";
-    productoInput.value = "";
-    categoriaInput.value = "";
-    precioCompraInput.value = "";
-    precioInput.value = "";
-    imagenInput.value = "";
+    limpiarFormularioProducto();
 
-    document
-        .querySelectorAll(".stock-sucursal-input")
-        .forEach(function(input){
-            input.value = "0";
-        });
+}
 
-    const nombreImagenProducto =
-        document.getElementById("nombreImagenProducto");
+function actualizarVistaPreviaProducto(urlImagen){
 
-    if(nombreImagenProducto){
-        nombreImagenProducto.innerHTML =
-            "Ninguna imagen seleccionada";
+    const vistaPrevia =
+        document.getElementById(
+            "vistaPreviaImagenProducto"
+        );
+
+    const estadoImagen =
+        document.getElementById(
+            "estadoImagenProducto"
+        );
+
+    if(!vistaPrevia || !estadoImagen){
+        return;
     }
+
+    if(urlImagen){
+
+        vistaPrevia.src =
+            urlImagen;
+
+        vistaPrevia.classList.add(
+            "is-visible"
+        );
+
+        estadoImagen.classList.add(
+            "is-hidden"
+        );
+
+        return;
+    }
+
+    vistaPrevia.removeAttribute(
+        "src"
+    );
+
+    vistaPrevia.classList.remove(
+        "is-visible"
+    );
+
+    estadoImagen.classList.remove(
+        "is-hidden"
+    );
+
 }
 
 function seleccionarImagenProducto(){
 
-    let imagenInput = document.getElementById("imagen");
-    let nombreImagenProducto = document.getElementById("nombreImagenProducto");
+    const imagenInput =
+        document.getElementById(
+            "imagen"
+        );
+
+    const nombreImagenProducto =
+        document.getElementById(
+            "nombreImagenProducto"
+        );
 
     if(!imagenInput || !nombreImagenProducto){
         return;
     }
 
-    let archivo = imagenInput.files[0];
+    const archivo =
+        imagenInput.files[0];
 
-    nombreImagenProducto.innerHTML = archivo
-        ? archivo.name
-        : "Ninguna imagen seleccionada";
+    nombreImagenProducto.textContent =
+        archivo
+            ? archivo.name
+            : "Ninguna imagen seleccionada";
+
+    if(!archivo){
+
+        actualizarVistaPreviaProducto(
+            ""
+        );
+
+        return;
+    }
+
+    const lector =
+        new FileReader();
+
+    lector.onload = function(evento){
+
+        actualizarVistaPreviaProducto(
+            evento.target.result
+        );
+
+    };
+
+    lector.readAsDataURL(
+        archivo
+    );
+
 }
 
 function editarProducto(idProducto){
 
-    localStorage.setItem("scrollEditar", window.scrollY);
+    const productoEditar =
+        state.productos.find(
+            function(producto){
 
-    let productoEditar = state.productos.find(function(p){
-        return p.id === idProducto;
-    });
+                return (
+                    producto.id === idProducto
+                );
 
-    if(!productoEditar){
-        alert("Producto no encontrado");
-        return;
-    }
-
-    let zonaAdmin = document.getElementById("zonaAdmin");
-
-    if(zonaAdmin){
-        zonaAdmin.style.display = "grid";
-    }
-
-    document.getElementById("codigo").value = productoEditar.codigo;
-    document.getElementById("producto").value = productoEditar.producto;
-    document.getElementById("categoria").value = productoEditar.categoria;
-
-    let stockTiendasEditar = obtenerStockTiendas(productoEditar);
-
-    const contenedorStock =
-    document.getElementById("contenedorStockSucursales");
-
-if(contenedorStock){
-
-    contenedorStock.innerHTML =
-        renderizarFormularioStock(
-            stockTiendasEditar
+            }
         );
 
-}
-    document.getElementById("precioCompra").value = productoEditar.precioCompra || 0;
-    document.getElementById("precio").value = productoEditar.precio;
+    if(!productoEditar){
 
-    state.indiceEditar = state.productos.findIndex(function(p){
-        return p.id === idProducto;
-    });
+        alert(
+            "Producto no encontrado"
+        );
 
-    document.getElementById("zonaAdmin").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+        return;
+
+    }
+
+    state.indiceEditar =
+        state.productos.findIndex(
+            function(producto){
+
+                return (
+                    producto.id === idProducto
+                );
+
+            }
+        );
+
+    if(
+        typeof window.abrirModalPanel ===
+        "function"
+    ){
+
+        window.abrirModalPanel(
+            "zonaAdmin",
+            {
+                preservarFormulario: true
+            }
+        );
+
+    }
+
+    const codigo =
+        document.getElementById(
+            "codigo"
+        );
+
+    const producto =
+        document.getElementById(
+            "producto"
+        );
+
+    const categoria =
+        document.getElementById(
+            "categoria"
+        );
+
+    const precioCompra =
+        document.getElementById(
+            "precioCompra"
+        );
+
+    const precio =
+        document.getElementById(
+            "precio"
+        );
+
+    if(codigo){
+
+        codigo.value =
+            productoEditar.codigo || "";
+
+    }
+
+    if(producto){
+
+        producto.value =
+            productoEditar.producto || "";
+
+    }
+
+    if(categoria){
+
+        categoria.value =
+            productoEditar.categoria || "";
+
+    }
+
+    const stockTiendasEditar =
+        obtenerStockTiendas(
+            productoEditar
+        );
+
+    const contenedorStock =
+        document.getElementById(
+            "contenedorStockSucursales"
+        );
+
+    if(contenedorStock){
+
+        contenedorStock.innerHTML =
+            renderizarFormularioStock(
+                stockTiendasEditar
+            );
+
+    }
+
+    if(precioCompra){
+
+        precioCompra.value =
+            productoEditar.precioCompra || 0;
+
+    }
+
+    if(precio){
+
+        precio.value =
+            productoEditar.precio || 0;
+
+    }
+
+    actualizarVistaPreviaProducto(
+        productoEditar.imagen || ""
+    );
+
+    const nombreImagen =
+        document.getElementById(
+            "nombreImagenProducto"
+        );
+
+    if(nombreImagen){
+
+        nombreImagen.textContent =
+            productoEditar.imagen
+                ? "Imagen actual del producto"
+                : "Ninguna imagen seleccionada";
+
+    }
+
+    actualizarModoFormularioProducto(
+        "editar"
+    );
+
+    setTimeout(function(){
+
+        document
+            .getElementById("codigo")
+            ?.focus();
+
+    }, 100);
+
 }
 
 async function eliminarProducto(idProducto){
@@ -1055,6 +1367,8 @@ async function eliminarProducto(idProducto){
         eliminarImagenAnteriorStorage,
         guardarProducto,
         seleccionarImagenProducto,
+        prepararNuevoProducto,
+        cancelarEdicionProducto,
         editarProducto,
         eliminarProducto,
         inicializarScrollCatalogo

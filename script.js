@@ -562,7 +562,15 @@ const UI = crearUI({
 
     localStorage,
 
-    state: estadoUIBridge
+    state: estadoUIBridge,
+
+    prepararNuevoProducto:
+        CatalogoProductos.prepararNuevoProducto,
+
+    cancelarEdicionProducto:
+        CatalogoProductos.cancelarEdicionProducto,
+
+    cerrarConfiguracion
 
 });
 
@@ -572,7 +580,7 @@ const HTMLLoader = crearHTMLLoader({
 
     directorioBase: "html",
 
-    version: "HTML29-8-1",
+    version: "HTML30-2",
 
     modoPredeterminado: "replace-element"
 
@@ -1559,29 +1567,172 @@ fondo.style.pointerEvents = "auto";
     ejecutarAnulacion(index);
 }
 
+function cerrarConfiguracion(){
+
+    const panel =
+        document.getElementById(
+            "panelConfiguracion"
+        );
+
+    const boton =
+        document.getElementById(
+            "btnToggleConfiguracion"
+        );
+
+    if(panel){
+
+        panel.style.display =
+            "none";
+
+        panel.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+    if(boton){
+
+        boton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
+
+}
+
 function abrirConfiguracion(){
 
-    document.getElementById("panelConfiguracion").style.display = "block";
+    const panel =
+        document.getElementById(
+            "panelConfiguracion"
+        );
 
-    document.getElementById("nuevoCodigoAnulacion").value = codigoAnulacion;
+    const boton =
+        document.getElementById(
+            "btnToggleConfiguracion"
+        );
+
+    const input =
+        document.getElementById(
+            "nuevoCodigoAnulacion"
+        );
+
+    if(!panel){
+
+        return;
+
+    }
+
+    panel.style.display =
+        "block";
+
+    panel.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    if(boton){
+
+        boton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+    }
+
+    if(input){
+
+        input.value =
+            codigoAnulacion;
+
+        setTimeout(function(){
+
+            input.focus();
+
+        }, 60);
+
+    }
+
+}
+
+function toggleConfiguracion(){
+
+    const panel =
+        document.getElementById(
+            "panelConfiguracion"
+        );
+
+    if(!panel){
+
+        return;
+
+    }
+
+    const estaAbierto =
+        panel.style.display !== "none";
+
+    if(estaAbierto){
+
+        cerrarConfiguracion();
+
+    }else{
+
+        abrirConfiguracion();
+
+    }
 
 }
 
 async function guardarConfiguracion(){
 
+    const input =
+        document.getElementById(
+            "nuevoCodigoAnulacion"
+        );
+
+    if(!input){
+
+        return;
+
+    }
+
+    const nuevoCodigo =
+        input.value.trim();
+
+    if(!nuevoCodigo){
+
+        alert(
+            "Ingrese un código de anulación"
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
     codigoAnulacion =
-    document.getElementById("nuevoCodigoAnulacion").value.trim();
+        nuevoCodigo;
 
     await setDoc(
-    doc(db, "configuracion", "sistema"),
-    {
-        codigoAnulacion: codigoAnulacion
-    }
-);
+        doc(
+            db,
+            "configuracion",
+            "sistema"
+        ),
+        {
+            codigoAnulacion:
+                codigoAnulacion
+        }
+    );
 
-    alert("Configuración guardada correctamente");
+    alert(
+        "Configuración guardada correctamente"
+    );
 
-    document.getElementById("panelConfiguracion").style.display = "none";
+    cerrarConfiguracion();
 
 }
 
@@ -1819,8 +1970,20 @@ window.finalizarEImprimir = finalizarEImprimir;
 window.imprimirBoleta = Ventas.imprimirBoleta;
 window.toggleAgregarProducto = toggleAgregarProducto;
 window.toggleReporteVendedores = toggleReporteVendedores;
-window.abrirConfiguracion = abrirConfiguracion;
-window.guardarConfiguracion = guardarConfiguracion;
+window.abrirConfiguracion =
+    abrirConfiguracion;
+
+window.cerrarConfiguracion =
+    cerrarConfiguracion;
+
+window.toggleConfiguracion =
+    toggleConfiguracion;
+
+window.guardarConfiguracion =
+    guardarConfiguracion;
+
+window.cancelarEdicionProducto =
+    CatalogoProductos.cancelarEdicionProducto;
 window.validarCodigoAdmin = validarCodigoAdmin;
 window.cerrarModalCodigo =
     Auth.cerrarModalCodigo;
@@ -1873,8 +2036,16 @@ window.cambiarSucursalCaja =
 window.cambiarSucursalDashboard =
     cambiarSucursalDashboard;
 
-function abrirModalPanel(idPanel){
-    UI.abrirModalPanel(idPanel);
+function abrirModalPanel(
+    idPanel,
+    opciones = {}
+){
+
+    UI.abrirModalPanel(
+        idPanel,
+        opciones
+    );
+
 }
 
 function cerrarModalPanel(){

@@ -273,9 +273,16 @@ function actualizarDashboardEjecutivo(){
 function mostrarReporteVendedores(){
 
     const tabla =
-        document.getElementById("reporteVendedoresTabla");
+        document.getElementById(
+            "reporteVendedoresTabla"
+        );
 
-    if(!tabla){
+    const lista =
+        document.getElementById(
+            "reporteVendedoresLista"
+        );
+
+    if(!tabla || !lista){
         return;
     }
 
@@ -283,38 +290,247 @@ function mostrarReporteVendedores(){
 
     state.historialVentas.forEach(function(venta){
 
-        const nombre = venta.vendedor || "Sin vendedor";
+        const nombre =
+            venta.vendedor || "Sin vendedor";
 
         if(!vendedores[nombre]){
+
             vendedores[nombre] = {
                 ventas: 0,
                 total: 0,
                 ganancia: 0
             };
+
         }
 
         vendedores[nombre].ventas++;
-        vendedores[nombre].total += Number(venta.total || 0);
-        vendedores[nombre].ganancia += Number(venta.ganancia || 0);
+
+        vendedores[nombre].total +=
+            Number(venta.total || 0);
+
+        vendedores[nombre].ganancia +=
+            Number(venta.ganancia || 0);
 
     });
 
-    let html = "";
+    const ranking =
+        Object.entries(vendedores)
+            .sort(function(a, b){
 
-    for(const nombre in vendedores){
+                if(
+                    b[1].total ===
+                    a[1].total
+                ){
+                    return (
+                        b[1].ganancia -
+                        a[1].ganancia
+                    );
+                }
 
-        html += `
-            <tr>
-                <td>${nombre}</td>
-                <td>${vendedores[nombre].ventas}</td>
-                <td>S/ ${vendedores[nombre].total.toFixed(2)}</td>
-                <td>S/ ${vendedores[nombre].ganancia.toFixed(2)}</td>
-            </tr>
-        `;
+                return (
+                    b[1].total -
+                    a[1].total
+                );
+
+            });
+
+    let totalVentas = 0;
+    let totalVendido = 0;
+    let gananciaTotal = 0;
+
+    ranking.forEach(function([, datos]){
+
+        totalVentas +=
+            datos.ventas;
+
+        totalVendido +=
+            datos.total;
+
+        gananciaTotal +=
+            datos.ganancia;
+
+    });
+
+    const resumenVendedores =
+        document.getElementById(
+            "resumenVendedoresActivos"
+        );
+
+    const resumenVentas =
+        document.getElementById(
+            "resumenVentasVendedores"
+        );
+
+    const resumenTotal =
+        document.getElementById(
+            "resumenTotalVendido"
+        );
+
+    const resumenGanancia =
+        document.getElementById(
+            "resumenGananciaVendedores"
+        );
+
+    if(resumenVendedores){
+
+        resumenVendedores.textContent =
+            ranking.length;
 
     }
 
-    tabla.innerHTML = html;
+    if(resumenVentas){
+
+        resumenVentas.textContent =
+            totalVentas;
+
+    }
+
+    if(resumenTotal){
+
+        resumenTotal.textContent =
+            "S/ " + totalVendido.toFixed(2);
+
+    }
+
+    if(resumenGanancia){
+
+        resumenGanancia.textContent =
+            "S/ " + gananciaTotal.toFixed(2);
+
+    }
+
+    if(ranking.length === 0){
+
+        tabla.innerHTML = "";
+
+        lista.innerHTML = `
+            <div class="vendedores-empty-state">
+
+                <span>👤</span>
+
+                <div>
+
+                    <strong>
+                        Sin ventas registradas
+                    </strong>
+
+                    <small>
+                        El ranking aparecerá cuando se registre la primera venta.
+                    </small>
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+    const medallas = [
+        "🥇",
+        "🥈",
+        "🥉"
+    ];
+
+    let htmlTabla = "";
+    let htmlLista = "";
+
+    ranking.forEach(function(
+        [nombre, datos],
+        index
+    ){
+
+        const posicion =
+            medallas[index] ||
+            "#" + (index + 1);
+
+        const ticketPromedio =
+            datos.ventas > 0
+                ? datos.total / datos.ventas
+                : 0;
+
+        htmlTabla += `
+            <tr>
+                <td>${nombre}</td>
+                <td>${datos.ventas}</td>
+                <td>S/ ${datos.total.toFixed(2)}</td>
+                <td>S/ ${datos.ganancia.toFixed(2)}</td>
+            </tr>
+        `;
+
+        htmlLista += `
+            <article class="vendedor-ranking-item">
+
+                <div class="vendedor-ranking-posicion">
+                    ${posicion}
+                </div>
+
+                <div class="vendedor-ranking-identidad">
+
+                    <strong>
+                        ${nombre}
+                    </strong>
+
+                    <small>
+                        Ticket promedio:
+                        S/ ${ticketPromedio.toFixed(2)}
+                    </small>
+
+                </div>
+
+                <div class="vendedor-ranking-metrica">
+
+                    <small>
+                        Ventas
+                    </small>
+
+                    <strong>
+                        ${datos.ventas}
+                    </strong>
+
+                </div>
+
+                <div class="
+                    vendedor-ranking-metrica
+                    vendedor-ranking-metrica-total
+                ">
+
+                    <small>
+                        Total vendido
+                    </small>
+
+                    <strong>
+                        S/ ${datos.total.toFixed(2)}
+                    </strong>
+
+                </div>
+
+                <div class="
+                    vendedor-ranking-metrica
+                    vendedor-ranking-metrica-ganancia
+                ">
+
+                    <small>
+                        Ganancia
+                    </small>
+
+                    <strong>
+                        S/ ${datos.ganancia.toFixed(2)}
+                    </strong>
+
+                </div>
+
+            </article>
+        `;
+
+    });
+
+    tabla.innerHTML =
+        htmlTabla;
+
+    lista.innerHTML =
+        htmlLista;
 
 }
 

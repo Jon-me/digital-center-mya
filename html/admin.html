@@ -1,87 +1,419 @@
 <div id="zonaAdmin" style="display:none;">
 
-        <h2>Agregar Producto</h2>
+    <section class="product-studio">
 
-        <input id="codigo" type="text" placeholder="Código de Producto">
+        <header class="product-studio-header">
 
-        <input id="producto" type="text" placeholder="Nombre del Producto">
+            <div class="product-studio-title">
 
-        <input id="categoria" type="text" placeholder="Categoría">
+                <span class="product-studio-title-icon">
+                    📦
+                </span>
 
-       <div class="stock-tiendas-form">
+                <div>
+                    <small>PRODUCT STUDIO</small>
 
-    <h3>🏪 Stock por sucursal</h3>
+                    <h2 id="tituloFormularioProducto">
+                        Agregar Producto
+                    </h2>
+                </div>
 
-    <div id="contenedorStockSucursales">
-        <p>Cargando sucursales...</p>
-    </div>
-
-</div>
-
-        <input
-    id="precioCompra"
-    type="number"
-    min="0"
-    step="0.01"
-    placeholder="Precio Compra"
->
-
-       <input
-    id="precio"
-    type="number"
-    min="0"
-    step="0.01"
-    placeholder="Precio Venta"
->
-
-        <div class="imagen-producto-panel">
-
-            <input
-                id="imagen"
-                type="file"
-                accept="image/*"
-                class="input-imagen-producto-oculto"
-                onchange="window.seleccionarImagenProducto()"
-            >
-
-            <div class="imagen-producto-botones imagen-producto-botones-desktop">
-                <label for="imagen" class="btn-imagen-producto">
-                    📁 Subir imagen
-                </label>
             </div>
 
-            <p id="nombreImagenProducto" class="nombre-imagen-producto">
-                Ninguna imagen seleccionada
-            </p>
+            <div class="product-studio-header-actions">
 
-        </div>
+                <div class="product-studio-header-actions">
 
-       <button type="button" id="btnGuardarProducto" onclick="window.guardarProducto()">
-    Guardar Producto
-</button>
+    <span class="product-studio-status">
+        Inventario
+    </span>
 
-<button onclick="abrirConfiguracion()">
-    ⚙️ Configuración
-</button>
-
-<button onclick="activarNotificaciones()">
-    🔔 Activar Notificaciones
-</button>
-
-<div id="panelConfiguracion" style="display:none;">
-
-    <h2>⚙️ Configuración</h2>
-
-    <input
-        id="nuevoCodigoAnulacion"
-        type="text"
-        placeholder="Código de Anulación"
+    <button
+        type="button"
+        class="product-studio-close"
+        onclick="window.cerrarModalPanel()"
+        title="Cerrar Productos"
+        aria-label="Cerrar Productos"
     >
-
-    <button onclick="guardarConfiguracion()">
-        Guardar Configuración
+        ×
     </button>
 
 </div>
+
+                <button
+                    type="button"
+                    class="product-studio-close"
+                    onclick="window.cerrarModalPanel()"
+                    title="Cerrar Productos"
+                    aria-label="Cerrar Productos"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </header>
+
+        <div class="product-studio-layout">
+
+            <div class="product-studio-main">
+
+                <section class="product-studio-section">
+
+                    <header class="product-studio-section-header">
+
+                        <div>
+                            <small>INFORMACIÓN</small>
+                            <h3>Datos del producto</h3>
+                        </div>
+
+                        <span>01</span>
+
+                    </header>
+
+                    <div class="product-studio-fields product-studio-fields-main">
+
+                        <label class="product-studio-field">
+
+                            <span>Código</span>
+
+                            <input
+                                id="codigo"
+                                type="text"
+                                placeholder="Ej. CEL-A35-001"
+                                autocomplete="off"
+                            >
+
+                        </label>
+
+                        <label class="product-studio-field product-studio-field-wide">
+
+                            <span>Nombre del producto</span>
+
+                            <input
+                                id="producto"
+                                type="text"
+                                placeholder="Ej. Samsung Galaxy A35 5G"
+                                autocomplete="off"
+                            >
+
+                        </label>
+
+                        <label class="product-studio-field">
+
+                            <span>Categoría</span>
+
+                            <input
+                                id="categoria"
+                                type="text"
+                                placeholder="Ej. Celulares"
+                                autocomplete="off"
+                            >
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+                <div class="product-studio-double">
+
+                    <section class="product-studio-section">
+
+                        <header class="product-studio-section-header">
+
+                            <div>
+                                <small>INVENTARIO</small>
+                                <h3>Stock por sucursal</h3>
+                            </div>
+
+                            <span>02</span>
+
+                        </header>
+
+                        <div class="stock-tiendas-form">
+
+                            <div id="contenedorStockSucursales">
+
+                                <div class="product-studio-loading">
+                                    Cargando sucursales...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="product-studio-section">
+
+                        <header class="product-studio-section-header">
+
+                            <div>
+                                <small>PRECIOS</small>
+                                <h3>Información comercial</h3>
+                            </div>
+
+                            <span>03</span>
+
+                        </header>
+
+                        <div class="product-studio-fields product-studio-prices">
+
+                            <label class="product-studio-field">
+
+                                <span>Precio de compra</span>
+
+                                <div class="product-studio-money">
+                                    <b>S/</b>
+
+                                    <input
+                                        id="precioCompra"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    >
+                                </div>
+
+                            </label>
+
+                            <label class="product-studio-field product-studio-field-sale">
+
+                                <span>Precio de venta</span>
+
+                                <div class="product-studio-money">
+                                    <b>S/</b>
+
+                                    <input
+                                        id="precio"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    >
+                                </div>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+            <aside class="product-studio-preview">
+
+                <header class="product-studio-section-header">
+
+                    <div>
+                        <small>VISTA PREVIA</small>
+                        <h3>Imagen del producto</h3>
+                    </div>
+
+                    <span>04</span>
+
+                </header>
+
+                <div class="imagen-producto-panel">
+
+                    <input
+                        id="imagen"
+                        type="file"
+                        accept="image/*"
+                        class="input-imagen-producto-oculto"
+                        onchange="window.seleccionarImagenProducto()"
+                    >
+
+                    <label
+                        for="imagen"
+                        class="product-image-dropzone"
+                    >
+
+                        <div class="product-image-preview-wrap">
+
+                            <img
+                                id="vistaPreviaImagenProducto"
+                                alt="Vista previa del producto"
+                                class="product-image-preview"
+                            >
+
+                            <div
+                                id="estadoImagenProducto"
+                                class="product-image-empty"
+                            >
+                                <span>📷</span>
+
+                                <strong>
+                                    Añadir imagen
+                                </strong>
+
+                                <small>
+                                    Haz clic para seleccionar
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="product-image-copy">
+
+                            <strong>
+                                Subir imagen
+                            </strong>
+
+                            <small>
+                                PNG, JPG o WEBP
+                            </small>
+
+                        </div>
+
+                    </label>
+
+                    <p
+                        id="nombreImagenProducto"
+                        class="nombre-imagen-producto"
+                    >
+                        Ninguna imagen seleccionada
+                    </p>
+
+                </div>
+
+                <div class="product-studio-tip">
+
+                    <span>✨</span>
+
+                    <p>
+                        Usa una imagen limpia y centrada para que el producto se vea mejor en el catálogo.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+        <footer class="product-studio-footer">
+
+            <div class="product-studio-secondary-actions">
+
+                <button
+    type="button"
+    id="btnCancelarEdicionProducto"
+    class="product-studio-cancel-edit"
+    onclick="window.cancelarEdicionProducto()"
+    style="display:none;"
+>
+    ↩ Cancelar edición
+</button>
+
+                <button
+                    type="button"
+                    id="btnCancelarEdicionProducto"
+                    class="product-studio-cancel-edit"
+                    onclick="window.cancelarEdicionProducto()"
+                    style="display:none;"
+                >
+                    ↩ Cancelar edición
+                </button>
+
+                <button
+    type="button"
+    id="btnToggleConfiguracion"
+    class="product-studio-secondary-button"
+    onclick="window.toggleConfiguracion()"
+    aria-expanded="false"
+    aria-controls="panelConfiguracion"
+>
+    ⚙️ Configuración
+</button>
+
+                <button
+                    type="button"
+                    class="product-studio-secondary-button"
+                    onclick="activarNotificaciones()"
+                >
+                    🔔 Notificaciones
+                </button>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnGuardarProducto"
+                class="product-studio-save"
+                onclick="window.guardarProducto()"
+            >
+                <span>Guardar Producto</span>
+                <b>→</b>
+            </button>
+
+        </footer>
+
+    </section>
+
+    <section
+        id="panelConfiguracion"
+        class="config-studio-panel"
+        style="display:none;"
+        aria-hidden="true"
+    >
+
+        <header class="config-studio-header">
+
+            <div class="config-studio-title">
+
+                <span>⚙️</span>
+
+                <div>
+                    <small>AJUSTES DEL SISTEMA</small>
+                    <h2>Configuración</h2>
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="config-studio-close"
+                onclick="window.cerrarConfiguracion()"
+                title="Cerrar configuración"
+                aria-label="Cerrar configuración"
+            >
+                ×
+            </button>
+
+        </header>
+
+        <div class="config-studio-body">
+
+            <label class="config-studio-field">
+
+                <span>Código de anulación</span>
+
+                <input
+                    id="nuevoCodigoAnulacion"
+                    type="text"
+                    placeholder="Código de Anulación"
+                    autocomplete="off"
+                >
+
+                <small>
+                    Este código autoriza operaciones administrativas sensibles.
+                </small>
+
+            </label>
+
+            <button
+                type="button"
+                class="config-studio-save"
+                onclick="window.guardarConfiguracion()"
+            >
+                Guardar Configuración
+            </button>
+
+        </div>
+
+    </section>
 
 </div><!-- FIN zonaAdmin -->

@@ -1019,3 +1019,1559 @@
     z-index:
         2 !important;
 }
+
+/* =========================================================
+   FASE 30 — PRODUCT STUDIO APPLE PRO MAX
+========================================================= */
+
+#zonaAdmin{
+    margin:
+        0 !important;
+
+    padding:
+        0 !important;
+
+    background:
+        transparent !important;
+
+    border:
+        0 !important;
+
+    border-radius:
+        0 !important;
+}
+
+.product-studio{
+    display:
+        grid;
+
+    gap:
+        16px;
+
+    width:
+        100%;
+
+    padding:
+        18px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(7, 13, 24, 0.98),
+            rgba(3, 8, 17, 0.995)
+        );
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.32);
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.42),
+        0 0 0 1px rgba(59, 130, 246, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+
+/* HEADER */
+
+.product-studio-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    padding:
+        2px
+        2px
+        14px;
+
+    border-bottom:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+}
+
+.product-studio-title{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+}
+
+.product-studio-title-icon{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    background:
+        rgba(15, 23, 42, 0.76);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.26);
+
+    border-radius:
+        12px;
+
+    font-size:
+        20px;
+}
+
+.product-studio-title small,
+.product-studio-section-header small{
+    display:
+        block;
+
+    margin-bottom:
+        3px;
+
+    color:
+        rgba(125, 211, 252, 0.66);
+
+    font-size:
+        8px;
+
+    font-weight:
+        var(--font-weight-black);
+
+    letter-spacing:
+        1.25px;
+}
+
+.product-studio-title h2{
+    margin:
+        0 !important;
+
+    font-size:
+        22px;
+
+    letter-spacing:
+        -0.4px;
+}
+
+.product-studio-status{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    min-height:
+        27px;
+
+    padding:
+        0
+        10px;
+
+    color:
+        rgba(191, 219, 254, 0.88);
+
+    background:
+        rgba(30, 64, 175, 0.16);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.18);
+
+    border-radius:
+        999px;
+
+    font-size:
+        9px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    text-transform:
+        uppercase;
+}
+
+
+/* LAYOUT */
+
+.product-studio-layout{
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1.75fr)
+        minmax(260px, 0.75fr);
+
+    gap:
+        12px;
+}
+
+.product-studio-main{
+    display:
+        grid;
+
+    gap:
+        12px;
+
+    min-width:
+        0;
+}
+
+.product-studio-double{
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        12px;
+}
+
+.product-studio-section,
+.product-studio-preview{
+    min-width:
+        0;
+
+    padding:
+        14px;
+
+    background:
+        rgba(10, 17, 30, 0.70);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.product-studio-section-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        11px;
+}
+
+.product-studio-section-header h3{
+    margin:
+        0;
+
+    color:
+        var(--color-text-primary);
+
+    font-size:
+        15px;
+
+    letter-spacing:
+        -0.2px;
+}
+
+.product-studio-section-header > span{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        27px;
+
+    height:
+        27px;
+
+    color:
+        rgba(191, 219, 254, 0.72);
+
+    background:
+        rgba(30, 64, 175, 0.13);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.16);
+
+    border-radius:
+        8px;
+
+    font-family:
+        "Oxanium",
+        var(--font-family-base);
+
+    font-size:
+        9px;
+}
+
+
+/* CAMPOS */
+
+.product-studio-fields{
+    display:
+        grid;
+
+    gap:
+        9px;
+}
+
+.product-studio-fields-main{
+    grid-template-columns:
+        minmax(170px, 0.65fr)
+        minmax(0, 1.5fr)
+        minmax(170px, 0.75fr);
+}
+
+.product-studio-field{
+    display:
+        grid;
+
+    gap:
+        6px;
+
+    min-width:
+        0;
+}
+
+.product-studio-field > span{
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        9px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    letter-spacing:
+        0.4px;
+
+    text-transform:
+        uppercase;
+}
+
+.product-studio #codigo,
+.product-studio #producto,
+.product-studio #categoria,
+.product-studio #precioCompra,
+.product-studio #precio{
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    height:
+        42px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0
+        13px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        rgba(3, 9, 20, 0.82) !important;
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.18) !important;
+
+    border-radius:
+        10px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+
+    font-size:
+        12px !important;
+
+    outline:
+        none !important;
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast) !important;
+}
+
+.product-studio #codigo:focus,
+.product-studio #producto:focus,
+.product-studio #categoria:focus,
+.product-studio #precioCompra:focus,
+.product-studio #precio:focus{
+    transform:
+        none !important;
+
+    background:
+        rgba(4, 12, 27, 0.96) !important;
+
+    border-color:
+        rgba(96, 165, 250, 0.58) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+.product-studio-prices{
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+}
+
+.product-studio-money{
+    display:
+        grid;
+
+    grid-template-columns:
+        34px
+        minmax(0, 1fr);
+
+    align-items:
+        center;
+
+    height:
+        42px;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(3, 9, 20, 0.82);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.18);
+
+    border-radius:
+        10px;
+}
+
+.product-studio-money b{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    height:
+        100%;
+
+    color:
+        rgba(191, 219, 254, 0.78);
+
+    background:
+        rgba(30, 64, 175, 0.11);
+
+    border-right:
+        1px solid
+        rgba(148, 163, 184, 0.12);
+
+    font-family:
+        "Oxanium",
+        var(--font-family-base);
+
+    font-size:
+        11px;
+}
+
+.product-studio-money input{
+    height:
+        100% !important;
+
+    background:
+        transparent !important;
+
+    border:
+        0 !important;
+
+    border-radius:
+        0 !important;
+
+    box-shadow:
+        none !important;
+}
+
+.product-studio-field-sale .product-studio-money{
+    border-color:
+        rgba(74, 222, 128, 0.25);
+
+    background:
+        rgba(6, 31, 18, 0.52);
+}
+
+.product-studio-field-sale .product-studio-money b{
+    color:
+        var(--color-success-400);
+
+    background:
+        rgba(20, 83, 45, 0.18);
+
+    border-right-color:
+        rgba(74, 222, 128, 0.16);
+}
+
+
+/* STOCK */
+
+.product-studio .stock-tiendas-form{
+    width:
+        100%;
+
+    max-width:
+        none;
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    background:
+        transparent;
+
+    border:
+        0;
+
+    border-radius:
+        0;
+
+    box-shadow:
+        none;
+}
+
+.product-studio #contenedorStockSucursales{
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        8px;
+}
+
+.product-studio #contenedorStockSucursales > div,
+.product-studio #contenedorStockSucursales > label{
+    min-width:
+        0;
+}
+
+.product-studio .stock-sucursal-grupo,
+.product-studio .stock-sucursal-item{
+    display:
+        grid;
+
+    gap:
+        6px;
+
+    padding:
+        10px;
+
+    background:
+        rgba(3, 9, 20, 0.68);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+
+    border-radius:
+        10px;
+}
+
+.product-studio .stock-sucursal-grupo label,
+.product-studio .stock-sucursal-item label,
+.product-studio #contenedorStockSucursales label{
+    color:
+        var(--color-text-secondary);
+
+    font-size:
+        10px;
+
+    font-weight:
+        var(--font-weight-semibold);
+}
+
+.product-studio .stock-sucursal-input{
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    height:
+        39px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0
+        11px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        rgba(2, 8, 18, 0.76) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.18) !important;
+
+    border-radius:
+        9px !important;
+
+    box-shadow:
+        none !important;
+
+    font-size:
+        12px !important;
+}
+
+.product-studio-loading{
+    grid-column:
+        1 / -1;
+
+    padding:
+        18px;
+
+    color:
+        var(--color-text-subtle);
+
+    text-align:
+        center;
+}
+
+
+/* IMAGEN */
+
+.product-studio-preview{
+    display:
+        flex;
+
+    flex-direction:
+        column;
+}
+
+.product-studio .imagen-producto-panel{
+    width:
+        100%;
+
+    max-width:
+        none;
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    background:
+        transparent;
+
+    border:
+        0;
+
+    border-radius:
+        0;
+
+    box-shadow:
+        none;
+}
+
+.product-image-dropzone{
+    display:
+        grid;
+
+    gap:
+        10px;
+
+    padding:
+        10px;
+
+    background:
+        rgba(3, 9, 20, 0.64);
+
+    border:
+        1px dashed
+        rgba(96, 165, 250, 0.30);
+
+    border-radius:
+        12px;
+
+    cursor:
+        pointer;
+
+    transition:
+        border-color var(--transition-fast),
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.product-image-dropzone:hover{
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(5, 13, 28, 0.84);
+
+    border-color:
+        rgba(96, 165, 250, 0.52);
+}
+
+.product-image-preview-wrap{
+    position:
+        relative;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    min-height:
+        210px;
+
+    overflow:
+        hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(248, 250, 252, 0.98),
+            rgba(226, 232, 240, 0.96)
+        );
+
+    border-radius:
+        10px;
+}
+
+.product-image-preview{
+    display:
+        none;
+
+    width:
+        100%;
+
+    height:
+        210px;
+
+    padding:
+        12px;
+
+    object-fit:
+        contain;
+}
+
+.product-image-preview.is-visible{
+    display:
+        block;
+}
+
+.product-image-empty{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    gap:
+        4px;
+
+    color:
+        #334155;
+
+    text-align:
+        center;
+}
+
+.product-image-empty.is-hidden{
+    display:
+        none;
+}
+
+.product-image-empty span{
+    font-size:
+        30px;
+}
+
+.product-image-empty strong{
+    font-size:
+        12px;
+}
+
+.product-image-empty small{
+    color:
+        #64748b;
+
+    font-size:
+        9px;
+}
+
+.product-image-copy{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+}
+
+.product-image-copy strong{
+    color:
+        var(--color-text-secondary);
+
+    font-size:
+        11px;
+}
+
+.product-image-copy small{
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        8px;
+
+    text-transform:
+        uppercase;
+}
+
+.product-studio .nombre-imagen-producto{
+    margin:
+        8px
+        2px
+        0;
+
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        9px;
+
+    text-align:
+        left;
+}
+
+.product-studio-tip{
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        8px;
+
+    margin-top:
+        auto;
+
+    padding-top:
+        12px;
+
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        9px;
+
+    line-height:
+        1.45;
+}
+
+.product-studio-tip p{
+    margin:
+        0;
+}
+
+
+/* FOOTER */
+
+.product-studio-footer{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    padding-top:
+        2px;
+}
+
+.product-studio-secondary-actions{
+    display:
+        flex;
+
+    gap:
+        8px;
+}
+
+#zonaAdmin .product-studio-secondary-button,
+#zonaAdmin .product-studio-save{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin:
+        0 !important;
+
+    border-radius:
+        10px;
+
+    cursor:
+        pointer;
+}
+
+#zonaAdmin .product-studio-secondary-button{
+    min-height:
+        38px;
+
+    padding:
+        0
+        13px;
+
+    color:
+        var(--color-text-secondary);
+
+    background:
+        rgba(15, 23, 42, 0.54);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.15);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+
+    font-size:
+        10px;
+}
+
+#zonaAdmin .product-studio-save{
+    min-width:
+        230px;
+
+    min-height:
+        44px;
+
+    gap:
+        18px;
+
+    padding:
+        0
+        16px;
+
+    color:
+        white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8,
+            #3b82f6
+        );
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.58);
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.22),
+        0 0 0 1px rgba(59, 130, 246, 0.10);
+
+    font-size:
+        12px;
+
+    font-weight:
+        var(--font-weight-black);
+}
+
+#zonaAdmin .product-studio-save b{
+    font-size:
+        17px;
+}
+
+#zonaAdmin .product-studio-save:hover{
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(96, 165, 250, 0.18);
+}
+
+
+/* CONFIGURACIÓN */
+
+#zonaAdmin #panelConfiguracion{
+    margin-top:
+        12px;
+
+    padding:
+        14px;
+
+    background:
+        rgba(10, 17, 30, 0.92);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+
+    border-radius:
+        14px;
+}
+
+
+/* BREAKPOINTS */
+
+@media (max-width: 1250px){
+
+    .product-studio-layout{
+        grid-template-columns:
+            minmax(0, 1.5fr)
+            minmax(250px, 0.8fr);
+    }
+
+    .product-studio-fields-main{
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .product-studio-field-wide{
+        grid-column:
+            1 / -1;
+    }
+
+}
+
+@media (max-width: 980px){
+
+    .product-studio-layout,
+    .product-studio-double{
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+/* =========================================================
+   FASE 30.2 — PRODUCT STUDIO UX FIXES
+========================================================= */
+
+/* Header actions y cierre propio */
+
+.product-studio-header-actions{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+}
+
+#zonaAdmin .product-studio-close,
+#zonaAdmin .config-studio-close{
+    display:
+        grid !important;
+
+    place-items:
+        center;
+
+    width:
+        31px;
+
+    min-width:
+        31px;
+
+    height:
+        31px;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 !important;
+
+    color:
+        var(--color-text-secondary);
+
+    background:
+        rgba(15, 23, 42, 0.68);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.20);
+
+    border-radius:
+        9px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.025);
+
+    font-size:
+        20px;
+
+    font-weight:
+        500;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+}
+
+#zonaAdmin .product-studio-close:hover,
+#zonaAdmin .config-studio-close:hover{
+    color:
+        #ffffff;
+
+    background:
+        rgba(127, 29, 29, 0.34);
+
+    border-color:
+        rgba(248, 113, 113, 0.42);
+}
+
+
+/* Precio perfectamente centrado */
+
+.product-studio .product-studio-money{
+    display:
+        flex !important;
+
+    align-items:
+        stretch !important;
+
+    width:
+        100% !important;
+
+    height:
+        42px !important;
+
+    min-height:
+        42px !important;
+
+    padding:
+        0 !important;
+}
+
+.product-studio .product-studio-money b{
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    flex:
+        0 0 38px !important;
+
+    width:
+        38px !important;
+
+    height:
+        42px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 !important;
+
+    line-height:
+        42px !important;
+}
+
+#contenidoModalPanel .product-studio .product-studio-money input,
+.product-studio .product-studio-money input{
+    display:
+        block !important;
+
+    flex:
+        1 1 auto !important;
+
+    width:
+        100% !important;
+
+    min-width:
+        0 !important;
+
+    max-width:
+        none !important;
+
+    height:
+        42px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 14px !important;
+
+    border:
+        0 !important;
+
+    border-radius:
+        0 !important;
+
+    box-sizing:
+        border-box !important;
+
+    box-shadow:
+        none !important;
+
+    line-height:
+        42px !important;
+
+    text-align:
+        left !important;
+
+    transform:
+        none !important;
+}
+
+
+/* Cancelar edición */
+
+#zonaAdmin .product-studio-cancel-edit{
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        38px;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 13px;
+
+    color:
+        #fca5a5;
+
+    background:
+        rgba(127, 29, 29, 0.14);
+
+    border:
+        1px solid
+        rgba(248, 113, 113, 0.24);
+
+    border-radius:
+        10px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    cursor:
+        pointer;
+}
+
+#zonaAdmin .product-studio-cancel-edit:hover{
+    background:
+        rgba(127, 29, 29, 0.25);
+
+    border-color:
+        rgba(248, 113, 113, 0.42);
+}
+
+
+/* Configuración Apple Pro */
+
+#zonaAdmin .config-studio-panel{
+    margin-top:
+        12px;
+
+    padding:
+        15px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10, 17, 30, 0.96),
+            rgba(5, 11, 22, 0.98)
+        );
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.20);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        0 16px 38px rgba(0,0,0,.24),
+        inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.config-studio-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    padding-bottom:
+        12px;
+
+    border-bottom:
+        1px solid
+        rgba(148, 163, 184, 0.12);
+}
+
+.config-studio-title{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+}
+
+.config-studio-title > span{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        36px;
+
+    height:
+        36px;
+
+    background:
+        rgba(15, 23, 42, 0.72);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.18);
+
+    border-radius:
+        10px;
+}
+
+.config-studio-title small{
+    display:
+        block;
+
+    margin-bottom:
+        2px;
+
+    color:
+        rgba(125, 211, 252, 0.64);
+
+    font-size:
+        8px;
+
+    font-weight:
+        var(--font-weight-black);
+
+    letter-spacing:
+        1.1px;
+}
+
+.config-studio-title h2{
+    margin:
+        0 !important;
+
+    font-size:
+        17px;
+}
+
+.config-studio-body{
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+    align-items:
+        end;
+
+    gap:
+        12px;
+
+    padding-top:
+        13px;
+}
+
+.config-studio-field{
+    display:
+        grid;
+
+    gap:
+        6px;
+}
+
+.config-studio-field > span{
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        9px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    text-transform:
+        uppercase;
+}
+
+#zonaAdmin .config-studio-field input{
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    height:
+        42px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 13px !important;
+
+    font-size:
+        12px !important;
+
+    transform:
+        none !important;
+}
+
+.config-studio-field small{
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        8px;
+}
+
+#zonaAdmin .config-studio-save{
+    min-height:
+        42px;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 16px;
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8,
+            #3b82f6
+        );
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.46);
+
+    border-radius:
+        10px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        var(--font-weight-black);
+
+    cursor:
+        pointer;
+}
+
+
+/* Evitar que la X global tape la X propia del Product Studio */
+
+.modal-contenido.modal-admin > .cerrar-modal{
+    display:
+        none !important;
+}
+
+@media (max-width: 900px){
+
+    .config-studio-body{
+        grid-template-columns:
+            1fr;
+    }
+
+}

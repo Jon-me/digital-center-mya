@@ -10,13 +10,25 @@ export function crearUI(deps){
 
     localStorage,
 
-    state
+    state,
+
+    prepararNuevoProducto,
+
+    cancelarEdicionProducto,
+
+    cerrarConfiguracion
 
 } = deps;
 
-function abrirModalPanel(idPanel){
+function abrirModalPanel(
+    idPanel,
+    opciones = {}
+){
 
-    const rol = localStorage.getItem("rolActivo");
+    const rol =
+        localStorage.getItem(
+            "rolActivo"
+        );
 
     const panelesSoloAdmin = [
         "panelReportes",
@@ -30,37 +42,83 @@ function abrirModalPanel(idPanel){
         rol === "vendedor" &&
         panelesSoloAdmin.includes(idPanel)
     ){
+
         return;
+
     }
 
-    let panel = document.getElementById(idPanel);
-    let modal = document.getElementById("modalPanel");
-    let contenido = document.getElementById("contenidoModalPanel");
-    let modalContenido = document.querySelector(".modal-contenido");
+    const panel =
+        document.getElementById(
+            idPanel
+        );
 
-    if(!panel || !modal || !contenido){
-        alert("Error abriendo panel");
+    const modal =
+        document.getElementById(
+            "modalPanel"
+        );
+
+    const contenido =
+        document.getElementById(
+            "contenidoModalPanel"
+        );
+
+    const modalContenido =
+        document.querySelector(
+            ".modal-contenido"
+        );
+
+    if(
+        !panel ||
+        !modal ||
+        !contenido ||
+        !modalContenido
+    ){
+
+        alert(
+            "Error abriendo panel"
+        );
+
         return;
+
+    }
+
+    if(
+        state.panelActivoModal &&
+        state.panelActivoModal !== panel
+    ){
+
+        cerrarModalPanel();
+
     }
 
     if(idPanel === "zonaAdmin"){
 
-        modalContenido.classList.add("modal-admin");
+        modalContenido.classList.add(
+            "modal-admin"
+        );
 
-        setTimeout(function(){
+        if(
+            !opciones.preservarFormulario &&
+            typeof prepararNuevoProducto ===
+                "function"
+        ){
 
-            document.getElementById("codigo")?.focus();
+            prepararNuevoProducto();
 
-        },100);
+        }
 
     }else{
 
-        modalContenido.classList.remove("modal-admin");
+        modalContenido.classList.remove(
+            "modal-admin"
+        );
 
     }
 
     state.placeholderModal =
-        document.createComment("placeholder-" + idPanel);
+        document.createComment(
+            "placeholder-" + idPanel
+        );
 
     panel.parentNode.insertBefore(
         state.placeholderModal,
@@ -69,45 +127,87 @@ function abrirModalPanel(idPanel){
 
     contenido.innerHTML = "";
 
-    contenido.appendChild(panel);
+    contenido.appendChild(
+        panel
+    );
 
-    panel.style.display = "block";
+    panel.style.display =
+        "block";
 
-    modal.style.display = "flex";
+    modal.style.display =
+        "flex";
 
-    state.panelActivoModal = panel;
+    state.panelActivoModal =
+        panel;
 
 }
 
 function cerrarModalPanel(){
 
-    let modal =
-        document.getElementById("modalPanel");
+    const modal =
+        document.getElementById(
+            "modalPanel"
+        );
+
+    const panelCerrado =
+        state.panelActivoModal;
+
+    if(
+        panelCerrado &&
+        panelCerrado.id === "zonaAdmin"
+    ){
+
+        if(
+            typeof cerrarConfiguracion ===
+            "function"
+        ){
+
+            cerrarConfiguracion();
+
+        }
+
+        if(
+            typeof cancelarEdicionProducto ===
+            "function"
+        ){
+
+            cancelarEdicionProducto();
+
+        }
+
+    }
 
     if(
         state.panelActivoModal &&
         state.placeholderModal
     ){
 
-        state.placeholderModal.parentNode.insertBefore(
-
-            state.panelActivoModal,
-
-            state.placeholderModal
-
-        );
+        state.placeholderModal
+            .parentNode
+            .insertBefore(
+                state.panelActivoModal,
+                state.placeholderModal
+            );
 
         state.placeholderModal.remove();
 
-        state.panelActivoModal.style.display = "none";
+        state.panelActivoModal.style.display =
+            "none";
 
     }
 
-    state.panelActivoModal = null;
+    state.panelActivoModal =
+        null;
 
-    state.placeholderModal = null;
+    state.placeholderModal =
+        null;
 
-    modal.style.display = "none";
+    if(modal){
+
+        modal.style.display =
+            "none";
+
+    }
 
 }
 
