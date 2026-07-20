@@ -572,7 +572,7 @@ const HTMLLoader = crearHTMLLoader({
 
     directorioBase: "html",
 
-    version: "HTML29-5",
+    version: "HTML29-8-1",
 
     modoPredeterminado: "replace-element"
 

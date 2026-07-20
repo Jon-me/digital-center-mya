@@ -1,62 +1,832 @@
 /* =========================================================
    DIGITAL CENTER M&A — CAJA
+   FASE 29.6 — APPLE PRO COMPACT
    Entorno: escritorio
 ========================================================= */
 
 
 /* =========================================================
-   CAMPOS DE CAJA
+   PANEL PRINCIPAL
+========================================================= */
+
+.caja-apple-panel{
+    display:
+        grid;
+
+    gap:
+        16px;
+
+    padding:
+        18px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(7, 13, 24, 0.97),
+            rgba(3, 8, 17, 0.99)
+        );
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.32);
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.40),
+        0 0 0 1px rgba(59, 130, 246, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.caja-apple-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    padding:
+        2px
+        2px
+        14px;
+
+    border-bottom:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+}
+
+.caja-apple-title{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+}
+
+.caja-apple-icon{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    background:
+        rgba(15, 23, 42, 0.76);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.26);
+
+    border-radius:
+        12px;
+
+    font-size:
+        20px;
+}
+
+.caja-apple-title small,
+.caja-bloque-header small{
+    display:
+        block;
+
+    margin-bottom:
+        3px;
+
+    color:
+        rgba(125, 211, 252, 0.66);
+
+    font-size:
+        8px;
+
+    font-weight:
+        var(--font-weight-black);
+
+    letter-spacing:
+        1.25px;
+}
+
+.caja-apple-title h2{
+    margin:
+        0;
+
+    font-size:
+        22px;
+
+    letter-spacing:
+        -0.4px;
+}
+
+.selector-sucursal-caja{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    margin:
+        0 !important;
+}
+
+.selector-sucursal-caja label{
+    color:
+        var(--color-text-muted);
+
+    font-size:
+        12px;
+
+    font-weight:
+        var(--font-weight-semibold);
+}
+
+.selector-sucursal-caja select{
+    min-width:
+        210px;
+
+    height:
+        38px;
+
+    padding:
+        0
+        12px;
+
+    color:
+        var(--color-text-primary);
+
+    background:
+        rgba(4, 10, 22, 0.86);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.30);
+
+    border-radius:
+        9px;
+
+    outline:
+        none;
+}
+
+
+/* =========================================================
+   RESUMEN
+========================================================= */
+
+.caja-resumen-grid{
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(9, minmax(0, 1fr));
+
+    gap:
+        8px;
+}
+
+.caja-resumen-card{
+    min-width:
+        0;
+
+    padding:
+        11px
+        10px;
+
+    background:
+        rgba(15, 23, 42, 0.54);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+
+    border-radius:
+        11px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.caja-resumen-card span{
+    display:
+        block;
+
+    margin-bottom:
+        6px;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--color-text-subtle);
+
+    font-size:
+        8px;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    letter-spacing:
+        0.45px;
+
+    text-overflow:
+        ellipsis;
+
+    text-transform:
+        uppercase;
+
+    white-space:
+        nowrap;
+}
+
+.caja-resumen-card strong{
+    display:
+        block;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--color-text-primary);
+
+    font-family:
+        "Oxanium",
+        var(--font-family-base);
+
+    font-size:
+        16px;
+
+    font-weight:
+        var(--font-weight-extrabold);
+
+    letter-spacing:
+        -0.3px;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+.caja-resumen-destacada{
+    border-color:
+        rgba(96, 165, 250, 0.30);
+}
+
+.caja-resumen-gasto strong{
+    color:
+        var(--color-danger-400);
+}
+
+.caja-resumen-esperada{
+    background:
+        rgba(20, 83, 45, 0.13);
+
+    border-color:
+        rgba(74, 222, 128, 0.28);
+}
+
+.caja-resumen-esperada strong{
+    color:
+        var(--color-success-400);
+}
+
+
+/* =========================================================
+   BLOQUES
+========================================================= */
+
+.caja-operaciones-grid,
+.caja-tablas-grid{
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        12px;
+}
+
+.caja-bloque{
+    min-width:
+        0;
+
+    padding:
+        14px;
+
+    background:
+        rgba(10, 17, 30, 0.70);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.caja-bloque-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        12px;
+}
+
+.caja-bloque-header h3{
+    margin:
+        0;
+
+    font-size:
+        15px;
+
+    letter-spacing:
+        -0.2px;
+}
+
+.caja-bloque-header > span{
+    color:
+        rgba(148, 163, 184, 0.42);
+
+    font-family:
+        var(--font-family-mono);
+
+    font-size:
+        12px;
+
+    font-weight:
+        var(--font-weight-bold);
+}
+
+
+/* =========================================================
+   INPUTS
 ========================================================= */
 
 #panelCajaDiaria input{
-    width: 100% !important;
-    max-width: 700px !important;
+    width:
+        100% !important;
+
+    max-width:
+        none !important;
+
+    height:
+        40px !important;
 
     margin:
-        10px 8px 12px 0 !important;
+        0 !important;
 
     padding:
-        14px 18px !important;
+        0
+        13px !important;
 
     color:
         var(--color-text-primary) !important;
 
     background:
-        var(--surface-input) !important;
+        rgba(3, 9, 20, 0.86) !important;
 
     border:
-        var(--border-input) !important;
+        1px solid
+        rgba(100, 116, 139, 0.30) !important;
 
     border-radius:
-        var(--radius-md) !important;
+        9px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
 
     font-size:
-        var(--font-size-base) !important;
+        13px !important;
 
     outline:
         none !important;
 
-    box-shadow:
-        var(--shadow-input) !important;
-
     transition:
-        transform var(--transition-slow),
-        border-color var(--transition-slow),
-        box-shadow var(--transition-slow) !important;
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background var(--transition-fast) !important;
 }
 
 #panelCajaDiaria input::placeholder{
     color:
-        var(--color-text-soft) !important;
+        var(--color-text-subtle) !important;
 }
 
 #panelCajaDiaria input:focus{
     transform:
-        scale(1.01);
+        none !important;
+
+    background:
+        rgba(4, 12, 28, 0.96) !important;
 
     border-color:
-        rgba(37, 99, 235, 0.90) !important;
+        rgba(96, 165, 250, 0.64) !important;
 
     box-shadow:
-        var(--shadow-input-focus) !important;
+        0 0 0 3px rgba(59, 130, 246, 0.08) !important;
+}
+
+.caja-form-row{
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+    gap:
+        8px;
+}
+
+.caja-form-grid-gasto{
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        150px
+        auto;
+
+    gap:
+        8px;
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.caja-btn{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        38px !important;
+
+    height:
+        38px;
+
+    margin:
+        0 !important;
+
+    padding:
+        0
+        15px !important;
+
+    border-radius:
+        9px !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        var(--font-weight-extrabold) !important;
+
+    letter-spacing:
+        0.1px;
+}
+
+.caja-btn-primary{
+    color:
+        #ffffff !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #2f7df2,
+            #1457d4
+        ) !important;
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.50) !important;
+}
+
+.caja-btn-warning{
+    color:
+        #fef3c7 !important;
+
+    background:
+        rgba(120, 72, 16, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(245, 158, 11, 0.40) !important;
+}
+
+.caja-btn-success{
+    color:
+        #dcfce7 !important;
+
+    background:
+        rgba(22, 101, 52, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(74, 222, 128, 0.40) !important;
+}
+
+.caja-btn-danger{
+    color:
+        #fee2e2 !important;
+
+    background:
+        rgba(127, 29, 29, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(248, 113, 113, 0.42) !important;
+}
+
+.caja-btn-compacto{
+    min-height:
+        34px !important;
+
+    height:
+        34px;
+
+    padding:
+        0
+        12px !important;
+
+    font-size:
+        10px !important;
+}
+
+
+/* =========================================================
+   TABLAS
+========================================================= */
+
+.caja-bloque-tabla{
+    min-height:
+        250px;
+}
+
+.caja-tabla-scroll{
+    max-height:
+        210px;
+
+    overflow:
+        auto;
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.12);
+
+    border-radius:
+        10px;
+}
+
+.caja-tabla{
+    width:
+        100%;
+
+    margin:
+        0 !important;
+
+    background:
+        rgba(5, 10, 19, 0.72) !important;
+
+    border-collapse:
+        collapse;
+
+    border-radius:
+        0 !important;
+
+    backdrop-filter:
+        none !important;
+}
+
+.caja-tabla th{
+    position:
+        sticky;
+
+    top:
+        0;
+
+    z-index:
+        2;
+
+    padding:
+        9px
+        10px !important;
+
+    color:
+        rgba(219, 234, 254, 0.88);
+
+    background:
+        rgba(29, 78, 216, 0.88) !important;
+
+    font-size:
+        9px !important;
+
+    font-weight:
+        var(--font-weight-bold);
+
+    text-transform:
+        uppercase;
+}
+
+.caja-tabla td{
+    padding:
+        9px
+        10px !important;
+
+    color:
+        rgba(226, 232, 240, 0.90);
+
+    border-bottom:
+        1px solid
+        rgba(148, 163, 184, 0.10);
+
+    font-size:
+        10px !important;
+
+    font-weight:
+        var(--font-weight-semibold);
+}
+
+#tablaGastosCaja td:last-child button{
+    min-height:
+        30px !important;
+
+    height:
+        30px;
+
+    padding:
+        0
+        10px !important;
+
+    color:
+        #fee2e2 !important;
+
+    background:
+        rgba(127, 29, 29, 0.66) !important;
+
+    border:
+        1px solid
+        rgba(248, 113, 113, 0.38) !important;
+
+    border-radius:
+        8px !important;
+
+    font-size:
+        9px !important;
+}
+
+
+/* =========================================================
+   CUADRE
+========================================================= */
+
+.caja-cuadre-panel{
+    min-height:
+        250px;
+}
+
+.caja-cuadre-contenido{
+    display:
+        grid;
+
+    gap:
+        9px;
+}
+
+.caja-resultado-cuadre{
+    min-height:
+        42px;
+
+    padding:
+        11px
+        12px;
+
+    color:
+        var(--color-text-secondary);
+
+    background:
+        rgba(15, 23, 42, 0.58);
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.14);
+
+    border-radius:
+        9px;
+
+    font-size:
+        12px;
+
+    font-weight:
+        var(--font-weight-bold);
+}
+
+.caja-acciones-cierre{
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        8px;
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+.caja-historial-panel{
+    padding-bottom:
+        12px;
+}
+
+.caja-historial-header{
+    margin-bottom:
+        10px;
+}
+
+.caja-tabla-historial-scroll{
+    max-height:
+        270px;
+}
+
+.caja-tabla-historial{
+    min-width:
+        1180px;
+}
+
+
+/* =========================================================
+   BREAKPOINTS
+========================================================= */
+
+@media (max-width: 1500px){
+
+    .caja-resumen-grid{
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 1180px){
+
+    .caja-operaciones-grid,
+    .caja-tablas-grid{
+        grid-template-columns:
+            1fr;
+    }
+
+    .caja-resumen-grid{
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
 }

@@ -1,89 +1,196 @@
 <div id="panelReportes" style="display:none;">
 
-    <h2
-        id="tituloReportes"
-        style="margin-top:40px;"
-    >
-        📊 Reportes y Estadísticas
-    </h2>
+    <section class="reportes-apple-panel">
 
-    <div
-        class="dashboard"
-        id="dashboardAdmin"
-    >
+        <header class="reportes-apple-header">
 
-        <div class="dashboard-card">
-            <h2 id="totalProductos">0</h2>
-            <p>📦 Productos</p>
-        </div>
+            <div class="reportes-apple-title">
+                <span class="reportes-apple-icon">📊</span>
 
-        <div class="dashboard-card">
-            <h2 id="valorInventario">S/ 0</h2>
-            <p>💰 Valor Inventario</p>
-        </div>
+                <div>
+                    <small>ANÁLISIS FINANCIERO</small>
 
-        <div class="dashboard-card">
-            <h2 id="productosCarrito">0</h2>
-            <p>🛒 Carrito</p>
-        </div>
+                    <h2 id="tituloReportes">
+                        Reportes y Estadísticas
+                    </h2>
+                </div>
+            </div>
 
-        <div class="dashboard-card">
-            <h2 id="ventaActual">S/ 0</h2>
-            <p>📈 Venta Actual</p>
-        </div>
+            <div class="reportes-periodo">
+                <span>Vista actual</span>
+                <strong>Empresa / Sucursal</strong>
+            </div>
 
-    </div>
+        </header>
 
-    <div
-        class="dashboard"
-        id="dashboardReportes"
-    >
+        <section class="reportes-seccion">
 
-        <div class="dashboard-card">
-            <h2 id="ventasHoy">S/ 0</h2>
-            <p>📅 Ventas Hoy</p>
-        </div>
+            <div class="reportes-seccion-header">
+                <div>
+                    <small>RESUMEN GENERAL</small>
+                    <h3>Estado del negocio</h3>
+                </div>
+            </div>
 
-        <div class="dashboard-card">
-            <h2 id="gananciaHoy">S/ 0</h2>
-            <p>💵 Ganancia Hoy</p>
-        </div>
+            <div
+                class="reportes-resumen-grid"
+                id="dashboardAdmin"
+            >
 
-        <div class="dashboard-card">
-            <h2 id="ventasMes">S/ 0</h2>
-            <p>📈 Ventas Mes</p>
-        </div>
+                <article class="reporte-card reporte-card-compacta">
+                    <span class="reporte-card-icon">📦</span>
 
-        <div class="dashboard-card">
-            <h2 id="gananciaMes">S/ 0</h2>
-            <p>🏦 Ganancia Mes</p>
-        </div>
+                    <div>
+                        <small>Productos</small>
+                        <strong id="totalProductos">0</strong>
+                    </div>
+                </article>
 
-        <div class="dashboard-card">
-            <h2 id="ventasEfectivo">S/ 0</h2>
-            <p>💵 Efectivo Hoy</p>
-        </div>
+                <article class="reporte-card reporte-card-principal">
+                    <span class="reporte-card-icon">💰</span>
 
-        <div class="dashboard-card">
-            <h2 id="ventasYape">S/ 0</h2>
-            <p>📱 Yape Hoy</p>
-        </div>
+                    <div>
+                        <small>Valor inventario</small>
+                        <strong id="valorInventario">S/ 0</strong>
+                    </div>
+                </article>
 
-        <div class="dashboard-card">
-            <h2 id="ventasPlin">S/ 0</h2>
-            <p>🟢 Plin Hoy</p>
-        </div>
+                <article class="reporte-card reporte-card-compacta">
+                    <span class="reporte-card-icon">🛒</span>
 
-        <div class="dashboard-card">
-            <h2 id="ventasTarjeta">S/ 0</h2>
-            <p>💳 Tarjeta Hoy</p>
-        </div>
+                    <div>
+                        <small>Carrito</small>
+                        <strong id="productosCarrito">0</strong>
+                    </div>
+                </article>
 
-        <div class="dashboard-card">
-            <h2 id="ventasTransferencia">S/ 0</h2>
-            <p>🏦 Transferencia Hoy</p>
-        </div>
+                <article class="reporte-card reporte-card-principal reporte-card-venta">
+                    <span class="reporte-card-icon">📈</span>
 
-    </div>
+                    <div>
+                        <small>Venta actual</small>
+                        <strong id="ventaActual">S/ 0</strong>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+        <section class="reportes-seccion">
+
+            <div class="reportes-seccion-header">
+                <div>
+                    <small>RENDIMIENTO</small>
+                    <h3>Ventas y ganancias</h3>
+                </div>
+            </div>
+
+            <div class="reportes-finanzas-grid">
+
+                <article class="reporte-card reporte-card-financiera reporte-card-ventas">
+                    <span class="reporte-card-icon">📅</span>
+
+                    <div>
+                        <small>Ventas hoy</small>
+                        <strong id="ventasHoy">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-financiera reporte-card-ganancia">
+                    <span class="reporte-card-icon">💵</span>
+
+                    <div>
+                        <small>Ganancia hoy</small>
+                        <strong id="gananciaHoy">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-financiera reporte-card-ventas">
+                    <span class="reporte-card-icon">📈</span>
+
+                    <div>
+                        <small>Ventas del mes</small>
+                        <strong id="ventasMes">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-financiera reporte-card-ganancia">
+                    <span class="reporte-card-icon">🏦</span>
+
+                    <div>
+                        <small>Ganancia del mes</small>
+                        <strong id="gananciaMes">S/ 0</strong>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+        <section class="reportes-seccion">
+
+            <div class="reportes-seccion-header">
+                <div>
+                    <small>COBROS DEL DÍA</small>
+                    <h3>Métodos de pago</h3>
+                </div>
+            </div>
+
+            <div
+                class="reportes-metodos-grid"
+                id="dashboardReportes"
+            >
+
+                <article class="reporte-card reporte-card-metodo">
+                    <span class="reporte-card-icon">💵</span>
+
+                    <div>
+                        <small>Efectivo</small>
+                        <strong id="ventasEfectivo">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-metodo">
+                    <span class="reporte-card-icon">📱</span>
+
+                    <div>
+                        <small>Yape</small>
+                        <strong id="ventasYape">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-metodo">
+                    <span class="reporte-card-icon">🟢</span>
+
+                    <div>
+                        <small>Plin</small>
+                        <strong id="ventasPlin">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-metodo">
+                    <span class="reporte-card-icon">💳</span>
+
+                    <div>
+                        <small>Tarjeta</small>
+                        <strong id="ventasTarjeta">S/ 0</strong>
+                    </div>
+                </article>
+
+                <article class="reporte-card reporte-card-metodo">
+                    <span class="reporte-card-icon">🏦</span>
+
+                    <div>
+                        <small>Transferencia</small>
+                        <strong id="ventasTransferencia">S/ 0</strong>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+    </section>
 
 </div>

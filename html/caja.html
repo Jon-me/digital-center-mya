@@ -1,192 +1,298 @@
 <div id="panelCajaDiaria" style="display:none;">
 
-    <h2>💰 Caja Diaria</h2>
+    <section class="caja-apple-panel">
 
-    <div class="selector-sucursal-caja">
+        <header class="caja-apple-header">
 
-        <label for="sucursalCaja">
-            🏪 Caja de la sucursal
-        </label>
+            <div class="caja-apple-title">
+                <span class="caja-apple-icon">💰</span>
 
-        <select
-            id="sucursalCaja"
-            onchange="cambiarSucursalCaja()"
-        ></select>
+                <div>
+                    <small>CONTROL FINANCIERO</small>
+                    <h2>Caja Diaria</h2>
+                </div>
+            </div>
 
-    </div>
+            <div class="selector-sucursal-caja">
 
-    <div class="dashboard">
+                <label for="sucursalCaja">
+                    Caja de la sucursal
+                </label>
 
-        <div class="dashboard-card">
-            <h2 id="cajaInicial">S/ 0</h2>
-            <p>💵 Caja Inicial</p>
-        </div>
+                <select
+                    id="sucursalCaja"
+                    onchange="cambiarSucursalCaja()"
+                ></select>
 
-        <div class="dashboard-card">
-            <h2 id="cajaVentas">S/ 0</h2>
-            <p>🛒 Ventas del Día</p>
-        </div>
+            </div>
 
-        <div class="dashboard-card">
-            <h2 id="cajaEfectivo">S/ 0</h2>
-            <p>💵 Efectivo</p>
-        </div>
+        </header>
 
-        <div class="dashboard-card">
-            <h2 id="cajaYape">S/ 0</h2>
-            <p>📱 Yape</p>
-        </div>
+        <section class="caja-resumen-grid" aria-label="Resumen de caja">
 
-        <div class="dashboard-card">
-            <h2 id="cajaPlin">S/ 0</h2>
-            <p>🟢 Plin</p>
-        </div>
+            <article class="caja-resumen-card caja-resumen-destacada">
+                <span>Caja inicial</span>
+                <strong id="cajaInicial">S/ 0</strong>
+            </article>
 
-        <div class="dashboard-card">
-            <h2 id="cajaTarjeta">S/ 0</h2>
-            <p>💳 Tarjeta</p>
-        </div>
+            <article class="caja-resumen-card">
+                <span>Ventas del día</span>
+                <strong id="cajaVentas">S/ 0</strong>
+            </article>
 
-        <div class="dashboard-card">
-            <h2 id="cajaTransferencia">S/ 0</h2>
-            <p>🏦 Transferencia</p>
-        </div>
+            <article class="caja-resumen-card">
+                <span>Efectivo</span>
+                <strong id="cajaEfectivo">S/ 0</strong>
+            </article>
 
-        <div class="dashboard-card">
-            <h2 id="cajaGastos">S/ 0</h2>
-            <p>📉 Gastos</p>
-        </div>
+            <article class="caja-resumen-card">
+                <span>Yape</span>
+                <strong id="cajaYape">S/ 0</strong>
+            </article>
 
-        <div class="dashboard-card">
-            <h2 id="cajaEsperada">S/ 0</h2>
-            <p>✅ Caja Esperada</p>
-        </div>
+            <article class="caja-resumen-card">
+                <span>Plin</span>
+                <strong id="cajaPlin">S/ 0</strong>
+            </article>
 
-    </div>
+            <article class="caja-resumen-card">
+                <span>Tarjeta</span>
+                <strong id="cajaTarjeta">S/ 0</strong>
+            </article>
 
-    <h3>Abrir Caja</h3>
+            <article class="caja-resumen-card">
+                <span>Transferencia</span>
+                <strong id="cajaTransferencia">S/ 0</strong>
+            </article>
 
-    <input
-        id="montoInicialCaja"
-        type="number"
-        min="0"
-        step="0.01"
-        placeholder="Monto inicial S/"
-    >
+            <article class="caja-resumen-card caja-resumen-gasto">
+                <span>Gastos</span>
+                <strong id="cajaGastos">S/ 0</strong>
+            </article>
 
-    <button
-        type="button"
-        onclick="abrirCaja()"
-    >
-        Abrir Caja
-    </button>
+            <article class="caja-resumen-card caja-resumen-esperada">
+                <span>Caja esperada</span>
+                <strong id="cajaEsperada">S/ 0</strong>
+            </article>
 
-    <h3>Registrar Gasto</h3>
+        </section>
 
-    <input
-        id="descripcionGasto"
-        type="text"
-        placeholder="Descripción del gasto"
-    >
+        <section class="caja-operaciones-grid">
 
-    <input
-        id="montoGasto"
-        type="number"
-        min="0"
-        step="0.01"
-        placeholder="Monto gasto S/"
-    >
+            <article class="caja-bloque">
 
-    <button
-        type="button"
-        onclick="registrarGasto()"
-    >
-        Registrar Gasto
-    </button>
+                <div class="caja-bloque-header">
+                    <div>
+                        <small>APERTURA</small>
+                        <h3>Abrir caja</h3>
+                    </div>
+                    <span>01</span>
+                </div>
 
-    <h3>Gastos del Día</h3>
+                <div class="caja-form-row">
 
-    <table>
+                    <input
+                        id="montoInicialCaja"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Monto inicial S/"
+                    >
 
-        <thead>
-            <tr>
-                <th>Hora</th>
-                <th>Descripción</th>
-                <th>Monto</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
+                    <button
+                        type="button"
+                        class="caja-btn caja-btn-primary"
+                        onclick="abrirCaja()"
+                    >
+                        Abrir caja
+                    </button>
 
-        <tbody id="tablaGastosCaja"></tbody>
+                </div>
 
-    </table>
+            </article>
 
-    <h3>Cuadre Real de Caja</h3>
+            <article class="caja-bloque">
 
-    <input
-        id="dineroRealCaja"
-        type="number"
-        min="0"
-        step="0.01"
-        placeholder="Dinero físico contado S/"
-    >
+                <div class="caja-bloque-header">
+                    <div>
+                        <small>EGRESOS</small>
+                        <h3>Registrar gasto</h3>
+                    </div>
+                    <span>02</span>
+                </div>
 
-    <button
-        type="button"
-        onclick="cuadrarCaja()"
-    >
-        🧮 Cuadrar Caja
-    </button>
+                <div class="caja-form-grid-gasto">
 
-    <h3 id="resultadoCuadreCaja">
-        Resultado: -
-    </h3>
+                    <input
+                        id="descripcionGasto"
+                        type="text"
+                        placeholder="Descripción del gasto"
+                    >
 
-    <button
-        type="button"
-        onclick="cerrarCaja()"
-    >
-        🔒 Cerrar Caja
-    </button>
+                    <input
+                        id="montoGasto"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Monto S/"
+                    >
 
-    <button
-        type="button"
-        onclick="anularCajaDelDia()"
-    >
-        🗑️ Anular Caja del Día
-    </button>
+                    <button
+                        type="button"
+                        class="caja-btn caja-btn-warning"
+                        onclick="registrarGasto()"
+                    >
+                        Registrar
+                    </button>
 
-    <h3>📚 Historial de Cierres</h3>
+                </div>
 
-    <button
-        type="button"
-        id="btnBorrarHistorialCajas"
-        onclick="borrarHistorialCierres()"
-    >
-        🗑️ Borrar Historial de Cierres
-    </button>
+            </article>
 
-    <table>
+        </section>
 
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Cerró</th>
-                <th>Ventas</th>
-                <th>Efectivo</th>
-                <th>Yape</th>
-                <th>Plin</th>
-                <th>Tarjeta</th>
-                <th>Transferencia</th>
-                <th>Gastos</th>
-                <th>Esperado</th>
-                <th>Real</th>
-                <th>Resultado</th>
-            </tr>
-        </thead>
+        <section class="caja-tablas-grid">
 
-        <tbody id="historialCajasTabla"></tbody>
+            <article class="caja-bloque caja-bloque-tabla">
 
-    </table>
+                <div class="caja-bloque-header">
+                    <div>
+                        <small>MOVIMIENTOS</small>
+                        <h3>Gastos del día</h3>
+                    </div>
+                </div>
+
+                <div class="caja-tabla-scroll">
+
+                    <table class="caja-tabla">
+
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tablaGastosCaja"></tbody>
+
+                    </table>
+
+                </div>
+
+            </article>
+
+            <article class="caja-bloque caja-cuadre-panel">
+
+                <div class="caja-bloque-header">
+                    <div>
+                        <small>CIERRE</small>
+                        <h3>Cuadre real</h3>
+                    </div>
+                    <span>03</span>
+                </div>
+
+                <div class="caja-cuadre-contenido">
+
+                    <input
+                        id="dineroRealCaja"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Dinero físico contado S/"
+                    >
+
+                    <button
+                        type="button"
+                        class="caja-btn caja-btn-primary"
+                        onclick="cuadrarCaja()"
+                    >
+                        Cuadrar caja
+                    </button>
+
+                    <div
+                        id="resultadoCuadreCaja"
+                        class="caja-resultado-cuadre"
+                    >
+                        Resultado: -
+                    </div>
+
+                    <div class="caja-acciones-cierre">
+
+                        <button
+                            type="button"
+                            class="caja-btn caja-btn-success"
+                            onclick="cerrarCaja()"
+                        >
+                            Cerrar caja
+                        </button>
+
+                        <button
+                            type="button"
+                            class="caja-btn caja-btn-danger"
+                            onclick="anularCajaDelDia()"
+                        >
+                            Anular caja
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+        <section class="caja-bloque caja-historial-panel">
+
+            <div class="caja-bloque-header caja-historial-header">
+
+                <div>
+                    <small>ARCHIVO</small>
+                    <h3>Historial de cierres</h3>
+                </div>
+
+                <button
+                    type="button"
+                    id="btnBorrarHistorialCajas"
+                    class="caja-btn caja-btn-danger caja-btn-compacto"
+                    onclick="borrarHistorialCierres()"
+                >
+                    Borrar historial
+                </button>
+
+            </div>
+
+            <div class="caja-tabla-scroll caja-tabla-historial-scroll">
+
+                <table class="caja-tabla caja-tabla-historial">
+
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cerró</th>
+                            <th>Ventas</th>
+                            <th>Efectivo</th>
+                            <th>Yape</th>
+                            <th>Plin</th>
+                            <th>Tarjeta</th>
+                            <th>Transferencia</th>
+                            <th>Gastos</th>
+                            <th>Esperado</th>
+                            <th>Real</th>
+                            <th>Resultado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="historialCajasTabla"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </section>
 
 </div>

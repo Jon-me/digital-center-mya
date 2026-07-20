@@ -1,73 +1,196 @@
 <div id="panelDashboardEjecutivo" style="display:none;">
 
-    <h2 id="tituloDashboardEjecutivo">
-        🧠 Dashboard Ejecutivo
-    </h2>
+    <section class="executive-command-center">
 
-    <div class="selector-dashboard-sucursal">
+        <header class="executive-header">
 
-        <label for="dashboardSucursal">
-            🏪 Dashboard
-        </label>
+            <div class="executive-title">
+                <span class="executive-title-icon">🧠</span>
 
-        <select
-            id="dashboardSucursal"
-            onchange="cambiarSucursalDashboard()"
-        >
-            <option value="empresa">
-                🌎 Toda la empresa
-            </option>
-        </select>
+                <div>
+                    <small>CENTRO DE MANDO</small>
 
-    </div>
+                    <h2 id="tituloDashboardEjecutivo">
+                        Dashboard Ejecutivo
+                    </h2>
+                </div>
+            </div>
 
-    <div class="dashboard" id="dashboardEjecutivo">
+            <div class="selector-dashboard-sucursal">
 
-        <div class="dashboard-card">
-            <h2 id="productoMasVendido">-</h2>
-            <p>Producto Más Vendido</p>
-        </div>
+                <div class="executive-selector-copy">
+                    <small>CONTEXTO ACTIVO</small>
 
-        <div class="dashboard-card">
-            <h2 id="mejorVendedor">-</h2>
-            <p>👑 Mejor Vendedor</p>
-        </div>
+                    <label for="dashboardSucursal">
+                        Empresa / sucursal
+                    </label>
+                </div>
 
-        <div class="dashboard-card">
-            <h2 id="gananciaRealDia">S/ 0</h2>
-            <p>💰 Ganancia Real del Día</p>
-        </div>
+                <select
+                    id="dashboardSucursal"
+                    onchange="cambiarSucursalDashboard()"
+                >
+                    <option value="empresa">
+                        🌎 Toda la empresa
+                    </option>
+                </select>
 
-        <div class="dashboard-card">
-            <h2 id="ticketPromedio">S/ 0</h2>
-            <p>🧾 Ticket Promedio</p>
-        </div>
+            </div>
 
-        <div class="dashboard-card">
-            <h2 id="gananciaMesEjecutiva">S/ 0</h2>
-            <p>📈 Ganancia del Mes</p>
-        </div>
+        </header>
 
-    </div>
+        <section class="executive-hero-grid" id="dashboardEjecutivo">
 
-    <div class="ranking-sucursales-panel">
+            <article class="executive-profit-card">
 
-        <h3>🏆 Ranking de Sucursales</h3>
+                <div class="executive-profit-heading">
+                    <span>💰</span>
 
-        <div id="rankingSucursales">
-            <p>Sin datos disponibles.</p>
-        </div>
+                    <div>
+                        <small>RESULTADO DE HOY</small>
+                        <p>Ganancia real del día</p>
+                    </div>
+                </div>
 
-    </div>
+                <h3 id="gananciaRealDia">
+                    S/ 0
+                </h3>
 
-    <div class="ranking-productos-panel">
+                <div class="executive-profit-status">
+                    <span class="executive-status-dot"></span>
+                    Actualización en tiempo real
+                </div>
 
-        <h3>📦 Top 5 Productos</h3>
+            </article>
 
-        <div id="rankingProductos">
-            <p>Sin ventas registradas.</p>
-        </div>
+            <div class="executive-support-grid">
 
-    </div>
+                <article class="executive-widget executive-widget-producto">
+                    <span class="executive-widget-icon">🏆</span>
+
+                    <div>
+                        <small>PRODUCTO TOP</small>
+
+                        <h3 id="productoMasVendido">
+                            -
+                        </h3>
+
+                        <p>Producto más vendido hoy</p>
+                    </div>
+                </article>
+
+                <article class="executive-widget executive-widget-vendedor">
+                    <span class="executive-widget-icon">👑</span>
+
+                    <div>
+                        <small>RENDIMIENTO</small>
+
+                        <h3 id="mejorVendedor">
+                            -
+                        </h3>
+
+                        <p>Mejor vendedor del día</p>
+                    </div>
+                </article>
+
+                <article class="executive-widget executive-widget-ticket">
+                    <span class="executive-widget-icon">🧾</span>
+
+                    <div>
+                        <small>PROMEDIO</small>
+
+                        <h3 id="ticketPromedio">
+                            S/ 0
+                        </h3>
+
+                        <p>Ticket promedio</p>
+                    </div>
+                </article>
+
+                <article class="executive-widget executive-widget-mes">
+                    <span class="executive-widget-icon">📈</span>
+
+                    <div>
+                        <small>ACUMULADO</small>
+
+                        <h3 id="gananciaMesEjecutiva">
+                            S/ 0
+                        </h3>
+
+                        <p>Ganancia del mes</p>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+        <section class="executive-ranking-layout">
+
+            <article class="executive-panel ranking-sucursales-panel">
+
+                <header class="executive-panel-header">
+
+                    <div>
+                        <small>COMPARATIVA DIARIA</small>
+                        <h3>🏆 Ranking de Sucursales</h3>
+                    </div>
+
+                    <span class="executive-panel-badge">
+                        Hoy
+                    </span>
+
+                </header>
+
+                <div
+                    id="rankingSucursales"
+                    class="executive-list"
+                >
+                    <div class="executive-empty-state">
+                        <span>🏪</span>
+
+                        <div>
+                            <strong>Sin ventas registradas</strong>
+                            <small>El ranking aparecerá con la primera venta del día.</small>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <article class="executive-panel ranking-productos-panel">
+
+                <header class="executive-panel-header">
+
+                    <div>
+                        <small>DEMANDA DEL DÍA</small>
+                        <h3>📦 Top 5 Productos</h3>
+                    </div>
+
+                    <span class="executive-panel-badge">
+                        Unidades
+                    </span>
+
+                </header>
+
+                <div
+                    id="rankingProductos"
+                    class="executive-list"
+                >
+                    <div class="executive-empty-state">
+                        <span>📦</span>
+
+                        <div>
+                            <strong>Sin productos vendidos</strong>
+                            <small>La clasificación se actualizará automáticamente.</small>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+        </section>
+
+    </section>
 
 </div>
