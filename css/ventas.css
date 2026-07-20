@@ -120,3 +120,536 @@
     transform:
         scale(1.08) !important;
 }
+
+/* =========================================================
+   FASE 29.5 — BUSCADOR DEL HISTORIAL DE VENTAS
+========================================================= */
+
+.historial-buscador{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        10px;
+
+    margin:
+        0
+        0
+        12px;
+
+    padding:
+        14px;
+
+    background:
+        rgba(7, 17, 34, 0.72);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.24);
+
+    border-radius:
+        14px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+#inputBuscarHistorialVentas{
+    flex:
+        1 1 420px;
+
+    width:
+        100%;
+
+    min-width:
+        280px;
+
+    max-width:
+        680px;
+
+    height:
+        44px;
+
+    margin:
+        0 !important;
+
+    padding:
+        0
+        15px !important;
+
+    color:
+        var(--color-text-primary) !important;
+
+    background:
+        rgba(2, 8, 20, 0.88) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.42) !important;
+
+    border-radius:
+        10px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        0 6px 16px rgba(0, 0, 0, 0.16) !important;
+
+    font-size:
+        14px !important;
+
+    outline:
+        none !important;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+#inputBuscarHistorialVentas::placeholder{
+    color:
+        rgba(148, 163, 184, 0.72) !important;
+}
+
+#inputBuscarHistorialVentas:focus{
+    background:
+        rgba(3, 11, 27, 0.98) !important;
+
+    border-color:
+        rgba(56, 189, 248, 0.72) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10),
+        0 8px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+#btnBuscarHistorialVentas,
+#btnLimpiarHistorialVentas{
+    min-height:
+        40px !important;
+
+    height:
+        40px;
+
+    margin:
+        0 !important;
+
+    padding:
+        0
+        16px !important;
+
+    border-radius:
+        9px !important;
+
+    font-size:
+        12px !important;
+
+    font-weight:
+        800 !important;
+}
+
+#btnBuscarHistorialVentas{
+    color:
+        #ffffff !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #2f7df2,
+            #1457d4
+        ) !important;
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.58) !important;
+
+    box-shadow:
+        0 7px 16px rgba(5, 75, 190, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+#btnLimpiarHistorialVentas{
+    color:
+        rgba(226, 232, 240, 0.88) !important;
+
+    background:
+        rgba(30, 41, 59, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.30) !important;
+
+    box-shadow:
+        none !important;
+}
+
+#btnBuscarHistorialVentas:hover,
+#btnLimpiarHistorialVentas:hover{
+    transform:
+        translateY(-1px) !important;
+
+    filter:
+        brightness(1.06);
+}
+
+.historial-busqueda-estado{
+    min-height:
+        18px;
+
+    margin:
+        0
+        2px
+        8px;
+
+    color:
+        rgba(148, 163, 184, 0.88);
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+}
+
+.historial-busqueda-estado:not(:empty){
+    padding:
+        7px
+        10px;
+
+    background:
+        rgba(15, 23, 42, 0.54);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.14);
+
+    border-radius:
+        8px;
+}
+
+/* =========================================================
+   FASE 29.5.1 — HISTORIAL APPLE PRO
+   - Buscador más limpio y compacto.
+   - Tabla con mayor aire y jerarquía.
+   - Acciones discretas.
+   - Botón Anular en rojo.
+========================================================= */
+
+
+/* =========================================================
+   BUSCADOR
+========================================================= */
+
+.historial-buscador{
+    gap:
+        8px !important;
+
+    margin-bottom:
+        10px !important;
+
+    padding:
+        10px !important;
+
+    background:
+        rgba(8, 15, 28, 0.54) !important;
+
+    border:
+        1px solid
+        rgba(100, 116, 139, 0.24) !important;
+
+    border-radius:
+        12px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+#inputBuscarHistorialVentas{
+    max-width:
+        620px !important;
+
+    height:
+        40px !important;
+
+    padding:
+        0
+        14px !important;
+
+    background:
+        rgba(3, 8, 18, 0.82) !important;
+
+    border:
+        1px solid
+        rgba(100, 116, 139, 0.36) !important;
+
+    border-radius:
+        9px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+
+    font-size:
+        13px !important;
+}
+
+#inputBuscarHistorialVentas:focus{
+    border-color:
+        rgba(96, 165, 250, 0.62) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+#btnBuscarHistorialVentas,
+#btnLimpiarHistorialVentas{
+    height:
+        38px !important;
+
+    min-height:
+        38px !important;
+
+    padding:
+        0
+        14px !important;
+
+    border-radius:
+        9px !important;
+
+    font-size:
+        11px !important;
+}
+
+#btnBuscarHistorialVentas{
+    background:
+        linear-gradient(
+            180deg,
+            #2b73df,
+            #174fb8
+        ) !important;
+
+    border-color:
+        rgba(147, 197, 253, 0.48) !important;
+
+    box-shadow:
+        0 6px 14px rgba(5, 75, 190, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+#btnLimpiarHistorialVentas{
+    color:
+        rgba(203, 213, 225, 0.88) !important;
+
+    background:
+        rgba(30, 41, 59, 0.60) !important;
+
+    border-color:
+        rgba(148, 163, 184, 0.22) !important;
+}
+
+.historial-busqueda-estado{
+    margin:
+        0
+        2px
+        10px !important;
+
+    color:
+        rgba(148, 163, 184, 0.82) !important;
+
+    font-size:
+        11px !important;
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+#panelHistorialVentas table{
+    margin-top:
+        12px !important;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(12, 18, 30, 0.88) !important;
+
+    border:
+        1px solid
+        rgba(100, 116, 139, 0.20);
+
+    border-radius:
+        12px !important;
+
+    box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.22);
+}
+
+#panelHistorialVentas th{
+    padding:
+        12px
+        14px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(30, 64, 175, 0.94),
+            rgba(29, 78, 216, 0.90)
+        ) !important;
+
+    border-right:
+        1px solid
+        rgba(255, 255, 255, 0.04);
+
+    font-size:
+        13px !important;
+
+    font-weight:
+        700 !important;
+
+    letter-spacing:
+        -0.1px;
+}
+
+#panelHistorialVentas td{
+    padding:
+        12px
+        14px !important;
+
+    color:
+        rgba(241, 245, 249, 0.92) !important;
+
+    border-bottom:
+        1px solid
+        rgba(148, 163, 184, 0.13) !important;
+
+    font-size:
+        12px !important;
+
+    font-weight:
+        600 !important;
+
+    line-height:
+        1.35;
+}
+
+#panelHistorialVentas tbody tr{
+    background:
+        rgba(255, 255, 255, 0.012);
+
+    transition:
+        background 140ms ease;
+}
+
+#panelHistorialVentas tbody tr:hover{
+    background:
+        rgba(59, 130, 246, 0.055) !important;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+#historialVentasTabla td:last-child{
+    min-width:
+        84px !important;
+
+    gap:
+        6px !important;
+}
+
+#historialVentasTabla td:last-child button{
+    width:
+        34px !important;
+
+    min-width:
+        34px !important;
+
+    max-width:
+        34px !important;
+
+    height:
+        34px !important;
+
+    min-height:
+        34px !important;
+
+    max-height:
+        34px !important;
+
+    border-radius:
+        9px !important;
+
+    font-size:
+        16px !important;
+}
+
+/* Reimprimir — azul sobrio */
+#historialVentasTabla td:last-child button[title="Reimprimir boleta"]{
+    color:
+        #dbeafe !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(37, 99, 235, 0.92),
+            rgba(30, 64, 175, 0.96)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.54) !important;
+
+    box-shadow:
+        0 6px 14px rgba(30, 64, 175, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Anular — rojo obligatorio */
+#historialVentasTabla td:last-child button[title="Anular venta"]{
+    color:
+        #fee2e2 !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #dc2626,
+            #991b1b
+        ) !important;
+
+    border:
+        1px solid
+        rgba(248, 113, 113, 0.72) !important;
+
+    box-shadow:
+        0 6px 14px rgba(127, 29, 29, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+#historialVentasTabla td:last-child button[title="Anular venta"]:hover{
+    background:
+        linear-gradient(
+            180deg,
+            #ef4444,
+            #b91c1c
+        ) !important;
+
+    border-color:
+        rgba(252, 165, 165, 0.88) !important;
+
+    box-shadow:
+        0 8px 18px rgba(127, 29, 29, 0.30),
+        0 0 0 2px rgba(239, 68, 68, 0.10) !important;
+}
+
+#historialVentasTabla td:last-child button:hover{
+    transform:
+        translateY(-1px) !important;
+}

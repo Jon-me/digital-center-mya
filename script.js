@@ -104,6 +104,8 @@ let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
 let historialVentas = [];
 
+let busquedaHistorialVentas = "";
+
 let codigoAnulacion = "DCMYA2811";
 
 let ventaPendienteAnular = null;
@@ -570,7 +572,7 @@ const HTMLLoader = crearHTMLLoader({
 
     directorioBase: "html",
 
-    version: "HTML28-5",
+    version: "HTML29-5",
 
     modoPredeterminado: "replace-element"
 
@@ -842,6 +844,8 @@ HTMLLoader.validarElementosCriticos([
     "#panelHistorialVentas",
     "#historialVentasTabla",
     "#columnaGanancia",
+    "#inputBuscarHistorialVentas",
+    "#estadoBusquedaHistorialVentas",
 
     "#panelGarantias",
     "#inputGarantia",
@@ -942,6 +946,8 @@ HTMLLoader.validarElementosCriticos([
     "#contenidoModalPanel"
 ]);
         Bootstrap.iniciarAplicacion();
+
+        inicializarBuscadorHistorialVentas();
 
         CatalogoProductos
             .inicializarScrollCatalogo();
@@ -1269,9 +1275,109 @@ await Ventas.finalizarVenta("B001-" + numeroBoleta);
 
 window.finalizarEImprimir = finalizarEImprimir;
 
+function obtenerInputBusquedaHistorial(){
+
+    return (
+        document.querySelector(
+            "#contenidoModalPanel #inputBuscarHistorialVentas"
+        ) ||
+        document.getElementById(
+            "inputBuscarHistorialVentas"
+        )
+    );
+
+}
+
+function obtenerEstadoBusquedaHistorial(){
+
+    return (
+        document.querySelector(
+            "#contenidoModalPanel #estadoBusquedaHistorialVentas"
+        ) ||
+        document.getElementById(
+            "estadoBusquedaHistorialVentas"
+        )
+    );
+
+}
+
+function buscarHistorialVentas(){
+
+    const input =
+        obtenerInputBusquedaHistorial();
+
+    busquedaHistorialVentas =
+        input?.value.trim() || "";
+
+    mostrarHistorialVentas();
+
+}
+
+function limpiarBusquedaHistorialVentas(){
+
+    const input =
+        obtenerInputBusquedaHistorial();
+
+    busquedaHistorialVentas = "";
+
+    if(input){
+        input.value = "";
+        input.focus();
+    }
+
+    mostrarHistorialVentas();
+
+}
+
+function inicializarBuscadorHistorialVentas(){
+
+    const input =
+        document.getElementById(
+            "inputBuscarHistorialVentas"
+        );
+
+    if(!input || input.dataset.inicializado === "true"){
+        return;
+    }
+
+    input.dataset.inicializado = "true";
+
+    input.addEventListener(
+        "input",
+        function(){
+
+            busquedaHistorialVentas =
+                input.value.trim();
+
+            mostrarHistorialVentas();
+
+        }
+    );
+
+    input.addEventListener(
+        "keydown",
+        function(event){
+
+            if(event.key === "Enter"){
+                event.preventDefault();
+                buscarHistorialVentas();
+            }
+
+            if(event.key === "Escape"){
+                limpiarBusquedaHistorialVentas();
+            }
+
+        }
+    );
+
+}
+
 function mostrarHistorialVentas(){
 
-    let tabla = document.getElementById("historialVentasTabla");
+    let tabla =
+        document.getElementById(
+            "historialVentasTabla"
+        );
 
     if(!tabla){
         return;
@@ -1279,23 +1385,40 @@ function mostrarHistorialVentas(){
 
     let html = "";
 
-    let rol = localStorage.getItem("rolActivo");
-    
-    let ventasFiltradas = historialVentas.filter(function(venta){
+    let rol =
+        localStorage.getItem("rolActivo");
 
-    if(rol === "vendedor"){
-        return venta.fechaISO === obtenerFechaISO();
-    }
+    let ventasPermitidas =
+        historialVentas.filter(function(venta){
 
-    return true;
+            if(rol === "vendedor"){
+                return (
+                    venta.fechaISO ===
+                    obtenerFechaISO()
+                );
+            }
 
-});
+            return true;
+
+        });
+
+    let ventasFiltradas =
+        ventasPermitidas.filter(function(venta){
+
+            return VentasHistorial
+                .coincideBusquedaVenta(
+                    venta,
+                    busquedaHistorialVentas
+                );
+
+        });
 
     ventasFiltradas.forEach(function(venta){
 
-        let indexReal = historialVentas.findIndex(function(v){
-            return v.id === venta.id;
-        });
+        let indexReal =
+            historialVentas.findIndex(function(v){
+                return v.id === venta.id;
+            });
 
         html += `
 <tr>
@@ -1303,44 +1426,108 @@ function mostrarHistorialVentas(){
     <td>${venta.hora}</td>
     <td>${VentasHistorial.obtenerProductosVenta(venta)}</td>
     <td>${VentasHistorial.obtenerCategoriasVenta(venta)}</td>
-   <td>${venta.vendedor || "Sin vendedor"}</td>
-<td>${venta.tiendaVentaNombre ||
-Sucursales.obtenerNombreSucursal(venta.tiendaVenta)}</td>
-<td>S/ ${Number(venta.total || 0).toFixed(2)}</td>
-    <td>${VentasHistorial.obtenerDetallePagosVenta(venta)}</td>
+    <td>${venta.vendedor || "Sin vendedor"}</td>
+
+    <td>${
+        venta.tiendaVentaNombre ||
+        Sucursales.obtenerNombreSucursal(
+            venta.tiendaVenta
+        )
+    }</td>
+
+    <td>
+        S/ ${Number(venta.total || 0).toFixed(2)}
+    </td>
+
+    <td>
+        ${VentasHistorial.obtenerDetallePagosVenta(venta)}
+    </td>
 
     ${
         rol === "admin"
-        ? `<td>S/ ${Number(venta.ganancia || 0).toFixed(2)}</td>`
+        ? `
+            <td>
+                S/ ${Number(venta.ganancia || 0).toFixed(2)}
+            </td>
+        `
         : ""
     }
 
     <td>
-    ${
-        venta.numeroBoleta && venta.numeroBoleta !== "SIN IMPRESION"
-        ? `<button onclick="reimprimirBoletaVenta(${indexReal})" title="Reimprimir boleta">🧾</button>`
-        : ""
-    }
+        ${
+            venta.numeroBoleta &&
+            venta.numeroBoleta !== "SIN IMPRESION"
+            ? `
+                <button
+                    onclick="reimprimirBoletaVenta(${indexReal})"
+                    title="Reimprimir boleta"
+                >
+                    🧾
+                </button>
+            `
+            : ""
+        }
 
-    <button onclick="anularVenta(${indexReal})" title="Anular venta">↩️</button>
-</td>
-
+        <button
+            onclick="anularVenta(${indexReal})"
+            title="Anular venta"
+        >
+            ↩️
+        </button>
+    </td>
 </tr>
 `;
 
     });
 
+    const columnas =
+        rol === "admin"
+            ? 10
+            : 9;
+
     if(html === ""){
+
+        const mensaje =
+            busquedaHistorialVentas
+                ? "No se encontraron ventas con ese criterio."
+                : rol === "vendedor"
+                ? "No tienes ventas registradas hoy."
+                : "No hay ventas registradas.";
+
         html = `
-        <tr>
-            <td colspan="9" style="text-align:center;">
-                No tienes ventas registradas hoy.
-            </td>
-        </tr>
+            <tr>
+                <td
+                    colspan="${columnas}"
+                    style="text-align:center;"
+                >
+                    ${mensaje}
+                </td>
+            </tr>
         `;
+
     }
 
     tabla.innerHTML = html;
+
+    const estado =
+        obtenerEstadoBusquedaHistorial();
+
+    if(estado){
+
+        if(busquedaHistorialVentas){
+
+            estado.textContent =
+                `${ventasFiltradas.length} resultado(s) para ` +
+                `"${busquedaHistorialVentas}"`;
+
+        }else{
+
+            estado.textContent =
+                `${ventasFiltradas.length} venta(s) mostrada(s)`;
+
+        }
+
+    }
 
 }
 
@@ -1653,6 +1840,10 @@ window.borrarHistorialCierres = Caja.borrarHistorialCierres;
 window.actualizarDashboardEjecutivo =
     Dashboard.actualizarDashboardEjecutivo;
 window.buscarGarantia = Garantias.buscarGarantia;
+window.buscarHistorialVentas =
+    buscarHistorialVentas;
+window.limpiarBusquedaHistorialVentas =
+    limpiarBusquedaHistorialVentas;
 window.toggleHistorialVentas = toggleHistorialVentas;
 window.toggleReportes = toggleReportes;
 window.toggleDashboardEjecutivo = toggleDashboardEjecutivo;

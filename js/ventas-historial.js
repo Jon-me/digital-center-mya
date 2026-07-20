@@ -1,18 +1,18 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // VENTAS HISTORIAL MODULE
-// FASE 5
+// FASE 29.5
 // =====================================================
 
 export function crearVentasHistorial(deps){
 
     const {
-    state,
-    obtenerFechaISO,
-    tiendasSistema,
-    construirHTMLReimpresionBoleta,
-    imprimirHTML
-} = deps;
+        state,
+        obtenerFechaISO,
+        tiendasSistema,
+        construirHTMLReimpresionBoleta,
+        imprimirHTML
+    } = deps;
 
     function obtenerDetallePagosVenta(venta){
 
@@ -82,32 +82,117 @@ export function crearVentasHistorial(deps){
 
     function reimprimirBoletaVenta(index){
 
-    let venta = state.historialVentas[index];
+        let venta = state.historialVentas[index];
 
-    if(!venta){
-        alert("No se encontró la venta");
-        return;
+        if(!venta){
+            alert("No se encontró la venta");
+            return;
+        }
+
+        if(!venta.numeroBoleta || venta.numeroBoleta === "SIN IMPRESION"){
+            alert("Esta venta no tiene boleta para reimprimir");
+            return;
+        }
+
+        let detallePagos = obtenerDetallePagosVenta(venta);
+
+        let contenido = construirHTMLReimpresionBoleta(
+            venta,
+            detallePagos
+        );
+
+        imprimirHTML(contenido);
     }
 
-    if(!venta.numeroBoleta || venta.numeroBoleta === "SIN IMPRESION"){
-        alert("Esta venta no tiene boleta para reimprimir");
-        return;
+    function normalizarBusqueda(valor){
+
+        return String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/\s+/g, " ")
+            .trim();
     }
 
-    let detallePagos = obtenerDetallePagosVenta(venta);
+    function limpiarHTMLBusqueda(valor){
 
-    let contenido = construirHTMLReimpresionBoleta(
+        const temporal =
+            document.createElement("div");
+
+        temporal.innerHTML =
+            String(valor || "");
+
+        return temporal.textContent || "";
+    }
+
+    function obtenerTextoBusquedaVenta(venta){
+
+        const productos =
+            limpiarHTMLBusqueda(
+                obtenerProductosVenta(venta)
+            );
+
+        const categorias =
+            limpiarHTMLBusqueda(
+                obtenerCategoriasVenta(venta)
+            );
+
+        const pagos =
+            limpiarHTMLBusqueda(
+                obtenerDetallePagosVenta(venta)
+            );
+
+        const tienda =
+            venta.tiendaVentaNombre ||
+            tiendasSistema?.[venta.tiendaVenta] ||
+            venta.tiendaVenta ||
+            "";
+
+        return normalizarBusqueda([
+            venta.numeroBoleta,
+            venta.fecha,
+            venta.fechaISO,
+            venta.hora,
+            productos,
+            categorias,
+            venta.vendedor,
+            tienda,
+            venta.total,
+            venta.ganancia,
+            venta.metodoPago,
+            pagos
+        ].join(" "));
+    }
+
+    function coincideBusquedaVenta(
         venta,
-        detallePagos
-    );
+        textoBusqueda
+    ){
 
-    imprimirHTML(contenido);
-}
+        const consulta =
+            normalizarBusqueda(textoBusqueda);
+
+        if(!consulta){
+            return true;
+        }
+
+        const textoVenta =
+            obtenerTextoBusquedaVenta(venta);
+
+        return consulta
+            .split(" ")
+            .filter(Boolean)
+            .every(function(token){
+                return textoVenta.includes(token);
+            });
+    }
 
     return {
         obtenerDetallePagosVenta,
         obtenerProductosVenta,
         obtenerCategoriasVenta,
+        obtenerTextoBusquedaVenta,
+        coincideBusquedaVenta,
         reimprimirBoletaVenta
     };
 }

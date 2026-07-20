@@ -1137,3 +1137,643 @@ body:not(.categorias-menu-abierto) #categoriasMenu{
     padding-bottom:
         18px !important;
 }
+
+/* =========================================================
+   FASE 29.4 — TARJETAS APPLE PRO + ASUS ROG
+   Objetivos:
+   - Jerarquía clara entre nombre, código, stock y precios.
+   - Menos ruido visual permanente.
+   - Imágenes más protagonistas.
+   - Botones compactos y comerciales.
+   - Mantener cinco columnas y altura unificada.
+========================================================= */
+
+
+/* =========================================================
+   PANEL Y GRID
+========================================================= */
+
+.panel-productos,
+.productos-premium-panel{
+    padding:
+        10px !important;
+
+    border-radius:
+        16px !important;
+
+    clip-path:
+        none !important;
+
+    border:
+        1px solid
+        rgba(56, 189, 248, 0.56) !important;
+
+    box-shadow:
+        0 22px 54px rgba(0, 0, 0, 0.42),
+        0 0 0 1px rgba(37, 99, 235, 0.14),
+        0 0 22px rgba(56, 189, 248, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        inset 0 0 30px rgba(37, 99, 235, 0.055) !important;
+}
+
+.panel-productos::before,
+.productos-premium-panel::before{
+    width:
+        50% !important;
+
+    height:
+        2px !important;
+
+    opacity:
+        0.88;
+}
+
+.panel-productos::after,
+.productos-premium-panel::after{
+    display:
+        none !important;
+}
+
+.productos-grid,
+.productos-premium-panel .productos-grid{
+    gap:
+        12px !important;
+
+    padding:
+        8px
+        10px
+        16px
+        8px !important;
+
+    align-items:
+        stretch !important;
+}
+
+
+/* =========================================================
+   TARJETA BASE
+========================================================= */
+
+.producto-card,
+.productos-premium-panel .producto-card{
+    min-height:
+        510px !important;
+
+    height:
+        100% !important;
+
+    padding:
+        10px !important;
+
+    overflow:
+        hidden !important;
+
+    color:
+        #f8fafc;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(7, 17, 34, 0.985),
+            rgba(3, 9, 20, 0.995)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(71, 85, 105, 0.48) !important;
+
+    border-radius:
+        14px !important;
+
+    clip-path:
+        none !important;
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        inset 0 0 18px rgba(37, 99, 235, 0.025) !important;
+
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease !important;
+}
+
+.producto-card::before{
+    content:
+        "";
+
+    top:
+        0 !important;
+
+    left:
+        14px !important;
+
+    width:
+        42px !important;
+
+    height:
+        2px !important;
+
+    transform:
+        none !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #38bdf8,
+            rgba(56, 189, 248, 0.08)
+        ) !important;
+
+    box-shadow:
+        0 0 8px rgba(56, 189, 248, 0.30) !important;
+}
+
+.producto-card::after{
+    display:
+        none !important;
+}
+
+.producto-card:hover,
+.productos-premium-panel .producto-card:hover{
+    transform:
+        translateY(-2px) !important;
+
+    filter:
+        none !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(9, 22, 43, 0.99),
+            rgba(3, 10, 22, 1)
+        ) !important;
+
+    border-color:
+        rgba(96, 165, 250, 0.66) !important;
+
+    box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.32),
+        0 0 0 1px rgba(59, 130, 246, 0.08),
+        0 0 16px rgba(37, 99, 235, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+
+/* =========================================================
+   IMAGEN — MÁS PROTAGONISMO
+========================================================= */
+
+.producto-card img,
+.productos-premium-panel .producto-card img{
+    height:
+        166px !important;
+
+    padding:
+        7px !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f8fafc
+        ) !important;
+
+    border:
+        1px solid
+        rgba(203, 213, 225, 0.72) !important;
+
+    border-radius:
+        11px !important;
+
+    box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.16) !important;
+}
+
+
+/* =========================================================
+   JERARQUÍA DE INFORMACIÓN
+========================================================= */
+
+.producto-card h3{
+    min-height:
+        52px !important;
+
+    max-height:
+        52px !important;
+
+    margin:
+        11px
+        0
+        8px !important;
+
+    padding:
+        0 !important;
+
+    overflow:
+        hidden !important;
+
+    color:
+        #ffffff !important;
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif !important;
+
+    font-size:
+        13px !important;
+
+    font-weight:
+        800 !important;
+
+    line-height:
+        1.18 !important;
+
+    letter-spacing:
+        -0.16px !important;
+
+    text-transform:
+        uppercase;
+
+    text-wrap:
+        balance;
+}
+
+.producto-card h3::-webkit-scrollbar{
+    display:
+        none !important;
+}
+
+.producto-card p{
+    margin:
+        3px
+        0 !important;
+
+    color:
+        rgba(203, 213, 225, 0.78) !important;
+
+    font-size:
+        9px !important;
+
+    line-height:
+        1.35 !important;
+}
+
+/* Código */
+.producto-card > p:nth-of-type(1){
+    color:
+        rgba(148, 163, 184, 0.82) !important;
+
+    font-size:
+        8px !important;
+
+    font-weight:
+        500 !important;
+}
+
+/* Categoría */
+.producto-card > p:nth-of-type(2){
+    color:
+        rgba(186, 230, 253, 0.72) !important;
+
+    font-size:
+        8px !important;
+
+    font-weight:
+        600 !important;
+
+    letter-spacing:
+        0.15px;
+}
+
+/* Compra */
+.producto-card > p:nth-last-of-type(2){
+    margin-top:
+        7px !important;
+
+    color:
+        rgba(148, 163, 184, 0.88) !important;
+
+    font-size:
+        9px !important;
+
+    font-weight:
+        600 !important;
+}
+
+/* Venta — prioridad visual */
+.producto-card > p:last-of-type{
+    margin-top:
+        1px !important;
+
+    color:
+        #4ade80 !important;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        900 !important;
+
+    letter-spacing:
+        -0.1px;
+
+    text-shadow:
+        0 0 8px rgba(34, 197, 94, 0.18);
+}
+
+
+/* =========================================================
+   STOCK
+========================================================= */
+
+.stock-tiendas-card{
+    margin:
+        9px
+        0
+        7px !important;
+
+    padding:
+        9px
+        10px !important;
+
+    background:
+        rgba(4, 13, 28, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.18) !important;
+
+    border-radius:
+        10px !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+}
+
+.stock-tiendas-card p{
+    margin:
+        3px
+        0 !important;
+
+    color:
+        rgba(226, 232, 240, 0.90) !important;
+
+    font-size:
+        10px !important;
+
+    line-height:
+        1.28 !important;
+}
+
+.stock-tiendas-card .stock-total{
+    margin-bottom:
+        5px !important;
+
+    color:
+        #7dd3fc !important;
+
+    font-size:
+        9px !important;
+
+    font-weight:
+        800 !important;
+
+    letter-spacing:
+        0.15px;
+
+    text-shadow:
+        none !important;
+}
+
+
+/* =========================================================
+   ACCIONES — COMPACTAS Y COMERCIALES
+========================================================= */
+
+.producto-card-acciones{
+    gap:
+        6px !important;
+
+    padding-top:
+        9px !important;
+}
+
+.producto-card-acciones button{
+    min-height:
+        31px !important;
+
+    padding:
+        0
+        8px !important;
+
+    border-radius:
+        8px !important;
+
+    clip-path:
+        none !important;
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif !important;
+
+    font-size:
+        8px !important;
+
+    font-weight:
+        800 !important;
+
+    letter-spacing:
+        0.15px !important;
+
+    box-shadow:
+        none !important;
+}
+
+.producto-card-acciones button:hover{
+    transform:
+        translateY(-1px) !important;
+
+    filter:
+        brightness(1.06) !important;
+}
+
+.producto-card .btn-agregar{
+    min-height:
+        34px !important;
+
+    color:
+        #ffffff !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            #2f7df2,
+            #1457d4
+        ) !important;
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.56) !important;
+
+    box-shadow:
+        0 7px 15px rgba(5, 75, 190, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+.producto-card .btn-agregar:hover{
+    border-color:
+        rgba(191, 219, 254, 0.74) !important;
+
+    box-shadow:
+        0 9px 18px rgba(5, 75, 190, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.17) !important;
+}
+
+.producto-card-acciones-secundarias{
+    grid-template-columns:
+        minmax(82px, 1fr)
+        30px
+        30px !important;
+
+    gap:
+        5px !important;
+}
+
+.producto-card .btn-transferir-stock{
+    min-height:
+        30px !important;
+
+    padding:
+        0
+        6px !important;
+
+    color:
+        #fde68a !important;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(92, 55, 16, 0.88),
+            rgba(40, 23, 5, 0.96)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(245, 158, 11, 0.44) !important;
+
+    font-size:
+        7px !important;
+
+    letter-spacing:
+        0 !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+.producto-card .btn-editar-producto,
+.producto-card .btn-eliminar-producto{
+    width:
+        30px !important;
+
+    min-width:
+        30px !important;
+
+    max-width:
+        30px !important;
+
+    min-height:
+        30px !important;
+
+    padding:
+        0 !important;
+
+    border-radius:
+        8px !important;
+}
+
+.producto-card .btn-editar-producto{
+    color:
+        #bae6fd !important;
+
+    background:
+        rgba(7, 74, 110, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(14, 165, 233, 0.44) !important;
+}
+
+.producto-card .btn-eliminar-producto{
+    color:
+        #fecaca !important;
+
+    background:
+        rgba(91, 19, 19, 0.72) !important;
+
+    border:
+        1px solid
+        rgba(239, 68, 68, 0.40) !important;
+}
+
+
+/* =========================================================
+   SKELETON COHERENTE
+========================================================= */
+
+.skeleton{
+    border-radius:
+        10px !important;
+}
+
+.skeleton-img{
+    height:
+        166px !important;
+
+    border-radius:
+        11px !important;
+}
+
+.skeleton-btn{
+    height:
+        31px !important;
+
+    border-radius:
+        8px !important;
+}
+
+
+/* =========================================================
+   VARIANTE VENDEDOR
+========================================================= */
+
+body.rol-vendedor .producto-card{
+    min-height:
+        455px !important;
+}
+
+
+/* =========================================================
+   AJUSTES POR ANCHO
+========================================================= */
+
+@media (max-width: 1500px){
+
+    .producto-card img,
+    .productos-premium-panel .producto-card img{
+        height:
+            154px !important;
+    }
+
+    .producto-card h3{
+        font-size:
+            12px !important;
+    }
+
+}

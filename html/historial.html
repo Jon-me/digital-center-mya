@@ -2,6 +2,43 @@
 
     <h2>📋 Historial de Ventas</h2>
 
+    <div class="historial-buscador">
+
+        <input
+            type="search"
+            id="inputBuscarHistorialVentas"
+            placeholder="Boleta, producto, categoría, vendedor, tienda, método o fecha"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        >
+
+        <button
+            type="button"
+            id="btnBuscarHistorialVentas"
+            onclick="window.buscarHistorialVentas()"
+        >
+            🔍 Buscar Venta
+        </button>
+
+        <button
+            type="button"
+            id="btnLimpiarHistorialVentas"
+            onclick="window.limpiarBusquedaHistorialVentas()"
+            title="Limpiar búsqueda"
+        >
+            ✕ Limpiar
+        </button>
+
+    </div>
+
+    <p
+        id="estadoBusquedaHistorialVentas"
+        class="historial-busqueda-estado"
+        aria-live="polite"
+    ></p>
+
     <table>
 
         <thead>
