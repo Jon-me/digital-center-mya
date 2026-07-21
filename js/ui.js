@@ -16,7 +16,9 @@ export function crearUI(deps){
 
     cancelarEdicionProducto,
 
-    cerrarConfiguracion
+    cerrarConfiguracion,
+
+    limpiarBusquedaGarantia
 
 } = deps;
 
@@ -91,29 +93,36 @@ function abrirModalPanel(
 
     }
 
-    if(idPanel === "zonaAdmin"){
+    modalContenido.classList.remove(
+    "modal-admin",
+    "modal-garantias"
+);
 
-        modalContenido.classList.add(
-            "modal-admin"
-        );
+if(idPanel === "zonaAdmin"){
 
-        if(
-            !opciones.preservarFormulario &&
-            typeof prepararNuevoProducto ===
-                "function"
-        ){
+    modalContenido.classList.add(
+        "modal-admin"
+    );
 
-            prepararNuevoProducto();
+    if(
+        !opciones.preservarFormulario &&
+        typeof prepararNuevoProducto ===
+            "function"
+    ){
 
-        }
-
-    }else{
-
-        modalContenido.classList.remove(
-            "modal-admin"
-        );
+        prepararNuevoProducto();
 
     }
+
+}
+
+if(idPanel === "panelGarantias"){
+
+    modalContenido.classList.add(
+        "modal-garantias"
+    );
+
+}
 
     state.placeholderModal =
         document.createComment(
@@ -176,6 +185,22 @@ function cerrarModalPanel(){
         }
 
     }
+
+    if(
+    panelCerrado &&
+    panelCerrado.id === "panelGarantias"
+){
+
+    if(
+        typeof limpiarBusquedaGarantia ===
+        "function"
+    ){
+
+        limpiarBusquedaGarantia();
+
+    }
+
+}
 
     if(
         state.panelActivoModal &&

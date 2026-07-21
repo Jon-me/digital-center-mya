@@ -570,7 +570,10 @@ const UI = crearUI({
     cancelarEdicionProducto:
         CatalogoProductos.cancelarEdicionProducto,
 
-    cerrarConfiguracion
+    cerrarConfiguracion,
+
+    limpiarBusquedaGarantia:
+        Garantias.limpiarBusquedaGarantia
 
 });
 
@@ -580,7 +583,7 @@ const HTMLLoader = crearHTMLLoader({
 
     directorioBase: "html",
 
-    version: "HTML30-2",
+    version: "HTML31-4",
 
     modoPredeterminado: "replace-element"
 
@@ -956,6 +959,8 @@ HTMLLoader.validarElementosCriticos([
         Bootstrap.iniciarAplicacion();
 
         inicializarBuscadorHistorialVentas();
+
+        Garantias.inicializarGarantias();
 
         CatalogoProductos
             .inicializarScrollCatalogo();
@@ -2003,6 +2008,8 @@ window.borrarHistorialCierres = Caja.borrarHistorialCierres;
 window.actualizarDashboardEjecutivo =
     Dashboard.actualizarDashboardEjecutivo;
 window.buscarGarantia = Garantias.buscarGarantia;
+window.limpiarBusquedaGarantia =
+    Garantias.limpiarBusquedaGarantia;
 window.buscarHistorialVentas =
     buscarHistorialVentas;
 window.limpiarBusquedaHistorialVentas =

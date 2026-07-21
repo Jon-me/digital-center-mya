@@ -1,28 +1,144 @@
 <div id="panelGarantias" style="display:none;">
 
-    <div class="garantias-panel">
+    <section class="warranty-center">
 
-        <h2>🛡️ Garantías</h2>
+        <header class="warranty-header">
 
-        <input
-            type="text"
-            id="inputGarantia"
-            placeholder="DNI o Número de Boleta"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
+            <div class="warranty-title">
+
+                <div class="warranty-icon">
+                    🛡️
+                </div>
+
+                <div>
+
+                    <small>
+                        WARRANTY CENTER
+                    </small>
+
+                    <h2>
+                        Gestión de Garantías
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="warranty-close"
+                onclick="window.cerrarModalPanel()"
+                title="Cerrar"
+            >
+                ×
+            </button>
+
+        </header>
+
+        <section class="warranty-search">
+
+            <div class="warranty-search-copy">
+
+                <h3>
+                    Buscar garantía
+                </h3>
+
+                <p>
+
+                    Consulta por número de boleta
+                    o DNI del cliente.
+
+                </p>
+
+            </div>
+
+            <div class="warranty-search-box">
+
+                <input
+
+                    type="text"
+
+                    id="inputGarantia"
+
+                    placeholder="Ej. B001-000012 o DNI"
+
+                    autocomplete="off"
+
+                    autocorrect="off"
+
+                    autocapitalize="off"
+
+                    spellcheck="false"
+
+                >
+
+                <div class="warranty-search-actions">
+
+                    <button
+
+                        type="button"
+
+                        class="btn-search-warranty"
+
+                        onclick="window.buscarGarantia()"
+
+                    >
+
+                        🔍 Buscar
+
+                    </button>
+
+                    <button
+
+                        type="button"
+
+                        class="btn-clear-warranty"
+
+                        onclick="window.limpiarBusquedaGarantia()"
+
+                    >
+
+                        Limpiar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section
+            id="resultadoGarantia"
+            class="warranty-results"
         >
 
-        <button
-            type="button"
-            onclick="window.buscarGarantia()"
-        >
-            🔍 Buscar Garantía
-        </button>
+            <div class="warranty-empty">
 
-        <div id="resultadoGarantia"></div>
+                <div class="warranty-empty-icon">
 
-    </div>
+                    🛡️
+
+                </div>
+
+                <h3>
+
+                    Warranty Center
+
+                </h3>
+
+                <p>
+
+                    Busca una garantía utilizando
+                    el DNI del cliente o el número
+                    de boleta.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </section>
 
 </div>
