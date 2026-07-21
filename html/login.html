@@ -1,111 +1,142 @@
-<video autoplay muted loop playsinline id="videoFondoLaptop">
-    <source src="./video-login.mp4?v=LAPTOP1" type="video/mp4">
-</video>
+<div class="login-scene" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="metadata" id="videoFondoLaptop">
+        <source src="./video-login.mp4?v=LOGIN-PRO-1" type="video/mp4">
+    </video>
 
-<button type="button" id="btnSonido" onclick="toggleSonido()">
-    🔊 Activar sonido
+    <div class="login-scene-overlay"></div>
+    <div class="login-scene-glow login-scene-glow--one"></div>
+    <div class="login-scene-glow login-scene-glow--two"></div>
+    <div class="login-scene-grain"></div>
+</div>
+
+<button
+    type="button"
+    id="btnSonido"
+    class="login-sound"
+    onclick="toggleSonido()"
+    aria-label="Activar o desactivar el sonido del fondo"
+>
+    <span class="login-sound-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+            <path d="M11 5 6.5 9H3v6h3.5L11 19V5Z"></path>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+            <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+        </svg>
+    </span>
+    <span class="login-sound-text">Activar sonido</span>
 </button>
 
-<div
+<main
     id="login"
     class="login-desktop-final"
     style="display: none;"
+    aria-labelledby="loginTitle"
 >
+    <section class="login-shell">
 
-    <div class="login-frame">
+        <div class="login-frame">
 
-        <div class="login-brand">
-            <img
-                src="./logo-login-transformer.png?v=LOGIN27-5"
-                alt="Digital Center M&A"
-                class="login-brand-logo"
+            <header class="login-brand">
+                <span class="login-brand-kicker">Sistema empresarial</span>
+
+                <img
+                    src="./logo-login-transformer.png?v=LOGIN-PRO-1"
+                    alt="Digital Center M&A"
+                    class="login-brand-logo"
+                    draggable="false"
+                >
+
+                <h1 id="loginTitle" class="login-title">
+                    Bienvenido
+                </h1>
+
+                <p class="login-subtitle">
+                    Ingresa a tu centro de operaciones.
+                </p>
+            </header>
+
+            <form
+                class="login-form"
+                onsubmit="event.preventDefault(); iniciarSesion();"
+                novalidate
             >
-        </div>
+                <label class="login-field" for="usuario">
+                    <span class="login-field-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 21a8 8 0 0 0-16 0"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
 
-        <div class="login-form">
+                    <span class="login-field-content">
+                        <span class="login-field-label">Usuario</span>
 
-            <label class="login-field">
+                        <input
+                            type="text"
+                            id="usuario"
+                            placeholder="Escribe tu usuario"
+                            autocomplete="username"
+                            autocapitalize="none"
+                            spellcheck="false"
+                            aria-label="Usuario"
+                            required
+                        >
+                    </span>
+                </label>
 
-                <span
-                    class="login-field-icon"
-                    aria-hidden="true"
+                <label class="login-field" for="password">
+                    <span class="login-field-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                        </svg>
+                    </span>
+
+                    <span class="login-field-content">
+                        <span class="login-field-label">Contraseña</span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Escribe tu contraseña"
+                            autocomplete="current-password"
+                            aria-label="Contraseña"
+                            required
+                        >
+                    </span>
+                </label>
+
+                <button
+                    type="submit"
+                    class="login-submit"
                 >
-                    <svg viewBox="0 0 24 24">
-                        <path d="M20 21a8 8 0 0 0-16 0"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </span>
+                    <span class="login-submit-shine" aria-hidden="true"></span>
+                    <span class="login-submit-label">Iniciar sesión</span>
 
-                <input
-                    type="text"
-                    id="usuario"
-                    placeholder="Usuario"
-                    autocomplete="username"
-                    aria-label="Usuario"
-                >
+                    <span class="login-submit-arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 12h14"></path>
+                            <path d="m13 6 6 6-6 6"></path>
+                        </svg>
+                    </span>
+                </button>
+            </form>
 
-            </label>
+            <footer class="login-footer">
+                <div class="login-security">
+                    <span class="login-security-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </span>
 
-            <label class="login-field">
+                    <span>Acceso protegido y privado</span>
+                </div>
 
-                <span
-                    class="login-field-icon"
-                    aria-hidden="true"
-                >
-                    <svg viewBox="0 0 24 24">
-                        <rect
-                            x="5"
-                            y="10"
-                            width="14"
-                            height="10"
-                            rx="2"
-                        ></rect>
-
-                        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-                    </svg>
-                </span>
-
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Contraseña"
-                    autocomplete="current-password"
-                    aria-label="Contraseña"
-                >
-
-            </label>
-
-            <button
-                type="button"
-                class="login-submit"
-                onclick="iniciarSesion()"
-            >
-                <span>Entrar</span>
-
-                <span
-                    class="login-submit-arrow"
-                    aria-hidden="true"
-                >
-                    <svg viewBox="0 0 24 24">
-                        <path d="M5 12h14"></path>
-                        <path d="m13 6 6 6-6 6"></path>
-                    </svg>
-                </span>
-            </button>
-
-        </div>
-
-        <div class="login-security">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
-                <path d="m9 12 2 2 4-4"></path>
-            </svg>
-
-            <span>Acceso seguro y privado</span>
+                <span class="login-version">Digital Center M&amp;A</span>
+            </footer>
 
         </div>
-
-    </div>
-
-</div>
+    </section>
+</main>

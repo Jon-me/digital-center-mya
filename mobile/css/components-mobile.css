@@ -1,0 +1,352 @@
+/* =========================================================
+   DIGITAL CENTER M&A
+   MOBILE COMPONENTS
+   FASE M2
+========================================================= */
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.mobile-button{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        var(--mobile-touch-size);
+
+    gap:
+        8px;
+
+    padding:
+        0 16px;
+
+    color:
+        var(--mobile-text-primary);
+
+    background:
+        var(--mobile-surface);
+
+    border:
+        var(--mobile-border-default);
+
+    border-radius:
+        var(--mobile-radius-md);
+
+    box-shadow:
+        var(--mobile-shadow-sm);
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        border-color
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        background
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-button:active{
+    transform:
+        scale(0.97);
+}
+
+.mobile-button-primary{
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--mobile-brand-700),
+            var(--mobile-brand-500)
+        );
+
+    border:
+        1px solid
+        rgba(147, 197, 253, 0.42);
+}
+
+.mobile-icon-button{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        var(--mobile-touch-size);
+
+    min-width:
+        var(--mobile-touch-size);
+
+    height:
+        var(--mobile-touch-size);
+
+    padding:
+        0;
+
+    color:
+        var(--mobile-text-secondary);
+
+    background:
+        rgba(15, 23, 42, 0.68);
+
+    border:
+        var(--mobile-border-default);
+
+    border-radius:
+        var(--mobile-radius-md);
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.03);
+
+    font-size:
+        20px;
+}
+
+
+/* =========================================================
+   TARJETAS
+========================================================= */
+
+.mobile-card{
+    padding:
+        var(--mobile-space-4);
+
+    color:
+        var(--mobile-text-primary);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 23, 42, 0.88),
+            rgba(6, 12, 23, 0.94)
+        );
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-lg);
+
+    box-shadow:
+        var(--mobile-shadow-sm),
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025);
+}
+
+.mobile-card-title{
+    margin:
+        0;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        17px;
+
+    line-height:
+        1.2;
+
+    letter-spacing:
+        -0.3px;
+}
+
+.mobile-card-copy{
+    margin:
+        6px 0 0;
+
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.5;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.mobile-badge{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        28px;
+
+    padding:
+        0 10px;
+
+    color:
+        var(--mobile-text-secondary);
+
+    background:
+        rgba(15, 23, 42, 0.72);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-round);
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+}
+
+.mobile-badge-success{
+    color:
+        #bbf7d0;
+
+    background:
+        rgba(34, 197, 94, 0.12);
+
+    border:
+        1px solid
+        rgba(74, 222, 128, 0.24);
+}
+
+
+/* =========================================================
+   MÉTRICAS
+========================================================= */
+
+.mobile-metric-card{
+    display:
+        grid;
+
+    gap:
+        4px;
+
+    min-width:
+        0;
+
+    padding:
+        14px;
+
+    background:
+        rgba(15, 23, 42, 0.62);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-md);
+}
+
+.mobile-metric-card small{
+    overflow:
+        hidden;
+
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+.mobile-metric-card strong{
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        20px;
+
+    line-height:
+        1.2;
+
+    letter-spacing:
+        -0.6px;
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.mobile-section{
+    display:
+        grid;
+
+    gap:
+        var(--mobile-space-3);
+}
+
+.mobile-section-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+}
+
+.mobile-section-header h2{
+    margin:
+        0;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        18px;
+
+    letter-spacing:
+        -0.4px;
+}
+
+.mobile-section-header small{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        12px;
+}

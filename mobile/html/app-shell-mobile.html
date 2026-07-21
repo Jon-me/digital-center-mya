@@ -1,0 +1,149 @@
+<section class="mobile-shell">
+
+    <header class="mobile-header">
+
+        <div class="mobile-header-brand">
+
+            <div class="mobile-header-logo">
+                DC
+            </div>
+
+            <div class="mobile-header-copy">
+
+                <small>
+                    DIGITAL CENTER M&A
+                </small>
+
+                <strong id="mobileHeaderTitle">
+                    Inicio
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="mobile-header-actions">
+
+    <button
+        type="button"
+        class="mobile-icon-button"
+        title="Notificaciones"
+        aria-label="Notificaciones"
+    >
+        🔔
+    </button>
+
+    <button
+        type="button"
+        class="mobile-icon-button"
+        onclick="window.cerrarSesionMobile()"
+        title="Cerrar sesión"
+        aria-label="Cerrar sesión"
+    >
+        ↪
+    </button>
+
+</div>
+
+    </header>
+
+    <main
+        id="mobileViewport"
+        class="mobile-viewport"
+    >
+
+        <section
+            id="mobileViewInicio"
+            class="mobile-view is-active"
+            data-mobile-view="inicio"
+        ></section>
+
+        <section
+            id="mobileViewVentas"
+            class="mobile-view"
+            data-mobile-view="ventas"
+        ></section>
+
+        <section
+            id="mobileViewInventario"
+            class="mobile-view"
+            data-mobile-view="inventario"
+        ></section>
+
+        <section
+            id="mobileViewCaja"
+            class="mobile-view"
+            data-mobile-view="caja"
+        ></section>
+
+        <section
+            id="mobileViewMas"
+            class="mobile-view"
+            data-mobile-view="mas"
+        ></section>
+
+    </main>
+
+    <nav
+        class="mobile-bottom-nav"
+        aria-label="Navegación principal"
+    >
+
+        <button
+            type="button"
+            class="mobile-nav-item is-active"
+            data-mobile-route="inicio"
+            aria-label="Inicio"
+        >
+            <span class="mobile-nav-indicator"></span>
+            <span class="mobile-nav-icon">🏠</span>
+            <span class="mobile-nav-label">Inicio</span>
+        </button>
+
+        <button
+            type="button"
+            class="mobile-nav-item"
+            data-mobile-route="ventas"
+            aria-label="Ventas"
+        >
+            <span class="mobile-nav-indicator"></span>
+            <span class="mobile-nav-icon">🛒</span>
+            <span class="mobile-nav-label">Ventas</span>
+        </button>
+
+        <button
+            type="button"
+            class="mobile-nav-item"
+            data-mobile-route="inventario"
+            aria-label="Inventario"
+        >
+            <span class="mobile-nav-indicator"></span>
+            <span class="mobile-nav-icon">📦</span>
+            <span class="mobile-nav-label">Stock</span>
+        </button>
+
+        <button
+            type="button"
+            class="mobile-nav-item"
+            data-mobile-route="caja"
+            aria-label="Caja"
+        >
+            <span class="mobile-nav-indicator"></span>
+            <span class="mobile-nav-icon">💰</span>
+            <span class="mobile-nav-label">Caja</span>
+        </button>
+
+        <button
+            type="button"
+            class="mobile-nav-item"
+            data-mobile-route="mas"
+            aria-label="Más opciones"
+        >
+            <span class="mobile-nav-indicator"></span>
+            <span class="mobile-nav-icon">☰</span>
+            <span class="mobile-nav-label">Más</span>
+        </button>
+
+    </nav>
+
+</section>

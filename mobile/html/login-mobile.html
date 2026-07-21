@@ -1,0 +1,141 @@
+<section
+    id="mobileLogin"
+    class="mobile-login"
+    aria-labelledby="mobileLoginTitle"
+>
+
+    <div class="mobile-login-background">
+
+        <div class="mobile-login-orb mobile-login-orb-one"></div>
+
+        <div class="mobile-login-orb mobile-login-orb-two"></div>
+
+    </div>
+
+    <div class="mobile-login-content">
+
+        <header class="mobile-login-brand">
+
+            <div class="mobile-login-logo">
+                DC
+            </div>
+
+            <span class="mobile-login-kicker">
+                DIGITAL CENTER M&A
+            </span>
+
+            <h1 id="mobileLoginTitle">
+                Bienvenido
+            </h1>
+
+            <p>
+                Ingresa a tu aplicación móvil.
+            </p>
+
+        </header>
+
+        <form
+            id="mobileLoginForm"
+            class="mobile-login-form"
+            novalidate
+        >
+
+            <label class="mobile-login-field">
+
+                <span class="mobile-login-field-icon">
+                    👤
+                </span>
+
+                <span class="mobile-login-field-content">
+
+                    <small>
+                        Usuario
+                    </small>
+
+                    <input
+                        type="text"
+                        id="mobileUsuario"
+                        placeholder="Escribe tu usuario"
+                        autocomplete="username"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        required
+                    >
+
+                </span>
+
+            </label>
+
+            <label class="mobile-login-field">
+
+                <span class="mobile-login-field-icon">
+                    🔒
+                </span>
+
+                <span class="mobile-login-field-content">
+
+                    <small>
+                        Contraseña
+                    </small>
+
+                    <input
+                        type="password"
+                        id="mobilePassword"
+                        placeholder="Escribe tu contraseña"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </span>
+
+                <button
+                    type="button"
+                    id="mobileTogglePassword"
+                    class="mobile-login-password-toggle"
+                    aria-label="Mostrar contraseña"
+                >
+                    👁
+                </button>
+
+            </label>
+
+            <p
+                id="mobileLoginError"
+                class="mobile-login-error"
+                role="alert"
+                hidden
+            ></p>
+
+            <button
+                type="submit"
+                id="mobileLoginSubmit"
+                class="mobile-login-submit"
+            >
+
+                <span id="mobileLoginSubmitText">
+                    Iniciar sesión
+                </span>
+
+                <span>
+                    →
+                </span>
+
+            </button>
+
+        </form>
+
+        <footer class="mobile-login-footer">
+
+            <span>
+                🛡 Acceso protegido
+            </span>
+
+            <small>
+                Mobile Enterprise
+            </small>
+
+        </footer>
+
+    </div>
+
+</section>

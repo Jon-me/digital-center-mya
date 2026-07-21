@@ -1,0 +1,124 @@
+/* =========================================================
+   DIGITAL CENTER M&A
+   MOBILE BASE
+   FASE M1
+========================================================= */
+
+*,
+*::before,
+*::after{
+    box-sizing:
+        border-box;
+}
+
+html{
+    min-height:
+        100%;
+
+    background:
+        var(--mobile-bg-deep);
+
+    color-scheme:
+        dark;
+
+    -webkit-text-size-adjust:
+        100%;
+
+    text-size-adjust:
+        100%;
+}
+
+body{
+    min-width:
+        320px;
+
+    min-height:
+        100vh;
+
+    min-height:
+        100dvh;
+
+    margin:
+        0;
+
+    color:
+        var(--mobile-text-primary);
+
+    background:
+        var(--mobile-bg-primary);
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size:
+        16px;
+
+    line-height:
+        1.5;
+
+    overflow-x:
+        hidden;
+
+    overscroll-behavior:
+        none;
+}
+
+button,
+input,
+textarea,
+select{
+    font:
+        inherit;
+}
+
+button{
+    min-height:
+        var(--mobile-touch-size);
+
+    color:
+        inherit;
+
+    cursor:
+        pointer;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+    touch-action:
+        manipulation;
+}
+
+img{
+    display:
+        block;
+
+    max-width:
+        100%;
+}
+
+a{
+    color:
+        inherit;
+
+    text-decoration:
+        none;
+}
+
+[hidden]{
+    display:
+        none !important;
+}
+
+:focus-visible{
+    outline:
+        3px solid
+        rgba(96, 165, 250, 0.38);
+
+    outline-offset:
+        2px;
+}
