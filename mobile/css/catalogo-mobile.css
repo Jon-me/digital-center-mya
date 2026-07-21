@@ -1,0 +1,748 @@
+/* =========================================================
+   DIGITAL CENTER M&A
+   MOBILE PRODUCT CATALOG
+   FASE M5.1
+========================================================= */
+
+
+/* =========================================================
+   CATÁLOGO
+========================================================= */
+
+.mobile-catalog{
+    display:
+        grid;
+
+    gap:
+        14px;
+}
+
+.mobile-catalog-grid{
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1fr);
+
+    gap:
+        12px;
+}
+
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+.mobile-product-card{
+    position:
+        relative;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        92px
+        minmax(0, 1fr);
+
+    gap:
+        14px;
+
+    width:
+        100%;
+
+    min-height:
+        142px;
+
+    padding:
+        13px;
+
+    color:
+        var(--mobile-text-primary);
+
+    text-align:
+        left;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 23, 42, 0.90),
+            rgba(5, 10, 21, 0.97)
+        );
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-lg);
+
+    box-shadow:
+        var(--mobile-shadow-sm),
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025);
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        border-color
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        background
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-product-card:active{
+    transform:
+        scale(0.985);
+}
+
+.mobile-product-card:focus-visible{
+    border-color:
+        rgba(96, 165, 250, 0.65);
+}
+
+
+/* =========================================================
+   IMAGEN
+========================================================= */
+
+.mobile-product-image-wrap{
+    position:
+        relative;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        92px;
+
+    height:
+        116px;
+
+    overflow:
+        hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(248, 250, 252, 0.96),
+            rgba(226, 232, 240, 0.88)
+        );
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius:
+        16px;
+}
+
+.mobile-product-image{
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        contain;
+
+    padding:
+        8px;
+}
+
+.mobile-product-image-placeholder{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    color:
+        #334155;
+
+    font-size:
+        30px;
+}
+
+
+/* =========================================================
+   INFORMACIÓN
+========================================================= */
+
+.mobile-product-info{
+    display:
+        flex;
+
+    min-width:
+        0;
+
+    flex-direction:
+        column;
+}
+
+.mobile-product-topline{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    min-width:
+        0;
+
+    gap:
+        8px;
+}
+
+.mobile-product-category{
+    overflow:
+        hidden;
+
+    color:
+        var(--mobile-brand-300);
+
+    font-size:
+        9px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        0.9px;
+
+    text-overflow:
+        ellipsis;
+
+    text-transform:
+        uppercase;
+
+    white-space:
+        nowrap;
+}
+
+.mobile-product-code{
+    flex:
+        0 0 auto;
+
+    color:
+        var(--mobile-text-faint);
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+}
+
+.mobile-product-name{
+    display:
+        -webkit-box;
+
+    margin:
+        7px 0 0;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        16px;
+
+    font-weight:
+        850;
+
+    line-height:
+        1.25;
+
+    letter-spacing:
+        -0.35px;
+
+    -webkit-box-orient:
+        vertical;
+
+    -webkit-line-clamp:
+        2;
+
+    line-clamp:
+        2;
+}
+
+.mobile-product-price{
+    margin-top:
+        8px;
+
+    color:
+        #ffffff;
+
+    font-size:
+        20px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1;
+
+    letter-spacing:
+        -0.6px;
+}
+
+
+/* =========================================================
+   STOCK RESUMIDO
+========================================================= */
+
+.mobile-product-stock-summary{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        6px;
+
+    margin-top:
+        auto;
+
+    padding-top:
+        10px;
+}
+
+.mobile-product-stock-pill{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    min-height:
+        24px;
+
+    gap:
+        5px;
+
+    padding:
+        0 8px;
+
+    color:
+        var(--mobile-text-muted);
+
+    background:
+        rgba(148, 163, 184, 0.07);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-round);
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+}
+
+.mobile-product-stock-pill.is-current{
+    color:
+        #bfdbfe;
+
+    background:
+        rgba(59, 130, 246, 0.12);
+
+    border-color:
+        rgba(96, 165, 250, 0.24);
+}
+
+.mobile-product-stock-pill.has-stock{
+    color:
+        #bbf7d0;
+
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    border-color:
+        rgba(74, 222, 128, 0.20);
+}
+
+.mobile-product-stock-pill.no-stock{
+    color:
+        #fecaca;
+
+    background:
+        rgba(239, 68, 68, 0.09);
+
+    border-color:
+        rgba(248, 113, 113, 0.18);
+}
+
+
+/* =========================================================
+   ALERTA ENTRE TIENDAS
+========================================================= */
+
+.mobile-product-other-store{
+    grid-column:
+        1 / -1;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    min-height:
+        34px;
+
+    margin-top:
+        -2px;
+
+    padding:
+        0 11px;
+
+    color:
+        #fef08a;
+
+    background:
+        rgba(250, 204, 21, 0.08);
+
+    border:
+        1px solid
+        rgba(250, 204, 21, 0.17);
+
+    border-radius:
+        11px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   PRODUCT SHEET
+========================================================= */
+
+.mobile-product-sheet{
+    display:
+        grid;
+
+    gap:
+        14px;
+}
+
+.mobile-product-sheet-summary{
+    display:
+        grid;
+
+    grid-template-columns:
+        96px
+        minmax(0, 1fr);
+
+    align-items:
+        center;
+
+    gap:
+        14px;
+}
+
+.mobile-product-sheet-image{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        96px;
+
+    height:
+        112px;
+
+    overflow:
+        hidden;
+
+    background:
+        #ffffff;
+
+    border-radius:
+        18px;
+}
+
+.mobile-product-sheet-image img{
+    width:
+        100%;
+
+    height:
+        100%;
+
+    padding:
+        8px;
+
+    object-fit:
+        contain;
+}
+
+.mobile-product-sheet-name{
+    margin:
+        0;
+
+    font-size:
+        18px;
+
+    line-height:
+        1.25;
+
+    letter-spacing:
+        -0.4px;
+}
+
+.mobile-product-sheet-meta{
+    display:
+        grid;
+
+    gap:
+        4px;
+
+    margin-top:
+        8px;
+
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        11px;
+}
+
+.mobile-product-sheet-price{
+    margin-top:
+        10px;
+
+    color:
+        #ffffff;
+
+    font-size:
+        24px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        -0.7px;
+}
+
+
+/* =========================================================
+   STOCK SHEET
+========================================================= */
+
+.mobile-product-stock-list{
+    display:
+        grid;
+
+    gap:
+        9px;
+}
+
+.mobile-product-stock-row{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    min-height:
+        54px;
+
+    gap:
+        12px;
+
+    padding:
+        10px 13px;
+
+    background:
+        rgba(15, 23, 42, 0.66);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-md);
+}
+
+.mobile-product-stock-store{
+    display:
+        grid;
+
+    gap:
+        2px;
+}
+
+.mobile-product-stock-store strong{
+    font-size:
+        13px;
+}
+
+.mobile-product-stock-store small{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        9px;
+}
+
+.mobile-product-stock-number{
+    font-size:
+        20px;
+
+    font-weight:
+        900;
+}
+
+.mobile-product-stock-number.has-stock{
+    color:
+        #86efac;
+}
+
+.mobile-product-stock-number.no-stock{
+    color:
+        #fca5a5;
+}
+
+
+/* =========================================================
+   SELECTOR DE CANTIDAD
+========================================================= */
+
+.mobile-product-quantity{
+    display:
+        grid;
+
+    grid-template-columns:
+        52px
+        minmax(70px, 1fr)
+        52px;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    padding:
+        12px;
+
+    background:
+        rgba(15, 23, 42, 0.62);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-lg);
+}
+
+.mobile-product-quantity button{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        52px;
+
+    height:
+        52px;
+
+    min-height:
+        52px;
+
+    padding:
+        0;
+
+    color:
+        #ffffff;
+
+    background:
+        rgba(59, 130, 246, 0.14);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.22);
+
+    border-radius:
+        15px;
+
+    font-size:
+        24px;
+
+    font-weight:
+        800;
+}
+
+.mobile-product-quantity-value{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    text-align:
+        center;
+}
+
+.mobile-product-quantity-value small{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+
+    text-transform:
+        uppercase;
+}
+
+.mobile-product-quantity-value strong{
+    font-size:
+        25px;
+
+    line-height:
+        1.2;
+}
