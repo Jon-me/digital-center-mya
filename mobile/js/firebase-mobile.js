@@ -16,10 +16,12 @@ import {
     doc,
     getDoc,
     getDocs,
+    onSnapshot,
     query,
-    where
+    where,
+    runTransaction,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
 
 // =====================================================
 // CONFIGURACIÓN FIREBASE
@@ -90,8 +92,14 @@ export {
 
     getDocs,
 
+    onSnapshot,
+
     query,
 
-    where
+    where,
+
+    runTransaction,
+
+    serverTimestamp
 
 };

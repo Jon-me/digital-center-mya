@@ -5,9 +5,15 @@
 // =====================================================
 
 import {
+
     mobileDB,
+
     collection,
-    getDocs
+
+    getDocs,
+
+    onSnapshot
+
 } from "../firebase-mobile.js";
 
 
@@ -17,6 +23,8 @@ let cacheProductosMobile =
 let promesaProductosMobile =
     null;
 
+let cancelarSuscripcionProductosMobile =
+    null;    
 
 function normalizarStockProductoMobile(
     producto
@@ -184,6 +192,21 @@ function ordenarProductosMobile(
 
 }
 
+function construirProductosDesdeSnapshotMobile(
+    snapshot
+){
+
+    const productos =
+        snapshot.docs.map(
+            normalizarProductoMobile
+        );
+
+
+    return ordenarProductosMobile(
+        productos
+    );
+
+}
 
 async function consultarProductosFirebaseMobile(){
 
@@ -196,15 +219,9 @@ async function consultarProductosFirebaseMobile(){
         );
 
 
-    const productos =
-        snapshot.docs.map(
-            normalizarProductoMobile
-        );
-
-
-    return ordenarProductosMobile(
-        productos
-    );
+return construirProductosDesdeSnapshotMobile(
+    snapshot
+);
 
 }
 
@@ -260,6 +277,116 @@ async function cargarProductosMobile(
 
 }
 
+function suscribirProductosMobile(
+    alActualizar,
+    alError
+){
+
+    if(
+        typeof cancelarSuscripcionProductosMobile ===
+        "function"
+    ){
+
+        cancelarSuscripcionProductosMobile();
+
+    }
+
+
+    const productosRef =
+        collection(
+            mobileDB,
+            "productos"
+        );
+
+
+    cancelarSuscripcionProductosMobile =
+        onSnapshot(
+            productosRef,
+
+            function(snapshot){
+
+                const productos =
+                    construirProductosDesdeSnapshotMobile(
+                        snapshot
+                    );
+
+
+                cacheProductosMobile =
+                    productos;
+
+
+                if(
+                    typeof alActualizar ===
+                    "function"
+                ){
+
+                    alActualizar(
+                        productos
+                    );
+
+                }
+
+            },
+
+            function(error){
+
+                console.error(
+                    "Error escuchando productos móviles:",
+                    error
+                );
+
+
+                if(
+                    typeof alError ===
+                    "function"
+                ){
+
+                    alError(
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+
+    return function cancelar(){
+
+        if(
+            typeof cancelarSuscripcionProductosMobile ===
+            "function"
+        ){
+
+            cancelarSuscripcionProductosMobile();
+
+        }
+
+
+        cancelarSuscripcionProductosMobile =
+            null;
+
+    };
+
+}
+
+function destruirSuscripcionProductosMobile(){
+
+    if(
+        typeof cancelarSuscripcionProductosMobile ===
+        "function"
+    ){
+
+        cancelarSuscripcionProductosMobile();
+
+    }
+
+
+    cancelarSuscripcionProductosMobile =
+        null;
+
+}
+
 
 function obtenerProductosCacheMobile(){
 
@@ -278,10 +405,13 @@ function limpiarCacheProductosMobile(){
 
 }
 
-
 export {
 
     cargarProductosMobile,
+
+    suscribirProductosMobile,
+
+    destruirSuscripcionProductosMobile,
 
     obtenerProductosCacheMobile,
 

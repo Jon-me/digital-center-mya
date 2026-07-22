@@ -20,6 +20,8 @@ import {
 
 import {
 
+    OverlayMobile,
+    
     abrirBottomSheet,
 
     mostrarDialogo,
@@ -27,6 +29,12 @@ import {
     mostrarToast
 
 } from "../components/overlay/overlay-mobile.js";
+
+import {
+
+    registrarVentaMobile
+
+} from "../services/checkout-mobile-service.js";
 
 let renderizada =
     false;
@@ -1673,48 +1681,63 @@ async function confirmarCobroEfectivoVentasMobile(
 
     }
 
+  const resultado =
+    await registrarVentaMobile({
 
-    mostrarToast({
+        metodoPago:
+            "efectivo",
 
-        tipo:
-            "success",
+        recibido,
 
-        duracion:
-            3600,
-
-        mensaje:
-            `Cobro validado. Vuelto: ${formatearMonedaVentasMobile(
-                vuelto
-            )}`
+        vuelto
 
     });
 
 
-    console.info(
-        "Cobro móvil listo para registrar:",
-        {
+if(
+    !resultado.completada
+){
 
-            metodoPago:
-                "efectivo",
+    mostrarToast({
 
-            total:
-                totalActual,
+        tipo:
+            "danger",
 
-            recibido,
+        duracion:
+            4200,
 
-            vuelto,
+        mensaje:
+            resultado.mensaje ||
+            "No se pudo registrar la venta."
 
-            cantidad:
-                resumenActual.cantidad,
+    });
 
-            items:
-                resumenActual.items
+    return false;
 
-        }
-    );
+}
 
 
-    return true;
+vaciarCarritoMobile();
+
+
+OverlayMobile.close();
+
+
+mostrarToast({
+
+    tipo:
+        "success",
+
+    duracion:
+        4200,
+
+    mensaje:
+        "Venta registrada correctamente."
+
+});
+
+
+return true;
 
 }
 

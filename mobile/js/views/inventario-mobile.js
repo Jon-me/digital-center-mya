@@ -36,6 +36,8 @@ import {
 
     cargarProductosMobile,
 
+    suscribirProductosMobile,
+
     limpiarCacheProductosMobile
 
 } from "../services/productos-mobile-service.js";
@@ -72,6 +74,11 @@ let usuarioActualMobile =
 let contenedorActualMobile =
     null;
 
+let cancelarSuscripcionProductosVistaMobile =
+    null;
+
+let inventarioDesactualizadoMobile =
+    false;    
 
 let estadoCatalogo = {
 
@@ -103,32 +110,43 @@ export async function renderInventarioMobile(
 
     if(!renderizada){
 
-        construirEstructuraInventarioMobile(
-            contenedor
-        );
+    construirEstructuraInventarioMobile(
+        contenedor
+    );
 
 
-        inicializarEventosCatalogoMobile(
-            contenedor
-        );
+    inicializarEventosCatalogoMobile(
+        contenedor
+    );
 
 
-        renderizada =
-            true;
-
-    }
+    inicializarSuscripcionProductosInventarioMobile();
 
 
-    await cargarCatalogoRealMobile({
+    renderizada =
+        true;
 
-        contenedor,
+}
 
-        usuario,
 
-        forzar:
-            productosMobile.length === 0
+const debeActualizar =
+    inventarioDesactualizadoMobile ||
+    productosMobile.length === 0;
 
-    });
+
+await cargarCatalogoRealMobile({
+
+    contenedor,
+
+    usuario,
+
+    forzar:
+        debeActualizar,
+
+    notificar:
+        false
+
+});
 
 }
 
@@ -223,18 +241,21 @@ async function cargarCatalogoRealMobile(
     opciones = {}
 ){
 
-    const {
+const {
 
-        contenedor =
-            contenedorActualMobile,
+    contenedor =
+        contenedorActualMobile,
 
-        usuario =
-            usuarioActualMobile,
+    usuario =
+        usuarioActualMobile,
 
-        forzar =
-            false
+    forzar =
+        false,
 
-    } = opciones;
+    notificar =
+        false
+
+} = opciones;
 
 
     if(
@@ -290,6 +311,9 @@ async function cargarCatalogoRealMobile(
                 productos
             );
 
+        inventarioDesactualizadoMobile =
+            false;    
+
 
         validarCategoriaActualMobile();
 
@@ -305,18 +329,19 @@ async function cargarCatalogoRealMobile(
         );
 
 
-        if(forzar){
+if(notificar){
 
-            OverlayMobile.toast({
+    OverlayMobile.toast({
 
-                tipo:
-                    "success",
+        tipo:
+            "success",
 
-                mensaje:
-                    `${productosMobile.length} productos cargados.`
-            });
+        mensaje:
+            `${productosMobile.length} productos actualizados.`
 
-        }
+    });
+
+}
 
     }catch(error){
 
@@ -336,6 +361,87 @@ async function cargarCatalogoRealMobile(
             false;
 
     }
+
+}
+
+function inicializarSuscripcionProductosInventarioMobile(){
+
+    destruirSuscripcionProductosInventarioMobile();
+
+
+    cancelarSuscripcionProductosVistaMobile =
+        suscribirProductosMobile(
+
+            function(productos){
+
+                productosMobile =
+                    prepararProductosBusquedaMobile(
+                        productos
+                    );
+
+
+                validarCategoriaActualMobile();
+
+
+                if(
+                    !contenedorActualMobile
+                ){
+
+                    return;
+
+                }
+
+
+                renderizarChipsMobile(
+                    contenedorActualMobile
+                );
+
+
+                actualizarCatalogoMobile(
+                    contenedorActualMobile,
+                    usuarioActualMobile
+                );
+
+            },
+
+            function(error){
+
+                console.error(
+                    "Error Realtime en Inventario Mobile:",
+                    error
+                );
+
+
+                if(
+                    contenedorActualMobile
+                ){
+
+                    mostrarErrorCatalogoMobile(
+                        contenedorActualMobile
+                    );
+
+                }
+
+            }
+
+        );
+
+}
+
+function destruirSuscripcionProductosInventarioMobile(){
+
+    if(
+        typeof cancelarSuscripcionProductosVistaMobile ===
+        "function"
+    ){
+
+        cancelarSuscripcionProductosVistaMobile();
+
+    }
+
+
+    cancelarSuscripcionProductosVistaMobile =
+        null;
 
 }
 
@@ -598,18 +704,21 @@ async function actualizarCatalogoDesdeFirebaseMobile(){
     limpiarCacheSucursalesMobile();
 
 
-    await cargarCatalogoRealMobile({
+await cargarCatalogoRealMobile({
 
-        contenedor:
-            contenedorActualMobile,
+    contenedor:
+        contenedorActualMobile,
 
-        usuario:
-            usuarioActualMobile,
+    usuario:
+        usuarioActualMobile,
 
-        forzar:
-            true
+    forzar:
+        true,
 
-    });
+    notificar:
+        true
+
+});
 
 }
 
@@ -1043,8 +1152,9 @@ function escaparHTMLMobile(
 
 }
 
-
 export function reiniciarInventarioMobile(){
+
+    destruirSuscripcionProductosInventarioMobile();
 
     renderizada =
         false;
@@ -1060,6 +1170,9 @@ export function reiniciarInventarioMobile(){
 
     contenedorActualMobile =
         null;
+
+    inventarioDesactualizadoMobile =
+        false;    
 
     estadoCatalogo = {
 
