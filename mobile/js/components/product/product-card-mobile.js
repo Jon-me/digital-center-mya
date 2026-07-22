@@ -329,11 +329,13 @@ function construirImagenProducto(
 
         return `
             <img
-                class="mobile-product-image"
-                src="${escaparHTMLProducto(producto.imagen)}"
-                alt="${escaparHTMLProducto(producto.producto)}"
-                loading="lazy"
-            >
+    class="mobile-product-image"
+    src="${escaparHTMLProducto(producto.imagen)}"
+    alt="${escaparHTMLProducto(producto.producto)}"
+    loading="lazy"
+    decoding="async"
+    data-mobile-smart-image
+>
         `;
 
     }
@@ -346,6 +348,116 @@ function construirImagenProducto(
 
 }
 
+function activarSmartImagesMobile(
+    contenedor
+){
+
+    if(!contenedor){
+
+        return;
+
+    }
+
+
+    contenedor
+        .querySelectorAll(
+            "[data-mobile-smart-image]"
+        )
+        .forEach(function(imagen){
+
+            if(
+                imagen.dataset
+                    .mobileSmartReady ===
+                "true"
+            ){
+
+                return;
+
+            }
+
+
+            function clasificarImagen(){
+
+                const ancho =
+                    Number(
+                        imagen.naturalWidth || 0
+                    );
+
+                const alto =
+                    Number(
+                        imagen.naturalHeight || 0
+                    );
+
+
+                if(
+                    ancho <= 0 ||
+                    alto <= 0
+                ){
+
+                    return;
+
+                }
+
+
+                const proporcion =
+                    ancho / alto;
+
+
+                imagen.classList.remove(
+                    "is-vertical",
+                    "is-square",
+                    "is-horizontal"
+                );
+
+
+                if(proporcion < 0.72){
+
+                    imagen.classList.add(
+                        "is-vertical"
+                    );
+
+                }else if(proporcion > 1.35){
+
+                    imagen.classList.add(
+                        "is-horizontal"
+                    );
+
+                }else{
+
+                    imagen.classList.add(
+                        "is-square"
+                    );
+
+                }
+
+
+                imagen.dataset
+                    .mobileSmartReady =
+                    "true";
+
+            }
+
+
+            if(imagen.complete){
+
+                clasificarImagen();
+
+            }else{
+
+                imagen.addEventListener(
+                    "load",
+                    clasificarImagen,
+                    {
+                        once:
+                            true
+                    }
+                );
+
+            }
+
+        });
+
+}
 
 function construirResumenStock(
     producto,
@@ -869,6 +981,8 @@ export {
     construirProductCardMobile,
 
     abrirProductSheetMobile,
+
+    activarSmartImagesMobile,
 
     obtenerStockTiendasProducto,
 

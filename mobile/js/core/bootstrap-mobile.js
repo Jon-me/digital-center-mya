@@ -21,6 +21,12 @@ import {
 } from "../state-mobile.js";
 
 import {
+
+    suscribirCarritoMobile
+
+} from "../services/carrito-mobile-service.js";
+
+import {
     crearRouterMobile
 } from "./router-mobile.js";
 
@@ -53,6 +59,8 @@ import {
 let RouterMobile =
     null;
 
+let cancelarSuscripcionCarritoMobile =
+    null;
 
 const AuthMobile =
     crearAuthMobile({
@@ -117,6 +125,8 @@ export default async function iniciarMobile(){
 async function mostrarLoginMobile(){
 
     destruirRouterMobile();
+
+    destruirBadgeCarritoMobile();
 
     reiniciarVistasMobile();
 
@@ -188,12 +198,15 @@ async function mostrarAplicacionMobile(
 
 
     aplicarPermisosMobile(
-        usuario
-    );
+    usuario
+);
 
 
-    RouterMobile =
-        crearRouterMobile({
+inicializarBadgeCarritoMobile();
+
+
+RouterMobile =
+    crearRouterMobile({
 
             obtenerUsuario:
                 function(){
@@ -232,6 +245,102 @@ async function mostrarAplicacionMobile(
 
 }
 
+function inicializarBadgeCarritoMobile(){
+
+    destruirBadgeCarritoMobile();
+
+
+    cancelarSuscripcionCarritoMobile =
+        suscribirCarritoMobile(
+            function(resumen){
+
+                actualizarBadgeCarritoMobile(
+                    resumen?.cantidad || 0
+                );
+
+            }
+        );
+
+}
+
+
+function actualizarBadgeCarritoMobile(
+    cantidad
+){
+
+    const badge =
+        document.getElementById(
+            "mobileCartBadge"
+        );
+
+
+    if(!badge){
+
+        return;
+
+    }
+
+
+    const total =
+        Math.max(
+            0,
+            Number(cantidad || 0)
+        );
+
+
+    if(total <= 0){
+
+        badge.hidden =
+            true;
+
+        badge.textContent =
+            "0";
+
+        return;
+
+    }
+
+
+    badge.hidden =
+        false;
+
+    badge.textContent =
+        total > 99
+            ? "99+"
+            : String(total);
+
+
+    badge.classList.remove(
+        "is-updating"
+    );
+
+
+    void badge.offsetWidth;
+
+
+    badge.classList.add(
+        "is-updating"
+    );
+
+}
+
+
+function destruirBadgeCarritoMobile(){
+
+    if(
+        typeof cancelarSuscripcionCarritoMobile ===
+        "function"
+    ){
+
+        cancelarSuscripcionCarritoMobile();
+
+    }
+
+
+    cancelarSuscripcionCarritoMobile =
+        null;
+
+}
 
 function destruirRouterMobile(){
 
