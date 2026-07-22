@@ -350,3 +350,620 @@
     font-size:
         12px;
 }
+
+/* =========================================================
+   MOBILE SALES
+   FASE M6.1
+========================================================= */
+
+.mobile-sales{
+
+    display:
+        grid;
+
+    gap:
+        18px;
+
+    min-height:
+        100%;
+
+}
+
+
+.mobile-sales-header{
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        16px;
+
+}
+
+
+.mobile-sales-eyebrow{
+
+    display:
+        block;
+
+    color:
+        var(--mobile-brand-300);
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.mobile-sales-title{
+
+    margin:
+        4px 0 0;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        28px;
+
+    font-weight:
+        900;
+
+}
+
+
+.mobile-sales-content{
+
+    display:
+        grid;
+
+    gap:
+        14px;
+
+}
+
+
+.mobile-sales-list{
+
+    display:
+        grid;
+
+    gap:
+        14px;
+
+}
+
+.mobile-sales-item{
+
+    display:
+        grid;
+
+    grid-template-columns:
+        64px
+        1fr
+        auto;
+
+    gap:
+        14px;
+
+    align-items:
+        center;
+
+    padding:
+        14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,23,42,.88),
+            rgba(5,10,18,.96)
+        );
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        var(--mobile-shadow-sm);
+
+}
+
+.mobile-sales-item-image{
+
+    width:
+        64px;
+
+    height:
+        64px;
+
+    overflow:
+        hidden;
+
+    border-radius:
+        14px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+}
+
+.mobile-sales-item-image img{
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+}
+
+.mobile-sales-item-info{
+
+    min-width:
+        0;
+
+}
+
+.mobile-sales-item-code{
+
+    color:
+        var(--mobile-brand-300);
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+}
+
+.mobile-sales-item-info h2{
+
+    margin:
+        4px 0;
+
+    font-size:
+        15px;
+
+    color:
+        var(--mobile-text-primary);
+
+}
+
+.mobile-sales-item-meta{
+
+    display:
+        flex;
+
+    gap:
+        12px;
+
+    flex-wrap:
+        wrap;
+
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        12px;
+
+}
+
+.mobile-sales-item-subtotal{
+
+    color:
+        var(--mobile-brand-300);
+
+    font-size:
+        17px;
+
+    font-weight:
+        900;
+
+}
+
+.mobile-sales-empty{
+
+    display:
+        grid;
+
+    justify-items:
+        center;
+
+    gap:
+        16px;
+
+    padding:
+        42px 20px;
+
+    text-align:
+        center;
+
+}
+
+.mobile-sales-empty-icon{
+
+    font-size:
+        64px;
+
+}
+
+.mobile-sales-empty h2{
+
+    margin:
+        0;
+
+}
+
+.mobile-sales-empty p{
+
+    max-width:
+        260px;
+
+    color:
+        var(--mobile-text-muted);
+
+    line-height:
+        1.6;
+
+}
+
+.mobile-sales-summary{
+
+    position:
+        sticky;
+
+    bottom:
+        0;
+
+    display:
+        grid;
+
+    gap:
+        12px;
+
+    padding:
+        18px;
+
+    background:
+        rgba(8,15,28,.96);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        20px;
+
+    backdrop-filter:
+        blur(18px);
+
+}
+
+.mobile-sales-summary-row,
+
+.mobile-sales-summary-total{
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+}
+
+.mobile-sales-summary-total{
+
+    font-size:
+        22px;
+
+    font-weight:
+        900;
+
+    color:
+        white;
+
+}
+
+.mobile-sales-checkout{
+
+    margin-top:
+        8px;
+
+    min-height:
+        54px;
+
+    font-size:
+        16px;
+
+}
+
+/* =========================================================
+   MOBILE SALES CONTROLS
+   FASE M6.1.3
+========================================================= */
+
+.mobile-sales-item-info{
+    display:
+        grid;
+
+    gap:
+        5px;
+}
+
+.mobile-sales-item-price{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+}
+
+.mobile-sales-item-actions{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    margin-top:
+        7px;
+}
+
+.mobile-sales-quantity{
+    display:
+        inline-grid;
+
+    grid-template-columns:
+        34px
+        minmax(30px, auto)
+        34px;
+
+    align-items:
+        center;
+
+    min-height:
+        36px;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(15, 23, 42, 0.82);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        12px;
+}
+
+.mobile-sales-quantity-button{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        34px;
+
+    height:
+        34px;
+
+    padding:
+        0;
+
+    color:
+        #ffffff;
+
+    background:
+        transparent;
+
+    border:
+        0;
+
+    font-size:
+        20px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+
+    transition:
+        background
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        transform
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-sales-quantity-button:active{
+    background:
+        rgba(59, 130, 246, 0.2);
+
+    transform:
+        scale(0.88);
+}
+
+.mobile-sales-quantity-value{
+    min-width:
+        30px;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        14px;
+
+    text-align:
+        center;
+}
+
+.mobile-sales-remove-button{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        36px;
+
+    height:
+        36px;
+
+    padding:
+        0;
+
+    color:
+        #fecaca;
+
+    background:
+        rgba(239, 68, 68, 0.1);
+
+    border:
+        1px solid
+        rgba(239, 68, 68, 0.2);
+
+    border-radius:
+        12px;
+
+    font-size:
+        15px;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        background
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-sales-remove-button:active{
+    background:
+        rgba(239, 68, 68, 0.22);
+
+    transform:
+        scale(0.9);
+}
+
+.mobile-sales-item-total{
+    display:
+        grid;
+
+    justify-items:
+        end;
+
+    gap:
+        3px;
+
+    align-self:
+        stretch;
+
+    align-content:
+        center;
+}
+
+.mobile-sales-item-total small{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        10px;
+
+    font-weight:
+        700;
+}
+
+.mobile-sales-item-total strong{
+    color:
+        var(--mobile-brand-300);
+
+    font-size:
+        17px;
+
+    font-weight:
+        900;
+
+    white-space:
+        nowrap;
+}
+
+@media (max-width: 390px){
+
+    .mobile-sales-item{
+        grid-template-columns:
+            56px
+            minmax(0, 1fr);
+
+        align-items:
+            start;
+    }
+
+    .mobile-sales-item-image{
+        width:
+            56px;
+
+        height:
+            56px;
+    }
+
+    .mobile-sales-item-total{
+        grid-column:
+            2;
+
+        justify-items:
+            start;
+
+        margin-top:
+            4px;
+    }
+
+}

@@ -10,10 +10,11 @@ import {
 
     abrirProductSheetMobile,
 
+    activarSmartImagesMobile,
+
     establecerMapaSucursalesMobile
 
 } from "../components/product/product-card-mobile.js";
-
 
 import {
 
@@ -25,6 +26,11 @@ import {
 
 } from "../services/catalog-search-mobile.js";
 
+import {
+
+    agregarProductoCarritoMobile
+
+} from "../services/carrito-mobile-service.js";
 
 import {
 
@@ -516,15 +522,65 @@ function inicializarEventosCatalogoMobile(
                 usuarioActualMobile,
                 {
 
-                    alAgregar:
-                        function(detalle){
+alAgregar:
+    function(detalle){
 
-                            console.info(
-                                "Producto real agregado:",
-                                detalle
-                            );
+        const resultado =
+            agregarProductoCarritoMobile(
 
-                        }
+                detalle.producto,
+
+                detalle.cantidad
+
+            );
+
+
+        if(
+            resultado?.operacion?.completada ===
+            false
+        ){
+
+            const stockDisponible =
+                Number(
+                    resultado.operacion
+                        .stockDisponible || 0
+                );
+
+
+            OverlayMobile.toast({
+
+                tipo:
+                    "warning",
+
+                mensaje:
+                    stockDisponible > 0
+                        ? `Solo tienes ${stockDisponible} unidades disponibles en esta tienda.`
+                        : "Este producto no tiene stock en tu tienda."
+
+            });
+
+
+            return false;
+
+        }
+
+
+        OverlayMobile.toast({
+
+            tipo:
+                "success",
+
+            mensaje:
+                detalle.cantidad === 1
+                    ? "Producto agregado a la venta."
+                    : `${detalle.cantidad} productos agregados a la venta.`
+
+        });
+
+
+        return true;
+
+    }
 
                 }
             );
@@ -743,6 +799,10 @@ function actualizarCatalogoMobile(
 
             })
             .join("");
+
+            activarSmartImagesMobile(
+                grid
+            );
 
 }
 
