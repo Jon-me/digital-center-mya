@@ -746,3 +746,848 @@
     line-height:
         1.2;
 }
+
+/* =========================================================
+   SMART SEARCH
+   FASE M5.2
+========================================================= */
+
+.mobile-catalog-tools{
+    position:
+        sticky;
+
+    top:
+        0;
+
+    z-index:
+        20;
+
+    display:
+        grid;
+
+    gap:
+        11px;
+
+    margin:
+        calc(
+            var(--mobile-page-padding) *
+            -1
+        )
+        calc(
+            var(--mobile-page-padding) *
+            -1
+        )
+        2px;
+
+    padding:
+        12px
+        var(--mobile-page-padding)
+        13px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(5, 9, 20, 0.98),
+            rgba(5, 9, 20, 0.90)
+        );
+
+    border-bottom:
+        var(--mobile-border-subtle);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+
+.mobile-catalog-search{
+    position:
+        relative;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        46px
+        minmax(0, 1fr)
+        42px;
+
+    align-items:
+        center;
+
+    min-height:
+        56px;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--mobile-text-primary);
+
+    background:
+        rgba(15, 23, 42, 0.80);
+
+    border:
+        var(--mobile-border-default);
+
+    border-radius:
+        17px;
+
+    box-shadow:
+        var(--mobile-shadow-sm),
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.03);
+
+    transition:
+        border-color
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        box-shadow
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-catalog-search:focus-within{
+    border-color:
+        rgba(96, 165, 250, 0.70);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37, 99, 235, 0.13),
+        var(--mobile-shadow-sm);
+}
+
+.mobile-catalog-search-icon{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        46px;
+
+    height:
+        100%;
+
+    color:
+        var(--mobile-brand-300);
+
+    font-size:
+        18px;
+}
+
+.mobile-catalog-search input{
+    width:
+        100%;
+
+    min-width:
+        0;
+
+    height:
+        54px;
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    color:
+        var(--mobile-text-primary);
+
+    background:
+        transparent;
+
+    border:
+        0;
+
+    outline:
+        0;
+
+    font-size:
+        15px;
+
+    font-weight:
+        650;
+}
+
+.mobile-catalog-search input::placeholder{
+    color:
+        var(--mobile-text-faint);
+}
+
+.mobile-catalog-search-clear{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        38px;
+
+    min-width:
+        38px;
+
+    height:
+        38px;
+
+    min-height:
+        38px;
+
+    margin-right:
+        4px;
+
+    padding:
+        0;
+
+    color:
+        var(--mobile-text-muted);
+
+    background:
+        rgba(148, 163, 184, 0.08);
+
+    border:
+        0;
+
+    border-radius:
+        12px;
+
+    box-shadow:
+        none;
+
+    font-size:
+        17px;
+}
+
+.mobile-catalog-search-clear[hidden]{
+    display:
+        none;
+}
+
+
+/* =========================================================
+   CATEGORY CHIPS
+========================================================= */
+
+.mobile-category-chips{
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    margin:
+        0
+        calc(
+            var(--mobile-page-padding) *
+            -1
+        );
+
+    padding:
+        0
+        var(--mobile-page-padding);
+
+    overflow-x:
+        auto;
+
+    overscroll-behavior-inline:
+        contain;
+
+    scroll-snap-type:
+        x proximity;
+
+    scrollbar-width:
+        none;
+
+    -webkit-overflow-scrolling:
+        touch;
+}
+
+.mobile-category-chips::-webkit-scrollbar{
+    display:
+        none;
+}
+
+.mobile-category-chip{
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex:
+        0 0 auto;
+
+    min-height:
+        38px;
+
+    padding:
+        0 14px;
+
+    color:
+        var(--mobile-text-muted);
+
+    background:
+        rgba(15, 23, 42, 0.66);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-round);
+
+    box-shadow:
+        none;
+
+    scroll-snap-align:
+        start;
+
+    font-size:
+        11px;
+
+    font-weight:
+        850;
+
+    transition:
+        color
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        background
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        border-color
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        transform
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-category-chip:active{
+    transform:
+        scale(0.96);
+}
+
+.mobile-category-chip.is-active{
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--mobile-brand-700),
+            var(--mobile-brand-500)
+        );
+
+    border-color:
+        rgba(147, 197, 253, 0.44);
+
+    box-shadow:
+        0 8px 18px
+        rgba(37, 99, 235, 0.22);
+}
+
+
+/* =========================================================
+   RESULTS HEADER
+========================================================= */
+
+.mobile-catalog-results-header{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    min-height:
+        34px;
+
+    gap:
+        12px;
+}
+
+.mobile-catalog-results-header h2{
+    margin:
+        0;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        17px;
+}
+
+.mobile-catalog-results-count{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        11px;
+
+    font-weight:
+        750;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.mobile-catalog-empty{
+    display:
+        grid;
+
+    justify-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        38px 20px;
+
+    color:
+        var(--mobile-text-muted);
+
+    background:
+        rgba(15, 23, 42, 0.48);
+
+    border:
+        1px dashed
+        rgba(148, 163, 184, 0.20);
+
+    border-radius:
+        var(--mobile-radius-xl);
+
+    text-align:
+        center;
+}
+
+.mobile-catalog-empty-icon{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        62px;
+
+    height:
+        62px;
+
+    margin-bottom:
+        4px;
+
+    background:
+        rgba(59, 130, 246, 0.10);
+
+    border:
+        var(--mobile-border-brand);
+
+    border-radius:
+        20px;
+
+    font-size:
+        27px;
+}
+
+.mobile-catalog-empty h3{
+    margin:
+        0;
+
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        17px;
+}
+
+.mobile-catalog-empty p{
+    max-width:
+        260px;
+
+    margin:
+        0;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.5;
+}
+
+/* =========================================================
+   FIREBASE CATALOG STATES
+   FASE M5.3
+========================================================= */
+
+.mobile-catalog-results-actions{
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+}
+
+.mobile-catalog-refresh{
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        34px;
+
+    min-width:
+        34px;
+
+    height:
+        34px;
+
+    min-height:
+        34px;
+
+    padding:
+        0;
+
+    color:
+        var(--mobile-brand-300);
+
+    background:
+        rgba(59, 130, 246, 0.10);
+
+    border:
+        1px solid
+        rgba(96, 165, 250, 0.18);
+
+    border-radius:
+        11px;
+
+    box-shadow:
+        none;
+
+    font-size:
+        18px;
+}
+
+.mobile-catalog-refresh:active{
+    transform:
+        rotate(35deg)
+        scale(0.94);
+}
+
+
+/* =========================================================
+   SKELETON
+========================================================= */
+
+.mobile-product-skeleton{
+    display:
+        grid;
+
+    grid-template-columns:
+        92px
+        minmax(0, 1fr);
+
+    min-height:
+        142px;
+
+    gap:
+        14px;
+
+    padding:
+        13px;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(15, 23, 42, 0.70);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        var(--mobile-radius-lg);
+}
+
+.mobile-skeleton-image,
+.mobile-skeleton-line{
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(148, 163, 184, 0.10);
+}
+
+.mobile-skeleton-image::after,
+.mobile-skeleton-line::after{
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.08),
+            transparent
+        );
+
+    transform:
+        translateX(-100%);
+
+    animation:
+        mobileCatalogSkeleton
+        1.25s
+        ease-in-out
+        infinite;
+}
+
+.mobile-skeleton-image{
+    width:
+        92px;
+
+    height:
+        116px;
+
+    border-radius:
+        16px;
+}
+
+.mobile-skeleton-content{
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        10px;
+
+    padding-top:
+        4px;
+}
+
+.mobile-skeleton-line{
+    display:
+        block;
+
+    height:
+        12px;
+
+    border-radius:
+        999px;
+}
+
+.mobile-skeleton-line.short{
+    width:
+        38%;
+}
+
+.mobile-skeleton-line.large{
+    width:
+        92%;
+
+    height:
+        18px;
+}
+
+.mobile-skeleton-line.medium{
+    width:
+        55%;
+
+    height:
+        17px;
+}
+
+.mobile-skeleton-line.stock{
+    width:
+        85%;
+
+    margin-top:
+        auto;
+
+    height:
+        24px;
+}
+
+@keyframes mobileCatalogSkeleton{
+
+    to{
+        transform:
+            translateX(100%);
+    }
+
+}
+
+/* =========================================================
+   PRECIOS ADMINISTRATIVOS
+   FASE M5.4.2
+========================================================= */
+
+.mobile-product-prices{
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        7px;
+
+    margin-top:
+        8px;
+}
+
+.mobile-product-price-item{
+    display:
+        grid;
+
+    min-width:
+        0;
+
+    gap:
+        3px;
+
+    padding:
+        7px 9px;
+
+    background:
+        rgba(15, 23, 42, 0.62);
+
+    border:
+        var(--mobile-border-subtle);
+
+    border-radius:
+        11px;
+}
+
+.mobile-product-price-item small{
+    overflow:
+        hidden;
+
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        8px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        0.8px;
+
+    text-overflow:
+        ellipsis;
+
+    text-transform:
+        uppercase;
+
+    white-space:
+        nowrap;
+}
+
+.mobile-product-price-item strong{
+    overflow:
+        hidden;
+
+    font-size:
+        14px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.15;
+
+    letter-spacing:
+        -0.35px;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+.mobile-product-price-item.is-sale{
+    background:
+        rgba(34, 197, 94, 0.08);
+
+    border-color:
+        rgba(74, 222, 128, 0.18);
+}
+
+.mobile-product-price-item.is-sale strong{
+    color:
+        #86efac;
+}
+
+.mobile-product-price-item.is-cost{
+    background:
+        rgba(245, 158, 11, 0.08);
+
+    border-color:
+        rgba(251, 191, 36, 0.18);
+}
+
+.mobile-product-price-item.is-cost strong{
+    color:
+        #fde68a;
+}
+
+
+/* Bottom Sheet */
+
+.mobile-product-prices.is-sheet{
+    margin-top:
+        11px;
+}
+
+.mobile-product-prices.is-sheet
+.mobile-product-price-item{
+    padding:
+        9px 10px;
+}
+
+.mobile-product-prices.is-sheet
+.mobile-product-price-item strong{
+    font-size:
+        17px;
+}

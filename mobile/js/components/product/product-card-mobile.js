@@ -9,7 +9,7 @@ import {
 } from "../overlay/overlay-mobile.js";
 
 
-const NOMBRES_SUCURSALES_MOBILE = {
+let NOMBRES_SUCURSALES_MOBILE = {
 
     principal:
         "Mercado",
@@ -18,6 +18,25 @@ const NOMBRES_SUCURSALES_MOBILE = {
         "Peluquería"
 
 };
+
+
+function establecerMapaSucursalesMobile(
+    mapa = {}
+){
+
+    NOMBRES_SUCURSALES_MOBILE = {
+
+        principal:
+            "Mercado",
+
+        sucursal:
+            "Peluquería",
+
+        ...mapa
+
+    };
+
+}
 
 
 function escaparHTMLProducto(
@@ -44,41 +63,180 @@ function formatearMonedaProducto(
 
 }
 
+function esAdministradorMobile(
+    usuario
+){
+
+    return (
+        String(
+            usuario?.rol || ""
+        )
+            .trim()
+            .toLowerCase() ===
+        "admin"
+    );
+
+}
+
+
+function construirPreciosProductoMobile(
+    producto,
+    usuario,
+    modo =
+        "card"
+){
+
+    const precioVenta =
+        formatearMonedaProducto(
+            producto?.precio
+        );
+
+
+    if(
+        !esAdministradorMobile(
+            usuario
+        )
+    ){
+
+        return `
+            <strong class="mobile-product-price">
+                ${precioVenta}
+            </strong>
+        `;
+
+    }
+
+
+    const precioCompra =
+        formatearMonedaProducto(
+            producto?.precioCompra
+        );
+
+
+    return `
+        <div
+            class="
+                mobile-product-prices
+                ${
+                    modo === "sheet"
+                        ? "is-sheet"
+                        : ""
+                }
+            "
+        >
+
+            <div class="mobile-product-price-item is-sale">
+
+                <small>
+                    Venta
+                </small>
+
+                <strong>
+                    ${precioVenta}
+                </strong>
+
+            </div>
+
+            <div class="mobile-product-price-item is-cost">
+
+                <small>
+                    Compra
+                </small>
+
+                <strong>
+                    ${precioCompra}
+                </strong>
+
+            </div>
+
+        </div>
+    `;
+
+}
 
 function obtenerStockTiendasProducto(
     producto
 ){
 
-    const stockTiendas = {
+    const stockTiendas = {};
 
-        principal:
-            0,
 
-        sucursal:
-            0,
-
-        ...(
-            producto?.stockTiendas ||
-            {}
+    /*
+     * Primero incorporamos todas las sucursales
+     * conocidas, incluso si tienen stock cero.
+     */
+    Object
+        .keys(
+            NOMBRES_SUCURSALES_MOBILE
         )
-
-    };
-
-    Object.keys(stockTiendas)
         .forEach(function(sucursalId){
 
             stockTiendas[sucursalId] =
+                0;
+
+        });
+
+
+    /*
+     * Después incorporamos el stock real
+     * registrado dentro del producto.
+     */
+    Object
+        .entries(
+            producto?.stockTiendas ||
+            {}
+        )
+        .forEach(function([
+            sucursalId,
+            cantidad
+        ]){
+
+            stockTiendas[sucursalId] =
                 Number(
-                    stockTiendas[sucursalId] ||
-                    0
+                    cantidad || 0
                 );
 
         });
 
+
+    /*
+     * Compatibilidad con productos antiguos
+     * que solo tienen el campo stock general.
+     */
+    const todosEnCero =
+        Object
+            .values(
+                stockTiendas
+            )
+            .every(function(cantidad){
+
+                return (
+                    Number(
+                        cantidad || 0
+                    ) === 0
+                );
+
+            });
+
+
+    if(
+        todosEnCero &&
+        Number(
+            producto?.stock || 0
+        ) > 0
+    ){
+
+        stockTiendas.principal =
+            Number(
+                producto.stock || 0
+            );
+
+    }
+
+
     return stockTiendas;
 
 }
-
 
 function obtenerStockTotalProducto(
     producto
@@ -305,11 +463,11 @@ function construirProductCardMobile(
                     ${escaparHTMLProducto(producto.producto)}
                 </h3>
 
-                <strong class="mobile-product-price">
-                    ${formatearMonedaProducto(
-                        producto.precio
-                    )}
-                </strong>
+                ${construirPreciosProductoMobile(
+                    producto,
+                    usuario,
+                    "card"
+                )}
 
                 <div class="mobile-product-stock-summary">
 
@@ -472,11 +630,11 @@ function construirContenidoProductSheet(
 
                     </div>
 
-                    <div class="mobile-product-sheet-price">
-                        ${formatearMonedaProducto(
-                            producto.precio
-                        )}
-                    </div>
+                    ${construirPreciosProductoMobile(
+                        producto,
+                        usuario,
+                        "sheet"
+                    )}
 
                 </div>
 
@@ -716,6 +874,8 @@ export {
 
     obtenerStockTotalProducto,
 
-    obtenerNombreSucursalMobile
+    obtenerNombreSucursalMobile,
+
+    establecerMapaSucursalesMobile
 
 };
