@@ -1,7 +1,7 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // MOBILE PRODUCT CARD
-// FASE M5.1
+// FASE M7.2.1 - PRODUCT CARD PREMIUM
 // =====================================================
 
 import {
@@ -63,6 +63,7 @@ function formatearMonedaProducto(
 
 }
 
+
 function esAdministradorMobile(
     usuario
 ){
@@ -114,7 +115,7 @@ function construirPreciosProductoMobile(
 
 
     return `
-        <div
+        <span
             class="
                 mobile-product-prices
                 ${
@@ -125,7 +126,7 @@ function construirPreciosProductoMobile(
             "
         >
 
-            <div class="mobile-product-price-item is-sale">
+            <span class="mobile-product-price-item is-sale">
 
                 <small>
                     Venta
@@ -135,9 +136,9 @@ function construirPreciosProductoMobile(
                     ${precioVenta}
                 </strong>
 
-            </div>
+            </span>
 
-            <div class="mobile-product-price-item is-cost">
+            <span class="mobile-product-price-item is-cost">
 
                 <small>
                     Compra
@@ -147,12 +148,13 @@ function construirPreciosProductoMobile(
                     ${precioCompra}
                 </strong>
 
-            </div>
+            </span>
 
-        </div>
+        </span>
     `;
 
 }
+
 
 function obtenerStockTiendasProducto(
     producto
@@ -237,6 +239,7 @@ function obtenerStockTiendasProducto(
     return stockTiendas;
 
 }
+
 
 function obtenerStockTotalProducto(
     producto
@@ -329,24 +332,39 @@ function construirImagenProducto(
 
         return `
             <img
-    class="mobile-product-image"
-    src="${escaparHTMLProducto(producto.imagen)}"
-    alt="${escaparHTMLProducto(producto.producto)}"
-    loading="lazy"
-    decoding="async"
-    data-mobile-smart-image
->
+                class="mobile-product-image"
+                src="${escaparHTMLProducto(producto.imagen)}"
+                alt="${escaparHTMLProducto(producto.producto)}"
+                loading="lazy"
+                decoding="async"
+                data-mobile-smart-image
+            >
         `;
 
     }
 
     return `
-        <div class="mobile-product-image-placeholder">
-            📦
-        </div>
+        <span
+            class="mobile-product-image-placeholder"
+            aria-hidden="true"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                focusable="false"
+            >
+                <path
+                    d="M4.5 7.5 12 3l7.5 4.5v9L12 21l-7.5-4.5v-9Z"
+                ></path>
+
+                <path
+                    d="m4.8 7.7 7.2 4.2 7.2-4.2M12 12v8.5"
+                ></path>
+            </svg>
+        </span>
     `;
 
 }
+
 
 function activarSmartImagesMobile(
     contenedor
@@ -459,6 +477,7 @@ function activarSmartImagesMobile(
 
 }
 
+
 function construirResumenStock(
     producto,
     usuario
@@ -473,6 +492,30 @@ function construirResumenStock(
         .entries(
             stockTiendas
         )
+        .sort(function(
+            [sucursalA],
+            [sucursalB]
+        ){
+
+            const sucursalUsuario =
+                usuario?.sucursalId ||
+                "principal";
+
+            if(sucursalA === sucursalUsuario){
+
+                return -1;
+
+            }
+
+            if(sucursalB === sucursalUsuario){
+
+                return 1;
+
+            }
+
+            return 0;
+
+        })
         .map(function([
             sucursalId,
             cantidad
@@ -500,17 +543,19 @@ function construirResumenStock(
             return `
                 <span class="${clases}">
 
-                    ${
-                        esTiendaUsuario
-                            ? "📍"
-                            : "🏪"
-                    }
+                    <span class="mobile-product-stock-label">
 
-                    ${escaparHTMLProducto(
-                        obtenerNombreSucursalMobile(
-                            sucursalId
-                        )
-                    )}
+                        ${
+                            esTiendaUsuario
+                                ? "Tu tienda"
+                                : escaparHTMLProducto(
+                                    obtenerNombreSucursalMobile(
+                                        sucursalId
+                                    )
+                                )
+                        }
+
+                    </span>
 
                     <strong>
                         ${cantidad}
@@ -530,50 +575,136 @@ function construirProductCardMobile(
     usuario
 ){
 
+    const sucursalUsuario =
+        usuario?.sucursalId ||
+        "principal";
+
+    const stockTiendas =
+        obtenerStockTiendasProducto(
+            producto
+        );
+
+    const stockTiendaUsuario =
+        Number(
+            stockTiendas[
+                sucursalUsuario
+            ] || 0
+        );
+
+    const stockTotal =
+        obtenerStockTotalProducto(
+            producto
+        );
+
     const disponibleOtraTienda =
         tieneStockOtraSucursal(
             producto,
-            usuario?.sucursalId ||
-            "principal"
+            sucursalUsuario
         );
+
+    const estadoDisponibilidad =
+        stockTiendaUsuario > 0
+            ? {
+                clase:
+                    "has-stock",
+
+                texto:
+                    "Disponible"
+            }
+            : disponibleOtraTienda
+                ? {
+                    clase:
+                        "is-other-store",
+
+                    texto:
+                        "Otra tienda"
+                }
+                : {
+                    clase:
+                        "no-stock",
+
+                    texto:
+                        "Agotado"
+                };
+
+    const clasesTarjeta = [
+        "mobile-product-card",
+        stockTiendaUsuario <= 0
+            ? "is-unavailable-here"
+            : "",
+        stockTotal <= 0
+            ? "is-out-of-stock"
+            : ""
+    ]
+        .filter(Boolean)
+        .join(" ");
 
     return `
         <button
             type="button"
-            class="mobile-product-card"
+            class="${clasesTarjeta}"
             data-product-id="${escaparHTMLProducto(producto.id)}"
-            aria-label="Ver ${escaparHTMLProducto(producto.producto)}"
+            aria-label="Ver ${escaparHTMLProducto(producto.producto)}. ${estadoDisponibilidad.texto}."
         >
 
-            <div class="mobile-product-image-wrap">
+            <span
+                class="mobile-product-card-glow"
+                aria-hidden="true"
+            ></span>
+
+            <span class="mobile-product-image-wrap">
 
                 ${construirImagenProducto(producto)}
 
-            </div>
+                <span
+                    class="
+                        mobile-product-availability
+                        ${estadoDisponibilidad.clase}
+                    "
+                >
 
-            <div class="mobile-product-info">
+                    <span
+                        class="mobile-product-availability-dot"
+                        aria-hidden="true"
+                    ></span>
 
-                <div class="mobile-product-topline">
+                    ${estadoDisponibilidad.texto}
+
+                </span>
+
+            </span>
+
+            <span class="mobile-product-info">
+
+                <span class="mobile-product-topline">
 
                     <span class="mobile-product-category">
+
                         ${escaparHTMLProducto(
                             producto.categoria ||
                             "Sin categoría"
                         )}
+
                     </span>
 
                     <span class="mobile-product-code">
+
                         ${escaparHTMLProducto(
                             producto.codigo ||
                             "S/C"
                         )}
+
                     </span>
 
-                </div>
+                </span>
 
-                <h3 class="mobile-product-name">
-                    ${escaparHTMLProducto(producto.producto)}
-                </h3>
+                <span class="mobile-product-name">
+
+                    ${escaparHTMLProducto(
+                        producto.producto
+                    )}
+
+                </span>
 
                 ${construirPreciosProductoMobile(
                     producto,
@@ -581,27 +712,48 @@ function construirProductCardMobile(
                     "card"
                 )}
 
-                <div class="mobile-product-stock-summary">
+                <span class="mobile-product-stock-summary">
 
                     ${construirResumenStock(
                         producto,
                         usuario
                     )}
 
-                </div>
+                </span>
 
-            </div>
+                <span class="mobile-product-card-footer">
 
-            ${
-                disponibleOtraTienda
-                    ? `
-                        <div class="mobile-product-other-store">
-                            💡 Sin stock en tu tienda,
-                            pero disponible en otra sucursal.
-                        </div>
-                    `
-                    : ""
-            }
+                    <span class="mobile-product-card-hint">
+
+                        ${
+                            disponibleOtraTienda
+                                ? "Disponible para traslado"
+                                : stockTotal <= 0
+                                    ? "Sin existencias"
+                                    : "Ver detalles"
+                        }
+
+                    </span>
+
+                    <span
+                        class="mobile-product-card-arrow"
+                        aria-hidden="true"
+                    >
+
+                        <svg
+                            viewBox="0 0 20 20"
+                            focusable="false"
+                        >
+                            <path
+                                d="m7.5 4.75 5.25 5.25-5.25 5.25"
+                            ></path>
+                        </svg>
+
+                    </span>
+
+                </span>
+
+            </span>
 
         </button>
     `;
@@ -638,19 +790,23 @@ function construirStockSheet(
                     <div class="mobile-product-stock-store">
 
                         <strong>
+
                             🏪 ${escaparHTMLProducto(
                                 obtenerNombreSucursalMobile(
                                     sucursalId
                                 )
                             )}
+
                         </strong>
 
                         <small>
+
                             ${
                                 esTiendaUsuario
                                     ? "Tu tienda"
                                     : "Otra sucursal"
                             }
+
                         </small>
 
                     </div>
@@ -714,25 +870,33 @@ function construirContenidoProductSheet(
                 <div>
 
                     <h3 class="mobile-product-sheet-name">
-                        ${escaparHTMLProducto(producto.producto)}
+
+                        ${escaparHTMLProducto(
+                            producto.producto
+                        )}
+
                     </h3>
 
                     <div class="mobile-product-sheet-meta">
 
                         <span>
+
                             Código:
                             ${escaparHTMLProducto(
                                 producto.codigo ||
                                 "S/C"
                             )}
+
                         </span>
 
                         <span>
+
                             Categoría:
                             ${escaparHTMLProducto(
                                 producto.categoria ||
                                 "Sin categoría"
                             )}
+
                         </span>
 
                         <span>
@@ -871,6 +1035,7 @@ function abrirProductSheetMobile(
 
                             mensaje:
                                 "No hay stock en tu tienda. Solicítalo a otra sucursal."
+
                         });
 
                         return false;
@@ -886,6 +1051,7 @@ function abrirProductSheetMobile(
 
                             mensaje:
                                 "La cantidad supera el stock de tu tienda."
+
                         });
 
                         return false;
@@ -912,6 +1078,7 @@ function abrirProductSheetMobile(
 
                         mensaje:
                             `${cantidad} unidad(es) agregadas al carrito.`
+
                     });
 
                     return true;
