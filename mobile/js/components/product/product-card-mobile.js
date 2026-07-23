@@ -781,54 +781,141 @@ function construirStockSheet(
         ]){
 
             const esTiendaUsuario =
-                usuario?.sucursalId ===
+                (
+                    usuario?.sucursalId ||
+                    "principal"
+                ) ===
                 sucursalId;
 
             return `
-                <div class="mobile-product-stock-row">
+                <div
+                    class="
+                        mobile-product-stock-row
+
+                        ${
+                            esTiendaUsuario
+                                ? "is-current"
+                                : ""
+                        }
+
+                        ${
+                            cantidad > 0
+                                ? "has-stock"
+                                : "no-stock"
+                        }
+                    "
+                >
 
                     <div class="mobile-product-stock-store">
 
-                        <strong>
+                        <span
+                            class="mobile-product-stock-store-dot"
+                            aria-hidden="true"
+                        ></span>
 
-                            🏪 ${escaparHTMLProducto(
-                                obtenerNombreSucursalMobile(
-                                    sucursalId
-                                )
-                            )}
+                        <span class="mobile-product-stock-store-copy">
 
+                            <strong>
+
+                                ${escaparHTMLProducto(
+                                    obtenerNombreSucursalMobile(
+                                        sucursalId
+                                    )
+                                )}
+
+                            </strong>
+
+                            <small>
+
+                                ${
+                                    esTiendaUsuario
+                                        ? "Tu tienda"
+                                        : "Otra sucursal"
+                                }
+
+                            </small>
+
+                        </span>
+
+                    </div>
+
+                    <span class="mobile-product-stock-amount">
+
+                        <strong
+                            class="
+                                mobile-product-stock-number
+
+                                ${
+                                    cantidad > 0
+                                        ? "has-stock"
+                                        : "no-stock"
+                                }
+                            "
+                        >
+                            ${cantidad}
                         </strong>
 
                         <small>
 
                             ${
-                                esTiendaUsuario
-                                    ? "Tu tienda"
-                                    : "Otra sucursal"
+                                cantidad === 1
+                                    ? "unidad"
+                                    : "unidades"
                             }
 
                         </small>
 
-                    </div>
-
-                    <strong
-                        class="
-                            mobile-product-stock-number
-                            ${
-                                cantidad > 0
-                                    ? "has-stock"
-                                    : "no-stock"
-                            }
-                        "
-                    >
-                        ${cantidad}
-                    </strong>
+                    </span>
 
                 </div>
             `;
 
         })
         .join("");
+
+}
+
+
+function construirImagenProductSheet(
+    producto
+){
+
+    if(producto.imagen){
+
+        return `
+            <img
+                src="${escaparHTMLProducto(producto.imagen)}"
+                alt="${escaparHTMLProducto(producto.producto)}"
+                loading="eager"
+                decoding="async"
+            >
+        `;
+
+    }
+
+    return `
+        <span
+            class="mobile-product-sheet-placeholder"
+            aria-hidden="true"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                focusable="false"
+            >
+
+                <path
+                    d="M4.5 7.5 12 3l7.5 4.5v9L12 21l-7.5-4.5v-9Z"
+                ></path>
+
+                <path
+                    d="m4.8 7.7 7.2 4.2 7.2-4.2M12 12v8.5"
+                ></path>
+
+            </svg>
+
+        </span>
+    `;
 
 }
 
@@ -843,45 +930,38 @@ function construirContenidoProductSheet(
             producto
         );
 
+    const sucursalUsuario =
+        usuario?.sucursalId ||
+        "principal";
+
+    const stockTiendaUsuario =
+        Number(
+            obtenerStockTiendasProducto(
+                producto
+            )[
+                sucursalUsuario
+            ] || 0
+        );
+
     return `
         <div class="mobile-product-sheet">
 
-            <section class="mobile-product-sheet-summary">
+            <section class="mobile-product-sheet-hero">
 
                 <div class="mobile-product-sheet-image">
 
-                    ${
-                        producto.imagen
-                            ? `
-                                <img
-                                    src="${escaparHTMLProducto(producto.imagen)}"
-                                    alt="${escaparHTMLProducto(producto.producto)}"
-                                >
-                            `
-                            : `
-                                <span style="font-size:38px;">
-                                    📦
-                                </span>
-                            `
-                    }
+                    ${construirImagenProductSheet(
+                        producto
+                    )}
 
                 </div>
 
-                <div>
+                <div class="mobile-product-sheet-summary">
 
-                    <h3 class="mobile-product-sheet-name">
-
-                        ${escaparHTMLProducto(
-                            producto.producto
-                        )}
-
-                    </h3>
-
-                    <div class="mobile-product-sheet-meta">
+                    <div class="mobile-product-sheet-tags">
 
                         <span>
 
-                            Código:
                             ${escaparHTMLProducto(
                                 producto.codigo ||
                                 "S/C"
@@ -891,7 +971,6 @@ function construirContenidoProductSheet(
 
                         <span>
 
-                            Categoría:
                             ${escaparHTMLProducto(
                                 producto.categoria ||
                                 "Sin categoría"
@@ -899,9 +978,39 @@ function construirContenidoProductSheet(
 
                         </span>
 
+                    </div>
+
+                    <div class="mobile-product-sheet-availability">
+
+                        <span
+                            class="
+                                mobile-product-sheet-status-dot
+
+                                ${
+                                    stockTiendaUsuario > 0
+                                        ? "has-stock"
+                                        : "no-stock"
+                                }
+                            "
+                            aria-hidden="true"
+                        ></span>
+
                         <span>
-                            Stock total:
-                            ${stockTotal}
+
+                            <small>
+                                Tu tienda
+                            </small>
+
+                            <strong>
+
+                                ${
+                                    stockTiendaUsuario > 0
+                                        ? `${stockTiendaUsuario} disponibles`
+                                        : "Sin stock"
+                                }
+
+                            </strong>
+
                         </span>
 
                     </div>
@@ -916,17 +1025,17 @@ function construirContenidoProductSheet(
 
             </section>
 
-            <section class="mobile-section">
+            <section class="mobile-product-sheet-section">
 
-                <header class="mobile-section-header">
+                <header class="mobile-product-sheet-section-header">
 
-                    <h2>
-                        Stock por tienda
-                    </h2>
+                    <span>
+                        Disponibilidad
+                    </span>
 
-                    <small>
-                        Todas las sucursales
-                    </small>
+                    <strong>
+                        ${stockTotal} en total
+                    </strong>
 
                 </header>
 
@@ -941,35 +1050,51 @@ function construirContenidoProductSheet(
 
             </section>
 
-            <section class="mobile-product-quantity">
+            <section class="mobile-product-sheet-section">
 
-                <button
-                    type="button"
-                    data-product-quantity-action="minus"
-                    aria-label="Reducir cantidad"
-                >
-                    −
-                </button>
+                <header class="mobile-product-sheet-section-header">
 
-                <div class="mobile-product-quantity-value">
-
-                    <small>
+                    <span>
                         Cantidad
-                    </small>
+                    </span>
 
-                    <strong data-product-quantity>
-                        1
+                    <strong>
+                        Máximo ${stockTiendaUsuario}
                     </strong>
 
-                </div>
+                </header>
 
-                <button
-                    type="button"
-                    data-product-quantity-action="plus"
-                    aria-label="Aumentar cantidad"
-                >
-                    +
-                </button>
+                <div class="mobile-product-quantity">
+
+                    <button
+                        type="button"
+                        data-product-quantity-action="minus"
+                        aria-label="Reducir cantidad"
+                    >
+                        −
+                    </button>
+
+                    <div class="mobile-product-quantity-value">
+
+                        <small>
+                            Unidades
+                        </small>
+
+                        <strong data-product-quantity>
+                            1
+                        </strong>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        data-product-quantity-action="plus"
+                        aria-label="Aumentar cantidad"
+                    >
+                        +
+                    </button>
+
+                </div>
 
             </section>
 
@@ -1001,6 +1126,9 @@ function abrirProductSheetMobile(
     const sheet =
         OverlayMobile.bottomSheet({
 
+            clase:
+                "mobile-product-sheet-overlay",
+
             eyebrow:
                 producto.categoria ||
                 "PRODUCTO",
@@ -1009,7 +1137,7 @@ function abrirProductSheetMobile(
                 producto.producto,
 
             descripcion:
-                "Consulta existencias y elige la cantidad.",
+                "Elige la cantidad para tu tienda.",
 
             contenido:
                 construirContenidoProductSheet(
@@ -1021,7 +1149,7 @@ function abrirProductSheetMobile(
                 "Cancelar",
 
             textoConfirmar:
-                "Agregar",
+                "Agregar al carrito",
 
             alConfirmar:
                 function(){

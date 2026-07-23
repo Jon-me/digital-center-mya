@@ -326,6 +326,9 @@ function abrirBottomSheet(
         contenido =
             "",
 
+        clase =
+            "",
+
         textoCancelar =
             "Cancelar",
 
@@ -379,9 +382,12 @@ function abrirBottomSheet(
     portal.insertAdjacentHTML(
         "beforeend",
         `
-            <section
-                class="mobile-bottom-sheet"
-                role="dialog"
+<section
+    class="
+        mobile-bottom-sheet
+        ${escaparHTMLOverlay(clase)}
+    "
+    role="dialog"
                 aria-modal="true"
                 aria-labelledby="mobileBottomSheetTitle"
             >

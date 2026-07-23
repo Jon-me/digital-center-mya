@@ -1,7 +1,7 @@
 /* =========================================================
    DIGITAL CENTER M&A
    MOBILE PRODUCT CATALOG
-   FASE M7.2.1 - PRODUCT CARD PREMIUM
+   FASE M7.2 - PREMIUM SALES EXPERIENCE
 ========================================================= */
 
 
@@ -1079,175 +1079,389 @@
 
 /* =========================================================
    PRODUCT SHEET
+   FASE M7.2.2 - PRODUCT SHEET PREMIUM
 ========================================================= */
 
 .mobile-product-sheet{
-    display:
-        grid;
-
-    gap:
-        14px;
+    display: grid;
+    gap: 12px;
 }
 
-.mobile-product-sheet-summary{
-    display:
-        grid;
+.mobile-product-sheet-hero{
+    display: grid;
+    grid-template-columns: 124px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 14px;
+    padding: 12px;
 
-    grid-template-columns:
-        96px
-        minmax(0, 1fr);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 31, 52, 0.92),
+            rgba(7, 14, 27, 0.97)
+        );
 
-    align-items:
-        center;
+    border:
+        1px solid rgba(148, 163, 184, 0.13);
 
-    gap:
-        14px;
+    border-radius:
+        22px;
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
+
+
+/* Imagen principal */
 
 .mobile-product-sheet-image{
-    display:
-        grid;
+    display: grid;
+    place-items: center;
 
-    place-items:
-        center;
+    width: 124px;
+    min-height: 150px;
 
-    width:
-        96px;
-
-    height:
-        112px;
-
-    overflow:
-        hidden;
+    overflow: hidden;
 
     background:
         #ffffff;
 
     border-radius:
-        18px;
+        17px;
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.22),
+        inset 0 0 0 1px rgba(15, 23, 42, 0.08);
 }
 
 .mobile-product-sheet-image img{
-    width:
-        100%;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
 
-    height:
-        100%;
+    object-fit: contain;
+    object-position: center;
 
-    padding:
-        2px;
-
-    object-fit:
-        contain;
-
-    object-position:
-        center;
-
-    transform:
-        scale(1.06);
+    transform: none;
 }
 
-.mobile-product-sheet-name{
-    margin:
-        0;
+.mobile-product-sheet-placeholder{
+    display: grid;
+    place-items: center;
 
-    font-size:
-        18px;
+    width: 100%;
+    height: 100%;
 
-    line-height:
-        1.25;
-
-    letter-spacing:
-        -0.4px;
+    color:
+        #64748b;
 }
 
-.mobile-product-sheet-meta{
-    display:
-        grid;
+.mobile-product-sheet-placeholder svg{
+    width: 38px;
+    height: 38px;
 
-    gap:
-        4px;
+    fill: none;
+    stroke: currentColor;
 
-    margin-top:
-        8px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.4;
+}
 
+
+/* Resumen */
+
+.mobile-product-sheet-summary{
+    display: flex;
+    min-width: 0;
+
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 12px;
+    padding: 2px 0;
+}
+
+.mobile-product-sheet-tags{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+}
+
+.mobile-product-sheet-tags span{
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 23px;
+    max-width: 100%;
+
+    padding: 0 8px;
+    overflow: hidden;
+
+    color:
+        #bfdbfe;
+
+    background:
+        rgba(59, 130, 246, 0.09);
+
+    border:
+        1px solid rgba(96, 165, 250, 0.14);
+
+    border-radius:
+        var(--mobile-radius-round);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.45px;
+
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+
+/* Disponibilidad de tienda actual */
+
+.mobile-product-sheet-availability{
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+
+    min-width: 0;
+
+    gap: 8px;
+    padding: 8px 10px;
+
+    color:
+        var(--mobile-text-secondary);
+
+    background:
+        rgba(2, 8, 18, 0.42);
+
+    border:
+        1px solid rgba(148, 163, 184, 0.10);
+
+    border-radius:
+        13px;
+}
+
+.mobile-product-sheet-status-dot{
+    width: 8px;
+    height: 8px;
+
+    flex: 0 0 auto;
+
+    background:
+        #f87171;
+
+    border-radius:
+        50%;
+
+    box-shadow:
+        0 0 0 4px rgba(248, 113, 113, 0.10);
+}
+
+.mobile-product-sheet-status-dot.has-stock{
+    background:
+        #4ade80;
+
+    box-shadow:
+        0 0 0 4px rgba(74, 222, 128, 0.10);
+}
+
+.mobile-product-sheet-availability > span:last-child{
+    display: grid;
+    min-width: 0;
+    gap: 1px;
+}
+
+.mobile-product-sheet-availability small{
     color:
         var(--mobile-text-muted);
 
-    font-size:
-        11px;
+    font-size: 8px;
+    font-weight: 800;
+
+    text-transform:
+        uppercase;
 }
 
-.mobile-product-sheet-price{
-    margin-top:
-        10px;
+.mobile-product-sheet-availability strong{
+    overflow: hidden;
 
     color:
-        #ffffff;
+        var(--mobile-text-primary);
 
     font-size:
-        24px;
+        12px;
 
-    font-weight:
-        900;
+    text-overflow:
+        ellipsis;
 
-    letter-spacing:
-        -0.7px;
+    white-space:
+        nowrap;
+}
+
+.mobile-product-sheet-summary
+> .mobile-product-price{
+    margin-top: auto;
+
+    font-size:
+        26px;
 }
 
 
 /* =========================================================
-   STOCK SHEET
+   SECCIONES DEL PRODUCT SHEET
+========================================================= */
+
+.mobile-product-sheet-section{
+    display: grid;
+    gap: 10px;
+
+    padding:
+        12px;
+
+    background:
+        rgba(15, 23, 42, 0.50);
+
+    border:
+        1px solid rgba(148, 163, 184, 0.10);
+
+    border-radius:
+        18px;
+}
+
+.mobile-product-sheet-section-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap:
+        12px;
+}
+
+.mobile-product-sheet-section-header span{
+    color:
+        var(--mobile-text-primary);
+
+    font-size:
+        12px;
+
+    font-weight:
+        850;
+}
+
+.mobile-product-sheet-section-header strong{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        9px;
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   STOCK POR TIENDA
 ========================================================= */
 
 .mobile-product-stock-list{
-    display:
-        grid;
-
-    gap:
-        9px;
+    display: grid;
+    gap: 8px;
 }
 
 .mobile-product-stock-row{
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     min-height:
-        54px;
+        58px;
 
     gap:
         12px;
 
     padding:
-        10px 13px;
+        9px 11px;
 
     background:
-        rgba(15, 23, 42, 0.66);
+        rgba(3, 10, 21, 0.40);
 
     border:
-        var(--mobile-border-subtle);
+        1px solid rgba(148, 163, 184, 0.09);
 
     border-radius:
-        var(--mobile-radius-md);
+        14px;
+}
+
+.mobile-product-stock-row.is-current{
+    background:
+        rgba(37, 99, 235, 0.075);
+
+    border-color:
+        rgba(96, 165, 250, 0.15);
 }
 
 .mobile-product-stock-store{
-    display:
-        grid;
+    display: flex;
+    align-items: center;
+
+    min-width:
+        0;
 
     gap:
-        2px;
+        9px;
+}
+
+.mobile-product-stock-store-dot{
+    width: 8px;
+    height: 8px;
+
+    flex:
+        0 0 auto;
+
+    background:
+        #f87171;
+
+    border-radius:
+        50%;
+
+    box-shadow:
+        0 0 0 4px rgba(248, 113, 113, 0.09);
+}
+
+.mobile-product-stock-row.has-stock
+.mobile-product-stock-store-dot{
+    background:
+        #4ade80;
+
+    box-shadow:
+        0 0 0 4px rgba(74, 222, 128, 0.09);
+}
+
+.mobile-product-stock-store-copy{
+    display: grid;
+    min-width: 0;
+    gap: 1px;
 }
 
 .mobile-product-stock-store strong{
+    overflow: hidden;
+
     font-size:
         13px;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
 }
 
 .mobile-product-stock-store small{
@@ -1255,15 +1469,42 @@
         var(--mobile-text-muted);
 
     font-size:
-        9px;
+        8px;
+}
+
+.mobile-product-stock-amount{
+    display: grid;
+
+    min-width:
+        50px;
+
+    justify-items:
+        end;
+
+    gap:
+        0;
+}
+
+.mobile-product-stock-amount small{
+    color:
+        var(--mobile-text-muted);
+
+    font-size:
+        7px;
+
+    font-weight:
+        750;
 }
 
 .mobile-product-stock-number{
     font-size:
-        20px;
+        19px;
 
     font-weight:
-        900;
+        850;
+
+    font-variant-numeric:
+        tabular-nums;
 }
 
 .mobile-product-stock-number.has-stock{
@@ -1282,48 +1523,37 @@
 ========================================================= */
 
 .mobile-product-quantity{
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
-        52px
-        minmax(70px, 1fr)
-        52px;
+        48px minmax(70px, 1fr) 48px;
 
     align-items:
         center;
 
     gap:
-        10px;
+        6px;
 
     padding:
-        12px;
+        6px;
 
     background:
-        rgba(15, 23, 42, 0.62);
+        rgba(2, 8, 18, 0.54);
 
     border:
-        var(--mobile-border-subtle);
+        1px solid rgba(148, 163, 184, 0.10);
 
     border-radius:
-        var(--mobile-radius-lg);
+        17px;
 }
 
 .mobile-product-quantity button{
-    display:
-        grid;
+    display: grid;
+    place-items: center;
 
-    place-items:
-        center;
-
-    width:
-        52px;
-
-    height:
-        52px;
-
-    min-height:
-        52px;
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
 
     padding:
         0;
@@ -1332,28 +1562,48 @@
         #ffffff;
 
     background:
-        rgba(59, 130, 246, 0.14);
+        linear-gradient(
+            145deg,
+            rgba(59, 130, 246, 0.22),
+            rgba(37, 99, 235, 0.12)
+        );
 
     border:
-        1px solid
-        rgba(96, 165, 250, 0.22);
+        1px solid rgba(96, 165, 250, 0.20);
 
     border-radius:
-        15px;
+        13px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.055);
 
     font-size:
-        24px;
+        22px;
 
     font-weight:
         800;
+
+    transition:
+        transform
+        var(--mobile-duration-fast)
+        var(--mobile-ease),
+
+        background
+        var(--mobile-duration-fast)
+        var(--mobile-ease);
+}
+
+.mobile-product-quantity button:active{
+    transform:
+        scale(0.94);
+
+    background:
+        rgba(59, 130, 246, 0.28);
 }
 
 .mobile-product-quantity-value{
-    display:
-        grid;
-
-    place-items:
-        center;
+    display: grid;
+    place-items: center;
 
     text-align:
         center;
@@ -1364,10 +1614,13 @@
         var(--mobile-text-muted);
 
     font-size:
-        9px;
+        8px;
 
     font-weight:
         800;
+
+    letter-spacing:
+        0.7px;
 
     text-transform:
         uppercase;
@@ -1375,10 +1628,65 @@
 
 .mobile-product-quantity-value strong{
     font-size:
-        25px;
+        26px;
+
+    font-weight:
+        850;
 
     line-height:
         1.2;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+
+/* =========================================================
+   RESPONSIVE PRODUCT SHEET
+========================================================= */
+
+@media (max-width: 380px){
+
+    .mobile-product-sheet-hero{
+        grid-template-columns:
+            104px minmax(0, 1fr);
+
+        gap:
+            11px;
+
+        padding:
+            10px;
+    }
+
+    .mobile-product-sheet-image{
+        width:
+            104px;
+
+        min-height:
+            132px;
+    }
+
+    .mobile-product-sheet-summary{
+        gap:
+            9px;
+    }
+
+    .mobile-product-sheet-summary
+    > .mobile-product-price{
+        font-size:
+            23px;
+    }
+
+    .mobile-product-sheet-availability{
+        padding:
+            7px 8px;
+    }
+
+    .mobile-product-sheet-section{
+        padding:
+            10px;
+    }
+
 }
 
 /* =========================================================
@@ -2295,18 +2603,43 @@
 /* Bottom Sheet */
 
 .mobile-product-prices.is-sheet{
+    width:
+        100%;
+
     margin-top:
-        11px;
+        auto;
+
+    gap:
+        6px;
 }
 
 .mobile-product-prices.is-sheet
 .mobile-product-price-item{
     padding:
-        9px 10px;
+        8px 9px;
+
+    border-radius:
+        12px;
 }
 
 .mobile-product-prices.is-sheet
 .mobile-product-price-item strong{
     font-size:
-        17px;
+        16px;
+}
+
+@media (max-width: 380px){
+
+    .mobile-product-prices.is-sheet
+    .mobile-product-price-item{
+        padding:
+            7px;
+    }
+
+    .mobile-product-prices.is-sheet
+    .mobile-product-price-item strong{
+        font-size:
+            14px;
+    }
+
 }
