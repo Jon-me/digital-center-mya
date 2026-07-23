@@ -998,17 +998,186 @@ function manejarMetodoPagoVentasMobile(
     }
 
 
+    if(metodo === "mixto"){
+
+        mostrarToast({
+
+            tipo:
+                "info",
+
+            mensaje:
+                "El pago mixto se implementará en el siguiente bloque."
+
+        });
+
+        return;
+
+    }
+
+
+    if(
+        [
+            "yape",
+            "plin",
+            "tarjeta",
+            "transferencia"
+        ].includes(
+            metodo
+        )
+    ){
+
+        confirmarPagoDigitalVentasMobile(
+            metodo
+        );
+
+        return;
+
+    }
+
+
     mostrarToast({
 
         tipo:
-            "info",
+            "warning",
 
         mensaje:
-            `${obtenerNombreMetodoPagoVentasMobile(
-                metodo
-            )} se implementará próximamente.`
+            "Método de pago no reconocido."
 
     });
+
+}
+
+async function confirmarPagoDigitalVentasMobile(
+    metodo
+){
+
+    const resumen =
+        obtenerResumenCarritoMobile();
+
+
+    if(
+        !Array.isArray(
+            resumen.items
+        ) ||
+        resumen.items.length === 0
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "La venta ya no tiene productos."
+
+        });
+
+        return false;
+
+    }
+
+
+    const nombreMetodo =
+        obtenerNombreMetodoPagoVentasMobile(
+            metodo
+        );
+
+
+    const confirmado =
+        await mostrarDialogo({
+
+            icono:
+                obtenerIconoMetodoPagoVentasMobile(
+                    metodo
+                ),
+
+            titulo:
+                `Confirmar pago con ${nombreMetodo}`,
+
+            mensaje:
+                `Total a registrar: ${formatearMonedaVentasMobile(
+                    resumen.total
+                )}`,
+
+            textoCancelar:
+                "Cancelar",
+
+            textoConfirmar:
+                "Confirmar pago",
+
+            peligro:
+                false
+
+        });
+
+
+    if(!confirmado){
+
+        return false;
+
+    }
+
+
+    const resultado =
+        await registrarVentaMobile({
+
+            metodoPago:
+                metodo,
+
+            recibido:
+                resumen.total,
+
+            vuelto:
+                0
+
+        });
+
+
+    if(
+        resultado?.completada !==
+        true
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "danger",
+
+            duracion:
+                4200,
+
+            mensaje:
+                resultado?.mensaje ||
+                "No se pudo registrar la venta."
+
+        });
+
+        return false;
+
+    }
+
+
+    vaciarCarritoMobile();
+
+
+    OverlayMobile.close();
+
+
+    mostrarToast({
+
+        tipo:
+            "success",
+
+        duracion:
+            4200,
+
+        mensaje:
+            `Venta registrada con ${nombreMetodo}.`
+
+    });
+
+
+    return true;
 
 }
 
@@ -1939,6 +2108,38 @@ function construirMetodoPagoVentasMobile(
 
         </button>
     `;
+
+}
+
+function obtenerIconoMetodoPagoVentasMobile(
+    metodo
+){
+
+    const iconos = {
+
+        efectivo:
+            "💵",
+
+        yape:
+            "📱",
+
+        plin:
+            "📲",
+
+        tarjeta:
+            "💳",
+
+        transferencia:
+            "🏦",
+
+        mixto:
+            "🔀"
+
+    };
+
+
+    return iconos[metodo] ||
+        "💰";
 
 }
 

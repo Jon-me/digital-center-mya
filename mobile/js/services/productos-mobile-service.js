@@ -26,6 +26,9 @@ let promesaProductosMobile =
 let cancelarSuscripcionProductosMobile =
     null;    
 
+const suscriptoresProductosMobile =
+    new Set();    
+
 function normalizarStockProductoMobile(
     producto
 ){
@@ -282,12 +285,64 @@ function suscribirProductosMobile(
     alError
 ){
 
+    const suscriptor = {
+
+        alActualizar,
+
+        alError
+
+    };
+
+
+    suscriptoresProductosMobile.add(
+        suscriptor
+    );
+
+
+    if(
+        cacheProductosMobile &&
+        typeof alActualizar ===
+        "function"
+    ){
+
+        alActualizar(
+            cacheProductosMobile
+        );
+
+    }
+
+
+    iniciarListenerProductosMobile();
+
+
+    return function cancelar(){
+
+        suscriptoresProductosMobile.delete(
+            suscriptor
+        );
+
+
+        if(
+            suscriptoresProductosMobile.size ===
+            0
+        ){
+
+            destruirSuscripcionProductosMobile();
+
+        }
+
+    };
+
+}
+
+function iniciarListenerProductosMobile(){
+
     if(
         typeof cancelarSuscripcionProductosMobile ===
         "function"
     ){
 
-        cancelarSuscripcionProductosMobile();
+        return;
 
     }
 
@@ -301,6 +356,7 @@ function suscribirProductosMobile(
 
     cancelarSuscripcionProductosMobile =
         onSnapshot(
+
             productosRef,
 
             function(snapshot){
@@ -315,16 +371,23 @@ function suscribirProductosMobile(
                     productos;
 
 
-                if(
-                    typeof alActualizar ===
-                    "function"
-                ){
+                suscriptoresProductosMobile
+                    .forEach(function(suscriptor){
 
-                    alActualizar(
-                        productos
-                    );
+                        if(
+                            typeof suscriptor
+                                .alActualizar ===
+                            "function"
+                        ){
 
-                }
+                            suscriptor
+                                .alActualizar(
+                                    productos
+                                );
+
+                        }
+
+                    });
 
             },
 
@@ -336,37 +399,27 @@ function suscribirProductosMobile(
                 );
 
 
-                if(
-                    typeof alError ===
-                    "function"
-                ){
+                suscriptoresProductosMobile
+                    .forEach(function(suscriptor){
 
-                    alError(
-                        error
-                    );
+                        if(
+                            typeof suscriptor
+                                .alError ===
+                            "function"
+                        ){
 
-                }
+                            suscriptor
+                                .alError(
+                                    error
+                                );
+
+                        }
+
+                    });
 
             }
+
         );
-
-
-    return function cancelar(){
-
-        if(
-            typeof cancelarSuscripcionProductosMobile ===
-            "function"
-        ){
-
-            cancelarSuscripcionProductosMobile();
-
-        }
-
-
-        cancelarSuscripcionProductosMobile =
-            null;
-
-    };
 
 }
 
