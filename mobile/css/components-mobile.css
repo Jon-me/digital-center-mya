@@ -1473,3 +1473,256 @@
     }
 
 }
+
+/* =====================================================
+   DIGITAL CENTER M&A
+   VENTAS MOBILE - TIENDA DE VENTA
+   FASE M7.2.2
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR DE TIENDA
+===================================================== */
+
+.mobile-sales-store {
+    display: grid;
+    gap: 12px;
+
+    margin: 0 14px 14px;
+    padding: 14px;
+
+    border: 1px solid rgba(110, 165, 255, 0.16);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 26, 52, 0.96),
+            rgba(7, 16, 35, 0.98)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+
+.mobile-sales-store-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.mobile-sales-store-info span {
+    color: rgba(180, 199, 230, 0.72);
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+
+.mobile-sales-store-info strong {
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   SELECTOR MERCADO / PELUQUERÍA
+===================================================== */
+
+.mobile-sales-store-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+
+.mobile-sales-store-button {
+    position: relative;
+
+    min-width: 0;
+    min-height: 46px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(110, 165, 255, 0.16);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 31, 62, 0.92),
+            rgba(8, 18, 40, 0.98)
+        );
+
+    color: rgba(220, 231, 250, 0.75);
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 7px 18px rgba(0, 0, 0, 0.16);
+
+    transition:
+        transform 150ms ease,
+        border-color 150ms ease,
+        background 150ms ease,
+        color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+
+.mobile-sales-store-button:active {
+    transform: scale(0.98);
+}
+
+
+.mobile-sales-store-button.is-active {
+    border-color: rgba(48, 137, 255, 0.8);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(35, 100, 211, 0.54),
+            rgba(10, 42, 102, 0.96)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        0 0 0 1px rgba(50, 133, 255, 0.14),
+        0 9px 24px rgba(0, 96, 255, 0.22);
+}
+
+
+.mobile-sales-store-button.is-active::after {
+    content: "✓";
+
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+
+    border: 2px solid #071225;
+    border-radius: 50%;
+
+    background: #318cff;
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    box-shadow:
+        0 4px 12px rgba(48, 136, 255, 0.35);
+}
+
+
+/* =====================================================
+   STOCK DEL PRODUCTO EN LA TIENDA ACTIVA
+===================================================== */
+
+.mobile-sales-item-stock {
+    display: block;
+
+    margin-top: 4px;
+
+    color: rgba(162, 188, 229, 0.7);
+
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+
+/* =====================================================
+   BOTONES DE CANTIDAD BLOQUEADOS
+===================================================== */
+
+.mobile-sales-quantity-button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.3;
+
+    transform: none;
+
+    filter: grayscale(0.45);
+
+    box-shadow: none;
+}
+
+
+.mobile-sales-quantity-button:disabled:active {
+    transform: none;
+}
+
+
+/* =====================================================
+   MEJORAS TÁCTILES
+===================================================== */
+
+.mobile-sales-store-button,
+.mobile-sales-quantity-button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+
+/* =====================================================
+   ACCESIBILIDAD
+===================================================== */
+
+.mobile-sales-store-button:focus-visible {
+    outline: 2px solid rgba(76, 151, 255, 0.92);
+    outline-offset: 2px;
+}
+
+
+/* =====================================================
+   PANTALLAS PEQUEÑAS
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-sales-store {
+        margin-right: 10px;
+        margin-left: 10px;
+
+        padding: 12px;
+
+        border-radius: 16px;
+    }
+
+
+    .mobile-sales-store-selector {
+        gap: 8px;
+    }
+
+
+    .mobile-sales-store-button {
+        min-height: 42px;
+
+        padding: 9px 10px;
+
+        font-size: 11px;
+    }
+
+}

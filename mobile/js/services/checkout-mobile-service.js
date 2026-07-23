@@ -1,129 +1,88 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // CHECKOUT MOBILE SERVICE
-// FASE M6.5 - CHECKOUT ENGINE
+// FASE M7.2.2
+// CHECKOUT SEGÚN TIENDA DE VENTA
 // =====================================================
 
 import {
-
     mobileDB,
-
     collection,
-
     doc,
-
     runTransaction,
-
     serverTimestamp
-
 } from "../firebase-mobile.js";
 
-
 import {
-
     obtenerResumenCarritoMobile
-
 } from "./carrito-mobile-service.js";
 
-
 import {
-
     obtenerSesionMobile,
-
-    obtenerSucursalMobile
-
+    obtenerSucursalMobile,
+    obtenerTiendaVentaMobile,
+    obtenerNombreTiendaVentaMobile
 } from "../state-mobile.js";
 
 import {
-
     cargarSucursalesMobile
-
 } from "./sucursales-mobile-service.js";
+
 
 // =====================================================
 // ESTADO
 // =====================================================
 
-let checkoutMobileEnProceso =
-    false;
+let checkoutMobileEnProceso = false;
 
 
 // =====================================================
 // UTILIDADES
 // =====================================================
 
-function normalizarMontoCheckoutMobile(
-    valor
-){
+function normalizarMontoCheckoutMobile(valor) {
 
-    const numero =
-        Number(valor || 0);
+    const numero = Number(valor || 0);
 
-
-    if(
+    if (
         !Number.isFinite(numero) ||
         numero < 0
-    ){
-
+    ) {
         return 0;
-
     }
 
-
-    return Number(
-        numero.toFixed(2)
-    );
+    return Number(numero.toFixed(2));
 
 }
 
 
-function redondearMontoCheckoutMobile(
-    valor
-){
+function redondearMontoCheckoutMobile(valor) {
 
     return Math.round(
-        normalizarMontoCheckoutMobile(
-            valor
-        ) *
-        100
+        normalizarMontoCheckoutMobile(valor) * 100
     ) / 100;
 
 }
 
-function obtenerFechaISOCheckoutMobile(
-    fecha =
-        new Date()
-){
 
-    const anio =
-        fecha.getFullYear();
+function obtenerFechaISOCheckoutMobile(fecha = new Date()) {
 
-    const mes =
-        String(
-            fecha.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
+    const anio = fecha.getFullYear();
 
-    const dia =
-        String(
-            fecha.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
+    const mes = String(
+        fecha.getMonth() + 1
+    ).padStart(2, "0");
 
+    const dia = String(
+        fecha.getDate()
+    ).padStart(2, "0");
 
     return `${anio}-${mes}-${dia}`;
 
 }
 
 
-function obtenerFechaLocalCheckoutMobile(
-    fecha =
-        new Date()
-){
+function obtenerFechaLocalCheckoutMobile(fecha = new Date()) {
 
     return fecha.toLocaleDateString(
         "es-PE"
@@ -132,10 +91,7 @@ function obtenerFechaLocalCheckoutMobile(
 }
 
 
-function obtenerHoraLocalCheckoutMobile(
-    fecha =
-        new Date()
-){
+function obtenerHoraLocalCheckoutMobile(fecha = new Date()) {
 
     return fecha.toLocaleTimeString(
         "es-PE"
@@ -143,59 +99,45 @@ function obtenerHoraLocalCheckoutMobile(
 
 }
 
+
 function construirPagosCheckoutMobile(
     metodoPago,
     total
-){
+) {
 
     const pagos = {
-
-        efectivo:
-            0,
-
-        yape:
-            0,
-
-        plin:
-            0,
-
-        tarjeta:
-            0,
-
-        transferencia:
-            0
-
+        efectivo: 0,
+        yape: 0,
+        plin: 0,
+        tarjeta: 0,
+        transferencia: 0
     };
 
-
-    if(
+    if (
         Object.hasOwn(
             pagos,
             metodoPago
         )
-    ){
+    ) {
 
         pagos[metodoPago] =
-            redondearMontoCheckoutMobile(
-                total
-            );
+            redondearMontoCheckoutMobile(total);
 
     }
-
 
     return pagos;
 
 }
 
+
 function calcularGananciaCheckoutMobile(
     items,
-    descuento =
-        0
-){
+    descuento = 0
+) {
 
     const gananciaBruta =
         items.reduce(
-            function(total, item){
+            function(total, item) {
 
                 const precioVenta =
                     normalizarMontoCheckoutMobile(
@@ -217,7 +159,6 @@ function calcularGananciaCheckoutMobile(
                         )
                     );
 
-
                 return (
                     total +
                     (
@@ -231,7 +172,6 @@ function calcularGananciaCheckoutMobile(
             0
         );
 
-
     return redondearMontoCheckoutMobile(
         gananciaBruta -
         normalizarMontoCheckoutMobile(
@@ -241,19 +181,41 @@ function calcularGananciaCheckoutMobile(
 
 }
 
+
+// =====================================================
+// NOMBRE DE TIENDA
+// =====================================================
+
 async function obtenerNombreSucursalCheckoutMobile(
     sucursalId
-){
+) {
 
-    try{
+    /*
+     * Para las dos tiendas oficiales usamos
+     * directamente sus nombres comerciales.
+     */
+
+    if (sucursalId === "principal") {
+        return "Mercado";
+    }
+
+    if (sucursalId === "sucursal") {
+        return "Peluquería";
+    }
+
+    /*
+     * Dejamos este respaldo por si en el futuro
+     * se agregan nuevas sucursales en Firebase.
+     */
+
+    try {
 
         const sucursales =
             await cargarSucursalesMobile();
 
-
         const sucursal =
             sucursales.find(
-                function(item){
+                function(item) {
 
                     return (
                         String(item.id) ===
@@ -263,20 +225,18 @@ async function obtenerNombreSucursalCheckoutMobile(
                 }
             );
 
-
         return String(
             sucursal?.nombre ||
             sucursalId ||
             "Sucursal"
         );
 
-    }catch(error){
+    } catch (error) {
 
         console.warn(
             "No se pudo resolver el nombre de la sucursal:",
             error
         );
-
 
         return String(
             sucursalId ||
@@ -287,25 +247,28 @@ async function obtenerNombreSucursalCheckoutMobile(
 
 }
 
+
+// =====================================================
+// STOCK SEGÚN TIENDA
+// =====================================================
+
 function obtenerStockProductoCheckoutMobile(
     datosProducto,
-    sucursalId
-){
+    tiendaVenta
+) {
 
     const stockTiendas =
         datosProducto?.stockTiendas &&
-        typeof datosProducto.stockTiendas ===
-        "object"
+        typeof datosProducto.stockTiendas === "object"
             ? datosProducto.stockTiendas
             : {};
-
 
     return Math.max(
         0,
         Math.trunc(
             Number(
                 stockTiendas[
-                    sucursalId
+                    tiendaVenta
                 ] || 0
             )
         )
@@ -314,15 +277,17 @@ function obtenerStockProductoCheckoutMobile(
 }
 
 
-function validarCarritoCheckoutMobile(
-    resumen
-){
+// =====================================================
+// VALIDACIÓN DEL CARRITO
+// =====================================================
 
-    if(
+function validarCarritoCheckoutMobile(resumen) {
+
+    if (
         !resumen ||
         !Array.isArray(resumen.items) ||
         resumen.items.length === 0
-    ){
+    ) {
 
         throw new Error(
             "La venta no tiene productos."
@@ -330,13 +295,12 @@ function validarCarritoCheckoutMobile(
 
     }
 
-
-    if(
+    if (
         !Number.isFinite(
             Number(resumen.total)
         ) ||
         Number(resumen.total) <= 0
-    ){
+    ) {
 
         throw new Error(
             "El total de la venta no es válido."
@@ -344,11 +308,10 @@ function validarCarritoCheckoutMobile(
 
     }
 
-
     resumen.items.forEach(
-        function(item){
+        function(item) {
 
-            if(!item?.id){
+            if (!item?.id) {
 
                 throw new Error(
                     "Uno de los productos no tiene un ID válido."
@@ -356,13 +319,12 @@ function validarCarritoCheckoutMobile(
 
             }
 
-
-            if(
+            if (
                 !Number.isFinite(
                     Number(item.cantidad)
                 ) ||
                 Number(item.cantidad) <= 0
-            ){
+            ) {
 
                 throw new Error(
                     `La cantidad de "${item.producto}" no es válida.`
@@ -370,13 +332,12 @@ function validarCarritoCheckoutMobile(
 
             }
 
-
-            if(
+            if (
                 !Number.isFinite(
                     Number(item.precio)
                 ) ||
                 Number(item.precio) < 0
-            ){
+            ) {
 
                 throw new Error(
                     `El precio de "${item.producto}" no es válido.`
@@ -387,19 +348,16 @@ function validarCarritoCheckoutMobile(
         }
     );
 
-
     return true;
 
 }
 
 
 // =====================================================
-// CONSTRUCCIÓN DE VENTA
+// DETALLE DE PRODUCTO PARA LA VENTA
 // =====================================================
 
-function construirDetalleVentaCheckoutMobile(
-    item
-){
+function construirDetalleVentaCheckoutMobile(item) {
 
     const cantidad =
         Math.max(
@@ -411,18 +369,15 @@ function construirDetalleVentaCheckoutMobile(
             )
         );
 
-
     const precio =
         normalizarMontoCheckoutMobile(
             item.precio
         );
 
-
     const precioCompra =
         normalizarMontoCheckoutMobile(
             item.precioCompra
         );
-
 
     return {
 
@@ -468,67 +423,74 @@ function construirDetalleVentaCheckoutMobile(
 }
 
 
-function construirVentaCheckoutMobile(
-    opciones
-){
+// =====================================================
+// CONSTRUCCIÓN DE LA VENTA
+// =====================================================
+
+function construirVentaCheckoutMobile(opciones) {
 
     const {
-
         resumen,
-
         metodoPago,
-
-        recibido =
-            resumen.total,
-
-        vuelto =
-            0,
-
-        tiendaVentaNombre =
-            "Sucursal",
-
-        clienteNombre =
-            "CLIENTE GENERAL",
-
-        clienteDni =
-            "-",
-
-        descuento =
-            0
-
+        tiendaVenta,
+        tiendaVentaNombre,
+        recibido = resumen.total,
+        vuelto = 0,
+        clienteNombre = "CLIENTE GENERAL",
+        clienteDni = "-",
+        descuento = 0
     } = opciones;
-
 
     const usuario =
         obtenerSesionMobile();
 
-
-    const tiendaVenta =
+    /*
+     * Esta es la sucursal asignada al usuario.
+     * Se conserva únicamente como información.
+     */
+    const sucursalUsuario =
         obtenerSucursalMobile();
 
+    /*
+     * Esta es la tienda seleccionada para la venta.
+     * De aquí se descontará el stock.
+     */
+    const tiendaSeleccionada =
+        String(
+            tiendaVenta ||
+            obtenerTiendaVentaMobile() ||
+            "principal"
+        );
+
+    const nombreTiendaSeleccionada =
+        String(
+            tiendaVentaNombre ||
+            obtenerNombreTiendaVentaMobile() ||
+            (
+                tiendaSeleccionada === "sucursal"
+                    ? "Peluquería"
+                    : "Mercado"
+            )
+        );
 
     const ahora =
         new Date();
-
 
     const productos =
         resumen.items.map(
             construirDetalleVentaCheckoutMobile
         );
 
-
     const totalFinal =
         redondearMontoCheckoutMobile(
             resumen.total
         );
-
 
     const pagos =
         construirPagosCheckoutMobile(
             metodoPago,
             totalFinal
         );
-
 
     return {
 
@@ -575,9 +537,12 @@ function construirVentaCheckoutMobile(
                 "Sin usuario"
             ),
 
+        /*
+         * Sucursal asignada al usuario.
+         */
         sucursalUsuario:
             String(
-                tiendaVenta ||
+                sucursalUsuario ||
                 "principal"
             ),
 
@@ -588,21 +553,22 @@ function construirVentaCheckoutMobile(
                 descuento
             ),
 
+        /*
+         * Conservamos el formato que ya usa
+         * tu sistema Desktop.
+         */
         metodoPago:
             "Pagos mixtos",
 
+        /*
+         * Tienda real desde donde se realizó
+         * y descontó la venta.
+         */
         tiendaVenta:
-            String(
-                tiendaVenta ||
-                "principal"
-            ),
+            tiendaSeleccionada,
 
         tiendaVentaNombre:
-            String(
-                tiendaVentaNombre ||
-                tiendaVenta ||
-                "Sucursal"
-            ),
+            nombreTiendaSeleccionada,
 
         pagos,
 
@@ -642,9 +608,9 @@ function construirVentaCheckoutMobile(
 
 async function registrarVentaMobile(
     opciones = {}
-){
+) {
 
-    if(checkoutMobileEnProceso){
+    if (checkoutMobileEnProceso) {
 
         return {
 
@@ -661,21 +627,16 @@ async function registrarVentaMobile(
 
     }
 
+    checkoutMobileEnProceso = true;
 
-    checkoutMobileEnProceso =
-        true;
-
-
-    try{
+    try {
 
         const resumen =
             obtenerResumenCarritoMobile();
 
-
         validarCarritoCheckoutMobile(
             resumen
         );
-
 
         const metodoPago =
             String(
@@ -683,24 +644,21 @@ async function registrarVentaMobile(
                 "efectivo"
             );
 
-
         const recibido =
             normalizarMontoCheckoutMobile(
                 opciones.recibido ??
                 resumen.total
             );
 
-
         const vuelto =
             normalizarMontoCheckoutMobile(
                 opciones.vuelto || 0
             );
 
-
-        if(
+        if (
             metodoPago === "efectivo" &&
             recibido < resumen.total
-        ){
+        ) {
 
             throw new Error(
                 "El monto recibido no cubre el total."
@@ -708,14 +666,21 @@ async function registrarVentaMobile(
 
         }
 
-
-        const sucursalId =
-            obtenerSucursalMobile();
+        /*
+         * IMPORTANTE:
+         * Ya no usamos obtenerSucursalMobile()
+         * para descontar el stock.
+         *
+         * Usamos la tienda que Admin o vendedor
+         * seleccionó antes de vender.
+         */
+        const tiendaVenta =
+            obtenerTiendaVentaMobile();
 
         const tiendaVentaNombre =
             await obtenerNombreSucursalCheckoutMobile(
-                sucursalId
-            );    
+                tiendaVenta
+            );
 
         const ventaRef =
             doc(
@@ -725,16 +690,19 @@ async function registrarVentaMobile(
                 )
             );
 
-
         const resultado =
             await runTransaction(
                 mobileDB,
-                async function(transaccion){
+                async function(transaccion) {
 
+                    /*
+                     * Firestore exige realizar primero
+                     * todas las lecturas antes de actualizar.
+                     */
                     const lecturas =
                         await Promise.all(
                             resumen.items.map(
-                                async function(item){
+                                async function(item) {
 
                                     const productoRef =
                                         doc(
@@ -743,34 +711,31 @@ async function registrarVentaMobile(
                                             String(item.id)
                                         );
 
-
                                     const snapshot =
                                         await transaccion.get(
                                             productoRef
                                         );
 
-
                                     return {
-
                                         item,
-
                                         productoRef,
-
                                         snapshot
-
                                     };
 
                                 }
                             )
                         );
 
-
+                    /*
+                     * Primera pasada:
+                     * comprobar existencia y stock.
+                     */
                     lecturas.forEach(
-                        function(registro){
+                        function(registro) {
 
-                            if(
+                            if (
                                 !registro.snapshot.exists()
-                            ){
+                            ) {
 
                                 throw new Error(
                                     `El producto "${registro.item.producto}" ya no existe.`
@@ -778,17 +743,14 @@ async function registrarVentaMobile(
 
                             }
 
-
                             const datosProducto =
                                 registro.snapshot.data();
-
 
                             const stockActual =
                                 obtenerStockProductoCheckoutMobile(
                                     datosProducto,
-                                    sucursalId
+                                    tiendaVenta
                                 );
-
 
                             const cantidad =
                                 Math.max(
@@ -801,11 +763,10 @@ async function registrarVentaMobile(
                                     )
                                 );
 
-
-                            if(stockActual < cantidad){
+                            if (stockActual < cantidad) {
 
                                 throw new Error(
-                                    `Stock insuficiente para "${registro.item.producto}". Disponible: ${stockActual}.`
+                                    `Stock insuficiente para "${registro.item.producto}" en ${tiendaVentaNombre}. Disponible: ${stockActual}.`
                                 );
 
                             }
@@ -813,30 +774,28 @@ async function registrarVentaMobile(
                         }
                     );
 
-
+                    /*
+                     * Segunda pasada:
+                     * descontar el stock de la tienda elegida.
+                     */
                     lecturas.forEach(
-                        function(registro){
+                        function(registro) {
 
                             const datosProducto =
                                 registro.snapshot.data();
 
-
                             const stockTiendas = {
-
                                 ...(
                                     datosProducto.stockTiendas ||
                                     {}
                                 )
-
                             };
-
 
                             const stockActual =
                                 obtenerStockProductoCheckoutMobile(
                                     datosProducto,
-                                    sucursalId
+                                    tiendaVenta
                                 );
-
 
                             const cantidad =
                                 Math.max(
@@ -849,19 +808,25 @@ async function registrarVentaMobile(
                                     )
                                 );
 
-
-                            stockTiendas[sucursalId] =
+                            /*
+                             * Solo descontamos de la tienda
+                             * seleccionada para esta venta.
+                             */
+                            stockTiendas[tiendaVenta] =
                                 stockActual -
                                 cantidad;
 
-
+                            /*
+                             * Recalculamos el stock total
+                             * sumando todas las tiendas.
+                             */
                             const stockTotal =
                                 Object
                                     .values(
                                         stockTiendas
                                     )
                                     .reduce(
-                                        function(total, stock){
+                                        function(total, stock) {
 
                                             return (
                                                 total +
@@ -875,53 +840,47 @@ async function registrarVentaMobile(
                                         0
                                     );
 
-
                             transaccion.update(
                                 registro.productoRef,
                                 {
-
                                     stockTiendas,
-
-                                    stock:
-                                        stockTotal
-
+                                    stock: stockTotal
                                 }
                             );
 
                         }
                     );
 
+                    const venta =
+                        construirVentaCheckoutMobile({
 
-const venta =
-    construirVentaCheckoutMobile({
+                            resumen,
 
-        resumen,
+                            metodoPago,
 
-        metodoPago,
+                            recibido,
 
-        recibido,
+                            vuelto,
 
-        vuelto,
+                            tiendaVenta,
 
-        tiendaVentaNombre,
+                            tiendaVentaNombre,
 
-        clienteNombre:
-            opciones.clienteNombre,
+                            clienteNombre:
+                                opciones.clienteNombre,
 
-        clienteDni:
-            opciones.clienteDni,
+                            clienteDni:
+                                opciones.clienteDni,
 
-        descuento:
-            opciones.descuento
+                            descuento:
+                                opciones.descuento
 
-    });
-
+                        });
 
                     transaccion.set(
                         ventaRef,
                         venta
                     );
-
 
                     return {
 
@@ -933,7 +892,7 @@ const venta =
                     };
 
                 }
-            );  
+            );
 
         return {
 
@@ -951,18 +910,15 @@ const venta =
 
         };
 
-    }catch(error){
+    } catch (error) {
 
-console.error(
-    "🔥 CHECKOUT MOBILE ERROR 🔥"
-);
+        console.error(
+            "🔥 CHECKOUT MOBILE ERROR 🔥"
+        );
 
-console.error(error);
-
-console.error(error?.message);
-
-console.error(error?.stack);
-
+        console.error(error);
+        console.error(error?.message);
+        console.error(error?.stack);
 
         return {
 
@@ -980,7 +936,7 @@ console.error(error?.stack);
 
         };
 
-    }finally{
+    } finally {
 
         checkoutMobileEnProceso =
             false;
@@ -994,7 +950,7 @@ console.error(error?.stack);
 // CONSULTAS
 // =====================================================
 
-function estaCheckoutMobileEnProceso(){
+function estaCheckoutMobileEnProceso() {
 
     return checkoutMobileEnProceso;
 

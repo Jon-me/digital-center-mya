@@ -1,14 +1,17 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // CARRITO MOBILE SERVICE
-// FASE M6.0
+// FASE M7.2.2
+// STOCK SEGÚN TIENDA DE VENTA
 // =====================================================
 
 import {
 
-    obtenerSucursalMobile
+    obtenerTiendaVentaMobile,
+    obtenerNombreTiendaVentaMobile
 
 } from "../state-mobile.js";
+
 
 const CLAVE_CARRITO_MOBILE =
     "mobileCarrito";
@@ -39,11 +42,40 @@ function normalizarNumeroCarritoMobile(
 
 }
 
+
+function normalizarCantidadCarritoMobile(
+    valor
+){
+
+    return Math.max(
+        1,
+        Math.trunc(
+            normalizarNumeroCarritoMobile(
+                valor
+            )
+        )
+    );
+
+}
+
+
+// =====================================================
+// STOCK SEGÚN TIENDA DE VENTA
+// =====================================================
+
 function obtenerStockSucursalProductoMobile(
     producto,
     sucursalId =
-        obtenerSucursalMobile()
+        obtenerTiendaVentaMobile()
 ){
+
+    const tiendaVenta =
+        String(
+            sucursalId ||
+            obtenerTiendaVentaMobile() ||
+            "principal"
+        );
+
 
     const stockTiendas =
         producto?.stockTiendas &&
@@ -58,10 +90,7 @@ function obtenerStockSucursalProductoMobile(
         Math.trunc(
             normalizarNumeroCarritoMobile(
                 stockTiendas[
-                    String(
-                        sucursalId ||
-                        "principal"
-                    )
+                    tiendaVenta
                 ]
             )
         )
@@ -78,7 +107,7 @@ function obtenerStockDisponibleCarritoMobile(
     const {
 
         sucursalId =
-            obtenerSucursalMobile(),
+            obtenerTiendaVentaMobile(),
 
         descontarCantidadActual =
             false
@@ -86,10 +115,18 @@ function obtenerStockDisponibleCarritoMobile(
     } = opciones;
 
 
+    const tiendaVenta =
+        String(
+            sucursalId ||
+            obtenerTiendaVentaMobile() ||
+            "principal"
+        );
+
+
     const stockSucursal =
         obtenerStockSucursalProductoMobile(
             producto,
-            sucursalId
+            tiendaVenta
         );
 
 
@@ -142,9 +179,17 @@ function validarCantidadContraStockCarritoMobile(
     const {
 
         sucursalId =
-            obtenerSucursalMobile()
+            obtenerTiendaVentaMobile()
 
     } = opciones;
+
+
+    const tiendaVenta =
+        String(
+            sucursalId ||
+            obtenerTiendaVentaMobile() ||
+            "principal"
+        );
 
 
     const cantidad =
@@ -156,7 +201,7 @@ function validarCantidadContraStockCarritoMobile(
     const stockDisponible =
         obtenerStockSucursalProductoMobile(
             producto,
-            sucursalId
+            tiendaVenta
         );
 
 
@@ -171,30 +216,23 @@ function validarCantidadContraStockCarritoMobile(
         stockDisponible,
 
         sucursalId:
-            String(
-                sucursalId ||
-                "principal"
-            )
+            tiendaVenta,
+
+        tiendaVenta,
+
+        nombreTienda:
+            tiendaVenta === "sucursal"
+                ? "Peluquería"
+                : "Mercado"
 
     };
 
 }
 
-function normalizarCantidadCarritoMobile(
-    valor
-){
 
-    return Math.max(
-        1,
-        Math.trunc(
-            normalizarNumeroCarritoMobile(
-                valor
-            )
-        )
-    );
-
-}
-
+// =====================================================
+// CONSTRUIR ITEM
+// =====================================================
 
 function construirItemCarritoMobile(
     producto,
@@ -500,6 +538,10 @@ function obtenerTotalCarritoMobile(){
 
 function obtenerResumenCarritoMobile(){
 
+    const tiendaVenta =
+        obtenerTiendaVentaMobile();
+
+
     return {
 
         items:
@@ -512,7 +554,12 @@ function obtenerResumenCarritoMobile(){
             obtenerCantidadTotalCarritoMobile(),
 
         total:
-            obtenerTotalCarritoMobile()
+            obtenerTotalCarritoMobile(),
+
+        tiendaVenta,
+
+        nombreTienda:
+            obtenerNombreTiendaVentaMobile()
 
     };
 
@@ -520,7 +567,7 @@ function obtenerResumenCarritoMobile(){
 
 
 // =====================================================
-// MODIFICACIONES
+// AGREGAR PRODUCTO
 // =====================================================
 
 function agregarProductoCarritoMobile(
@@ -576,10 +623,18 @@ function agregarProductoCarritoMobile(
         cantidadAgregar;
 
 
+    const tiendaVenta =
+        obtenerTiendaVentaMobile();
+
+
     const validacion =
         validarCantidadContraStockCarritoMobile(
             producto,
-            cantidadFinal
+            cantidadFinal,
+            {
+                sucursalId:
+                    tiendaVenta
+            }
         );
 
 
@@ -605,7 +660,13 @@ function agregarProductoCarritoMobile(
                 cantidadSolicitada:
                     cantidadFinal,
 
-                productoId
+                productoId,
+
+                tiendaVenta:
+                    validacion.tiendaVenta,
+
+                nombreTienda:
+                    validacion.nombreTienda
 
             }
 
@@ -662,7 +723,13 @@ function agregarProductoCarritoMobile(
             cantidadSolicitada:
                 cantidadFinal,
 
-            productoId
+            productoId,
+
+            tiendaVenta:
+                validacion.tiendaVenta,
+
+            nombreTienda:
+                validacion.nombreTienda
 
         }
 
@@ -670,6 +737,10 @@ function agregarProductoCarritoMobile(
 
 }
 
+
+// =====================================================
+// ACTUALIZAR CANTIDAD
+// =====================================================
 
 function actualizarCantidadCarritoMobile(
     productoId,
@@ -733,10 +804,18 @@ function actualizarCantidadCarritoMobile(
     }
 
 
+    const tiendaVenta =
+        obtenerTiendaVentaMobile();
+
+
     const validacion =
         validarCantidadContraStockCarritoMobile(
             item,
-            nuevaCantidad
+            nuevaCantidad,
+            {
+                sucursalId:
+                    tiendaVenta
+            }
         );
 
 
@@ -763,7 +842,13 @@ function actualizarCantidadCarritoMobile(
                     nuevaCantidad,
 
                 productoId:
-                    id
+                    id,
+
+                tiendaVenta:
+                    validacion.tiendaVenta,
+
+                nombreTienda:
+                    validacion.nombreTienda
 
             }
 
@@ -800,7 +885,13 @@ function actualizarCantidadCarritoMobile(
                 nuevaCantidad,
 
             productoId:
-                id
+                id,
+
+            tiendaVenta:
+                validacion.tiendaVenta,
+
+            nombreTienda:
+                validacion.nombreTienda
 
         }
 
@@ -808,6 +899,10 @@ function actualizarCantidadCarritoMobile(
 
 }
 
+
+// =====================================================
+// ELIMINAR PRODUCTO
+// =====================================================
 
 function eliminarProductoCarritoMobile(
     productoId
@@ -838,6 +933,10 @@ function eliminarProductoCarritoMobile(
 
 }
 
+
+// =====================================================
+// VACIAR CARRITO
+// =====================================================
 
 function vaciarCarritoMobile(){
 

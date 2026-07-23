@@ -2643,3 +2643,319 @@
     }
 
 }
+/* =====================================================
+   DIGITAL CENTER M&A
+   PRODUCT SHEET - TIENDA DE VENTA
+   FASE M7.2.2
+===================================================== */
+
+
+/* =====================================================
+   SELECTOR DE TIENDA
+===================================================== */
+
+.mobile-product-store-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+}
+
+
+.mobile-product-store-option {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    min-width: 0;
+    min-height: 54px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(118, 170, 255, 0.18);
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 27, 54, 0.94),
+            rgba(7, 17, 38, 0.98)
+        );
+
+    color: rgba(230, 239, 255, 0.78);
+
+    font-family: inherit;
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 8px 22px rgba(0, 0, 0, 0.2);
+
+    transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        color 160ms ease,
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+
+.mobile-product-store-option span {
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+
+.mobile-product-store-option strong {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 28px;
+
+    padding: 0 8px;
+
+    border: 1px solid rgba(114, 165, 255, 0.18);
+    border-radius: 999px;
+
+    background: rgba(79, 128, 255, 0.1);
+
+    color: #a9c6ff;
+
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+
+.mobile-product-store-option:active {
+    transform: scale(0.98);
+}
+
+
+.mobile-product-store-option.is-active {
+    border-color: rgba(53, 142, 255, 0.75);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(26, 80, 166, 0.48),
+            rgba(9, 37, 90, 0.94)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 1px rgba(41, 127, 255, 0.16),
+        0 10px 28px rgba(0, 91, 255, 0.22);
+}
+
+
+.mobile-product-store-option.is-active strong {
+    border-color: rgba(106, 174, 255, 0.45);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(54, 151, 255, 0.9),
+            rgba(32, 97, 255, 0.9)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 5px 16px rgba(31, 103, 255, 0.28);
+}
+
+
+/* Indicador visual de tienda seleccionada */
+
+.mobile-product-store-option.is-active::after {
+    content: "✓";
+
+    position: absolute;
+    top: -5px;
+    right: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+
+    border: 2px solid #081327;
+    border-radius: 50%;
+
+    background: #3695ff;
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    box-shadow:
+        0 4px 12px rgba(32, 117, 255, 0.38);
+}
+
+
+/* =====================================================
+   ESTADO DEL STOCK SELECCIONADO
+===================================================== */
+
+.mobile-product-sheet-status-dot {
+    flex: 0 0 auto;
+
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: rgba(151, 164, 190, 0.7);
+
+    box-shadow:
+        0 0 0 4px rgba(151, 164, 190, 0.08);
+
+    transition:
+        background 160ms ease,
+        box-shadow 160ms ease;
+}
+
+
+.mobile-product-sheet-status-dot.has-stock {
+    background: #38d58a;
+
+    box-shadow:
+        0 0 0 4px rgba(56, 213, 138, 0.1),
+        0 0 14px rgba(56, 213, 138, 0.32);
+}
+
+
+.mobile-product-sheet-status-dot.no-stock {
+    background: #ff5f68;
+
+    box-shadow:
+        0 0 0 4px rgba(255, 95, 104, 0.1),
+        0 0 14px rgba(255, 95, 104, 0.28);
+}
+
+
+/* =====================================================
+   AYUDA DE CANTIDAD
+===================================================== */
+
+.mobile-product-quantity-help {
+    margin: 10px 0 0;
+
+    color: rgba(186, 202, 231, 0.72);
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-align: center;
+}
+
+
+/* =====================================================
+   BOTONES DE CANTIDAD BLOQUEADOS
+===================================================== */
+
+.mobile-product-quantity button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.32;
+
+    transform: none;
+
+    filter: grayscale(0.45);
+
+    box-shadow: none;
+}
+
+
+.mobile-product-quantity button:disabled:active {
+    transform: none;
+}
+
+
+/* =====================================================
+   BOTÓN AGREGAR BLOQUEADO
+===================================================== */
+
+.mobile-product-sheet-overlay button:disabled {
+    cursor: not-allowed;
+}
+
+
+.mobile-product-sheet-overlay
+.mobile-overlay-button-confirm:disabled,
+.mobile-product-sheet-overlay
+[data-overlay-confirm]:disabled {
+    opacity: 0.42;
+
+    pointer-events: none;
+
+    filter: grayscale(0.35);
+
+    box-shadow: none;
+}
+
+
+/* =====================================================
+   MEJORAS PARA PANTALLAS PEQUEÑAS
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-product-store-selector {
+        gap: 8px;
+    }
+
+
+    .mobile-product-store-option {
+        min-height: 50px;
+
+        padding: 9px 10px;
+
+        border-radius: 14px;
+    }
+
+
+    .mobile-product-store-option span {
+        font-size: 11px;
+    }
+
+
+    .mobile-product-store-option strong {
+        min-width: 25px;
+        height: 25px;
+
+        padding: 0 7px;
+
+        font-size: 10px;
+    }
+
+}
+
+
+/* =====================================================
+   ACCESIBILIDAD
+===================================================== */
+
+.mobile-product-store-option:focus-visible {
+    outline: 2px solid rgba(79, 151, 255, 0.9);
+    outline-offset: 2px;
+}

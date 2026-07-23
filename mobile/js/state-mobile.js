@@ -1,7 +1,8 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // MOBILE STATE
-// FASE M3.2
+// FASE M7.2.2
+// ESTADO GLOBAL + TIENDA DE VENTA
 // =====================================================
 
 const CLAVES_SESION_MOBILE = {
@@ -19,7 +20,11 @@ const CLAVES_SESION_MOBILE = {
         "mobileRolActivo",
 
     sucursal:
-        "mobileSucursalActiva"
+        "mobileSucursalActiva",
+
+    // Tienda seleccionada para realizar la venta.
+    tiendaVenta:
+        "mobileTiendaVenta"
 
 };
 
@@ -33,12 +38,73 @@ const MobileState = {
         false,
 
     appLista:
-        false
+        false,
+
+    // Tienda desde la cual se descontará el stock.
+    // principal = Mercado
+    // sucursal = Peluquería
+    tiendaVenta:
+        "principal"
 
 };
 
 
+// =====================================================
+// NORMALIZAR TIENDA DE VENTA
+// =====================================================
+
+function normalizarTiendaVentaMobile(tienda){
+
+    const valor =
+        String(
+            tienda || ""
+        )
+            .trim()
+            .toLowerCase();
+
+    if(
+        valor === "sucursal" ||
+        valor === "peluqueria" ||
+        valor === "peluquería"
+    ){
+
+        return "sucursal";
+
+    }
+
+    return "principal";
+
+}
+
+
+// =====================================================
+// GUARDAR SESIÓN
+// =====================================================
+
 function guardarSesionMobile(usuario){
+
+    const sucursalUsuario =
+        normalizarTiendaVentaMobile(
+            usuario.sucursalId ||
+            "principal"
+        );
+
+    /*
+     * Conservamos la tienda elegida si ya existe.
+     * Si todavía no existe, usamos inicialmente
+     * la sucursal asignada al usuario.
+     */
+    const tiendaGuardada =
+        localStorage.getItem(
+            CLAVES_SESION_MOBILE.tiendaVenta
+        );
+
+    const tiendaVentaInicial =
+        tiendaGuardada
+            ? normalizarTiendaVentaMobile(
+                tiendaGuardada
+            )
+            : sucursalUsuario;
 
     localStorage.setItem(
         CLAVES_SESION_MOBILE.sesion,
@@ -64,8 +130,12 @@ function guardarSesionMobile(usuario){
 
     localStorage.setItem(
         CLAVES_SESION_MOBILE.sucursal,
-        usuario.sucursalId ||
-        "principal"
+        sucursalUsuario
+    );
+
+    localStorage.setItem(
+        CLAVES_SESION_MOBILE.tiendaVenta,
+        tiendaVentaInicial
     );
 
     MobileState.usuarioActual = {
@@ -82,13 +152,19 @@ function guardarSesionMobile(usuario){
             usuario.rol || "vendedor",
 
         sucursalId:
-            usuario.sucursalId ||
-            "principal"
+            sucursalUsuario
 
     };
 
+    MobileState.tiendaVenta =
+        tiendaVentaInicial;
+
 }
 
+
+// =====================================================
+// OBTENER SESIÓN
+// =====================================================
 
 function obtenerSesionMobile(){
 
@@ -102,6 +178,21 @@ function obtenerSesionMobile(){
         return null;
 
     }
+
+    const sucursalUsuario =
+        normalizarTiendaVentaMobile(
+            localStorage.getItem(
+                CLAVES_SESION_MOBILE.sucursal
+            ) || "principal"
+        );
+
+    const tiendaVenta =
+        normalizarTiendaVentaMobile(
+            localStorage.getItem(
+                CLAVES_SESION_MOBILE.tiendaVenta
+            ) ||
+            sucursalUsuario
+        );
 
     const usuario = {
 
@@ -121,19 +212,29 @@ function obtenerSesionMobile(){
             ) || "vendedor",
 
         sucursalId:
-            localStorage.getItem(
-                CLAVES_SESION_MOBILE.sucursal
-            ) || "principal"
+            sucursalUsuario
 
     };
 
     MobileState.usuarioActual =
         usuario;
 
+    MobileState.tiendaVenta =
+        tiendaVenta;
+
+    localStorage.setItem(
+        CLAVES_SESION_MOBILE.tiendaVenta,
+        tiendaVenta
+    );
+
     return usuario;
 
 }
 
+
+// =====================================================
+// LIMPIAR SESIÓN
+// =====================================================
 
 function limpiarSesionMobile(){
 
@@ -152,8 +253,15 @@ function limpiarSesionMobile(){
     MobileState.usuarioActual =
         null;
 
+    MobileState.tiendaVenta =
+        "principal";
+
 }
 
+
+// =====================================================
+// OBTENER ROL
+// =====================================================
 
 function obtenerRolMobile(){
 
@@ -168,6 +276,10 @@ function obtenerRolMobile(){
 }
 
 
+// =====================================================
+// OBTENER SUCURSAL ASIGNADA AL USUARIO
+// =====================================================
+
 function obtenerSucursalMobile(){
 
     return (
@@ -180,6 +292,71 @@ function obtenerSucursalMobile(){
 
 }
 
+
+// =====================================================
+// CAMBIAR TIENDA DE VENTA
+// =====================================================
+
+function cambiarTiendaVentaMobile(tienda){
+
+    const tiendaNormalizada =
+        normalizarTiendaVentaMobile(
+            tienda
+        );
+
+    MobileState.tiendaVenta =
+        tiendaNormalizada;
+
+    localStorage.setItem(
+        CLAVES_SESION_MOBILE.tiendaVenta,
+        tiendaNormalizada
+    );
+
+    return tiendaNormalizada;
+
+}
+
+
+// =====================================================
+// OBTENER TIENDA DE VENTA
+// =====================================================
+
+function obtenerTiendaVentaMobile(){
+
+    const tienda =
+        normalizarTiendaVentaMobile(
+            MobileState.tiendaVenta ||
+            localStorage.getItem(
+                CLAVES_SESION_MOBILE.tiendaVenta
+            ) ||
+            obtenerSucursalMobile()
+        );
+
+    MobileState.tiendaVenta =
+        tienda;
+
+    return tienda;
+
+}
+
+
+// =====================================================
+// OBTENER NOMBRE VISIBLE DE LA TIENDA
+// =====================================================
+
+function obtenerNombreTiendaVentaMobile(){
+
+    return obtenerTiendaVentaMobile() ===
+        "sucursal"
+            ? "Peluquería"
+            : "Mercado";
+
+}
+
+
+// =====================================================
+// EXPORTACIONES
+// =====================================================
 
 export {
 
@@ -195,6 +372,14 @@ export {
 
     obtenerRolMobile,
 
-    obtenerSucursalMobile
+    obtenerSucursalMobile,
+
+    cambiarTiendaVentaMobile,
+
+    obtenerTiendaVentaMobile,
+
+    obtenerNombreTiendaVentaMobile,
+
+    normalizarTiendaVentaMobile
 
 };

@@ -14,7 +14,9 @@ import {
 
     eliminarProductoCarritoMobile,
 
-    vaciarCarritoMobile
+    vaciarCarritoMobile,
+
+    obtenerStockSucursalProductoMobile
 
 } from "../services/carrito-mobile-service.js";
 
@@ -35,6 +37,16 @@ import {
     registrarVentaMobile
 
 } from "../services/checkout-mobile-service.js";
+
+import {
+
+    obtenerTiendaVentaMobile,
+
+    cambiarTiendaVentaMobile,
+
+    obtenerNombreTiendaVentaMobile
+
+} from "../state-mobile.js";
 
 let renderizada =
     false;
@@ -131,6 +143,46 @@ function construirEstructuraVentasMobile(
                 </span>
 
             </header>
+
+             <section class="mobile-sales-store">
+
+                <div class="mobile-sales-store-info">
+
+                    <span>
+                        Tienda de venta
+                    </span>
+
+                    <strong id="mobileSalesStoreName">
+                        Mercado
+                    </strong>
+
+                </div>
+
+                <div
+                    class="mobile-sales-store-selector"
+                    role="group"
+                    aria-label="Seleccionar tienda de venta"
+                >
+
+                    <button
+                        type="button"
+                        class="mobile-sales-store-button"
+                        data-mobile-sales-store="principal"
+                    >
+                        Mercado
+                    </button>
+
+                    <button
+                        type="button"
+                        class="mobile-sales-store-button"
+                        data-mobile-sales-store="sucursal"
+                    >
+                        Peluquería
+                    </button>
+
+                </div>
+
+            </section>
 
             <section
                 id="mobileSalesContent"
@@ -276,6 +328,16 @@ function renderizarCarritoVentasMobile(
             "#mobileSalesTotal"
         );
 
+    const tiendaNombreSalida =
+        contenedorVentasMobile.querySelector(
+            "#mobileSalesStoreName"
+        );
+
+    const botonesTienda =
+        contenedorVentasMobile.querySelectorAll(
+            "[data-mobile-sales-store]"
+        );    
+
 
     const items =
         Array.isArray(
@@ -295,6 +357,44 @@ function renderizarCarritoVentasMobile(
             resumen?.total || 0
         );
 
+    const tiendaVenta =
+        resumen?.tiendaVenta ||
+        obtenerTiendaVentaMobile();
+
+    const nombreTienda =
+        resumen?.nombreTienda ||
+        obtenerNombreTiendaVentaMobile();    
+
+    if(tiendaNombreSalida){
+
+        tiendaNombreSalida.textContent =
+            nombreTienda;
+
+    }
+
+
+    botonesTienda.forEach(
+        function(boton){
+
+            const activa =
+                boton.dataset
+                    .mobileSalesStore ===
+                tiendaVenta;
+
+            boton.classList.toggle(
+                "is-active",
+                activa
+            );
+
+            boton.setAttribute(
+                "aria-pressed",
+                activa
+                    ? "true"
+                    : "false"
+            );
+
+        }
+    );
 
     if(contador){
 
@@ -386,6 +486,23 @@ function construirItemVentasMobile(
         Number(item.precio || 0) *
         cantidad;
 
+    const tiendaVenta =
+        obtenerTiendaVentaMobile();
+
+    const stockDisponible =
+        obtenerStockSucursalProductoMobile(
+            item,
+            tiendaVenta
+        );
+
+    const llegoAlStockMaximo =
+        cantidad >= stockDisponible;
+
+    const nombreTienda =
+        tiendaVenta === "sucursal"
+            ? "Peluquería"
+            : "Mercado";
+
 
     return `
         <article
@@ -441,6 +558,13 @@ function construirItemVentasMobile(
                     c/u
                 </span>
 
+                                <span class="mobile-sales-item-stock">
+                    ${stockDisponible} disponibles en
+                    ${escaparHTMLVentasMobile(
+                        nombreTienda
+                    )}
+                </span>
+
                 <div class="mobile-sales-item-actions">
 
                     <div
@@ -463,11 +587,16 @@ function construirItemVentasMobile(
                             ${cantidad}
                         </strong>
 
-                        <button
+                                                <button
                             type="button"
                             class="mobile-sales-quantity-button"
                             data-cart-increase
                             aria-label="Aumentar cantidad"
+                            ${
+                                llegoAlStockMaximo
+                                    ? "disabled"
+                                    : ""
+                            }
                         >
                             +
                         </button>
@@ -554,6 +683,27 @@ function inicializarEventosVentasMobile(
     contenedor.addEventListener(
         "click",
         async function(evento){
+
+                        const botonTienda =
+                evento.target.closest(
+                    "[data-mobile-sales-store]"
+                );
+
+
+            if(botonTienda){
+
+                const nuevaTienda =
+                    botonTienda.dataset
+                        .mobileSalesStore;
+
+
+                await cambiarTiendaVentaDesdeVentasMobile(
+                    nuevaTienda
+                );
+
+                return;
+
+            }
 
             const irInventario =
                 evento.target.closest(
@@ -699,9 +849,15 @@ if(
             "warning",
 
         mensaje:
-            stockDisponible > 0
-                ? `Stock máximo disponible: ${stockDisponible}.`
-                : "Este producto no tiene stock en tu tienda."
+    stockDisponible > 0
+        ? `Stock máximo en ${
+            resultado.operacion.nombreTienda ||
+            obtenerNombreTiendaVentaMobile()
+        }: ${stockDisponible}.`
+        : `Este producto no tiene stock en ${
+            resultado.operacion.nombreTienda ||
+            obtenerNombreTiendaVentaMobile()
+        }.`
 
     });
 
@@ -848,6 +1004,97 @@ if(cobrar){
 
 }
 
+async function cambiarTiendaVentaDesdeVentasMobile(
+    nuevaTienda
+){
+
+    const tiendaActual =
+        obtenerTiendaVentaMobile();
+
+
+    if(
+        nuevaTienda ===
+        tiendaActual
+    ){
+
+        return;
+
+    }
+
+
+    const resumen =
+        obtenerResumenCarritoMobile();
+
+
+    if(resumen.items.length > 0){
+
+        const nombreNuevaTienda =
+            nuevaTienda === "sucursal"
+                ? "Peluquería"
+                : "Mercado";
+
+
+        const confirmado =
+            await mostrarDialogo({
+
+                icono:
+                    "🏪",
+
+                titulo:
+                    "Cambiar tienda de venta",
+
+                mensaje:
+                    `Para cambiar a ${nombreNuevaTienda} se vaciará la venta actual. Esto evita descontar productos de dos tiendas en una misma venta.`,
+
+                textoCancelar:
+                    "Mantener venta",
+
+                textoConfirmar:
+                    "Vaciar y cambiar",
+
+                peligro:
+                    true
+
+            });
+
+
+        if(!confirmado){
+
+            return;
+
+        }
+
+
+        vaciarCarritoMobile();
+
+    }
+
+
+    const tiendaSeleccionada =
+        cambiarTiendaVentaMobile(
+            nuevaTienda
+        );
+
+
+    renderizarCarritoVentasMobile(
+        obtenerResumenCarritoMobile()
+    );
+
+
+    mostrarToast({
+
+        tipo:
+            "success",
+
+        mensaje:
+            tiendaSeleccionada === "sucursal"
+                ? "Ahora vendes desde Peluquería."
+                : "Ahora vendes desde Mercado."
+
+    });
+
+}
+
 async function confirmarEliminarProductoVentasMobile(
     item
 ){
@@ -936,9 +1183,9 @@ function abrirFlujoCobroVentasMobile(){
                 "Cobrar venta",
 
             descripcion:
-                `${resumen.cantidad} unidades · ${formatearMonedaVentasMobile(
-                    resumen.total
-                )}`,
+    `${resumen.cantidad} unidades · ${formatearMonedaVentasMobile(
+        resumen.total
+    )} · ${resumen.nombreTienda}`,
 
             textoCancelar:
                 "Cancelar",
@@ -1217,9 +1464,9 @@ function abrirCobroEfectivoVentasMobile(){
                 "Pago en efectivo",
 
             descripcion:
-                `Total de la venta: ${formatearMonedaVentasMobile(
-                    resumen.total
-                )}`,
+    `Total: ${formatearMonedaVentasMobile(
+        resumen.total
+    )} · Tienda: ${resumen.nombreTienda}`,
 
             textoCancelar:
                 "Volver",

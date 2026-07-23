@@ -8,6 +8,18 @@ import {
     OverlayMobile
 } from "../overlay/overlay-mobile.js";
 
+import {
+    obtenerTiendaVentaMobile,
+    cambiarTiendaVentaMobile,
+    obtenerNombreTiendaVentaMobile
+} from "../../state-mobile.js";
+
+
+import {
+    obtenerStockDisponibleCarritoMobile,
+    obtenerResumenCarritoMobile,
+    vaciarCarritoMobile
+} from "../../services/carrito-mobile-service.js";
 
 let NOMBRES_SUCURSALES_MOBILE = {
 
@@ -930,18 +942,35 @@ function construirContenidoProductSheet(
             producto
         );
 
-    const sucursalUsuario =
-        usuario?.sucursalId ||
-        "principal";
+    const tiendaVenta =
+        obtenerTiendaVentaMobile();
 
-    const stockTiendaUsuario =
+    const stockTiendas =
+        obtenerStockTiendasProducto(
+            producto
+        );
+
+    const stockTiendaSeleccionada =
         Number(
-            obtenerStockTiendasProducto(
-                producto
-            )[
-                sucursalUsuario
+            stockTiendas[
+                tiendaVenta
             ] || 0
         );
+
+    const stockDisponible =
+        obtenerStockDisponibleCarritoMobile(
+            producto,
+            {
+                sucursalId:
+                    tiendaVenta,
+
+                descontarCantidadActual:
+                    true
+            }
+        );
+
+    const nombreTienda =
+        obtenerNombreTiendaVentaMobile();
 
     return `
         <div class="mobile-product-sheet">
@@ -961,21 +990,17 @@ function construirContenidoProductSheet(
                     <div class="mobile-product-sheet-tags">
 
                         <span>
-
                             ${escaparHTMLProducto(
                                 producto.codigo ||
                                 "S/C"
                             )}
-
                         </span>
 
                         <span>
-
                             ${escaparHTMLProducto(
                                 producto.categoria ||
                                 "Sin categoría"
                             )}
-
                         </span>
 
                     </div>
@@ -985,28 +1010,30 @@ function construirContenidoProductSheet(
                         <span
                             class="
                                 mobile-product-sheet-status-dot
-
                                 ${
-                                    stockTiendaUsuario > 0
+                                    stockDisponible > 0
                                         ? "has-stock"
                                         : "no-stock"
                                 }
                             "
+                            data-product-store-status-dot
                             aria-hidden="true"
                         ></span>
 
                         <span>
 
-                            <small>
-                                Tu tienda
+                            <small data-product-store-name>
+                                ${escaparHTMLProducto(
+                                    nombreTienda
+                                )}
                             </small>
 
-                            <strong>
+                            <strong data-product-store-stock>
 
                                 ${
-                                    stockTiendaUsuario > 0
-                                        ? `${stockTiendaUsuario} disponibles`
-                                        : "Sin stock"
+                                    stockDisponible > 0
+                                        ? `${stockDisponible} disponibles`
+                                        : "Sin stock disponible"
                                 }
 
                             </strong>
@@ -1024,6 +1051,98 @@ function construirContenidoProductSheet(
                 </div>
 
             </section>
+
+
+            <section class="mobile-product-sheet-section">
+
+                <header class="mobile-product-sheet-section-header">
+
+                    <span>
+                        Tienda de venta
+                    </span>
+
+                    <strong data-product-selected-store-label>
+                        ${escaparHTMLProducto(
+                            nombreTienda
+                        )}
+                    </strong>
+
+                </header>
+
+                <div
+                    class="mobile-product-store-selector"
+                    role="group"
+                    aria-label="Seleccionar tienda de venta"
+                >
+
+                    <button
+                        type="button"
+                        class="
+                            mobile-product-store-option
+                            ${
+                                tiendaVenta === "principal"
+                                    ? "is-active"
+                                    : ""
+                            }
+                        "
+                        data-product-store="principal"
+                        aria-pressed="${
+                            tiendaVenta === "principal"
+                                ? "true"
+                                : "false"
+                        }"
+                    >
+
+                        <span>
+                            Mercado
+                        </span>
+
+                        <strong>
+                            ${
+                                Number(
+                                    stockTiendas.principal || 0
+                                )
+                            }
+                        </strong>
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="
+                            mobile-product-store-option
+                            ${
+                                tiendaVenta === "sucursal"
+                                    ? "is-active"
+                                    : ""
+                            }
+                        "
+                        data-product-store="sucursal"
+                        aria-pressed="${
+                            tiendaVenta === "sucursal"
+                                ? "true"
+                                : "false"
+                        }"
+                    >
+
+                        <span>
+                            Peluquería
+                        </span>
+
+                        <strong>
+                            ${
+                                Number(
+                                    stockTiendas.sucursal || 0
+                                )
+                            }
+                        </strong>
+
+                    </button>
+
+                </div>
+
+            </section>
+
 
             <section class="mobile-product-sheet-section">
 
@@ -1050,6 +1169,7 @@ function construirContenidoProductSheet(
 
             </section>
 
+
             <section class="mobile-product-sheet-section">
 
                 <header class="mobile-product-sheet-section-header">
@@ -1058,8 +1178,8 @@ function construirContenidoProductSheet(
                         Cantidad
                     </span>
 
-                    <strong>
-                        Máximo ${stockTiendaUsuario}
+                    <strong data-product-quantity-max>
+                        Máximo ${stockDisponible}
                     </strong>
 
                 </header>
@@ -1070,6 +1190,7 @@ function construirContenidoProductSheet(
                         type="button"
                         data-product-quantity-action="minus"
                         aria-label="Reducir cantidad"
+                        disabled
                     >
                         −
                     </button>
@@ -1081,7 +1202,11 @@ function construirContenidoProductSheet(
                         </small>
 
                         <strong data-product-quantity>
-                            1
+                            ${
+                                stockDisponible > 0
+                                    ? "1"
+                                    : "0"
+                            }
                         </strong>
 
                     </div>
@@ -1090,11 +1215,33 @@ function construirContenidoProductSheet(
                         type="button"
                         data-product-quantity-action="plus"
                         aria-label="Aumentar cantidad"
+                        ${
+                            stockDisponible <= 1
+                                ? "disabled"
+                                : ""
+                        }
                     >
                         +
                     </button>
 
                 </div>
+
+                <p
+                    class="mobile-product-quantity-help"
+                    data-product-quantity-help
+                >
+
+                    ${
+                        stockTiendaSeleccionada <= 0
+                            ? `No hay stock en ${escaparHTMLProducto(
+                                nombreTienda
+                            )}.`
+                            : stockDisponible <= 0
+                                ? "Todo el stock disponible ya está en el carrito."
+                                : `${stockDisponible} unidad(es) disponibles para agregar.`
+                    }
+
+                </p>
 
             </section>
 
@@ -1103,25 +1250,46 @@ function construirContenidoProductSheet(
 
 }
 
-
 function abrirProductSheetMobile(
     producto,
     usuario,
     opciones = {}
 ){
 
+    let tiendaVenta =
+        obtenerTiendaVentaMobile();
+
     let cantidad =
         1;
 
-    const stockTiendaUsuario =
-        Number(
-            obtenerStockTiendasProducto(
-                producto
-            )[
-                usuario?.sucursalId ||
-                "principal"
-            ] || 0
+
+    function obtenerDisponibleActual(){
+
+        return obtenerStockDisponibleCarritoMobile(
+            producto,
+            {
+                sucursalId:
+                    tiendaVenta,
+
+                descontarCantidadActual:
+                    true
+            }
         );
+
+    }
+
+
+    let stockDisponible =
+        obtenerDisponibleActual();
+
+
+    if(stockDisponible <= 0){
+
+        cantidad =
+            0;
+
+    }
+
 
     const sheet =
         OverlayMobile.bottomSheet({
@@ -1137,7 +1305,7 @@ function abrirProductSheetMobile(
                 producto.producto,
 
             descripcion:
-                "Elige la cantidad para tu tienda.",
+                "Selecciona la tienda y la cantidad.",
 
             contenido:
                 construirContenidoProductSheet(
@@ -1154,7 +1322,11 @@ function abrirProductSheetMobile(
             alConfirmar:
                 function(){
 
-                    if(stockTiendaUsuario <= 0){
+                    stockDisponible =
+                        obtenerDisponibleActual();
+
+
+                    if(stockDisponible <= 0){
 
                         OverlayMobile.toast({
 
@@ -1162,7 +1334,11 @@ function abrirProductSheetMobile(
                                 "warning",
 
                             mensaje:
-                                "No hay stock en tu tienda. Solicítalo a otra sucursal."
+                                `No hay stock disponible en ${
+                                    tiendaVenta === "sucursal"
+                                        ? "Peluquería"
+                                        : "Mercado"
+                                }.`
 
                         });
 
@@ -1170,7 +1346,11 @@ function abrirProductSheetMobile(
 
                     }
 
-                    if(cantidad > stockTiendaUsuario){
+
+                    if(
+                        cantidad <= 0 ||
+                        cantidad > stockDisponible
+                    ){
 
                         OverlayMobile.toast({
 
@@ -1178,13 +1358,14 @@ function abrirProductSheetMobile(
                                 "warning",
 
                             mensaje:
-                                "La cantidad supera el stock de tu tienda."
+                                `Solo puedes agregar ${stockDisponible} unidad(es).`
 
                         });
 
                         return false;
 
                     }
+
 
                     if(
                         typeof opciones
@@ -1192,12 +1373,46 @@ function abrirProductSheetMobile(
                         "function"
                     ){
 
-                        opciones.alAgregar({
-                            producto,
-                            cantidad
-                        });
+                        const resultado =
+                            opciones.alAgregar({
+                                producto,
+                                cantidad,
+                                tiendaVenta
+                            });
+
+
+                        if(
+                            resultado?.operacion &&
+                            resultado.operacion
+                                .completada === false
+                        ){
+
+                            OverlayMobile.toast({
+
+                                tipo:
+                                    "warning",
+
+                                mensaje:
+                                    resultado.operacion
+                                        .motivo ===
+                                        "sin-stock"
+                                            ? `No hay stock en ${
+                                                resultado.operacion
+                                                    .nombreTienda
+                                            }.`
+                                            : `Stock disponible: ${
+                                                resultado.operacion
+                                                    .stockDisponible
+                                            }.`
+
+                            });
+
+                            return false;
+
+                        }
 
                     }
+
 
                     OverlayMobile.toast({
 
@@ -1205,7 +1420,11 @@ function abrirProductSheetMobile(
                             "success",
 
                         mensaje:
-                            `${cantidad} unidad(es) agregadas al carrito.`
+                            `${cantidad} unidad(es) agregadas desde ${
+                                tiendaVenta === "sucursal"
+                                    ? "Peluquería"
+                                    : "Mercado"
+                            }.`
 
                     });
 
@@ -1215,31 +1434,330 @@ function abrirProductSheetMobile(
 
         });
 
+
+    function actualizarControlesCantidad(){
+
+        stockDisponible =
+            obtenerDisponibleActual();
+
+
+        if(stockDisponible <= 0){
+
+            cantidad =
+                0;
+
+        }else{
+
+            cantidad =
+                Math.max(
+                    1,
+                    Math.min(
+                        cantidad,
+                        stockDisponible
+                    )
+                );
+
+        }
+
+
+        const salida =
+            sheet.body?.querySelector(
+                "[data-product-quantity]"
+            );
+
+        const botonMenos =
+            sheet.body?.querySelector(
+                '[data-product-quantity-action="minus"]'
+            );
+
+        const botonMas =
+            sheet.body?.querySelector(
+                '[data-product-quantity-action="plus"]'
+            );
+
+        const salidaMaximo =
+            sheet.body?.querySelector(
+                "[data-product-quantity-max]"
+            );
+
+        const ayuda =
+            sheet.body?.querySelector(
+                "[data-product-quantity-help]"
+            );
+
+        const stockVisible =
+            sheet.body?.querySelector(
+                "[data-product-store-stock]"
+            );
+
+        const nombreVisible =
+            sheet.body?.querySelector(
+                "[data-product-store-name]"
+            );
+
+        const nombreSeleccionado =
+            sheet.body?.querySelector(
+                "[data-product-selected-store-label]"
+            );
+
+        const puntoEstado =
+            sheet.body?.querySelector(
+                "[data-product-store-status-dot]"
+            );
+
+        const nombreTienda =
+            tiendaVenta === "sucursal"
+                ? "Peluquería"
+                : "Mercado";
+
+
+        if(salida){
+
+            salida.textContent =
+                cantidad;
+
+        }
+
+
+        if(botonMenos){
+
+            botonMenos.disabled =
+                cantidad <= 1;
+
+        }
+
+
+        if(botonMas){
+
+            botonMas.disabled =
+                stockDisponible <= 0 ||
+                cantidad >= stockDisponible;
+
+        }
+
+
+        if(salidaMaximo){
+
+            salidaMaximo.textContent =
+                `Máximo ${stockDisponible}`;
+
+        }
+
+
+        if(stockVisible){
+
+            stockVisible.textContent =
+                stockDisponible > 0
+                    ? `${stockDisponible} disponibles`
+                    : "Sin stock disponible";
+
+        }
+
+
+        if(nombreVisible){
+
+            nombreVisible.textContent =
+                nombreTienda;
+
+        }
+
+
+        if(nombreSeleccionado){
+
+            nombreSeleccionado.textContent =
+                nombreTienda;
+
+        }
+
+
+        if(puntoEstado){
+
+            puntoEstado.classList.toggle(
+                "has-stock",
+                stockDisponible > 0
+            );
+
+            puntoEstado.classList.toggle(
+                "no-stock",
+                stockDisponible <= 0
+            );
+
+        }
+
+
+        if(ayuda){
+
+            ayuda.textContent =
+                stockDisponible <= 0
+                    ? `No hay unidades disponibles para agregar desde ${nombreTienda}.`
+                    : `${stockDisponible} unidad(es) disponibles para agregar.`;
+
+        }
+
+
+        sheet.confirmButton?.toggleAttribute(
+            "disabled",
+            stockDisponible <= 0
+        );
+
+    }
+
+
+    async function cambiarTiendaDesdeSheet(
+        nuevaTienda
+    ){
+
+        if(
+            nuevaTienda ===
+            tiendaVenta
+        ){
+
+            return;
+
+        }
+
+
+        const resumenCarrito =
+            obtenerResumenCarritoMobile();
+
+
+        if(resumenCarrito.items.length > 0){
+
+            const confirmado =
+                await OverlayMobile.confirm({
+
+                    icono:
+                        "🏪",
+
+                    titulo:
+                        "Cambiar tienda de venta",
+
+                    mensaje:
+                        "El carrito actual pertenece a otra tienda. Para cambiar de tienda debemos vaciarlo.",
+
+                    textoCancelar:
+                        "Mantener carrito",
+
+                    textoConfirmar:
+                        "Vaciar y cambiar",
+
+                    peligro:
+                        true
+
+                });
+
+
+            if(!confirmado){
+
+                return;
+
+            }
+
+
+            vaciarCarritoMobile();
+
+        }
+
+
+        tiendaVenta =
+            cambiarTiendaVentaMobile(
+                nuevaTienda
+            );
+
+
+        cantidad =
+            1;
+
+
+        sheet.body
+            ?.querySelectorAll(
+                "[data-product-store]"
+            )
+            .forEach(function(boton){
+
+                const activo =
+                    boton.dataset
+                        .productStore ===
+                    tiendaVenta;
+
+                boton.classList.toggle(
+                    "is-active",
+                    activo
+                );
+
+                boton.setAttribute(
+                    "aria-pressed",
+                    activo
+                        ? "true"
+                        : "false"
+                );
+
+            });
+
+
+        actualizarControlesCantidad();
+
+    }
+
+
     sheet.body
         ?.addEventListener(
             "click",
-            function(evento){
+            async function(evento){
 
-                const boton =
+                const botonTienda =
                     evento.target.closest(
-                        "[data-product-quantity-action]"
+                        "[data-product-store]"
                     );
 
-                if(!boton){
+
+                if(botonTienda){
+
+                    await cambiarTiendaDesdeSheet(
+                        botonTienda.dataset
+                            .productStore
+                    );
 
                     return;
 
                 }
 
+
+                const botonCantidad =
+                    evento.target.closest(
+                        "[data-product-quantity-action]"
+                    );
+
+
+                if(
+                    !botonCantidad ||
+                    botonCantidad.disabled
+                ){
+
+                    return;
+
+                }
+
+
                 const accion =
-                    boton.dataset
+                    botonCantidad.dataset
                         .productQuantityAction;
+
+
+                stockDisponible =
+                    obtenerDisponibleActual();
+
 
                 if(accion === "plus"){
 
-                    cantidad++;
+                    cantidad =
+                        Math.min(
+                            cantidad + 1,
+                            stockDisponible
+                        );
 
                 }
+
 
                 if(accion === "minus"){
 
@@ -1251,20 +1769,15 @@ function abrirProductSheetMobile(
 
                 }
 
-                const salida =
-                    sheet.body.querySelector(
-                        "[data-product-quantity]"
-                    );
 
-                if(salida){
-
-                    salida.textContent =
-                        cantidad;
-
-                }
+                actualizarControlesCantidad();
 
             }
         );
+
+
+    actualizarControlesCantidad();
+
 
     return sheet;
 
