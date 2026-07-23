@@ -1,0 +1,1409 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   CARRITO MOBILE PREMIUM
+   FASE M7.2.3
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+
+.mobile-sales {
+    --mobile-sales-summary-height: 0px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    min-height: 100%;
+
+    padding-bottom:
+        calc(
+            var(--mobile-sales-summary-height) +
+            var(--mobile-bottom-nav-height, 72px) +
+            env(safe-area-inset-bottom) +
+            28px
+        );
+
+    transition:
+        padding-bottom 180ms ease;
+}
+
+
+/* =====================================================
+   HEADER PREMIUM
+===================================================== */
+
+.mobile-sales-header-premium {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 18px 16px 4px;
+}
+
+
+.mobile-sales-header-copy {
+    min-width: 0;
+}
+
+
+.mobile-sales-eyebrow {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: rgba(126, 171, 255, 0.76);
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-sales-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.mobile-sales-title {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 27px;
+    font-weight: 900;
+    line-height: 1.05;
+}
+
+
+.mobile-sales-title-icon {
+    font-size: 20px;
+}
+
+
+.mobile-sales-header-description {
+    max-width: 280px;
+
+    margin: 8px 0 0;
+
+    color: rgba(180, 198, 229, 0.7);
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+
+.mobile-sales-count-badge {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 32px;
+
+    padding: 0 11px;
+
+    border: 1px solid rgba(83, 148, 255, 0.28);
+    border-radius: 999px;
+
+    background: rgba(45, 104, 218, 0.15);
+    color: #a9c9ff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =====================================================
+   TIENDA DE VENTA PREMIUM
+===================================================== */
+
+.mobile-sales-store-premium {
+    margin: 0 14px;
+
+    border-radius: 20px;
+}
+
+
+.mobile-sales-store-copy {
+    min-width: 0;
+}
+
+
+.mobile-sales-store-eyebrow {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: rgba(133, 174, 245, 0.62);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+
+.mobile-sales-store-copy strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+
+.mobile-sales-store-icon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid rgba(104, 162, 255, 0.18);
+    border-radius: 12px;
+
+    background: rgba(45, 104, 218, 0.12);
+
+    font-size: 17px;
+}
+
+
+.mobile-sales-store-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    text-align: left;
+}
+
+
+.mobile-sales-store-button-icon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 10px;
+
+    background: rgba(100, 151, 255, 0.1);
+
+    font-size: 14px;
+}
+
+
+.mobile-sales-store-button-copy {
+    min-width: 0;
+}
+
+
+.mobile-sales-store-button-copy strong {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: inherit;
+
+    font-size: 11px;
+    font-weight: 850;
+}
+
+
+.mobile-sales-store-button-copy small {
+    display: block;
+
+    margin-top: 2px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: rgba(176, 198, 231, 0.56);
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   CONTENIDO DEL CARRITO
+===================================================== */
+
+.mobile-sales-content {
+    padding: 0 14px;
+}
+
+
+.mobile-sales-list {
+    display: grid;
+    gap: 12px;
+}
+
+
+/* =====================================================
+   TARJETA DE PRODUCTO
+===================================================== */
+
+.mobile-sales-item-premium {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 12px;
+
+    padding: 12px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(104, 158, 255, 0.15);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 27, 55, 0.97),
+            rgba(6, 16, 36, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+
+.mobile-sales-item-premium::before {
+    content: "";
+
+    position: absolute;
+    inset: 0 auto 0 0;
+
+    width: 3px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(63, 151, 255, 0.95),
+            rgba(35, 95, 255, 0.18)
+        );
+}
+
+
+.mobile-sales-item-image {
+    position: relative;
+
+    width: 78px;
+    height: 78px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(110, 165, 255, 0.14);
+    border-radius: 16px;
+
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgba(72, 133, 255, 0.17),
+            rgba(10, 21, 45, 0.95)
+        );
+}
+
+
+.mobile-sales-item-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.mobile-sales-item-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    font-size: 28px;
+}
+
+
+.mobile-sales-item-info {
+    min-width: 0;
+}
+
+
+.mobile-sales-item-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+
+.mobile-sales-item-code,
+.mobile-sales-item-category {
+    display: inline-flex;
+    align-items: center;
+
+    min-width: 0;
+    max-width: 48%;
+
+    padding: 4px 7px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    border: 1px solid rgba(112, 163, 255, 0.13);
+    border-radius: 999px;
+
+    background: rgba(81, 125, 210, 0.08);
+    color: rgba(170, 199, 244, 0.7);
+
+    font-size: 8px;
+    font-weight: 750;
+}
+
+
+.mobile-sales-item-name {
+
+    margin: 8px 0 0;
+
+    display: -webkit-box;
+    overflow: hidden;
+
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 850;
+    line-height: 1.22;
+
+}
+
+
+.mobile-sales-item-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+
+    margin-top: 7px;
+}
+
+
+.mobile-sales-item-price {
+    color: #78b2ff;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+
+.mobile-sales-item-pricing small {
+    color: rgba(171, 190, 221, 0.57);
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+.mobile-sales-item-stock {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 7px;
+
+    color: rgba(165, 193, 231, 0.72);
+
+    font-size: 9px;
+    font-weight: 650;
+}
+
+
+.mobile-sales-item-stock-dot {
+    flex: 0 0 auto;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #39d58d;
+
+    box-shadow:
+        0 0 0 3px rgba(57, 213, 141, 0.08),
+        0 0 10px rgba(57, 213, 141, 0.28);
+}
+
+
+.mobile-sales-item-stock.is-limit {
+    color: rgba(255, 179, 96, 0.88);
+}
+
+
+.mobile-sales-item-stock.is-limit
+.mobile-sales-item-stock-dot {
+    background: #ff9f43;
+
+    box-shadow:
+        0 0 0 3px rgba(255, 159, 67, 0.08),
+        0 0 10px rgba(255, 159, 67, 0.24);
+}
+
+
+/* =====================================================
+   CONTROLES DEL ITEM
+===================================================== */
+
+.mobile-sales-item-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+
+.mobile-sales-quantity {
+    display: grid;
+    grid-template-columns: 34px minmax(48px, 1fr) 34px;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 132px;
+
+    padding: 5px;
+
+    border: 1px solid rgba(103, 157, 255, 0.13);
+    border-radius: 14px;
+
+    background: rgba(7, 17, 37, 0.72);
+}
+
+
+.mobile-sales-quantity-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 1px solid rgba(102, 160, 255, 0.19);
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 73, 142, 0.72),
+            rgba(13, 36, 83, 0.95)
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        opacity 140ms ease,
+        border-color 140ms ease;
+}
+
+
+.mobile-sales-quantity-button:active {
+    transform: scale(0.93);
+}
+
+
+.mobile-sales-quantity-display {
+    min-width: 0;
+
+    text-align: center;
+}
+
+
+.mobile-sales-quantity-display small {
+    display: block;
+
+    color: rgba(171, 193, 226, 0.54);
+
+    font-size: 7px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+.mobile-sales-quantity-value {
+    display: block;
+
+    margin-top: 1px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+.mobile-sales-remove-button {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border: 1px solid rgba(255, 96, 110, 0.18);
+    border-radius: 13px;
+
+    background: rgba(123, 32, 43, 0.14);
+    color: #ff8d98;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        background 140ms ease;
+}
+
+
+.mobile-sales-remove-button:active {
+    transform: scale(0.93);
+    background: rgba(155, 38, 50, 0.23);
+}
+
+
+/* =====================================================
+   SUBTOTAL
+===================================================== */
+
+.mobile-sales-item-total {
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-top: 2px;
+    padding-top: 11px;
+
+    border-top: 1px solid rgba(119, 162, 226, 0.1);
+}
+
+
+.mobile-sales-item-total small {
+    color: rgba(171, 191, 221, 0.58);
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+.mobile-sales-item-total strong {
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   CARRITO VACÍO
+===================================================== */
+
+.mobile-sales-empty-premium {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 46px 24px 32px;
+
+    text-align: center;
+}
+
+
+.mobile-sales-empty-visual {
+    position: relative;
+
+    width: 104px;
+    height: 104px;
+
+    margin-bottom: 18px;
+}
+
+
+.mobile-sales-empty-glow {
+    position: absolute;
+    inset: 12px;
+
+    border-radius: 50%;
+
+    background: rgba(48, 123, 255, 0.2);
+
+    filter: blur(20px);
+}
+
+
+.mobile-sales-empty-icon {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    border: 1px solid rgba(100, 158, 255, 0.18);
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 58, 121, 0.54),
+            rgba(8, 23, 53, 0.97)
+        );
+
+    font-size: 42px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 18px 40px rgba(0, 0, 0, 0.26);
+}
+
+
+.mobile-sales-empty-eyebrow {
+    color: rgba(105, 163, 255, 0.72);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-sales-empty-premium h2 {
+    margin: 8px 0 0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 900;
+}
+
+
+.mobile-sales-empty-premium p {
+    max-width: 280px;
+
+    margin: 10px 0 0;
+
+    color: rgba(174, 194, 226, 0.68);
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+.mobile-sales-empty-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    min-width: 180px;
+
+    margin-top: 22px;
+}
+
+
+/* =====================================================
+   RESUMEN FIJO
+===================================================== */
+
+.mobile-sales-summary-premium {
+    position: fixed;
+    z-index: 40;
+
+    right: 12px;
+    bottom: calc(
+        var(--mobile-bottom-nav-height, 72px) +
+        env(safe-area-inset-bottom) +
+        10px
+    );
+    left: 12px;
+
+    padding: 14px;
+
+    border: 1px solid rgba(110, 165, 255, 0.22);
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 29, 60, 0.97),
+            rgba(6, 16, 37, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 18px 45px rgba(0, 0, 0, 0.38);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+
+.mobile-sales-summary-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 12px;
+}
+
+
+.mobile-sales-summary-stat,
+.mobile-sales-summary-total {
+    min-width: 0;
+}
+
+
+.mobile-sales-summary-stat span,
+.mobile-sales-summary-total span {
+    display: block;
+
+    color: rgba(169, 193, 229, 0.6);
+
+    font-size: 8px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+
+.mobile-sales-summary-stat strong {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+.mobile-sales-summary-total {
+    flex: 1;
+
+    text-align: right;
+}
+
+
+.mobile-sales-summary-total strong {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #7db4ff;
+
+    font-size: 20px;
+    font-weight: 950;
+}
+
+
+.mobile-sales-summary-divider {
+    width: 1px;
+    height: 32px;
+
+    background: rgba(124, 165, 224, 0.14);
+}
+
+
+.mobile-sales-actions {
+    display: grid;
+    grid-template-columns: minmax(92px, 0.42fr) minmax(0, 1fr);
+    gap: 10px;
+}
+
+
+.mobile-sales-clear-button,
+.mobile-sales-checkout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 48px;
+
+    border-radius: 15px;
+
+    font-size: 11px;
+    font-weight: 850;
+}
+
+
+.mobile-sales-clear-button {
+    border-color: rgba(150, 178, 224, 0.14);
+
+    background: rgba(70, 91, 128, 0.13);
+    color: rgba(213, 226, 247, 0.75);
+}
+
+
+/* =====================================================
+   ESTADOS DISABLED
+===================================================== */
+
+.mobile-sales-quantity-button:disabled {
+    opacity: 0.26;
+    cursor: not-allowed;
+    transform: none;
+    filter: grayscale(0.55);
+}
+
+
+.mobile-sales-quantity-button:disabled:active {
+    transform: none;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-sales-header-premium {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+
+    .mobile-sales-header-description {
+        max-width: 220px;
+    }
+
+
+    .mobile-sales-content {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+
+    .mobile-sales-store-premium {
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+
+    .mobile-sales-item-premium {
+        grid-template-columns: 68px minmax(0, 1fr);
+
+        gap: 10px;
+
+        padding: 10px;
+
+        border-radius: 18px;
+    }
+
+
+    .mobile-sales-item-image {
+        width: 68px;
+        height: 68px;
+
+        border-radius: 14px;
+    }
+
+
+    .mobile-sales-quantity {
+        grid-template-columns: 30px minmax(42px, 1fr) 30px;
+
+        min-width: 116px;
+    }
+
+
+    .mobile-sales-quantity-button {
+        width: 30px;
+        height: 30px;
+    }
+
+
+    .mobile-sales-remove-button {
+        width: 36px;
+        height: 36px;
+    }
+
+
+    .mobile-sales-summary-premium {
+        right: 9px;
+        left: 9px;
+
+        padding: 12px;
+
+        border-radius: 19px;
+    }
+
+}
+
+/* =====================================================
+   MICROINTERACCIONES
+===================================================== */
+
+.mobile-sales-item-premium {
+    transition:
+        transform 180ms ease,
+        opacity 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+
+.mobile-sales-item-premium.is-increasing {
+    animation:
+        mobileCartIncrease 240ms ease;
+}
+
+
+.mobile-sales-item-premium.is-decreasing {
+    animation:
+        mobileCartDecrease 240ms ease;
+}
+
+
+.mobile-sales-item-premium.is-removing {
+    pointer-events: none;
+
+    animation:
+        mobileCartRemove 240ms ease forwards;
+}
+
+
+@keyframes mobileCartIncrease {
+
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.018);
+
+        border-color:
+            rgba(63, 153, 255, 0.48);
+
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            0 12px 34px rgba(22, 93, 220, 0.24);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+@keyframes mobileCartDecrease {
+
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(0.985);
+
+        border-color:
+            rgba(145, 177, 227, 0.28);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+@keyframes mobileCartRemove {
+
+    from {
+        opacity: 1;
+
+        transform:
+            translateX(0)
+            scale(1);
+
+        max-height: 240px;
+    }
+
+    to {
+        opacity: 0;
+
+        transform:
+            translateX(24px)
+            scale(0.96);
+
+        max-height: 0;
+
+        margin: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-sales-item-premium,
+    .mobile-sales-item-premium.is-increasing,
+    .mobile-sales-item-premium.is-decreasing,
+    .mobile-sales-item-premium.is-removing {
+        animation: none;
+        transition: none;
+    }
+
+}
+
+/* =====================================================
+   FOOTER INTELIGENTE Y SCROLL PREMIUM
+   FASE M7.2.3.3
+===================================================== */
+
+
+/* =====================================================
+   SCROLL GENERAL
+===================================================== */
+
+.mobile-sales {
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
+}
+
+
+.mobile-sales-content {
+    position: relative;
+
+    min-height: 0;
+
+    scroll-padding-bottom:
+        calc(
+            var(--mobile-sales-summary-height) +
+            24px
+        );
+}
+
+
+.mobile-sales-list {
+    position: relative;
+
+    padding-bottom: 4px;
+}
+
+
+.mobile-sales-item-premium {
+    scroll-margin-top: 18px;
+
+    scroll-margin-bottom:
+        calc(
+            var(--mobile-sales-summary-height) +
+            22px
+        );
+}
+
+
+/* =====================================================
+   SEPARADOR VISUAL ANTES DEL FOOTER
+===================================================== */
+
+.mobile-sales.has-active-summary
+.mobile-sales-content::after {
+    content: "";
+
+    display: block;
+
+    height: 8px;
+
+    margin-top: 8px;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   FOOTER INTELIGENTE
+===================================================== */
+
+.mobile-sales-summary-premium {
+    transform:
+        translateY(0);
+
+    opacity: 1;
+
+    transition:
+        transform 180ms ease,
+        opacity 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+
+.mobile-sales-summary-premium[hidden] {
+    display: block;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform:
+        translateY(
+            calc(
+                100% +
+                24px
+            )
+        );
+}
+
+
+/*
+ * Después de terminar la animación, el navegador
+ * puede excluirlo visualmente sin afectar la medición.
+ */
+
+.mobile-sales:not(.has-active-summary)
+.mobile-sales-summary-premium[hidden] {
+    visibility: hidden;
+}
+
+
+/* =====================================================
+   SOMBRA SUPERIOR DEL FOOTER
+===================================================== */
+
+.mobile-sales-summary-premium::before {
+    content: "";
+
+    position: absolute;
+
+    top: -16px;
+    right: 18px;
+    left: 18px;
+
+    height: 16px;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(4, 11, 26, 0.36),
+            transparent
+        );
+
+    filter: blur(7px);
+}
+
+
+/* =====================================================
+   ÚLTIMO PRODUCTO
+===================================================== */
+
+.mobile-sales-list
+.mobile-sales-item-premium:last-child {
+    margin-bottom: 4px;
+}
+
+
+/* =====================================================
+   SCROLLBAR DISCRETO
+===================================================== */
+
+.mobile-sales-content {
+    scrollbar-width: thin;
+    scrollbar-color:
+        rgba(80, 142, 255, 0.28)
+        transparent;
+}
+
+
+.mobile-sales-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+
+.mobile-sales-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.mobile-sales-content::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background:
+        rgba(80, 142, 255, 0.28);
+}
+
+
+/* =====================================================
+   ÁREA SEGURA
+===================================================== */
+
+@supports (
+    padding-bottom:
+    env(safe-area-inset-bottom)
+) {
+
+    .mobile-sales-summary-premium {
+        bottom:
+            calc(
+                var(--mobile-bottom-nav-height, 72px) +
+                env(safe-area-inset-bottom) +
+                10px
+            );
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-sales,
+    .mobile-sales-summary-premium {
+        transition: none;
+        scroll-behavior: auto;
+    }
+
+}
+
+/* =====================================================
+   M7.2.3.4
+   FEEDBACK TÁCTIL Y LOADING
+===================================================== */
+
+.mobile-sales-checkout,
+.mobile-sales-clear-button,
+.mobile-checkout-method,
+.mobile-cash-confirm,
+.mobile-sales-store-button,
+.mobile-sales-remove-button {
+    position: relative;
+}
+
+
+.mobile-sales-checkout.is-loading,
+.mobile-sales-clear-button.is-loading,
+.mobile-checkout-method.is-loading,
+.mobile-cash-confirm.is-loading {
+    pointer-events: none;
+
+    cursor: wait;
+
+    opacity: 0.76;
+}
+
+
+.mobile-sales-button-spinner {
+    flex: 0 0 auto;
+
+    width: 16px;
+    height: 16px;
+
+    border: 2px solid
+        rgba(255, 255, 255, 0.28);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileSalesButtonSpin
+        700ms linear infinite;
+}
+
+
+@keyframes mobileSalesButtonSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+.mobile-sales-store-button:disabled,
+.mobile-sales-remove-button:disabled {
+    cursor: wait;
+
+    opacity: 0.55;
+
+    pointer-events: none;
+}
+
+
+.mobile-checkout-method.is-loading
+.mobile-checkout-method-arrow {
+    display: none;
+}
+
+
+.mobile-checkout-method.is-loading {
+    justify-content: center;
+}
+
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-sales-button-spinner {
+        animation-duration:
+            1400ms;
+    }
+
+}

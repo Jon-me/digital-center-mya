@@ -59,7 +59,17 @@ let contenedorVentasMobile =
 
 let navegarVentasMobile =
     null;
+let accionCarritoEnProceso =
+    false;
 
+let checkoutVentasEnProceso =
+    false;
+
+let observadorResumenVentasMobile =
+    null;
+
+let manejadorResizeVentasMobile =
+    null;
 
 // =====================================================
 // RENDER PRINCIPAL
@@ -87,20 +97,24 @@ export async function renderVentasMobile(
 
     if(!renderizada){
 
-        construirEstructuraVentasMobile(
-            contenedor
-        );
+    construirEstructuraVentasMobile(
+        contenedor
+    );
 
-        inicializarEventosVentasMobile(
-            contenedor
-        );
+    inicializarEventosVentasMobile(
+        contenedor
+    );
 
-        inicializarSuscripcionVentasMobile();
+    inicializarFooterInteligenteVentasMobile(
+        contenedor
+    );
 
-        renderizada =
-            true;
+    inicializarSuscripcionVentasMobile();
 
-    }
+    renderizada =
+        true;
+
+}
 
 
     renderizarCarritoVentasMobile(
@@ -121,68 +135,122 @@ function construirEstructuraVentasMobile(
     contenedor.innerHTML = `
         <div class="mobile-sales">
 
-            <header class="mobile-sales-header">
+  <header class="mobile-sales-header mobile-sales-header-premium">
 
-                <div>
+    <div class="mobile-sales-header-copy">
 
-                    <span class="mobile-sales-eyebrow">
-                        VENTA ACTUAL
-                    </span>
+        <span class="mobile-sales-eyebrow">
+            VENTA ACTUAL
+        </span>
 
-                    <h1 class="mobile-sales-title">
-                        Carrito
-                    </h1>
+        <div class="mobile-sales-title-row">
 
-                </div>
+            <h1 class="mobile-sales-title">
+                Carrito
+            </h1>
 
-                <span
-                    id="mobileSalesItemsCount"
-                    class="mobile-badge"
-                >
-                    0 productos
-                </span>
+            <span class="mobile-sales-title-icon">
+                🛒
+            </span>
 
-            </header>
+        </div>
 
-             <section class="mobile-sales-store">
+        <p class="mobile-sales-header-description">
+            Revisa productos, cantidades y tienda antes de cobrar.
+        </p>
 
-                <div class="mobile-sales-store-info">
+    </div>
 
-                    <span>
-                        Tienda de venta
-                    </span>
+    <span
+        id="mobileSalesItemsCount"
+        class="mobile-sales-count-badge"
+    >
+        0 productos
+    </span>
 
-                    <strong id="mobileSalesStoreName">
-                        Mercado
-                    </strong>
+</header>
 
-                </div>
+             <section class="mobile-sales-store mobile-sales-store-premium">
 
-                <div
-                    class="mobile-sales-store-selector"
-                    role="group"
-                    aria-label="Seleccionar tienda de venta"
-                >
+    <div class="mobile-sales-store-info">
 
-                    <button
-                        type="button"
-                        class="mobile-sales-store-button"
-                        data-mobile-sales-store="principal"
-                    >
-                        Mercado
-                    </button>
+        <div class="mobile-sales-store-copy">
 
-                    <button
-                        type="button"
-                        class="mobile-sales-store-button"
-                        data-mobile-sales-store="sucursal"
-                    >
-                        Peluquería
-                    </button>
+            <span class="mobile-sales-store-eyebrow">
+                STOCK DE ORIGEN
+            </span>
 
-                </div>
+            <strong id="mobileSalesStoreName">
+                Mercado
+            </strong>
 
-            </section>
+        </div>
+
+        <span class="mobile-sales-store-icon">
+            🏪
+        </span>
+
+    </div>
+
+    <div
+        class="mobile-sales-store-selector"
+        role="group"
+        aria-label="Seleccionar tienda de venta"
+    >
+
+        <button
+            type="button"
+            class="mobile-sales-store-button"
+            data-mobile-sales-store="principal"
+            aria-pressed="false"
+        >
+
+            <span class="mobile-sales-store-button-icon">
+                🏬
+            </span>
+
+            <span class="mobile-sales-store-button-copy">
+
+                <strong>
+                    Mercado
+                </strong>
+
+                <small>
+                    Tienda principal
+                </small>
+
+            </span>
+
+        </button>
+
+        <button
+            type="button"
+            class="mobile-sales-store-button"
+            data-mobile-sales-store="sucursal"
+            aria-pressed="false"
+        >
+
+            <span class="mobile-sales-store-button-icon">
+                ✂️
+            </span>
+
+            <span class="mobile-sales-store-button-copy">
+
+                <strong>
+                    Peluquería
+                </strong>
+
+                <small>
+                    Tienda secundaria
+                </small>
+
+            </span>
+
+        </button>
+
+    </div>
+
+</section>
 
             <section
                 id="mobileSalesContent"
@@ -190,56 +258,85 @@ function construirEstructuraVentasMobile(
             ></section>
 
             <aside
-                id="mobileSalesSummary"
-                class="mobile-sales-summary"
-                hidden
-            >
+    id="mobileSalesSummary"
+    class="mobile-sales-summary mobile-sales-summary-premium"
+    hidden
+>
 
-                <div class="mobile-sales-summary-row">
+    <div class="mobile-sales-summary-top">
 
-                    <span>
-                        Unidades
-                    </span>
+        <div class="mobile-sales-summary-stat">
 
-                    <strong id="mobileSalesQuantity">
-                        0
-                    </strong>
+            <span>
+                Unidades
+            </span>
 
-                </div>
+            <strong id="mobileSalesQuantity">
+                0
+            </strong>
 
-                <div class="mobile-sales-summary-total">
+        </div>
 
-                    <span>
-                        Total
-                    </span>
+        <div class="mobile-sales-summary-divider"></div>
 
-                    <strong id="mobileSalesTotal">
-                        S/ 0.00
-                    </strong>
+        <div class="mobile-sales-summary-total">
 
-                </div>
+            <span>
+                Total a cobrar
+            </span>
 
-                <div class="mobile-sales-actions">
+            <strong id="mobileSalesTotal">
+                S/ 0.00
+            </strong>
 
-    <button
-        type="button"
-        class="mobile-button"
-        data-mobile-clear-cart
-    >
-        Vaciar venta
-    </button>
+        </div>
 
-    <button
-        type="button"
-        class="mobile-button mobile-button-primary mobile-sales-checkout"
-        data-mobile-checkout
-    >
-        Cobrar venta
-    </button>
+    </div>
 
-</div>
+    <div class="mobile-sales-actions">
 
-            </aside>
+        <button
+            type="button"
+            class="
+                mobile-button
+                mobile-sales-clear-button
+            "
+            data-mobile-clear-cart
+        >
+
+            <span aria-hidden="true">
+                🧹
+            </span>
+
+            <span>
+                Vaciar
+            </span>
+
+        </button>
+
+        <button
+            type="button"
+            class="
+                mobile-button
+                mobile-button-primary
+                mobile-sales-checkout
+            "
+            data-mobile-checkout
+        >
+
+            <span>
+                Cobrar venta
+            </span>
+
+            <span aria-hidden="true">
+                →
+            </span>
+
+        </button>
+
+    </div>
+
+</aside>
 
         </div>
     `;
@@ -283,6 +380,166 @@ function destruirSuscripcionVentasMobile(){
 
 
     cancelarSuscripcionVentasMobile =
+        null;
+
+}
+
+// =====================================================
+// FOOTER INTELIGENTE
+// =====================================================
+
+function inicializarFooterInteligenteVentasMobile(
+    contenedor
+){
+
+    destruirFooterInteligenteVentasMobile();
+
+
+    const resumen =
+        contenedor.querySelector(
+            "#mobileSalesSummary"
+        );
+
+
+    if(
+        resumen &&
+        typeof ResizeObserver !==
+        "undefined"
+    ){
+
+        observadorResumenVentasMobile =
+            new ResizeObserver(
+                function(){
+
+                    actualizarEspacioResumenVentasMobile();
+
+                }
+            );
+
+
+        observadorResumenVentasMobile.observe(
+            resumen
+        );
+
+    }
+
+
+    manejadorResizeVentasMobile =
+        function(){
+
+            actualizarEspacioResumenVentasMobile();
+
+        };
+
+
+    window.addEventListener(
+        "resize",
+        manejadorResizeVentasMobile,
+        {
+            passive:
+                true
+        }
+    );
+
+
+    window.visualViewport
+        ?.addEventListener(
+            "resize",
+            manejadorResizeVentasMobile,
+            {
+                passive:
+                    true
+            }
+        );
+
+
+    actualizarEspacioResumenVentasMobile();
+
+}
+
+
+function actualizarEspacioResumenVentasMobile(){
+
+    const raizVentas =
+        contenedorVentasMobile
+            ?.querySelector(
+                ".mobile-sales"
+            );
+
+
+    const resumen =
+        contenedorVentasMobile
+            ?.querySelector(
+                "#mobileSalesSummary"
+            );
+
+
+    if(!raizVentas){
+
+        return;
+
+    }
+
+
+    const resumenVisible =
+        resumen &&
+        !resumen.hidden;
+
+
+    const alturaResumen =
+        resumenVisible
+            ? Math.ceil(
+                resumen.getBoundingClientRect()
+                    .height
+            )
+            : 0;
+
+
+    raizVentas.style.setProperty(
+        "--mobile-sales-summary-height",
+        `${alturaResumen}px`
+    );
+
+
+    raizVentas.classList.toggle(
+        "has-active-summary",
+        alturaResumen > 0
+    );
+
+}
+
+
+function destruirFooterInteligenteVentasMobile(){
+
+    if(observadorResumenVentasMobile){
+
+        observadorResumenVentasMobile.disconnect();
+
+    }
+
+
+    observadorResumenVentasMobile =
+        null;
+
+
+    if(manejadorResizeVentasMobile){
+
+        window.removeEventListener(
+            "resize",
+            manejadorResizeVentasMobile
+        );
+
+
+        window.visualViewport
+            ?.removeEventListener(
+                "resize",
+                manejadorResizeVentasMobile
+            );
+
+    }
+
+
+    manejadorResizeVentasMobile =
         null;
 
 }
@@ -398,10 +655,14 @@ function renderizarCarritoVentasMobile(
 
     if(contador){
 
-        contador.textContent =
-            cantidad === 1
-                ? "1 producto"
-                : `${cantidad} productos`;
+        const cantidadProductos =
+    items.length;
+
+
+contador.textContent =
+    cantidadProductos === 1
+        ? "1 producto"
+        : `${cantidadProductos} productos`;
 
     }
 
@@ -424,12 +685,33 @@ function renderizarCarritoVentasMobile(
     }
 
 
-    if(resumenVisual){
+if(resumenVisual){
 
-        resumenVisual.hidden =
-            items.length === 0;
+    const carritoVacio =
+        items.length === 0;
+
+
+    resumenVisual.hidden =
+        carritoVacio;
+
+
+    resumenVisual.setAttribute(
+        "aria-hidden",
+        carritoVacio
+            ? "true"
+            : "false"
+    );
+
+}
+
+
+window.requestAnimationFrame(
+    function(){
+
+        actualizarEspacioResumenVentasMobile();
 
     }
+);
 
 
     if(!contenido){
@@ -505,38 +787,43 @@ function construirItemVentasMobile(
 
 
     return `
-        <article
-            class="mobile-sales-item"
-            data-cart-product-id="${escaparHTMLVentasMobile(
-                item.id
-            )}"
-        >
+    <article
+        class="mobile-sales-item mobile-sales-item-premium"
+        data-cart-product-id="${escaparHTMLVentasMobile(
+            item.id
+        )}"
+    >
 
-            <div class="mobile-sales-item-image">
+        <div class="mobile-sales-item-image">
 
-                ${
-                    item.imagen
-                        ? `
-                            <img
-                                src="${escaparHTMLVentasMobile(
-                                    item.imagen
-                                )}"
-                                alt="${escaparHTMLVentasMobile(
-                                    item.producto
-                                )}"
-                                loading="lazy"
-                            >
-                        `
-                        : `
-                            <span>
-                                📦
-                            </span>
-                        `
-                }
+            ${
+                item.imagen
+                    ? `
+                        <img
+                            src="${escaparHTMLVentasMobile(
+                                item.imagen
+                            )}"
+                            alt="${escaparHTMLVentasMobile(
+                                item.producto
+                            )}"
+                            loading="lazy"
+                        >
+                    `
+                    : `
+                        <span
+                            class="mobile-sales-item-placeholder"
+                            aria-hidden="true"
+                        >
+                            📦
+                        </span>
+                    `
+            }
 
-            </div>
+        </div>
 
-            <div class="mobile-sales-item-info">
+        <div class="mobile-sales-item-info">
+
+            <div class="mobile-sales-item-topline">
 
                 <span class="mobile-sales-item-code">
                     ${escaparHTMLVentasMobile(
@@ -545,41 +832,88 @@ function construirItemVentasMobile(
                     )}
                 </span>
 
-                <h2>
+                <span class="mobile-sales-item-category">
                     ${escaparHTMLVentasMobile(
-                        item.producto
+                        item.categoria ||
+                        "Sin categoría"
                     )}
-                </h2>
+                </span>
+
+            </div>
+
+            <h2 class="mobile-sales-item-name">
+                ${escaparHTMLVentasMobile(
+                    item.producto
+                )}
+            </h2>
+
+            <div class="mobile-sales-item-pricing">
 
                 <span class="mobile-sales-item-price">
                     ${formatearMonedaVentasMobile(
                         item.precio
                     )}
-                    c/u
                 </span>
 
-                                <span class="mobile-sales-item-stock">
-                    ${stockDisponible} disponibles en
-                    ${escaparHTMLVentasMobile(
-                        nombreTienda
-                    )}
+                <small>
+                    por unidad
+                </small>
+
+            </div>
+
+            <div
+                class="
+                    mobile-sales-item-stock
+                    ${
+                        llegoAlStockMaximo
+                            ? "is-limit"
+                            : ""
+                    }
+                "
+            >
+
+                <span
+                    class="mobile-sales-item-stock-dot"
+                    aria-hidden="true"
+                ></span>
+
+                <span>
+
+                    ${
+                        llegoAlStockMaximo
+                            ? `Stock máximo alcanzado en ${escaparHTMLVentasMobile(
+                                nombreTienda
+                            )}`
+                            : `${stockDisponible} disponibles en ${escaparHTMLVentasMobile(
+                                nombreTienda
+                            )}`
+                    }
+
                 </span>
 
-                <div class="mobile-sales-item-actions">
+            </div>
 
-                    <div
-                        class="mobile-sales-quantity"
-                        aria-label="Cantidad del producto"
+            <div class="mobile-sales-item-bottom">
+
+                <div
+                    class="mobile-sales-quantity"
+                    aria-label="Cantidad del producto"
+                >
+
+                    <button
+                        type="button"
+                        class="mobile-sales-quantity-button"
+                        data-cart-decrease
+                        aria-label="Disminuir cantidad"
                     >
+                        −
+                    </button>
 
-                        <button
-                            type="button"
-                            class="mobile-sales-quantity-button"
-                            data-cart-decrease
-                            aria-label="Disminuir cantidad"
-                        >
-                            −
-                        </button>
+                    <div class="mobile-sales-quantity-display">
+
+                        <small>
+                            Cantidad
+                        </small>
 
                         <strong
                             class="mobile-sales-quantity-value"
@@ -587,51 +921,55 @@ function construirItemVentasMobile(
                             ${cantidad}
                         </strong>
 
-                                                <button
-                            type="button"
-                            class="mobile-sales-quantity-button"
-                            data-cart-increase
-                            aria-label="Aumentar cantidad"
-                            ${
-                                llegoAlStockMaximo
-                                    ? "disabled"
-                                    : ""
-                            }
-                        >
-                            +
-                        </button>
-
                     </div>
 
                     <button
                         type="button"
-                        class="mobile-sales-remove-button"
-                        data-cart-remove
-                        aria-label="Eliminar producto"
+                        class="mobile-sales-quantity-button"
+                        data-cart-increase
+                        aria-label="Aumentar cantidad"
+                        ${
+                            llegoAlStockMaximo
+                                ? "disabled"
+                                : ""
+                        }
                     >
-                        🗑
+                        +
                     </button>
 
                 </div>
 
-            </div>
-
-            <div class="mobile-sales-item-total">
-
-                <small>
-                    Subtotal
-                </small>
-
-                <strong>
-                    ${formatearMonedaVentasMobile(
-                        subtotal
-                    )}
-                </strong>
+                <button
+                    type="button"
+                    class="mobile-sales-remove-button"
+                    data-cart-remove
+                    aria-label="Eliminar producto"
+                >
+                    <span aria-hidden="true">
+                        🗑
+                    </span>
+                </button>
 
             </div>
 
-        </article>
-    `;
+        </div>
+
+        <div class="mobile-sales-item-total">
+
+            <small>
+                Subtotal
+            </small>
+
+            <strong>
+                ${formatearMonedaVentasMobile(
+                    subtotal
+                )}
+            </strong>
+
+        </div>
+
+    </article>
+`;
 
 }
 
@@ -642,28 +980,55 @@ function construirItemVentasMobile(
 
 function construirEstadoVacioVentasMobile(){
 
-    return `
-        <section class="mobile-sales-empty">
+    const nombreTienda =
+        obtenerNombreTiendaVentaMobile();
 
-            <div class="mobile-sales-empty-icon">
-                🛒
+
+    return `
+        <section class="mobile-sales-empty mobile-sales-empty-premium">
+
+            <div class="mobile-sales-empty-visual">
+
+                <span class="mobile-sales-empty-glow"></span>
+
+                <div class="mobile-sales-empty-icon">
+                    🛒
+                </div>
+
             </div>
+
+            <span class="mobile-sales-empty-eyebrow">
+                VENTA EN ${escaparHTMLVentasMobile(
+                    nombreTienda.toUpperCase()
+                )}
+            </span>
 
             <h2>
                 Tu carrito está vacío
             </h2>
 
             <p>
-                Explora el inventario y agrega
-                los productos de la venta.
+                Agrega productos desde el inventario para comenzar una nueva venta.
             </p>
 
             <button
                 type="button"
-                class="mobile-button mobile-button-primary"
+                class="
+                    mobile-button
+                    mobile-button-primary
+                    mobile-sales-empty-action
+                "
                 data-mobile-go-inventory
             >
-                Ir al inventario
+
+                <span>
+                    Ir al inventario
+                </span>
+
+                <span aria-hidden="true">
+                    →
+                </span>
+
             </button>
 
         </section>
@@ -684,7 +1049,11 @@ function inicializarEventosVentasMobile(
         "click",
         async function(evento){
 
-                        const botonTienda =
+            // =====================================================
+            // CAMBIAR TIENDA
+            // =====================================================
+
+            const botonTienda =
                 evento.target.closest(
                     "[data-mobile-sales-store]"
                 );
@@ -692,18 +1061,65 @@ function inicializarEventosVentasMobile(
 
             if(botonTienda){
 
-                const nuevaTienda =
-                    botonTienda.dataset
-                        .mobileSalesStore;
+                if(accionCarritoEnProceso){
+
+                    return;
+
+                }
 
 
-                await cambiarTiendaVentaDesdeVentasMobile(
-                    nuevaTienda
+                accionCarritoEnProceso =
+                    true;
+
+
+                botonTienda.disabled =
+                    true;
+
+
+                vibrarVentasMobile(
+                    "tap"
                 );
+
+
+                try{
+
+                    const nuevaTienda =
+                        botonTienda.dataset
+                            .mobileSalesStore;
+
+
+                    await cambiarTiendaVentaDesdeVentasMobile(
+                        nuevaTienda
+                    );
+
+                }finally{
+
+                    accionCarritoEnProceso =
+                        false;
+
+
+                    if(
+                        document.body.contains(
+                            botonTienda
+                        )
+                    ){
+
+                        botonTienda.disabled =
+                            false;
+
+                    }
+
+                }
+
 
                 return;
 
             }
+
+
+            // =====================================================
+            // IR AL INVENTARIO
+            // =====================================================
 
             const irInventario =
                 evento.target.closest(
@@ -713,13 +1129,24 @@ function inicializarEventosVentasMobile(
 
             if(irInventario){
 
+                vibrarVentasMobile(
+                    "tap"
+                );
+
+
                 navegarVentasMobile?.(
                     "inventario"
                 );
 
+
                 return;
 
             }
+
+
+            // =====================================================
+            // PRODUCTO DEL CARRITO
+            // =====================================================
 
             const tarjeta =
                 evento.target.closest(
@@ -731,6 +1158,10 @@ function inicializarEventosVentasMobile(
                 tarjeta?.dataset
                     ?.cartProductId;
 
+
+            // =====================================================
+            // DISMINUIR CANTIDAD
+            // =====================================================
 
             const disminuir =
                 evento.target.closest(
@@ -746,6 +1177,7 @@ function inicializarEventosVentasMobile(
                 const resumen =
                     obtenerResumenCarritoMobile();
 
+
                 const item =
                     resumen.items.find(
                         function(producto){
@@ -766,29 +1198,99 @@ function inicializarEventosVentasMobile(
                 }
 
 
+                /*
+                 * Si la cantidad es 1, la acción equivale
+                 * a eliminar el producto.
+                 */
                 if(
                     Number(item.cantidad) <=
                     1
                 ){
 
-                    await confirmarEliminarProductoVentasMobile(
-                        item
+                    if(accionCarritoEnProceso){
+
+                        return;
+
+                    }
+
+
+                    accionCarritoEnProceso =
+                        true;
+
+
+                    disminuir.disabled =
+                        true;
+
+
+                    vibrarVentasMobile(
+                        "delete"
                     );
+
+
+                    try{
+
+                        await confirmarEliminarProductoVentasMobile(
+                            item
+                        );
+
+                    }finally{
+
+                        accionCarritoEnProceso =
+                            false;
+
+
+                        if(
+                            document.body.contains(
+                                disminuir
+                            )
+                        ){
+
+                            disminuir.disabled =
+                                false;
+
+                        }
+
+                    }
+
 
                     return;
 
                 }
 
 
-                actualizarCantidadCarritoMobile(
-                    productoId,
-                    Number(item.cantidad) - 1
+                vibrarVentasMobile(
+                    "tap"
                 );
+
+
+                const resultado =
+                    actualizarCantidadCarritoMobile(
+                        productoId,
+                        Number(item.cantidad) - 1
+                    );
+
+
+                if(
+                    resultado?.operacion?.completada ===
+                    true
+                ){
+
+                    animarItemCarritoVentasMobile(
+                        productoId,
+                        "decrease"
+                    );
+
+                }
+
 
                 return;
 
             }
 
+
+            // =====================================================
+            // AUMENTAR CANTIDAD
+            // =====================================================
 
             const aumentar =
                 evento.target.closest(
@@ -801,8 +1303,16 @@ function inicializarEventosVentasMobile(
                 productoId
             ){
 
+                if(aumentar.disabled){
+
+                    return;
+
+                }
+
+
                 const resumen =
                     obtenerResumenCarritoMobile();
+
 
                 const item =
                     resumen.items.find(
@@ -824,50 +1334,77 @@ function inicializarEventosVentasMobile(
                 }
 
 
+                vibrarVentasMobile(
+                    "tap"
+                );
+
+
                 const resultado =
-    actualizarCantidadCarritoMobile(
-        productoId,
-        Number(item.cantidad) + 1
-    );
+                    actualizarCantidadCarritoMobile(
+                        productoId,
+                        Number(item.cantidad) + 1
+                    );
 
 
-if(
-    resultado?.operacion?.completada ===
-    false
-){
+                if(
+                    resultado?.operacion?.completada ===
+                    true
+                ){
 
-    const stockDisponible =
-        Number(
-            resultado.operacion
-                .stockDisponible || 0
-        );
+                    animarItemCarritoVentasMobile(
+                        productoId,
+                        "increase"
+                    );
 
-
-    mostrarToast({
-
-        tipo:
-            "warning",
-
-        mensaje:
-    stockDisponible > 0
-        ? `Stock máximo en ${
-            resultado.operacion.nombreTienda ||
-            obtenerNombreTiendaVentaMobile()
-        }: ${stockDisponible}.`
-        : `Este producto no tiene stock en ${
-            resultado.operacion.nombreTienda ||
-            obtenerNombreTiendaVentaMobile()
-        }.`
-
-    });
-
-}
+                }
 
 
-return;
+                if(
+                    resultado?.operacion?.completada ===
+                    false
+                ){
+
+                    const stockDisponible =
+                        Number(
+                            resultado.operacion
+                                .stockDisponible || 0
+                        );
+
+
+                    vibrarVentasMobile(
+                        "warning"
+                    );
+
+
+                    mostrarToast({
+
+                        tipo:
+                            "warning",
+
+                        mensaje:
+                            stockDisponible > 0
+                                ? `Stock máximo en ${
+                                    resultado.operacion.nombreTienda ||
+                                    obtenerNombreTiendaVentaMobile()
+                                }: ${stockDisponible}.`
+                                : `Este producto no tiene stock en ${
+                                    resultado.operacion.nombreTienda ||
+                                    obtenerNombreTiendaVentaMobile()
+                                }.`
+
+                    });
+
+                }
+
+
+                return;
 
             }
 
+
+            // =====================================================
+            // ELIMINAR PRODUCTO
+            // =====================================================
 
             const eliminar =
                 evento.target.closest(
@@ -880,124 +1417,351 @@ return;
                 productoId
             ){
 
-                const resumen =
-                    obtenerResumenCarritoMobile();
+                if(accionCarritoEnProceso){
 
-                const item =
-                    resumen.items.find(
-                        function(producto){
-
-                            return (
-                                producto.id ===
-                                productoId
-                            );
-
-                        }
-                    );
-
-
-                if(item){
-
-                    await confirmarEliminarProductoVentasMobile(
-                        item
-                    );
+                    return;
 
                 }
+
+
+                accionCarritoEnProceso =
+                    true;
+
+
+                eliminar.disabled =
+                    true;
+
+
+                vibrarVentasMobile(
+                    "delete"
+                );
+
+
+                try{
+
+                    const resumen =
+                        obtenerResumenCarritoMobile();
+
+
+                    const item =
+                        resumen.items.find(
+                            function(producto){
+
+                                return (
+                                    producto.id ===
+                                    productoId
+                                );
+
+                            }
+                        );
+
+
+                    if(item){
+
+                        await confirmarEliminarProductoVentasMobile(
+                            item
+                        );
+
+                    }
+
+                }finally{
+
+                    accionCarritoEnProceso =
+                        false;
+
+
+                    if(
+                        document.body.contains(
+                            eliminar
+                        )
+                    ){
+
+                        eliminar.disabled =
+                            false;
+
+                    }
+
+                }
+
 
                 return;
 
             }
 
+
+            // =====================================================
+            // VACIAR CARRITO
+            // =====================================================
+
             const vaciarVenta =
-    evento.target.closest(
-        "[data-mobile-clear-cart]"
+                evento.target.closest(
+                    "[data-mobile-clear-cart]"
+                );
+
+
+            if(vaciarVenta){
+
+                if(accionCarritoEnProceso){
+
+                    return;
+
+                }
+
+
+                accionCarritoEnProceso =
+                    true;
+
+
+                bloquearBotonVentasMobile(
+                    vaciarVenta,
+                    true,
+                    "Vaciando..."
+                );
+
+
+                vibrarVentasMobile(
+                    "warning"
+                );
+
+
+                try{
+
+                    const resumen =
+                        obtenerResumenCarritoMobile();
+
+
+                    if(resumen.items.length === 0){
+
+                        mostrarToast({
+
+                            tipo:
+                                "info",
+
+                            mensaje:
+                                "El carrito ya está vacío."
+
+                        });
+
+
+                        return;
+
+                    }
+
+
+                    const confirmado =
+                        await mostrarDialogo({
+
+                            icono:
+                                "🧹",
+
+                            titulo:
+                                "Vaciar venta",
+
+                            mensaje:
+                                "Se eliminarán todos los productos del carrito.",
+
+                            textoCancelar:
+                                "Cancelar",
+
+                            textoConfirmar:
+                                "Vaciar",
+
+                            peligro:
+                                true
+
+                        });
+
+
+                    if(!confirmado){
+
+                        return;
+
+                    }
+
+
+                    vaciarCarritoMobile();
+
+
+                    vibrarVentasMobile(
+                        "success"
+                    );
+
+
+                    mostrarToast({
+
+                        tipo:
+                            "success",
+
+                        mensaje:
+                            "Venta vaciada correctamente."
+
+                    });
+
+                }finally{
+
+                    accionCarritoEnProceso =
+                        false;
+
+
+                    if(
+                        document.body.contains(
+                            vaciarVenta
+                        )
+                    ){
+
+                        bloquearBotonVentasMobile(
+                            vaciarVenta,
+                            false
+                        );
+
+                    }
+
+                }
+
+
+                return;
+
+            }
+
+
+            // =====================================================
+            // ABRIR CHECKOUT
+            // =====================================================
+
+            const cobrar =
+                evento.target.closest(
+                    "[data-mobile-checkout]"
+                );
+
+
+            if(cobrar){
+
+                if(checkoutVentasEnProceso){
+
+                    return;
+
+                }
+
+
+                vibrarVentasMobile(
+                    "tap"
+                );
+
+
+                abrirFlujoCobroVentasMobile();
+
+
+                return;
+
+            }
+
+        }
     );
 
+}
 
-if(vaciarVenta){
+function animarItemCarritoVentasMobile(
+    productoId,
+    tipo
+){
 
-    const resumen =
-        obtenerResumenCarritoMobile();
+    window.requestAnimationFrame(
+        function(){
 
-
-    if(resumen.items.length === 0){
-
-        mostrarToast({
-
-            tipo:
-                "info",
-
-            mensaje:
-                "El carrito ya está vacío."
-
-        });
-
-        return;
-
-    }
+            const selectorId =
+                CSS.escape(
+                    String(
+                        productoId || ""
+                    )
+                );
 
 
-    const confirmado =
-        await mostrarDialogo({
-
-            icono:
-                "🧹",
-
-            titulo:
-                "Vaciar venta",
-
-            mensaje:
-                "Se eliminarán todos los productos del carrito.",
-
-            textoCancelar:
-                "Cancelar",
-
-            textoConfirmar:
-                "Vaciar",
-
-            peligro:
-                true
-
-        });
+            const tarjeta =
+                contenedorVentasMobile
+                    ?.querySelector(
+                        `[data-cart-product-id="${selectorId}"]`
+                    );
 
 
-    if(!confirmado){
+            if(!tarjeta){
 
-        return;
+                return;
 
-    }
+            }
+
+            const rectangulo =
+    tarjeta.getBoundingClientRect();
 
 
-    vaciarCarritoMobile();
+const alturaVentana =
+    window.visualViewport
+        ?.height ||
+    window.innerHeight;
 
 
-    mostrarToast({
+const limiteInferior =
+    alturaVentana -
+    (
+        Number.parseFloat(
+            getComputedStyle(
+                contenedorVentasMobile
+                    .querySelector(
+                        ".mobile-sales"
+                    )
+            )
+                .getPropertyValue(
+                    "--mobile-sales-summary-height"
+                )
+        ) || 0
+    ) -
+    28;
 
-        tipo:
-            "success",
 
-        mensaje:
-            "Venta vaciada correctamente."
+if(rectangulo.bottom > limiteInferior){
+
+    tarjeta.scrollIntoView({
+
+        behavior:
+            "smooth",
+
+        block:
+            "center"
 
     });
 
-    return;
-
 }
 
-            const cobrar =
-    evento.target.closest(
-        "[data-mobile-checkout]"
-    );
+
+            const clase =
+                tipo === "decrease"
+                    ? "is-decreasing"
+                    : "is-increasing";
 
 
-if(cobrar){
+            tarjeta.classList.remove(
+                "is-increasing",
+                "is-decreasing"
+            );
 
-    abrirFlujoCobroVentasMobile();
 
-    return;
+            void tarjeta.offsetWidth;
 
-}
+
+            tarjeta.classList.add(
+                clase
+            );
+
+
+            window.setTimeout(
+                function(){
+
+                    tarjeta.classList.remove(
+                        clase
+                    );
+
+                },
+                260
+            );
 
         }
     );
@@ -1095,6 +1859,52 @@ async function cambiarTiendaVentaDesdeVentasMobile(
 
 }
 
+function animarEliminacionItemVentasMobile(
+    productoId
+){
+
+    return new Promise(
+        function(resolve){
+
+            const selectorId =
+                CSS.escape(
+                    String(
+                        productoId || ""
+                    )
+                );
+
+
+            const tarjeta =
+                contenedorVentasMobile
+                    ?.querySelector(
+                        `[data-cart-product-id="${selectorId}"]`
+                    );
+
+
+            if(!tarjeta){
+
+                resolve();
+
+                return;
+
+            }
+
+
+            tarjeta.classList.add(
+                "is-removing"
+            );
+
+
+            window.setTimeout(
+                resolve,
+                240
+            );
+
+        }
+    );
+
+}
+
 async function confirmarEliminarProductoVentasMobile(
     item
 ){
@@ -1129,6 +1939,9 @@ async function confirmarEliminarProductoVentasMobile(
 
     }
 
+    await animarEliminacionItemVentasMobile(
+    item.id
+    );
 
     eliminarProductoCarritoMobile(
         item.id
@@ -1298,6 +2111,12 @@ async function confirmarPagoDigitalVentasMobile(
     metodo
 ){
 
+    if(checkoutVentasEnProceso){
+
+    return false;
+
+}
+
     const resumen =
         obtenerResumenCarritoMobile();
 
@@ -1342,9 +2161,9 @@ async function confirmarPagoDigitalVentasMobile(
                 `Confirmar pago con ${nombreMetodo}`,
 
             mensaje:
-                `Total a registrar: ${formatearMonedaVentasMobile(
-                    resumen.total
-                )}`,
+    `Total: ${formatearMonedaVentasMobile(
+        resumen.total
+    )} · Tienda: ${resumen.nombreTienda}`,
 
             textoCancelar:
                 "Cancelar",
@@ -1364,6 +2183,26 @@ async function confirmarPagoDigitalVentasMobile(
 
     }
 
+    checkoutVentasEnProceso =
+    true;
+
+
+const botonMetodo =
+    document.querySelector(
+        `[data-mobile-payment-method="${CSS.escape(
+            metodo
+        )}"]`
+    );
+
+
+bloquearBotonVentasMobile(
+    botonMetodo,
+    true,
+    "Procesando..."
+);
+
+
+    try{
 
     const resultado =
         await registrarVentaMobile({
@@ -1378,6 +2217,85 @@ async function confirmarPagoDigitalVentasMobile(
                 0
 
         });
+
+
+    if(
+        resultado?.completada !==
+        true
+    ){
+
+        vibrarVentasMobile(
+            "warning"
+        );
+
+
+        mostrarToast({
+
+            tipo:
+                "danger",
+
+            duracion:
+                4200,
+
+            mensaje:
+                resultado?.mensaje ||
+                "No se pudo registrar la venta."
+
+        });
+
+        return false;
+
+    }
+
+
+    vaciarCarritoMobile();
+
+
+    OverlayMobile.close();
+
+
+    vibrarVentasMobile(
+        "success"
+    );
+
+
+    mostrarToast({
+
+        tipo:
+            "success",
+
+        duracion:
+            4200,
+
+        mensaje:
+            `Venta registrada con ${nombreMetodo}.`
+
+    });
+
+
+    return true;
+
+}finally{
+
+    checkoutVentasEnProceso =
+        false;
+
+
+    if(
+        botonMetodo &&
+        document.body.contains(
+            botonMetodo
+        )
+    ){
+
+        bloquearBotonVentasMobile(
+            botonMetodo,
+            false
+        );
+
+    }
+
+}
 
 
     if(
@@ -1731,45 +2649,49 @@ function inicializarTecladoEfectivoVentasMobile(
         if(botonConfirmar){
 
             botonConfirmar.disabled =
-                recibido < total;
+                recibido < total ||
+                checkoutVentasEnProceso;
 
         }
 
+
         portal
-    .querySelectorAll(
-        "[data-cash-quick]"
-    )
-    .forEach(function(boton){
+            .querySelectorAll(
+                "[data-cash-quick]"
+            )
+            .forEach(function(boton){
 
-        const valor =
-            boton.dataset.cashQuick;
+                const valor =
+                    boton.dataset.cashQuick;
 
-        const montoBoton =
-            valor === "exacto"
-                ? total
-                : Number(valor || 0);
-
-
-        const seleccionado =
-            Math.abs(
-                recibido -
-                montoBoton
-            ) < 0.001;
+                const montoBoton =
+                    valor === "exacto"
+                        ? total
+                        : Number(
+                            valor || 0
+                        );
 
 
-        boton.classList.toggle(
-            "is-selected",
-            seleccionado
-        );
+                const seleccionado =
+                    Math.abs(
+                        recibido -
+                        montoBoton
+                    ) < 0.001;
 
-        boton.setAttribute(
-            "aria-pressed",
-            seleccionado
-                ? "true"
-                : "false"
-        );
 
-     });
+                boton.classList.toggle(
+                    "is-selected",
+                    seleccionado
+                );
+
+                boton.setAttribute(
+                    "aria-pressed",
+                    seleccionado
+                        ? "true"
+                        : "false"
+                );
+
+            });
 
     }
 
@@ -1779,56 +2701,71 @@ function inicializarTecladoEfectivoVentasMobile(
         function(evento){
 
             const botonRapido =
-    evento.target.closest(
-        "[data-cash-quick]"
-    );
+                evento.target.closest(
+                    "[data-cash-quick]"
+                );
 
 
-if(botonRapido){
+            if(botonRapido){
 
-    const valorRapido =
-        botonRapido.dataset
-            .cashQuick;
+                if(checkoutVentasEnProceso){
 
+                    return;
 
-    if(valorRapido === "exacto"){
-
-        centimosRecibidos =
-            Math.round(
-                total * 100
-            );
-
-    }else{
-
-        const montoRapido =
-            Number(
-                valorRapido || 0
-            );
+                }
 
 
-        if(
-            !Number.isFinite(montoRapido) ||
-            montoRapido <= 0
-        ){
-
-            return;
-
-        }
+                vibrarVentasMobile(
+                    "tap"
+                );
 
 
-        centimosRecibidos =
-            Math.round(
-                montoRapido * 100
-            );
-
-    }
+                const valorRapido =
+                    botonRapido.dataset
+                        .cashQuick;
 
 
-    actualizarPantalla();
+                if(valorRapido === "exacto"){
 
-    return;
+                    centimosRecibidos =
+                        Math.round(
+                            total * 100
+                        );
 
-}
+                }else{
+
+                    const montoRapido =
+                        Number(
+                            valorRapido || 0
+                        );
+
+
+                    if(
+                        !Number.isFinite(
+                            montoRapido
+                        ) ||
+                        montoRapido <= 0
+                    ){
+
+                        return;
+
+                    }
+
+
+                    centimosRecibidos =
+                        Math.round(
+                            montoRapido * 100
+                        );
+
+                }
+
+
+                actualizarPantalla();
+
+                return;
+
+            }
+
 
             const tecla =
                 evento.target.closest(
@@ -1843,8 +2780,20 @@ if(botonRapido){
             }
 
 
+            if(checkoutVentasEnProceso){
+
+                return;
+
+            }
+
+
             const valor =
                 tecla.dataset.cashKey;
+
+
+            vibrarVentasMobile(
+                "tap"
+            );
 
 
             if(valor === "limpiar"){
@@ -1894,6 +2843,11 @@ if(botonRapido){
                 99999999
             ){
 
+                vibrarVentasMobile(
+                    "warning"
+                );
+
+
                 mostrarToast({
 
                     tipo:
@@ -1918,71 +2872,110 @@ if(botonRapido){
     );
 
 
-botonConfirmar?.addEventListener(
-    "click",
-    async function(){
+    botonConfirmar?.addEventListener(
+        "click",
+        async function(){
 
-        const recibido =
-            centimosRecibidos /
-            100;
+            if(checkoutVentasEnProceso){
 
-        const vuelto =
-            Math.max(
-                0,
-                recibido - total
+                return;
+
+            }
+
+
+            const recibido =
+                centimosRecibidos /
+                100;
+
+            const vuelto =
+                Math.max(
+                    0,
+                    recibido - total
+                );
+
+
+            if(recibido < total){
+
+                vibrarVentasMobile(
+                    "warning"
+                );
+
+
+                mostrarToast({
+
+                    tipo:
+                        "warning",
+
+                    mensaje:
+                        "El monto recibido no cubre el total de la venta."
+
+                });
+
+                return;
+
+            }
+
+
+            checkoutVentasEnProceso =
+                true;
+
+
+            bloquearBotonVentasMobile(
+                botonConfirmar,
+                true,
+                "Registrando..."
             );
 
 
-        if(recibido < total){
-
-            mostrarToast({
-
-                tipo:
-                    "warning",
-
-                mensaje:
-                    "El monto recibido no cubre el total de la venta."
-
-            });
-
-            return;
-
-        }
+            vibrarVentasMobile(
+                "tap"
+            );
 
 
-        botonConfirmar.disabled =
-            true;
+            try{
 
+                await confirmarCobroEfectivoVentasMobile({
 
-        try{
+                    total,
 
-            await confirmarCobroEfectivoVentasMobile({
+                    recibido,
 
-                total,
+                    vuelto
 
-                recibido,
+                });
 
-                vuelto
+            }finally{
 
-            });
-
-        }finally{
-
-            if(
-                document.body.contains(
-                    botonConfirmar
-                )
-            ){
-
-                botonConfirmar.disabled =
+                checkoutVentasEnProceso =
                     false;
+
+
+                if(
+                    document.body.contains(
+                        botonConfirmar
+                    )
+                ){
+
+                    bloquearBotonVentasMobile(
+                        botonConfirmar,
+                        false
+                    );
+
+
+                    const recibidoActual =
+                        centimosRecibidos /
+                        100;
+
+
+                    botonConfirmar.disabled =
+                        recibidoActual < total;
+
+                }
 
             }
 
         }
-
-    }
-);
+    );
 
 
     actualizarPantalla();
@@ -2114,6 +3107,10 @@ if(
     !resultado.completada
 ){
 
+    vibrarVentasMobile(
+    "warning"
+);
+
     mostrarToast({
 
         tipo:
@@ -2138,6 +3135,9 @@ vaciarCarritoMobile();
 
 OverlayMobile.close();
 
+vibrarVentasMobile(
+    "success"
+);
 
 mostrarToast({
 
@@ -2170,6 +3170,9 @@ function construirMensajeConfirmacionEfectivoVentasMobile(
         vuelto
 
     } = datos;
+
+    const resumen =
+    obtenerResumenCarritoMobile();
 
 
     return [
@@ -2327,6 +3330,7 @@ function construirMetodoPagoVentasMobile(
             data-mobile-payment-method="${escaparHTMLVentasMobile(
                 id
             )}"
+            aria-busy="false"
         >
 
             <span class="mobile-checkout-method-icon">
@@ -2423,6 +3427,147 @@ function obtenerNombreMetodoPagoVentasMobile(
 }
 
 // =====================================================
+// FEEDBACK TÁCTIL
+// =====================================================
+
+function vibrarVentasMobile(
+    tipo =
+        "tap"
+){
+
+    if(
+        typeof navigator.vibrate !==
+        "function"
+    ){
+
+        return;
+
+    }
+
+
+    const patrones = {
+
+        tap:
+            12,
+
+        success:
+            [18, 35, 22],
+
+        warning:
+            [28, 45, 28],
+
+        delete:
+            [20, 30, 45]
+
+    };
+
+
+    try{
+
+        navigator.vibrate(
+            patrones[tipo] ||
+            patrones.tap
+        );
+
+    }catch(error){
+
+        console.warn(
+            "No se pudo ejecutar vibración:",
+            error
+        );
+
+    }
+
+}
+
+
+function bloquearBotonVentasMobile(
+    boton,
+    bloqueado,
+    textoLoading =
+        "Procesando..."
+){
+
+    if(!boton){
+
+        return;
+
+    }
+
+
+    if(bloqueado){
+
+        if(
+            !boton.dataset
+                .textoOriginal
+        ){
+
+            boton.dataset.textoOriginal =
+                boton.innerHTML;
+
+        }
+
+
+        boton.disabled =
+            true;
+
+        boton.classList.add(
+            "is-loading"
+        );
+
+        boton.setAttribute(
+            "aria-busy",
+            "true"
+        );
+
+
+        boton.innerHTML = `
+            <span
+                class="mobile-sales-button-spinner"
+                aria-hidden="true"
+            ></span>
+
+            <span>
+                ${escaparHTMLVentasMobile(
+                    textoLoading
+                )}
+            </span>
+        `;
+
+        return;
+
+    }
+
+
+    boton.disabled =
+        false;
+
+    boton.classList.remove(
+        "is-loading"
+    );
+
+    boton.removeAttribute(
+        "aria-busy"
+    );
+
+
+    if(
+        boton.dataset
+            .textoOriginal
+    ){
+
+        boton.innerHTML =
+            boton.dataset
+                .textoOriginal;
+
+        delete boton.dataset
+            .textoOriginal;
+
+    }
+
+}
+
+// =====================================================
 // UTILIDADES
 // =====================================================
 
@@ -2459,6 +3604,8 @@ export function reiniciarVentasMobile(){
 
     destruirSuscripcionVentasMobile();
 
+    destruirFooterInteligenteVentasMobile();
+
 
     renderizada =
         false;
@@ -2468,5 +3615,11 @@ export function reiniciarVentasMobile(){
 
     navegarVentasMobile =
         null;
+
+    accionCarritoEnProceso =
+        false;
+
+    checkoutVentasEnProceso =
+        false;
 
 }
