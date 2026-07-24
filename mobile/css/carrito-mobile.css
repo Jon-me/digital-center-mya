@@ -1103,12 +1103,6 @@
 }
 
 /* =====================================================
-   FOOTER INTELIGENTE Y SCROLL PREMIUM
-   FASE M7.2.3.3
-===================================================== */
-
-
-/* =====================================================
    SCROLL GENERAL
 ===================================================== */
 
@@ -1404,6 +1398,1330 @@
     .mobile-sales-button-spinner {
         animation-duration:
             1400ms;
+    }
+
+}
+
+/* =====================================================
+   M7.2.3.5
+   PREMIUM CHECKOUT EXPERIENCE
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+.mobile-checkout-premium {
+    display: grid;
+    gap: 18px;
+}
+
+
+/* =====================================================
+   HEADER DEL CHECKOUT
+===================================================== */
+
+.mobile-checkout-header {
+    display: grid;
+    gap: 12px;
+}
+
+
+.mobile-checkout-eyebrow {
+    color: rgba(126, 171, 255, 0.76);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-checkout-total-card {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 16px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(91, 154, 255, 0.24);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 65, 138, 0.66),
+            rgba(8, 28, 69, 0.98)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 16px 34px rgba(0, 52, 147, 0.22);
+}
+
+
+.mobile-checkout-total-card::before {
+    content: "";
+
+    position: absolute;
+    top: -40px;
+    right: -30px;
+
+    width: 110px;
+    height: 110px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(111, 177, 255, 0.32),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-checkout-total-copy {
+    position: relative;
+    z-index: 1;
+
+    min-width: 0;
+}
+
+
+.mobile-checkout-total-copy span {
+    display: block;
+
+    color: rgba(205, 222, 249, 0.68);
+
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+.mobile-checkout-total-copy strong {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #ffffff;
+
+    font-size: 27px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-checkout-total-icon {
+    position: relative;
+    z-index: 1;
+
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    border: 1px solid rgba(172, 208, 255, 0.2);
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   METADATOS DE LA VENTA
+===================================================== */
+
+.mobile-checkout-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(102, 156, 244, 0.12);
+    border-radius: 14px;
+
+    background: rgba(8, 19, 42, 0.58);
+}
+
+
+.mobile-checkout-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    color: rgba(190, 210, 240, 0.74);
+
+    font-size: 9px;
+    font-weight: 650;
+}
+
+
+.mobile-checkout-meta-divider {
+    width: 1px;
+    height: 14px;
+
+    background: rgba(126, 168, 226, 0.14);
+}
+
+
+/* =====================================================
+   ENCABEZADO DE MÉTODOS
+===================================================== */
+
+.mobile-checkout-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.mobile-checkout-section-eyebrow {
+    display: block;
+
+    color: rgba(109, 165, 255, 0.7);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+
+.mobile-checkout-section-header h3 {
+    margin: 4px 0 0;
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+
+.mobile-checkout-secure-badge {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid rgba(87, 150, 255, 0.16);
+    border-radius: 12px;
+
+    background: rgba(39, 95, 185, 0.11);
+
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   LISTA DE MÉTODOS
+===================================================== */
+
+.mobile-checkout-methods-premium {
+    display: grid;
+    gap: 10px;
+}
+
+
+.mobile-checkout-method-premium {
+    --checkout-method-accent:
+        rgba(75, 142, 255, 0.92);
+
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 4px 42px minmax(0, 1fr) 26px;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 10px 12px 10px 0;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(106, 158, 241, 0.14);
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 27, 56, 0.96),
+            rgba(7, 17, 38, 0.99)
+        );
+
+    color: #ffffff;
+
+    text-align: left;
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 9px 24px rgba(0, 0, 0, 0.18);
+
+    transition:
+        transform 150ms ease,
+        border-color 150ms ease,
+        background 150ms ease,
+        box-shadow 150ms ease;
+}
+
+
+.mobile-checkout-method-premium:active {
+    transform: scale(0.985);
+}
+
+
+.mobile-checkout-method-premium:hover {
+    border-color: rgba(90, 153, 255, 0.3);
+}
+
+
+.mobile-checkout-method-accent {
+    align-self: stretch;
+
+    width: 4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--checkout-method-accent),
+            rgba(255, 255, 255, 0.05)
+        );
+}
+
+
+.mobile-checkout-method-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border: 1px solid rgba(108, 163, 249, 0.14);
+    border-radius: 13px;
+
+    background: rgba(46, 94, 174, 0.11);
+
+    font-size: 20px;
+}
+
+
+.mobile-checkout-method-copy {
+    min-width: 0;
+}
+
+
+.mobile-checkout-method-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    min-width: 0;
+}
+
+
+.mobile-checkout-method-title-row strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+
+.mobile-checkout-method-description {
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: rgba(172, 194, 227, 0.6);
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+.mobile-checkout-method-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(150, 187, 241, 0.68);
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   ACENTOS POR MÉTODO
+===================================================== */
+
+.mobile-checkout-method-premium.is-cash {
+    --checkout-method-accent:
+        #45d99a;
+}
+
+
+.mobile-checkout-method-premium.is-yape {
+    --checkout-method-accent:
+        #8d4de8;
+}
+
+
+.mobile-checkout-method-premium.is-plin {
+    --checkout-method-accent:
+        #32c7d9;
+}
+
+
+.mobile-checkout-method-premium.is-card {
+    --checkout-method-accent:
+        #5a8dff;
+}
+
+
+.mobile-checkout-method-premium.is-transfer {
+    --checkout-method-accent:
+        #f5b84b;
+}
+
+
+.mobile-checkout-method-premium.is-mixed {
+    --checkout-method-accent:
+        #b58cff;
+}
+
+
+/* =====================================================
+   PAGO MIXTO
+===================================================== */
+
+.mobile-checkout-secondary {
+    display: grid;
+    gap: 8px;
+
+    padding-top: 4px;
+}
+
+
+.mobile-checkout-secondary-label {
+    color: rgba(120, 164, 232, 0.58);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+
+.mobile-checkout-method-premium.is-coming-soon {
+    border-style: dashed;
+
+    opacity: 0.72;
+}
+
+
+.mobile-checkout-coming-soon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+
+    padding: 3px 6px;
+
+    border: 1px solid rgba(176, 141, 255, 0.22);
+    border-radius: 999px;
+
+    background: rgba(139, 90, 255, 0.1);
+    color: #cbb4ff;
+
+    font-size: 7px;
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   LOADING EN MÉTODOS PREMIUM
+===================================================== */
+
+.mobile-checkout-method-premium.is-loading {
+    grid-template-columns:
+        minmax(0, 1fr);
+
+    min-height: 64px;
+
+    padding: 12px;
+
+    text-align: center;
+}
+
+
+.mobile-checkout-method-premium.is-loading
+.mobile-checkout-method-accent,
+.mobile-checkout-method-premium.is-loading
+.mobile-checkout-method-icon,
+.mobile-checkout-method-premium.is-loading
+.mobile-checkout-method-copy,
+.mobile-checkout-method-premium.is-loading
+.mobile-checkout-method-arrow {
+    display: none;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-checkout-total-copy strong {
+        font-size: 24px;
+    }
+
+
+    .mobile-checkout-meta {
+        gap: 6px;
+    }
+
+
+    .mobile-checkout-method-premium {
+        grid-template-columns:
+            4px
+            38px
+            minmax(0, 1fr)
+            22px;
+
+        gap: 8px;
+
+        padding-right: 10px;
+    }
+
+
+    .mobile-checkout-method-icon {
+        width: 38px;
+        height: 38px;
+
+        font-size: 18px;
+    }
+
+
+    .mobile-checkout-method-description {
+        font-size: 7px;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-checkout-method-premium {
+        transition: none;
+    }
+
+}
+
+/* =====================================================
+   M7.2.3.5.2
+   SELECCIÓN PREMIUM DE MÉTODO
+===================================================== */
+
+.mobile-checkout-method-premium {
+    transform-origin: center;
+}
+
+
+.mobile-checkout-method-premium.is-selected {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--checkout-method-accent) 65%,
+            transparent
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24, 56, 113, 0.98),
+            rgba(8, 25, 59, 0.99)
+        );
+
+    transform:
+        scale(1.012);
+
+    box-shadow:
+        inset 0 1px 0
+            rgba(255, 255, 255, 0.055),
+        0 0 0 1px
+            color-mix(
+                in srgb,
+                var(--checkout-method-accent) 18%,
+                transparent
+            ),
+        0 14px 32px
+            rgba(0, 0, 0, 0.24);
+}
+
+
+.mobile-checkout-method-premium.is-selected
+.mobile-checkout-method-icon {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--checkout-method-accent) 34%,
+            transparent
+        );
+
+    background:
+        color-mix(
+            in srgb,
+            var(--checkout-method-accent) 13%,
+            transparent
+        );
+
+    transform:
+        scale(1.06);
+}
+
+
+.mobile-checkout-method-premium.is-selected
+.mobile-checkout-method-arrow {
+    color:
+        var(--checkout-method-accent);
+
+    transform:
+        translateX(2px);
+}
+
+
+.mobile-checkout-method-premium.is-muted {
+    opacity: 0.38;
+
+    filter:
+        saturate(0.55);
+
+    transform:
+        scale(0.985);
+
+    pointer-events:
+        none;
+}
+
+
+.mobile-checkout-method-premium:disabled {
+    cursor:
+        not-allowed;
+}
+
+
+.mobile-checkout-method-icon,
+.mobile-checkout-method-arrow {
+    transition:
+        transform 150ms ease,
+        background 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+
+/* Respaldo para navegadores sin color-mix */
+
+@supports not (
+    color:
+    color-mix(
+        in srgb,
+        white 50%,
+        black
+    )
+) {
+
+    .mobile-checkout-method-premium.is-selected {
+        border-color:
+            rgba(87, 151, 255, 0.58);
+
+        box-shadow:
+            inset 0 1px 0
+                rgba(255, 255, 255, 0.055),
+            0 0 0 1px
+                rgba(75, 142, 255, 0.16),
+            0 14px 32px
+                rgba(0, 0, 0, 0.24);
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-checkout-method-premium,
+    .mobile-checkout-method-icon,
+    .mobile-checkout-method-arrow {
+        transition:
+            none;
+    }
+
+
+    .mobile-checkout-method-premium.is-selected,
+    .mobile-checkout-method-premium.is-muted {
+        transform:
+            none;
+    }
+
+}
+
+/* =====================================================
+   M7.2.3.5.3
+   COBRO EN EFECTIVO PREMIUM
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+.mobile-cash-checkout-premium {
+    display: grid;
+    gap: 18px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-cash-header {
+    display: grid;
+    gap: 12px;
+}
+
+
+.mobile-cash-eyebrow {
+    color: rgba(126, 171, 255, 0.76);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-cash-total-card {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 16px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(69, 217, 154, 0.24);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(23, 93, 72, 0.62),
+            rgba(7, 37, 31, 0.98)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 16px 34px rgba(0, 90, 59, 0.2);
+}
+
+
+.mobile-cash-total-card::before {
+    content: "";
+
+    position: absolute;
+    top: -38px;
+    right: -28px;
+
+    width: 108px;
+    height: 108px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(107, 255, 194, 0.28),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-cash-total-copy {
+    position: relative;
+    z-index: 1;
+
+    min-width: 0;
+}
+
+
+.mobile-cash-total-copy span {
+    display: block;
+
+    color: rgba(206, 239, 225, 0.68);
+
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+.mobile-cash-total-copy strong {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #ffffff;
+
+    font-size: 27px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-cash-total-icon {
+    position: relative;
+    z-index: 1;
+
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    border: 1px solid rgba(186, 255, 226, 0.18);
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    font-size: 22px;
+}
+
+
+.mobile-cash-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(95, 181, 151, 0.12);
+    border-radius: 14px;
+
+    background: rgba(8, 29, 27, 0.58);
+}
+
+
+.mobile-cash-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    color: rgba(190, 225, 214, 0.72);
+
+    font-size: 9px;
+    font-weight: 650;
+}
+
+
+/* =====================================================
+   BLOQUE DE MONTOS
+===================================================== */
+
+.mobile-cash-amounts {
+    display: grid;
+    gap: 10px;
+}
+
+
+.mobile-cash-display-premium {
+    position: relative;
+
+    display: grid;
+    gap: 5px;
+
+    padding: 16px;
+
+    border: 1px solid rgba(85, 153, 255, 0.18);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 34, 70, 0.96),
+            rgba(7, 18, 41, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+
+.mobile-cash-display-premium span {
+    color: rgba(175, 199, 235, 0.64);
+
+    font-size: 9px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+
+.mobile-cash-display-premium strong {
+    color: #ffffff;
+
+    font-size: 28px;
+    font-weight: 950;
+    line-height: 1.05;
+}
+
+
+.mobile-cash-display-premium small {
+    color: rgba(169, 191, 225, 0.54);
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+.mobile-cash-change-premium {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(109, 160, 244, 0.14);
+    border-radius: 16px;
+
+    background: rgba(8, 19, 42, 0.62);
+}
+
+
+.mobile-cash-change-premium div {
+    min-width: 0;
+}
+
+
+.mobile-cash-change-premium span {
+    display: block;
+
+    color: rgba(178, 199, 230, 0.68);
+
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+
+.mobile-cash-change-premium small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: rgba(161, 181, 214, 0.5);
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+.mobile-cash-change-premium strong {
+    flex: 0 0 auto;
+
+    color: rgba(190, 206, 231, 0.72);
+
+    font-size: 20px;
+    font-weight: 950;
+
+    transition:
+        color 160ms ease,
+        transform 160ms ease,
+        text-shadow 160ms ease;
+}
+
+
+.mobile-cash-change-premium strong.is-ready {
+    color: #55e4a5;
+
+    transform: scale(1.03);
+
+    text-shadow:
+        0 0 18px rgba(85, 228, 165, 0.22);
+}
+
+
+/* =====================================================
+   SECCIONES
+===================================================== */
+
+.mobile-cash-section {
+    display: grid;
+    gap: 10px;
+}
+
+
+.mobile-cash-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.mobile-cash-section-header div {
+    min-width: 0;
+}
+
+
+.mobile-cash-section-header div > span {
+    display: block;
+
+    color: rgba(104, 162, 255, 0.66);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+
+.mobile-cash-section-header div > strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+
+.mobile-cash-section-header > span {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid rgba(100, 158, 255, 0.14);
+    border-radius: 11px;
+
+    background: rgba(46, 96, 181, 0.1);
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   MONTOS RÁPIDOS
+===================================================== */
+
+.mobile-cash-quick {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+
+.mobile-cash-quick-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    min-height: 42px;
+
+    padding: 8px 6px;
+
+    border: 1px solid rgba(101, 158, 248, 0.15);
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 45, 89, 0.82),
+            rgba(8, 23, 54, 0.97)
+        );
+
+    color: rgba(215, 228, 248, 0.78);
+
+    font-size: 10px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 140ms ease,
+        background 140ms ease,
+        color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+.mobile-cash-quick-button:active {
+    transform: scale(0.96);
+}
+
+
+.mobile-cash-quick-button.is-selected {
+    border-color: rgba(69, 217, 154, 0.62);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(29, 114, 86, 0.78),
+            rgba(9, 54, 43, 0.98)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 1px rgba(69, 217, 154, 0.12),
+        0 10px 24px rgba(0, 92, 61, 0.18);
+}
+
+
+/* =====================================================
+   TECLADO NUMÉRICO
+===================================================== */
+
+.mobile-cash-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+
+
+.mobile-cash-key {
+    min-height: 54px;
+
+    border: 1px solid rgba(104, 159, 248, 0.16);
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 38, 77, 0.96),
+            rgba(7, 20, 47, 0.99)
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 8px 20px rgba(0, 0, 0, 0.15);
+
+    transition:
+        transform 120ms ease,
+        border-color 120ms ease,
+        background 120ms ease;
+}
+
+
+.mobile-cash-key:active {
+    transform: scale(0.95);
+
+    border-color: rgba(83, 149, 255, 0.36);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(27, 60, 118, 0.98),
+            rgba(10, 30, 68, 0.99)
+        );
+}
+
+
+.mobile-cash-key.is-action {
+    color: #9fc3ff;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(27, 53, 98, 0.9),
+            rgba(10, 25, 55, 0.98)
+        );
+}
+
+
+.mobile-cash-key[data-cash-key="limpiar"] {
+    color: #ff9da6;
+
+    border-color: rgba(255, 105, 118, 0.18);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(104, 35, 47, 0.45),
+            rgba(45, 15, 24, 0.96)
+        );
+}
+
+
+/* =====================================================
+   CONFIRMAR PAGO
+===================================================== */
+
+.mobile-cash-confirm-premium {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-height: 52px;
+
+    padding-right: 18px;
+    padding-left: 18px;
+
+    border-radius: 16px;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+
+.mobile-cash-confirm-premium:disabled {
+    opacity: 0.34;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    filter: grayscale(0.4);
+}
+
+
+/* =====================================================
+   BLOQUEO DURANTE CHECKOUT
+===================================================== */
+
+.mobile-cash-checkout-premium[aria-busy="true"]
+.mobile-cash-key,
+.mobile-cash-checkout-premium[aria-busy="true"]
+.mobile-cash-quick-button {
+    pointer-events: none;
+
+    opacity: 0.48;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-cash-total-copy strong {
+        font-size: 24px;
+    }
+
+
+    .mobile-cash-display-premium strong {
+        font-size: 25px;
+    }
+
+
+    .mobile-cash-quick {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .mobile-cash-key {
+        min-height: 50px;
+
+        border-radius: 13px;
+
+        font-size: 17px;
+    }
+
+
+    .mobile-cash-change-premium strong {
+        font-size: 18px;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-cash-change-premium strong,
+    .mobile-cash-quick-button,
+    .mobile-cash-key {
+        transition: none;
+    }
+
+
+    .mobile-cash-change-premium strong.is-ready,
+    .mobile-cash-quick-button:active,
+    .mobile-cash-key:active {
+        transform: none;
     }
 
 }

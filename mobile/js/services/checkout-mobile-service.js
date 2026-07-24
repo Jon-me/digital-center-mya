@@ -255,24 +255,115 @@ async function obtenerNombreSucursalCheckoutMobile(
 function obtenerStockProductoCheckoutMobile(
     datosProducto,
     tiendaVenta
-) {
+){
 
     const stockTiendas =
         datosProducto?.stockTiendas &&
-        typeof datosProducto.stockTiendas === "object"
+        typeof datosProducto.stockTiendas ===
+        "object"
             ? datosProducto.stockTiendas
             : {};
 
-    return Math.max(
-        0,
-        Math.trunc(
-            Number(
-                stockTiendas[
-                    tiendaVenta
-                ] || 0
-            )
+
+    const tiendaNormalizada =
+        String(
+            tiendaVenta ||
+            "principal"
         )
-    );
+            .trim()
+            .toLowerCase();
+
+
+    let posiblesClaves;
+
+
+    if(
+        tiendaNormalizada === "sucursal" ||
+        tiendaNormalizada === "peluqueria" ||
+        tiendaNormalizada === "peluquería"
+    ){
+
+        posiblesClaves = [
+
+            "sucursal",
+
+            "peluqueria",
+
+            "peluquería"
+
+        ];
+
+    }else{
+
+        posiblesClaves = [
+
+            "principal",
+
+            "mercado"
+
+        ];
+
+    }
+
+
+    for(
+        const clave of
+        posiblesClaves
+    ){
+
+        const valor =
+            Number(
+                stockTiendas[clave]
+            );
+
+
+        if(Number.isFinite(valor)){
+
+            return Math.max(
+                0,
+                Math.trunc(
+                    valor
+                )
+            );
+
+        }
+
+    }
+
+
+    return 0;
+
+}
+
+function construirStockTiendasCheckoutMobile(
+    datosProducto
+){
+
+    const stockOriginal =
+        datosProducto?.stockTiendas &&
+        typeof datosProducto.stockTiendas ===
+        "object"
+            ? datosProducto.stockTiendas
+            : {};
+
+
+    return {
+
+        ...stockOriginal,
+
+        principal:
+            obtenerStockProductoCheckoutMobile(
+                datosProducto,
+                "principal"
+            ),
+
+        sucursal:
+            obtenerStockProductoCheckoutMobile(
+                datosProducto,
+                "sucursal"
+            )
+
+    };
 
 }
 
@@ -784,12 +875,10 @@ async function registrarVentaMobile(
                             const datosProducto =
                                 registro.snapshot.data();
 
-                            const stockTiendas = {
-                                ...(
-                                    datosProducto.stockTiendas ||
-                                    {}
-                                )
-                            };
+                            const stockTiendas =
+                                construirStockTiendasCheckoutMobile(
+                                   datosProducto
+                                );
 
                             const stockActual =
                                 obtenerStockProductoCheckoutMobile(
@@ -812,33 +901,52 @@ async function registrarVentaMobile(
                              * Solo descontamos de la tienda
                              * seleccionada para esta venta.
                              */
-                            stockTiendas[tiendaVenta] =
-                                stockActual -
-                                cantidad;
+const tiendaVentaNormalizada =
+    String(
+        tiendaVenta || "principal"
+    )
+        .trim()
+        .toLowerCase();
+
+
+const claveTiendaStock =
+    (
+        tiendaVentaNormalizada === "sucursal" ||
+        tiendaVentaNormalizada === "peluqueria" ||
+        tiendaVentaNormalizada === "peluquería"
+    )
+        ? "sucursal"
+        : "principal";
+
+stockTiendas[claveTiendaStock] =
+    stockActual -
+    cantidad;
+
+delete stockTiendas.mercado;
+
+delete stockTiendas.peluqueria;
+
+delete stockTiendas["peluquería"];
 
                             /*
                              * Recalculamos el stock total
                              * sumando todas las tiendas.
                              */
                             const stockTotal =
-                                Object
-                                    .values(
-                                        stockTiendas
-                                    )
-                                    .reduce(
-                                        function(total, stock) {
-
-                                            return (
-                                                total +
-                                                Math.max(
-                                                    0,
-                                                    Number(stock || 0)
-                                                )
-                                            );
-
-                                        },
-                                        0
-                                    );
+    Math.max(
+        0,
+        Number(
+            stockTiendas.principal ||
+            0
+        )
+    ) +
+    Math.max(
+        0,
+        Number(
+            stockTiendas.sucursal ||
+            0
+        )
+    );
 
                             transaccion.update(
                                 registro.productoRef,

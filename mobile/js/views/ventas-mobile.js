@@ -65,6 +65,9 @@ let accionCarritoEnProceso =
 let checkoutVentasEnProceso =
     false;
 
+let seleccionMetodoPagoEnProceso =
+    false;
+
 let observadorResumenVentasMobile =
     null;
 
@@ -2015,37 +2018,172 @@ function abrirFlujoCobroVentasMobile(){
 
 
     sheet.portal.addEventListener(
-        "click",
-        function(evento){
+    "click",
+    async function(evento){
 
-            const botonMetodo =
-                evento.target.closest(
-                    "[data-mobile-payment-method]"
-                );
-
-
-            if(!botonMetodo){
-
-                return;
-
-            }
+        const botonMetodo =
+            evento.target.closest(
+                "[data-mobile-payment-method]"
+            );
 
 
-            const metodo =
-                botonMetodo.dataset
-                    .mobilePaymentMethod;
+        if(
+            !botonMetodo ||
+            botonMetodo.disabled
+        ){
+
+            return;
+
+        }
 
 
-            manejarMetodoPagoVentasMobile(
+        if(
+            seleccionMetodoPagoEnProceso ||
+            checkoutVentasEnProceso
+        ){
+
+            return;
+
+        }
+
+
+        const metodo =
+            botonMetodo.dataset
+                .mobilePaymentMethod;
+
+
+        seleccionMetodoPagoEnProceso =
+            true;
+
+
+        marcarMetodoPagoSeleccionadoVentasMobile({
+
+            portal:
+                sheet.portal,
+
+            botonSeleccionado:
+                botonMetodo,
+
+            bloqueado:
+                true
+
+        });
+
+
+        vibrarVentasMobile(
+            "tap"
+        );
+
+
+        try{
+
+            await manejarMetodoPagoVentasMobile(
                 metodo
             );
 
+        }finally{
+
+            seleccionMetodoPagoEnProceso =
+                false;
+
+
+            if(
+                document.body.contains(
+                    sheet.portal
+                )
+            ){
+
+                marcarMetodoPagoSeleccionadoVentasMobile({
+
+                    portal:
+                        sheet.portal,
+
+                    botonSeleccionado:
+                        null,
+
+                    bloqueado:
+                        false
+
+                });
+
+            }
+
         }
-    );
+
+    }
+);
 
 }
 
-function manejarMetodoPagoVentasMobile(
+function marcarMetodoPagoSeleccionadoVentasMobile(
+    opciones
+){
+
+    const {
+
+        portal,
+
+        botonSeleccionado,
+
+        bloqueado
+
+    } = opciones;
+
+
+    if(!portal){
+
+        return;
+
+    }
+
+
+    portal
+        .querySelectorAll(
+            "[data-mobile-payment-method]"
+        )
+        .forEach(function(boton){
+
+            const seleccionado =
+                boton ===
+                botonSeleccionado;
+
+
+            boton.classList.toggle(
+                "is-selected",
+                seleccionado
+            );
+
+
+            boton.classList.toggle(
+                "is-muted",
+                bloqueado &&
+                !seleccionado
+            );
+
+
+            boton.setAttribute(
+                "aria-pressed",
+                seleccionado
+                    ? "true"
+                    : "false"
+            );
+
+
+            /*
+             * No deshabilitamos Pago Mixto de forma
+             * permanente porque conserva su toast.
+             */
+            boton.disabled =
+                Boolean(
+                    bloqueado &&
+                    !seleccionado
+                );
+
+        });
+
+}
+
+async function manejarMetodoPagoVentasMobile(
     metodo
 ){
 
@@ -2053,12 +2191,17 @@ function manejarMetodoPagoVentasMobile(
 
         abrirCobroEfectivoVentasMobile();
 
-        return;
+        return true;
 
     }
 
 
     if(metodo === "mixto"){
+
+        vibrarVentasMobile(
+            "warning"
+        );
+
 
         mostrarToast({
 
@@ -2070,7 +2213,8 @@ function manejarMetodoPagoVentasMobile(
 
         });
 
-        return;
+
+        return false;
 
     }
 
@@ -2086,13 +2230,16 @@ function manejarMetodoPagoVentasMobile(
         )
     ){
 
-        confirmarPagoDigitalVentasMobile(
+        return await confirmarPagoDigitalVentasMobile(
             metodo
         );
 
-        return;
-
     }
+
+
+    vibrarVentasMobile(
+        "warning"
+    );
 
 
     mostrarToast({
@@ -2105,6 +2252,9 @@ function manejarMetodoPagoVentasMobile(
 
     });
 
+
+    return false;
+
 }
 
 async function confirmarPagoDigitalVentasMobile(
@@ -2113,9 +2263,10 @@ async function confirmarPagoDigitalVentasMobile(
 
     if(checkoutVentasEnProceso){
 
-    return false;
+        return false;
 
-}
+    }
+
 
     const resumen =
         obtenerResumenCarritoMobile();
@@ -2128,6 +2279,11 @@ async function confirmarPagoDigitalVentasMobile(
         resumen.items.length === 0
     ){
 
+        vibrarVentasMobile(
+            "warning"
+        );
+
+
         mostrarToast({
 
             tipo:
@@ -2137,6 +2293,7 @@ async function confirmarPagoDigitalVentasMobile(
                 "La venta ya no tiene productos."
 
         });
+
 
         return false;
 
@@ -2161,9 +2318,9 @@ async function confirmarPagoDigitalVentasMobile(
                 `Confirmar pago con ${nombreMetodo}`,
 
             mensaje:
-    `Total: ${formatearMonedaVentasMobile(
-        resumen.total
-    )} · Tienda: ${resumen.nombreTienda}`,
+                `Total: ${formatearMonedaVentasMobile(
+                    resumen.total
+                )} · Tienda: ${resumen.nombreTienda}`,
 
             textoCancelar:
                 "Cancelar",
@@ -2183,166 +2340,121 @@ async function confirmarPagoDigitalVentasMobile(
 
     }
 
+
     checkoutVentasEnProceso =
-    true;
+        true;
 
 
-const botonMetodo =
-    document.querySelector(
-        `[data-mobile-payment-method="${CSS.escape(
-            metodo
-        )}"]`
+    const botonMetodo =
+        document.querySelector(
+            `[data-mobile-payment-method="${CSS.escape(
+                metodo
+            )}"]`
+        );
+
+
+    bloquearBotonVentasMobile(
+        botonMetodo,
+        true,
+        "Procesando..."
     );
-
-
-bloquearBotonVentasMobile(
-    botonMetodo,
-    true,
-    "Procesando..."
-);
 
 
     try{
 
-    const resultado =
-        await registrarVentaMobile({
+        const resultado =
+            await registrarVentaMobile({
 
-            metodoPago:
-                metodo,
+                metodoPago:
+                    metodo,
 
-            recibido:
-                resumen.total,
+                recibido:
+                    resumen.total,
 
-            vuelto:
-                0
+                vuelto:
+                    0
 
-        });
+            });
 
 
-    if(
-        resultado?.completada !==
-        true
-    ){
+        if(
+            resultado?.completada !==
+            true
+        ){
+
+            vibrarVentasMobile(
+                "warning"
+            );
+
+
+            mostrarToast({
+
+                tipo:
+                    "danger",
+
+                duracion:
+                    4200,
+
+                mensaje:
+                    resultado?.mensaje ||
+                    "No se pudo registrar la venta."
+
+            });
+
+
+            return false;
+
+        }
+
+
+        vaciarCarritoMobile();
+
+
+        OverlayMobile.close();
+
 
         vibrarVentasMobile(
-            "warning"
+            "success"
         );
 
 
         mostrarToast({
 
             tipo:
-                "danger",
+                "success",
 
             duracion:
                 4200,
 
             mensaje:
-                resultado?.mensaje ||
-                "No se pudo registrar la venta."
+                `Venta registrada con ${nombreMetodo}.`
 
         });
 
-        return false;
+
+        return true;
+
+    }finally{
+
+        checkoutVentasEnProceso =
+            false;
+
+
+        if(
+            botonMetodo &&
+            document.body.contains(
+                botonMetodo
+            )
+        ){
+
+            bloquearBotonVentasMobile(
+                botonMetodo,
+                false
+            );
+
+        }
 
     }
-
-
-    vaciarCarritoMobile();
-
-
-    OverlayMobile.close();
-
-
-    vibrarVentasMobile(
-        "success"
-    );
-
-
-    mostrarToast({
-
-        tipo:
-            "success",
-
-        duracion:
-            4200,
-
-        mensaje:
-            `Venta registrada con ${nombreMetodo}.`
-
-    });
-
-
-    return true;
-
-}finally{
-
-    checkoutVentasEnProceso =
-        false;
-
-
-    if(
-        botonMetodo &&
-        document.body.contains(
-            botonMetodo
-        )
-    ){
-
-        bloquearBotonVentasMobile(
-            botonMetodo,
-            false
-        );
-
-    }
-
-}
-
-
-    if(
-        resultado?.completada !==
-        true
-    ){
-
-        mostrarToast({
-
-            tipo:
-                "danger",
-
-            duracion:
-                4200,
-
-            mensaje:
-                resultado?.mensaje ||
-                "No se pudo registrar la venta."
-
-        });
-
-        return false;
-
-    }
-
-
-    vaciarCarritoMobile();
-
-
-    OverlayMobile.close();
-
-
-    mostrarToast({
-
-        tipo:
-            "success",
-
-        duracion:
-            4200,
-
-        mensaje:
-            `Venta registrada con ${nombreMetodo}.`
-
-    });
-
-
-    return true;
 
 }
 
@@ -2418,122 +2530,276 @@ function construirCobroEfectivoVentasMobile(
     resumen
 ){
 
+    const nombreTienda =
+        resumen?.nombreTienda ||
+        obtenerNombreTiendaVentaMobile();
+
+
+    const cantidadProductos =
+        Array.isArray(
+            resumen?.items
+        )
+            ? resumen.items.length
+            : 0;
+
+
+    const cantidadUnidades =
+        Number(
+            resumen?.cantidad || 0
+        );
+
+
     return `
         <section
-            class="mobile-cash-checkout"
+            class="
+                mobile-cash-checkout
+                mobile-cash-checkout-premium
+            "
             data-cash-checkout
         >
 
-            <div class="mobile-cash-total">
+            <header class="mobile-cash-header">
 
-                <span>
-                    Total a cobrar
+                <span class="mobile-cash-eyebrow">
+                    COBRO EN EFECTIVO
                 </span>
 
-                <strong>
-                    ${formatearMonedaVentasMobile(
-                        resumen.total
+                <div class="mobile-cash-total-card">
+
+                    <div class="mobile-cash-total-copy">
+
+                        <span>
+                            Total a cobrar
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaVentasMobile(
+                                resumen.total
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <span
+                        class="mobile-cash-total-icon"
+                        aria-hidden="true"
+                    >
+                        💵
+                    </span>
+
+                </div>
+
+                <div class="mobile-cash-meta">
+
+                    <span>
+                        🏪
+                        ${escaparHTMLVentasMobile(
+                            nombreTienda
+                        )}
+                    </span>
+
+                    <span>
+                        🛒
+                        ${
+                            cantidadProductos === 1
+                                ? "1 producto"
+                                : `${cantidadProductos} productos`
+                        }
+                    </span>
+
+                    <span>
+                        📦
+                        ${
+                            cantidadUnidades === 1
+                                ? "1 unidad"
+                                : `${cantidadUnidades} unidades`
+                        }
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <section class="mobile-cash-amounts">
+
+                <div class="mobile-cash-display mobile-cash-display-premium">
+
+                    <span>
+                        Monto recibido
+                    </span>
+
+                    <strong
+                        data-cash-received
+                        aria-live="polite"
+                    >
+                        S/ 0.00
+                    </strong>
+
+                    <small>
+                        Ingresa el dinero entregado por el cliente.
+                    </small>
+
+                </div>
+
+
+                <div class="mobile-cash-change mobile-cash-change-premium">
+
+                    <div>
+
+                        <span>
+                            Vuelto
+                        </span>
+
+                        <small>
+                            Se calculará automáticamente.
+                        </small>
+
+                    </div>
+
+                    <strong
+                        data-cash-change
+                        aria-live="polite"
+                    >
+                        S/ 0.00
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <section class="mobile-cash-section">
+
+                <div class="mobile-cash-section-header">
+
+                    <div>
+
+                        <span>
+                            MONTOS RÁPIDOS
+                        </span>
+
+                        <strong>
+                            Selecciona una opción
+                        </strong>
+
+                    </div>
+
+                    <span aria-hidden="true">
+                        ⚡
+                    </span>
+
+                </div>
+
+                <div class="mobile-cash-quick">
+
+                    <button
+                        type="button"
+                        class="
+                            mobile-cash-quick-button
+                            is-exact
+                        "
+                        data-cash-quick="exacto"
+                        aria-pressed="false"
+                    >
+
+                        <span aria-hidden="true">
+                            ✓
+                        </span>
+
+                        <span>
+                            Exacto
+                        </span>
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="mobile-cash-quick-button"
+                        data-cash-quick="20"
+                        aria-pressed="false"
+                    >
+                        S/ 20
+                    </button>
+
+                    <button
+                        type="button"
+                        class="mobile-cash-quick-button"
+                        data-cash-quick="50"
+                        aria-pressed="false"
+                    >
+                        S/ 50
+                    </button>
+
+                    <button
+                        type="button"
+                        class="mobile-cash-quick-button"
+                        data-cash-quick="100"
+                        aria-pressed="false"
+                    >
+                        S/ 100
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <section class="mobile-cash-section">
+
+                <div class="mobile-cash-section-header">
+
+                    <div>
+
+                        <span>
+                            TECLADO NUMÉRICO
+                        </span>
+
+                        <strong>
+                            Ingresa el monto manualmente
+                        </strong>
+
+                    </div>
+
+                    <span aria-hidden="true">
+                        🔢
+                    </span>
+
+                </div>
+
+                <div
+                    class="mobile-cash-keypad"
+                    aria-label="Teclado numérico"
+                >
+
+                    ${construirTeclaEfectivoVentasMobile("7")}
+                    ${construirTeclaEfectivoVentasMobile("8")}
+                    ${construirTeclaEfectivoVentasMobile("9")}
+
+                    ${construirTeclaEfectivoVentasMobile("4")}
+                    ${construirTeclaEfectivoVentasMobile("5")}
+                    ${construirTeclaEfectivoVentasMobile("6")}
+
+                    ${construirTeclaEfectivoVentasMobile("1")}
+                    ${construirTeclaEfectivoVentasMobile("2")}
+                    ${construirTeclaEfectivoVentasMobile("3")}
+
+                    ${construirTeclaEfectivoVentasMobile(
+                        "limpiar",
+                        "C"
                     )}
-                </strong>
 
-            </div>
+                    ${construirTeclaEfectivoVentasMobile("0")}
 
-            <div class="mobile-cash-display">
+                    ${construirTeclaEfectivoVentasMobile(
+                        "borrar",
+                        "⌫"
+                    )}
 
-                <span>
-                    Monto recibido
-                </span>
+                </div>
 
-                <strong
-                    data-cash-received
-                    aria-live="polite"
-                >
-                    S/ 0.00
-                </strong>
+            </section>
 
-            </div>
-
-            <div class="mobile-cash-change">
-
-                <span>
-                    Vuelto
-                </span>
-
-                <strong
-                    data-cash-change
-                    aria-live="polite"
-                >
-                    S/ 0.00
-                </strong>
-
-            </div>
-
-            <div class="mobile-cash-quick">
-
-    <button
-        type="button"
-        class="mobile-cash-quick-button is-exact"
-        data-cash-quick="exacto"
-    >
-        Exacto
-    </button>
-
-    <button
-        type="button"
-        class="mobile-cash-quick-button"
-        data-cash-quick="20"
-    >
-        S/ 20
-    </button>
-
-    <button
-        type="button"
-        class="mobile-cash-quick-button"
-        data-cash-quick="50"
-    >
-        S/ 50
-    </button>
-
-    <button
-        type="button"
-        class="mobile-cash-quick-button"
-        data-cash-quick="100"
-    >
-        S/ 100
-    </button>
-
-</div>
-
-            <div
-                class="mobile-cash-keypad"
-                aria-label="Teclado numérico"
-            >
-
-                ${construirTeclaEfectivoVentasMobile("7")}
-                ${construirTeclaEfectivoVentasMobile("8")}
-                ${construirTeclaEfectivoVentasMobile("9")}
-
-                ${construirTeclaEfectivoVentasMobile("4")}
-                ${construirTeclaEfectivoVentasMobile("5")}
-                ${construirTeclaEfectivoVentasMobile("6")}
-
-                ${construirTeclaEfectivoVentasMobile("1")}
-                ${construirTeclaEfectivoVentasMobile("2")}
-                ${construirTeclaEfectivoVentasMobile("3")}
-
-                ${construirTeclaEfectivoVentasMobile(
-                    "limpiar",
-                    "C"
-                )}
-
-                ${construirTeclaEfectivoVentasMobile("0")}
-
-                ${construirTeclaEfectivoVentasMobile(
-                    "borrar",
-                    "⌫"
-                )}
-
-            </div>
 
             <button
                 type="button"
@@ -2541,11 +2807,20 @@ function construirCobroEfectivoVentasMobile(
                     mobile-button
                     mobile-button-primary
                     mobile-cash-confirm
+                    mobile-cash-confirm-premium
                 "
                 data-cash-confirm
                 disabled
             >
-                Confirmar pago
+
+                <span>
+                    Confirmar pago
+                </span>
+
+                <span aria-hidden="true">
+                    →
+                </span>
+
             </button>
 
         </section>
@@ -2559,13 +2834,38 @@ function construirTeclaEfectivoVentasMobile(
         valor
 ){
 
+    const esAccion =
+        [
+            "limpiar",
+            "borrar"
+        ].includes(
+            valor
+        );
+
+
     return `
         <button
             type="button"
-            class="mobile-cash-key"
+            class="
+                mobile-cash-key
+                ${
+                    esAccion
+                        ? "is-action"
+                        : ""
+                }
+            "
             data-cash-key="${escaparHTMLVentasMobile(
                 valor
             )}"
+            aria-label="${
+                valor === "limpiar"
+                    ? "Limpiar monto"
+                    : valor === "borrar"
+                        ? "Borrar último número"
+                        : `Número ${escaparHTMLVentasMobile(
+                            valor
+                        )}`
+            }"
         >
             ${escaparHTMLVentasMobile(
                 etiqueta
@@ -3171,11 +3471,18 @@ function construirMensajeConfirmacionEfectivoVentasMobile(
 
     } = datos;
 
+
     const resumen =
-    obtenerResumenCarritoMobile();
+        obtenerResumenCarritoMobile();
 
 
     return [
+
+        `Tienda: ${
+            resumen.nombreTienda ||
+            obtenerNombreTiendaVentaMobile()
+        }`,
+
         `Total: ${formatearMonedaVentasMobile(
             total
         )}`,
@@ -3196,26 +3503,144 @@ function construirMetodosPagoVentasMobile(
     resumen
 ){
 
+    const cantidadProductos =
+        Array.isArray(
+            resumen?.items
+        )
+            ? resumen.items.length
+            : 0;
+
+
+    const cantidadUnidades =
+        Number(
+            resumen?.cantidad || 0
+        );
+
+
+    const nombreTienda =
+        resumen?.nombreTienda ||
+        obtenerNombreTiendaVentaMobile();
+
+
     return `
-        <section class="mobile-checkout">
+        <section class="mobile-checkout mobile-checkout-premium">
 
-            <div class="mobile-checkout-total">
+            <header class="mobile-checkout-header">
 
-                <span>
-                    Total a cobrar
+                <span class="mobile-checkout-eyebrow">
+                    RESUMEN DE VENTA
                 </span>
 
-                <strong>
-                    ${formatearMonedaVentasMobile(
-                        resumen.total
-                    )}
-                </strong>
+                <div class="mobile-checkout-total-card">
+
+                    <div class="mobile-checkout-total-copy">
+
+                        <span>
+                            Total a cobrar
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaVentasMobile(
+                                resumen.total
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <span
+                        class="mobile-checkout-total-icon"
+                        aria-hidden="true"
+                    >
+                        💳
+                    </span>
+
+                </div>
+
+                <div class="mobile-checkout-meta">
+
+                    <div class="mobile-checkout-meta-item">
+
+                        <span aria-hidden="true">
+                            🏪
+                        </span>
+
+                        <span>
+                            ${escaparHTMLVentasMobile(
+                                nombreTienda
+                            )}
+                        </span>
+
+                    </div>
+
+                    <div class="mobile-checkout-meta-divider"></div>
+
+                    <div class="mobile-checkout-meta-item">
+
+                        <span aria-hidden="true">
+                            🛒
+                        </span>
+
+                        <span>
+                            ${
+                                cantidadProductos === 1
+                                    ? "1 producto"
+                                    : `${cantidadProductos} productos`
+                            }
+                        </span>
+
+                    </div>
+
+                    <div class="mobile-checkout-meta-divider"></div>
+
+                    <div class="mobile-checkout-meta-item">
+
+                        <span aria-hidden="true">
+                            📦
+                        </span>
+
+                        <span>
+                            ${
+                                cantidadUnidades === 1
+                                    ? "1 unidad"
+                                    : `${cantidadUnidades} unidades`
+                            }
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <div class="mobile-checkout-section-header">
+
+                <div>
+
+                    <span class="mobile-checkout-section-eyebrow">
+                        MÉTODO DE PAGO
+                    </span>
+
+                    <h3>
+                        ¿Cómo pagará el cliente?
+                    </h3>
+
+                </div>
+
+                <span
+                    class="mobile-checkout-secure-badge"
+                    aria-label="Cobro seguro"
+                >
+                    🔒
+                </span>
 
             </div>
 
-            <div class="mobile-checkout-methods">
+
+            <div class="mobile-checkout-methods mobile-checkout-methods-premium">
 
                 ${construirMetodoPagoVentasMobile({
+
                     id:
                         "efectivo",
 
@@ -3226,10 +3651,16 @@ function construirMetodosPagoVentasMobile(
                         "Efectivo",
 
                     descripcion:
-                        "Pago en efectivo"
+                        "Ingresa el monto recibido y calcula el vuelto.",
+
+                    clase:
+                        "is-cash"
+
                 })}
 
+
                 ${construirMetodoPagoVentasMobile({
+
                     id:
                         "yape",
 
@@ -3240,10 +3671,16 @@ function construirMetodosPagoVentasMobile(
                         "Yape",
 
                     descripcion:
-                        "Pago mediante Yape"
+                        "Registrar el total como pago mediante Yape.",
+
+                    clase:
+                        "is-yape"
+
                 })}
 
+
                 ${construirMetodoPagoVentasMobile({
+
                     id:
                         "plin",
 
@@ -3254,10 +3691,16 @@ function construirMetodosPagoVentasMobile(
                         "Plin",
 
                     descripcion:
-                        "Pago mediante Plin"
+                        "Registrar el total como pago mediante Plin.",
+
+                    clase:
+                        "is-plin"
+
                 })}
 
+
                 ${construirMetodoPagoVentasMobile({
+
                     id:
                         "tarjeta",
 
@@ -3268,10 +3711,16 @@ function construirMetodosPagoVentasMobile(
                         "Tarjeta",
 
                     descripcion:
-                        "Débito o crédito"
+                        "Pago con tarjeta de débito o crédito.",
+
+                    clase:
+                        "is-card"
+
                 })}
 
+
                 ${construirMetodoPagoVentasMobile({
+
                     id:
                         "transferencia",
 
@@ -3282,10 +3731,25 @@ function construirMetodosPagoVentasMobile(
                         "Transferencia",
 
                     descripcion:
-                        "Transferencia bancaria"
+                        "Registrar una transferencia bancaria.",
+
+                    clase:
+                        "is-transfer"
+
                 })}
 
+            </div>
+
+
+            <div class="mobile-checkout-secondary">
+
+                <span class="mobile-checkout-secondary-label">
+                    COMBINAR MÉTODOS
+                </span>
+
+
                 ${construirMetodoPagoVentasMobile({
+
                     id:
                         "mixto",
 
@@ -3296,7 +3760,14 @@ function construirMetodosPagoVentasMobile(
                         "Pago mixto",
 
                     descripcion:
-                        "Combinar varios métodos"
+                        "Combinar efectivo, Yape, Plin u otros métodos.",
+
+                    clase:
+                        "is-mixed",
+
+                    proximo:
+                        true
+
                 })}
 
             </div>
@@ -3318,7 +3789,11 @@ function construirMetodoPagoVentasMobile(
 
         nombre,
 
-        descripcion
+        descripcion,
+
+        clase = "",
+
+        proximo = false
 
     } = opciones;
 
@@ -3326,26 +3801,64 @@ function construirMetodoPagoVentasMobile(
     return `
         <button
             type="button"
-            class="mobile-checkout-method"
+            class="
+                mobile-checkout-method
+                mobile-checkout-method-premium
+                ${escaparHTMLVentasMobile(
+                    clase
+                )}
+                ${
+                    proximo
+                        ? "is-coming-soon"
+                        : ""
+                }
+            "
             data-mobile-payment-method="${escaparHTMLVentasMobile(
                 id
             )}"
             aria-busy="false"
+            aria-pressed="false"
+            ${
+                proximo
+                    ? 'aria-describedby="mobileMixedPaymentStatus"'
+                    : ""
+            }
         >
 
+            <span class="mobile-checkout-method-accent"></span>
+
             <span class="mobile-checkout-method-icon">
+
                 ${icono}
+
             </span>
 
             <span class="mobile-checkout-method-copy">
 
-                <strong>
-                    ${escaparHTMLVentasMobile(
-                        nombre
-                    )}
-                </strong>
+                <span class="mobile-checkout-method-title-row">
 
-                <small>
+                    <strong>
+                        ${escaparHTMLVentasMobile(
+                            nombre
+                        )}
+                    </strong>
+
+                    ${
+                        proximo
+                            ? `
+                                <small
+                                    id="mobileMixedPaymentStatus"
+                                    class="mobile-checkout-coming-soon"
+                                >
+                                    Próximamente
+                                </small>
+                            `
+                            : ""
+                    }
+
+                </span>
+
+                <small class="mobile-checkout-method-description">
                     ${escaparHTMLVentasMobile(
                         descripcion
                     )}
@@ -3353,8 +3866,15 @@ function construirMetodoPagoVentasMobile(
 
             </span>
 
-            <span class="mobile-checkout-method-arrow">
-                ›
+            <span
+                class="mobile-checkout-method-arrow"
+                aria-hidden="true"
+            >
+                ${
+                    proximo
+                        ? "⌛"
+                        : "›"
+                }
             </span>
 
         </button>
@@ -3621,5 +4141,8 @@ export function reiniciarVentasMobile(){
 
     checkoutVentasEnProceso =
         false;
+
+    seleccionMetodoPagoEnProceso =
+        false;    
 
 }
