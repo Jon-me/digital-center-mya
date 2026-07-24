@@ -1,0 +1,3087 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   CAJA MOBILE PREMIUM
+   FASE M7.3.3.1
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR GENERAL
+===================================================== */
+
+.mobile-caja-dashboard {
+    display: grid;
+    gap: 18px;
+
+    width: 100%;
+    padding-bottom: 24px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-caja-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 18px;
+
+    border: 1px solid rgba(77, 145, 255, 0.18);
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 45, 91, 0.96),
+            rgba(7, 20, 47, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 16px 34px rgba(0, 0, 0, 0.2);
+}
+
+
+.mobile-caja-header > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-eyebrow {
+    display: block;
+
+    color: rgba(111, 169, 255, 0.72);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-caja-header h1 {
+    margin: 5px 0 0;
+
+    color: #ffffff;
+
+    font-size: 24px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-caja-header p {
+    margin: 7px 0 0;
+
+    color: rgba(178, 199, 232, 0.62);
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+
+.mobile-caja-header-icon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    border: 1px solid rgba(102, 162, 255, 0.16);
+    border-radius: 16px;
+
+    background: rgba(54, 106, 196, 0.12);
+
+    font-size: 23px;
+}
+
+
+/* =====================================================
+   SELECTOR DE TIENDA
+===================================================== */
+
+.mobile-caja-store-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+
+.mobile-caja-store-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 44px;
+
+    padding: 9px 12px;
+
+    border: 1px solid rgba(102, 158, 244, 0.14);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 38, 77, 0.94),
+            rgba(7, 20, 47, 0.98)
+        );
+
+    color: rgba(199, 217, 244, 0.7);
+
+    font-size: 10px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 140ms ease,
+        background 140ms ease,
+        color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+.mobile-caja-store-option:active {
+    transform: scale(0.97);
+}
+
+
+.mobile-caja-store-option.is-active {
+    border-color: rgba(74, 148, 255, 0.52);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(36, 84, 165, 0.94),
+            rgba(11, 37, 85, 0.99)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 1px rgba(74, 148, 255, 0.12),
+        0 10px 24px rgba(0, 54, 139, 0.2);
+}
+
+
+/* =====================================================
+   ESTADO ACTUAL
+===================================================== */
+
+.mobile-caja-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(111, 158, 230, 0.14);
+    border-radius: 17px;
+
+    background: rgba(8, 20, 44, 0.72);
+}
+
+
+.mobile-caja-status-icon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 13px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    font-size: 17px;
+}
+
+
+.mobile-caja-status div {
+    min-width: 0;
+}
+
+
+.mobile-caja-status div span {
+    display: block;
+
+    color: rgba(165, 190, 228, 0.56);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+}
+
+
+.mobile-caja-status div strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-status.is-open {
+    border-color: rgba(69, 217, 154, 0.24);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(19, 77, 61, 0.58),
+            rgba(7, 32, 28, 0.96)
+        );
+}
+
+
+.mobile-caja-status.is-open
+.mobile-caja-status-icon {
+    background: rgba(69, 217, 154, 0.12);
+}
+
+
+.mobile-caja-status.is-closed {
+    border-color: rgba(111, 158, 230, 0.16);
+}
+
+
+.mobile-caja-status.is-cancelled {
+    border-color: rgba(255, 91, 108, 0.24);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(91, 28, 41, 0.58),
+            rgba(37, 12, 20, 0.96)
+        );
+}
+
+
+/* =====================================================
+   MÉTRICAS PRINCIPALES
+===================================================== */
+
+.mobile-caja-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+
+.mobile-caja-metric {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 0;
+
+    padding: 13px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(101, 157, 245, 0.13);
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 34, 69, 0.96),
+            rgba(7, 18, 41, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 9px 22px rgba(0, 0, 0, 0.16);
+}
+
+
+.mobile-caja-metric::after {
+    content: "";
+
+    position: absolute;
+    top: -28px;
+    right: -26px;
+
+    width: 72px;
+    height: 72px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(90, 151, 255, 0.11),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-caja-metric-icon {
+    position: relative;
+    z-index: 1;
+
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid rgba(110, 165, 250, 0.12);
+    border-radius: 12px;
+
+    background: rgba(44, 90, 167, 0.1);
+
+    font-size: 16px;
+}
+
+
+.mobile-caja-metric div {
+    position: relative;
+    z-index: 1;
+
+    min-width: 0;
+}
+
+
+.mobile-caja-metric div span {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: rgba(166, 190, 226, 0.58);
+
+    font-size: 8px;
+    font-weight: 750;
+}
+
+
+.mobile-caja-metric div strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 950;
+}
+
+
+.mobile-caja-metric.is-initial {
+    border-color: rgba(90, 151, 255, 0.18);
+}
+
+
+.mobile-caja-metric.is-sales {
+    border-color: rgba(69, 217, 154, 0.18);
+}
+
+
+.mobile-caja-metric.is-expenses {
+    border-color: rgba(255, 104, 119, 0.18);
+}
+
+
+.mobile-caja-metric.is-expected {
+    border-color: rgba(245, 184, 75, 0.18);
+}
+
+
+/* =====================================================
+   MÉTODOS DE PAGO
+===================================================== */
+
+.mobile-caja-methods {
+    display: grid;
+    gap: 11px;
+}
+
+
+.mobile-caja-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.mobile-caja-section-header > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-section-header > div span {
+    display: block;
+
+    color: rgba(100, 158, 249, 0.64);
+
+    font-size: 8px;
+    font-weight: 820;
+    letter-spacing: 0.09em;
+}
+
+
+.mobile-caja-section-header > div strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-section-header > span {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid rgba(102, 159, 247, 0.14);
+    border-radius: 11px;
+
+    background: rgba(44, 91, 172, 0.1);
+
+    font-size: 14px;
+}
+
+
+.mobile-caja-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+
+.mobile-caja-methods-grid
+.mobile-caja-metric:last-child {
+    grid-column: 1 / -1;
+}
+
+
+.mobile-caja-metric.is-cash {
+    border-color: rgba(69, 217, 154, 0.18);
+}
+
+
+.mobile-caja-metric.is-yape {
+    border-color: rgba(141, 77, 232, 0.2);
+}
+
+
+.mobile-caja-metric.is-plin {
+    border-color: rgba(50, 199, 217, 0.2);
+}
+
+
+.mobile-caja-metric.is-card {
+    border-color: rgba(90, 141, 255, 0.2);
+}
+
+
+.mobile-caja-metric.is-transfer {
+    border-color: rgba(245, 184, 75, 0.2);
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+.mobile-caja-actions {
+    display: grid;
+    gap: 9px;
+}
+
+
+.mobile-caja-actions
+.mobile-button {
+    min-height: 48px;
+
+    border-radius: 15px;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-actions
+.mobile-button:disabled {
+    opacity: 0.34;
+    pointer-events: none;
+    cursor: not-allowed;
+
+    filter: grayscale(0.35);
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.mobile-caja-loading {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+
+    padding: 32px 18px;
+
+    border: 1px solid rgba(104, 158, 245, 0.14);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 35, 70, 0.96),
+            rgba(7, 18, 41, 0.99)
+        );
+
+    text-align: center;
+}
+
+
+.mobile-caja-loading > span {
+    font-size: 32px;
+
+    animation:
+        mobileCajaPulse 1.2s ease-in-out infinite;
+}
+
+
+.mobile-caja-loading strong {
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-loading small {
+    color: rgba(172, 196, 231, 0.58);
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+
+@keyframes mobileCajaPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.75;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-caja-header {
+        padding: 15px;
+    }
+
+
+    .mobile-caja-header h1 {
+        font-size: 21px;
+    }
+
+
+    .mobile-caja-summary-grid,
+    .mobile-caja-methods-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .mobile-caja-metric {
+        padding: 11px;
+    }
+
+
+    .mobile-caja-metric-icon {
+        width: 33px;
+        height: 33px;
+
+        font-size: 15px;
+    }
+
+
+    .mobile-caja-metric div strong {
+        font-size: 12px;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-store-option {
+        transition: none;
+    }
+
+
+    .mobile-caja-loading > span {
+        animation: none;
+    }
+
+}
+
+/* =====================================================
+   M7.3.4.2
+   APERTURA DE CAJA PREMIUM
+===================================================== */
+
+
+/* =====================================================
+   BLOQUEO DEL BODY
+===================================================== */
+
+body.mobile-caja-modal-open {
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   BACKDROP
+===================================================== */
+
+.mobile-caja-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding:
+        18px
+        12px
+        max(
+            14px,
+            env(safe-area-inset-bottom)
+        );
+
+    background:
+        rgba(2, 8, 20, 0.72);
+
+    backdrop-filter:
+        blur(12px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 180ms ease,
+        visibility 180ms ease;
+}
+
+
+.mobile-caja-modal-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =====================================================
+   SHEET
+===================================================== */
+
+.mobile-caja-open-sheet {
+    width: min(
+        100%,
+        520px
+    );
+
+    max-height:
+        calc(
+            100dvh -
+            28px
+        );
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        12px
+        16px
+        18px;
+
+    border:
+        1px solid
+        rgba(
+            92,
+            151,
+            246,
+            0.2
+        );
+
+    border-radius:
+        24px
+        24px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(12, 29, 61, 0.99),
+            rgba(5, 15, 34, 0.995)
+        );
+
+    box-shadow:
+        0 -18px 54px
+        rgba(0, 0, 0, 0.42);
+
+    transform:
+        translateY(28px)
+        scale(0.985);
+
+    transition:
+        transform 180ms ease;
+}
+
+
+.mobile-caja-modal-backdrop.is-visible
+.mobile-caja-open-sheet {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =====================================================
+   HANDLE
+===================================================== */
+
+.mobile-caja-open-handle {
+    width: 42px;
+    height: 4px;
+
+    margin:
+        0
+        auto
+        14px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            154,
+            186,
+            232,
+            0.28
+        );
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-caja-open-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+
+.mobile-caja-open-header > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-open-header > div > span {
+    display: block;
+
+    color:
+        rgba(
+            105,
+            164,
+            255,
+            0.72
+        );
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-caja-open-header h2 {
+    margin:
+        5px
+        0
+        0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-caja-open-header p {
+    margin:
+        7px
+        0
+        0;
+
+    color:
+        rgba(
+            174,
+            196,
+            229,
+            0.62
+        );
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+.mobile-caja-open-close {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border:
+        1px solid
+        rgba(
+            105,
+            161,
+            247,
+            0.16
+        );
+
+    border-radius: 12px;
+
+    background:
+        rgba(
+            42,
+            89,
+            170,
+            0.12
+        );
+
+    color:
+        rgba(
+            221,
+            231,
+            249,
+            0.86
+        );
+
+    font-size: 21px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 140ms ease,
+        background 140ms ease;
+}
+
+
+.mobile-caja-open-close:active {
+    transform: scale(0.94);
+}
+
+
+/* =====================================================
+   TIENDA SELECCIONADA
+===================================================== */
+
+.mobile-caja-open-store {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    margin-top: 16px;
+    padding: 13px 14px;
+
+    border:
+        1px solid
+        rgba(
+            91,
+            152,
+            250,
+            0.16
+        );
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24, 56, 113, 0.72),
+            rgba(8, 25, 57, 0.94)
+        );
+}
+
+
+.mobile-caja-open-store-icon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border:
+        1px solid
+        rgba(
+            115,
+            170,
+            255,
+            0.15
+        );
+
+    border-radius: 13px;
+
+    background:
+        rgba(
+            73,
+            126,
+            218,
+            0.12
+        );
+
+    font-size: 18px;
+}
+
+
+.mobile-caja-open-store div {
+    min-width: 0;
+}
+
+
+.mobile-caja-open-store div span {
+    display: block;
+
+    color:
+        rgba(
+            159,
+            188,
+            232,
+            0.58
+        );
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+
+.mobile-caja-open-store div strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   CAMPO MONTO
+===================================================== */
+
+.mobile-caja-open-field {
+    display: grid;
+    gap: 8px;
+
+    margin-top: 16px;
+}
+
+
+.mobile-caja-open-field > span {
+    color:
+        rgba(
+            210,
+            224,
+            247,
+            0.8
+        );
+
+    font-size: 10px;
+    font-weight: 850;
+}
+
+
+.mobile-caja-open-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    min-height: 58px;
+
+    padding:
+        0
+        14px;
+
+    border:
+        1px solid
+        rgba(
+            94,
+            153,
+            247,
+            0.2
+        );
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 32, 67, 0.98),
+            rgba(6, 18, 41, 0.995)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.mobile-caja-open-input-wrap:focus-within {
+    border-color:
+        rgba(
+            81,
+            148,
+            255,
+            0.56
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            72,
+            137,
+            255,
+            0.1
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 44, 91, 0.99),
+            rgba(7, 22, 50, 0.995)
+        );
+}
+
+
+.mobile-caja-open-input-wrap > span {
+    flex: 0 0 auto;
+
+    color:
+        rgba(
+            126,
+            177,
+            255,
+            0.78
+        );
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-open-input-wrap input {
+    width: 100%;
+    min-width: 0;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 24px;
+    font-weight: 950;
+
+    appearance: textfield;
+}
+
+
+.mobile-caja-open-input-wrap
+input::-webkit-inner-spin-button,
+.mobile-caja-open-input-wrap
+input::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+}
+
+
+.mobile-caja-open-input-wrap input::placeholder {
+    color:
+        rgba(
+            167,
+            191,
+            229,
+            0.32
+        );
+}
+
+
+.mobile-caja-open-field small {
+    color:
+        rgba(
+            161,
+            184,
+            220,
+            0.52
+        );
+
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+
+/* =====================================================
+   MONTOS RÁPIDOS
+===================================================== */
+
+.mobile-caja-open-quick {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 8px;
+
+    margin-top: 13px;
+}
+
+
+.mobile-caja-open-quick button {
+    min-height: 40px;
+
+    padding:
+        8px
+        5px;
+
+    border:
+        1px solid
+        rgba(
+            101,
+            158,
+            249,
+            0.14
+        );
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 42, 84, 0.92),
+            rgba(7, 20, 47, 0.99)
+        );
+
+    color:
+        rgba(
+            207,
+            222,
+            246,
+            0.74
+        );
+
+    font-size: 9px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 130ms ease,
+        border-color 130ms ease,
+        background 130ms ease,
+        color 130ms ease;
+}
+
+
+.mobile-caja-open-quick button:active {
+    transform: scale(0.95);
+
+    border-color:
+        rgba(
+            79,
+            149,
+            255,
+            0.44
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(31, 70, 136, 0.94),
+            rgba(10, 34, 78, 0.99)
+        );
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   MENSAJES
+===================================================== */
+
+.mobile-caja-open-message {
+    min-height: 18px;
+
+    margin-top: 11px;
+    padding:
+        0
+        2px;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+
+.mobile-caja-open-message.is-error {
+    color: #ff9aa5;
+}
+
+
+.mobile-caja-open-message.is-success {
+    color: #66e7ad;
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+.mobile-caja-open-actions {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 0.8fr)
+        minmax(0, 1.2fr);
+
+    gap: 9px;
+
+    margin-top: 4px;
+}
+
+
+.mobile-caja-open-actions
+.mobile-button {
+    min-height: 48px;
+
+    border-radius: 15px;
+
+    font-size: 10px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-open-confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding-right: 16px;
+    padding-left: 16px;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.mobile-caja-open-sheet[aria-busy="true"] {
+    cursor: wait;
+}
+
+
+.mobile-caja-open-sheet[aria-busy="true"]
+.mobile-caja-open-confirm {
+    position: relative;
+
+    padding-left: 42px;
+}
+
+
+.mobile-caja-open-sheet[aria-busy="true"]
+.mobile-caja-open-confirm::before {
+    content: "";
+
+    position: absolute;
+    left: 16px;
+
+    width: 16px;
+    height: 16px;
+
+    border:
+        2px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.32
+        );
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileCajaOpenSpin
+        700ms
+        linear
+        infinite;
+}
+
+
+.mobile-caja-open-sheet[aria-busy="true"]
+button,
+.mobile-caja-open-sheet[aria-busy="true"]
+input {
+    cursor: wait;
+}
+
+
+@keyframes mobileCajaOpenSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-caja-modal-backdrop {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+
+    .mobile-caja-open-sheet {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
+
+
+    .mobile-caja-open-header h2 {
+        font-size: 19px;
+    }
+
+
+    .mobile-caja-open-input-wrap input {
+        font-size: 22px;
+    }
+
+
+    .mobile-caja-open-quick {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-modal-backdrop,
+    .mobile-caja-open-sheet,
+    .mobile-caja-open-close,
+    .mobile-caja-open-input-wrap,
+    .mobile-caja-open-quick button {
+        transition: none;
+    }
+
+
+    .mobile-caja-open-sheet[aria-busy="true"]
+    .mobile-caja-open-confirm::before {
+        animation: none;
+    }
+
+}
+
+/* =====================================================
+   M7.3.5.3
+   REGISTRO DE GASTOS PREMIUM
+===================================================== */
+
+
+/* =====================================================
+   SHEET DE GASTO
+===================================================== */
+
+.mobile-caja-expense-sheet {
+    width: min(
+        100%,
+        520px
+    );
+
+    max-height:
+        calc(
+            100dvh -
+            28px
+        );
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        12px
+        16px
+        18px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            107,
+            121,
+            0.18
+        );
+
+    border-radius:
+        24px
+        24px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(34, 19, 38, 0.995),
+            rgba(12, 12, 29, 0.998)
+        );
+
+    box-shadow:
+        0 -18px 54px
+        rgba(0, 0, 0, 0.44);
+
+    transform:
+        translateY(28px)
+        scale(0.985);
+
+    transition:
+        transform 180ms ease;
+}
+
+
+.mobile-caja-modal-backdrop.is-visible
+.mobile-caja-expense-sheet {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-caja-expense-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+
+.mobile-caja-expense-header > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-expense-header > div > span {
+    display: block;
+
+    color:
+        rgba(
+            255,
+            132,
+            145,
+            0.76
+        );
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-caja-expense-header h2 {
+    margin:
+        5px
+        0
+        0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-caja-expense-header p {
+    margin:
+        7px
+        0
+        0;
+
+    color:
+        rgba(
+            205,
+            183,
+            207,
+            0.62
+        );
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+/* =====================================================
+   CAMPOS
+===================================================== */
+
+.mobile-caja-expense-field {
+    display: grid;
+    gap: 8px;
+
+    margin-top: 16px;
+}
+
+
+.mobile-caja-expense-field > span {
+    color:
+        rgba(
+            234,
+            217,
+            236,
+            0.82
+        );
+
+    font-size: 10px;
+    font-weight: 850;
+}
+
+
+.mobile-caja-expense-field > input {
+    width: 100%;
+    min-height: 52px;
+
+    padding:
+        0
+        14px;
+
+    border:
+        1px solid
+        rgba(
+            222,
+            116,
+            150,
+            0.18
+        );
+
+    border-radius: 15px;
+    outline: 0;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(43, 25, 48, 0.96),
+            rgba(17, 15, 33, 0.995)
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 750;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.mobile-caja-expense-field > input:focus {
+    border-color:
+        rgba(
+            255,
+            112,
+            134,
+            0.54
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57, 29, 54, 0.98),
+            rgba(23, 17, 39, 0.998)
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            255,
+            97,
+            123,
+            0.09
+        );
+}
+
+
+.mobile-caja-expense-field > input::placeholder {
+    color:
+        rgba(
+            196,
+            169,
+            201,
+            0.36
+        );
+}
+
+
+.mobile-caja-expense-field small {
+    color:
+        rgba(
+            190,
+            169,
+            197,
+            0.52
+        );
+
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+
+/* =====================================================
+   INPUT DE MONTO
+===================================================== */
+
+.mobile-caja-expense-sheet
+.mobile-caja-open-input-wrap {
+    border-color:
+        rgba(
+            229,
+            111,
+            145,
+            0.18
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(43, 25, 48, 0.97),
+            rgba(17, 15, 33, 0.998)
+        );
+}
+
+
+.mobile-caja-expense-sheet
+.mobile-caja-open-input-wrap:focus-within {
+    border-color:
+        rgba(
+            255,
+            112,
+            134,
+            0.56
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            255,
+            97,
+            123,
+            0.09
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57, 29, 54, 0.99),
+            rgba(23, 17, 39, 0.998)
+        );
+}
+
+
+.mobile-caja-expense-sheet
+.mobile-caja-open-input-wrap > span {
+    color:
+        rgba(
+            255,
+            139,
+            153,
+            0.82
+        );
+}
+
+
+/* =====================================================
+   MONTOS RÁPIDOS
+===================================================== */
+
+.mobile-caja-expense-quick {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 8px;
+
+    margin-top: 13px;
+}
+
+
+.mobile-caja-expense-quick button {
+    min-height: 40px;
+
+    padding:
+        8px
+        5px;
+
+    border:
+        1px solid
+        rgba(
+            224,
+            108,
+            142,
+            0.14
+        );
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(48, 27, 53, 0.92),
+            rgba(18, 15, 34, 0.99)
+        );
+
+    color:
+        rgba(
+            228,
+            207,
+            232,
+            0.74
+        );
+
+    font-size: 9px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 130ms ease,
+        border-color 130ms ease,
+        background 130ms ease,
+        color 130ms ease,
+        box-shadow 130ms ease;
+}
+
+
+.mobile-caja-expense-quick button:active {
+    transform: scale(0.95);
+
+    border-color:
+        rgba(
+            255,
+            113,
+            135,
+            0.46
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(80, 37, 62, 0.95),
+            rgba(35, 19, 42, 0.995)
+        );
+
+    color: #ffffff;
+}
+
+
+.mobile-caja-expense-quick button.is-selected {
+    border-color:
+        rgba(
+            255,
+            109,
+            131,
+            0.58
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(98, 41, 67, 0.94),
+            rgba(42, 21, 46, 0.995)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 1px
+        rgba(
+            255,
+            109,
+            131,
+            0.1
+        ),
+        0 9px 22px
+        rgba(
+            91,
+            25,
+            48,
+            0.2
+        );
+}
+
+
+/* =====================================================
+   MENSAJES
+===================================================== */
+
+.mobile-caja-expense-message {
+    min-height: 18px;
+
+    margin-top: 11px;
+    padding:
+        0
+        2px;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+
+.mobile-caja-expense-message.is-error {
+    color: #ff9aa5;
+}
+
+
+.mobile-caja-expense-message.is-success {
+    color: #66e7ad;
+}
+
+
+/* =====================================================
+   BOTÓN CONFIRMAR
+===================================================== */
+
+.mobile-caja-expense-confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding-right: 16px;
+    padding-left: 16px;
+
+    border-color:
+        rgba(
+            255,
+            108,
+            130,
+            0.28
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(194, 53, 79, 0.96),
+            rgba(126, 27, 53, 0.99)
+        );
+
+    box-shadow:
+        0 12px 28px
+        rgba(
+            123,
+            25,
+            51,
+            0.24
+        );
+}
+
+
+.mobile-caja-expense-confirm:active {
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.mobile-caja-expense-sheet[aria-busy="true"] {
+    cursor: wait;
+}
+
+
+.mobile-caja-expense-sheet[aria-busy="true"]
+.mobile-caja-expense-confirm {
+    position: relative;
+
+    padding-left: 42px;
+}
+
+
+.mobile-caja-expense-sheet[aria-busy="true"]
+.mobile-caja-expense-confirm::before {
+    content: "";
+
+    position: absolute;
+    left: 16px;
+
+    width: 16px;
+    height: 16px;
+
+    border:
+        2px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.32
+        );
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileCajaExpenseSpin
+        700ms
+        linear
+        infinite;
+}
+
+
+.mobile-caja-expense-sheet[aria-busy="true"]
+button,
+.mobile-caja-expense-sheet[aria-busy="true"]
+input {
+    cursor: wait;
+}
+
+
+@keyframes mobileCajaExpenseSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-caja-expense-sheet {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
+
+
+    .mobile-caja-expense-header h2 {
+        font-size: 19px;
+    }
+
+
+    .mobile-caja-expense-quick {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-expense-sheet,
+    .mobile-caja-expense-field > input,
+    .mobile-caja-expense-quick button,
+    .mobile-caja-expense-confirm {
+        transition: none;
+    }
+
+
+    .mobile-caja-expense-sheet[aria-busy="true"]
+    .mobile-caja-expense-confirm::before {
+        animation: none;
+    }
+
+}
+
+/* =====================================================
+   M7.3.6.1
+   HISTORIAL REALTIME DE GASTOS
+===================================================== */
+
+.mobile-caja-expense-history {
+    display: grid;
+    gap: 11px;
+}
+
+
+.mobile-caja-expense-list {
+    display: grid;
+    gap: 9px;
+}
+
+
+.mobile-caja-expense-card {
+    display: grid;
+    grid-template-columns:
+        38px
+        minmax(0, 1fr)
+        auto;
+    align-items: center;
+    gap: 10px;
+
+    padding: 12px 13px;
+
+    border: 1px solid rgba(222, 108, 142, 0.14);
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(40, 24, 46, 0.92),
+            rgba(16, 15, 32, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.025),
+        0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.mobile-caja-expense-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid rgba(255, 112, 134, 0.14);
+    border-radius: 12px;
+
+    background: rgba(126, 34, 59, 0.12);
+
+    font-size: 16px;
+}
+
+
+.mobile-caja-expense-card-copy {
+    min-width: 0;
+}
+
+
+.mobile-caja-expense-card-copy strong {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-expense-card-copy span {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: rgba(204, 184, 209, 0.56);
+
+    font-size: 8px;
+    font-weight: 650;
+}
+
+
+.mobile-caja-expense-card-amount {
+    flex: 0 0 auto;
+
+    color: #ff9ca8;
+
+    font-size: 12px;
+    font-weight: 950;
+    white-space: nowrap;
+}
+
+
+.mobile-caja-expense-empty {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+
+    padding: 24px 16px;
+
+    border: 1px dashed rgba(222, 108, 142, 0.16);
+    border-radius: 16px;
+
+    background: rgba(28, 18, 35, 0.52);
+
+    text-align: center;
+}
+
+
+.mobile-caja-expense-empty > span {
+    font-size: 26px;
+    opacity: 0.72;
+}
+
+
+.mobile-caja-expense-empty strong {
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-expense-empty small {
+    color: rgba(196, 176, 202, 0.54);
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+@media (max-width: 360px) {
+
+    .mobile-caja-expense-card {
+        grid-template-columns:
+            34px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 8px;
+
+        padding: 11px;
+    }
+
+
+    .mobile-caja-expense-card-icon {
+        width: 34px;
+        height: 34px;
+
+        font-size: 15px;
+    }
+
+
+    .mobile-caja-expense-card-copy strong {
+        font-size: 10px;
+    }
+
+
+    .mobile-caja-expense-card-amount {
+        font-size: 11px;
+    }
+
+}
+
+/* =====================================================
+   M7.3.7.4
+   MODAL PREMIUM DE ANULACIÓN DE GASTO
+===================================================== */
+
+
+/* =====================================================
+   SHEET PRINCIPAL
+===================================================== */
+
+.mobile-caja-cancel-expense-sheet {
+    width: min(
+        100%,
+        520px
+    );
+
+    max-height:
+        calc(
+            100dvh -
+            28px
+        );
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        12px
+        16px
+        18px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            92,
+            117,
+            0.24
+        );
+
+    border-radius:
+        24px
+        24px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(41, 17, 29, 0.995),
+            rgba(14, 12, 27, 0.998)
+        );
+
+    box-shadow:
+        0 -18px 56px
+        rgba(
+            0,
+            0,
+            0,
+            0.48
+        );
+
+    transform:
+        translateY(28px)
+        scale(0.985);
+
+    transition:
+        transform 180ms ease;
+}
+
+
+.mobile-caja-modal-backdrop.is-visible
+.mobile-caja-cancel-expense-sheet {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-caja-cancel-expense-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+
+.mobile-caja-cancel-expense-header > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-cancel-expense-header > div > span {
+    display: block;
+
+    color:
+        rgba(
+            255,
+            118,
+            137,
+            0.82
+        );
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-caja-cancel-expense-header h2 {
+    margin:
+        5px
+        0
+        0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-caja-cancel-expense-header p {
+    margin:
+        7px
+        0
+        0;
+
+    color:
+        rgba(
+            210,
+            185,
+            193,
+            0.62
+        );
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+/* =====================================================
+   RESUMEN DEL GASTO
+===================================================== */
+
+.mobile-caja-cancel-expense-summary {
+    display: grid;
+    grid-template-columns:
+        42px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+    gap: 11px;
+
+    margin-top: 16px;
+    padding: 13px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            98,
+            122,
+            0.18
+        );
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(72, 27, 43, 0.72),
+            rgba(30, 17, 31, 0.96)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+}
+
+
+.mobile-caja-cancel-expense-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            112,
+            134,
+            0.2
+        );
+
+    border-radius: 13px;
+
+    background:
+        rgba(
+            147,
+            35,
+            59,
+            0.18
+        );
+
+    font-size: 18px;
+}
+
+
+.mobile-caja-cancel-expense-summary > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-cancel-expense-summary > div > span {
+    display: block;
+
+    color:
+        rgba(
+            255,
+            137,
+            152,
+            0.74
+        );
+
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+
+.mobile-caja-cancel-expense-summary > div > strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-cancel-expense-summary > div > small {
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        rgba(
+            205,
+            184,
+            193,
+            0.54
+        );
+
+    font-size: 8px;
+    font-weight: 650;
+}
+
+
+.mobile-caja-cancel-expense-summary > strong {
+    color: #ff98a6;
+
+    font-size: 13px;
+    font-weight: 950;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   CAMPO MOTIVO
+===================================================== */
+
+.mobile-caja-cancel-expense-sheet
+.mobile-caja-expense-field {
+    margin-top: 16px;
+}
+
+
+.mobile-caja-cancel-expense-sheet
+.mobile-caja-expense-field > input {
+    border-color:
+        rgba(
+            255,
+            104,
+            128,
+            0.2
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(54, 24, 39, 0.94),
+            rgba(20, 15, 29, 0.995)
+        );
+}
+
+
+.mobile-caja-cancel-expense-sheet
+.mobile-caja-expense-field > input:focus {
+    border-color:
+        rgba(
+            255,
+            105,
+            129,
+            0.58
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(69, 28, 44, 0.98),
+            rgba(26, 16, 32, 0.998)
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            255,
+            83,
+            112,
+            0.1
+        );
+}
+
+
+/* =====================================================
+   ADVERTENCIA
+===================================================== */
+
+.mobile-caja-cancel-expense-warning {
+    display: grid;
+    grid-template-columns:
+        30px
+        minmax(0, 1fr);
+
+    align-items: flex-start;
+    gap: 9px;
+
+    margin-top: 14px;
+    padding: 11px 12px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            188,
+            77,
+            0.18
+        );
+
+    border-radius: 14px;
+
+    background:
+        rgba(
+            103,
+            63,
+            18,
+            0.14
+        );
+}
+
+
+.mobile-caja-cancel-expense-warning > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(
+            255,
+            187,
+            69,
+            0.1
+        );
+
+    font-size: 15px;
+}
+
+
+.mobile-caja-cancel-expense-warning p {
+    margin: 0;
+
+    color:
+        rgba(
+            236,
+            213,
+            177,
+            0.72
+        );
+
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+.mobile-caja-cancel-expense-warning strong {
+    color: #ffd28a;
+}
+
+
+/* =====================================================
+   MENSAJES
+===================================================== */
+
+.mobile-caja-cancel-expense-message {
+    min-height: 18px;
+
+    margin-top: 11px;
+    padding:
+        0
+        2px;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+
+.mobile-caja-cancel-expense-message.is-error {
+    color: #ff9ba8;
+}
+
+
+.mobile-caja-cancel-expense-message.is-success {
+    color: #6de8ae;
+}
+
+
+/* =====================================================
+   BOTÓN DE ANULACIÓN
+===================================================== */
+
+.mobile-caja-cancel-expense-confirm {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding-right: 16px;
+    padding-left: 16px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            104,
+            128,
+            0.3
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(198, 50, 77, 0.98),
+            rgba(119, 23, 47, 0.995)
+        );
+
+    box-shadow:
+        0 12px 28px
+        rgba(
+            125,
+            20,
+            48,
+            0.28
+        );
+}
+
+
+.mobile-caja-cancel-expense-confirm:active {
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.mobile-caja-cancel-expense-sheet[aria-busy="true"] {
+    cursor: wait;
+}
+
+
+.mobile-caja-cancel-expense-sheet[aria-busy="true"]
+.mobile-caja-cancel-expense-confirm {
+    padding-left: 42px;
+}
+
+
+.mobile-caja-cancel-expense-sheet[aria-busy="true"]
+.mobile-caja-cancel-expense-confirm::before {
+    content: "";
+
+    position: absolute;
+    left: 16px;
+
+    width: 16px;
+    height: 16px;
+
+    border:
+        2px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.3
+        );
+
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileCajaCancelExpenseSpin
+        700ms
+        linear
+        infinite;
+}
+
+
+.mobile-caja-cancel-expense-sheet[aria-busy="true"]
+button,
+.mobile-caja-cancel-expense-sheet[aria-busy="true"]
+input {
+    cursor: wait;
+}
+
+
+@keyframes mobileCajaCancelExpenseSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =====================================================
+   TARJETAS ANULADAS
+===================================================== */
+
+.mobile-caja-expense-card.is-cancelled {
+    border-color:
+        rgba(
+            255,
+            102,
+            125,
+            0.12
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(50, 25, 34, 0.72),
+            rgba(20, 16, 28, 0.94)
+        );
+
+    opacity: 0.72;
+}
+
+
+.mobile-caja-expense-card.is-cancelled
+.mobile-caja-expense-card-copy > strong {
+    text-decoration: line-through;
+
+    color:
+        rgba(
+            235,
+            209,
+            215,
+            0.64
+        );
+}
+
+
+.mobile-caja-expense-card-copy small {
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        rgba(
+            255,
+            128,
+            145,
+            0.72
+        );
+
+    font-size: 7px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+
+.mobile-caja-expense-card.is-cancelled
+.mobile-caja-expense-card-amount {
+    text-decoration: line-through;
+
+    color:
+        rgba(
+            255,
+            148,
+            161,
+            0.58
+        );
+}
+
+
+/* =====================================================
+   ACCIONES DE LA TARJETA
+===================================================== */
+
+.mobile-caja-expense-actions {
+    display: grid;
+    justify-items: end;
+    gap: 7px;
+}
+
+
+.mobile-caja-expense-delete {
+    min-height: 27px;
+
+    padding:
+        5px
+        9px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            105,
+            129,
+            0.24
+        );
+
+    border-radius: 9px;
+
+    background:
+        rgba(
+            137,
+            26,
+            53,
+            0.16
+        );
+
+    color: #ff9aa8;
+
+    font-size: 8px;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    transition:
+        transform 130ms ease,
+        border-color 130ms ease,
+        background 130ms ease,
+        color 130ms ease;
+}
+
+
+.mobile-caja-expense-delete:active {
+    transform: scale(0.95);
+
+    border-color:
+        rgba(
+            255,
+            112,
+            135,
+            0.54
+        );
+
+    background:
+        rgba(
+            162,
+            34,
+            61,
+            0.28
+        );
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-caja-cancel-expense-sheet {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
+
+
+    .mobile-caja-cancel-expense-header h2 {
+        font-size: 19px;
+    }
+
+
+    .mobile-caja-cancel-expense-summary {
+        grid-template-columns:
+            38px
+            minmax(0, 1fr);
+
+        gap: 9px;
+    }
+
+
+    .mobile-caja-cancel-expense-summary > strong {
+        grid-column:
+            2;
+
+        justify-self: start;
+    }
+
+
+    .mobile-caja-cancel-expense-icon {
+        width: 38px;
+        height: 38px;
+
+        font-size: 16px;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-cancel-expense-sheet,
+    .mobile-caja-cancel-expense-confirm,
+    .mobile-caja-expense-delete {
+        transition: none;
+    }
+
+
+    .mobile-caja-cancel-expense-sheet[aria-busy="true"]
+    .mobile-caja-cancel-expense-confirm::before {
+        animation: none;
+    }
+
+}
