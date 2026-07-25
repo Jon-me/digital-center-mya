@@ -517,6 +517,20 @@ function normalizarGastoCajaMobile(
     id = ""
 ){
 
+    const estado =
+        String(
+            datos.estado ||
+            "activo"
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const anulado =
+        datos.anulado === true ||
+        estado === "anulado";
+
+
     return {
 
         id:
@@ -572,43 +586,77 @@ function normalizarGastoCajaMobile(
             String(
                 datos.registradoPor ||
                 "Sin usuario"
-            )
+            ),
 
-            ,
+        registradoPorUsuario:
+            String(
+                datos.registradoPorUsuario ||
+                ""
+            ),
 
-estado:
-    String(
-        datos.estado ||
-        "activo"
-    ),
+        origen:
+            String(
+                datos.origen ||
+                ""
+            ),
 
-anulado:
-    datos.anulado === true ||
-    datos.estado === "anulado",
+        estado:
+            anulado
+                ? "anulado"
+                : "activo",
 
-anuladoPor:
-    String(
-        datos.anuladoPor ||
-        ""
-    ),
+        anulado,
 
-fechaAnulacion:
-    String(
-        datos.fechaAnulacion ||
-        ""
-    ),
+        motivoAnulacion:
+            String(
+                datos.motivoAnulacion ||
+                ""
+            ),
 
-horaAnulacion:
-    String(
-        datos.horaAnulacion ||
-        ""
-    ),
+        anuladoPor:
+            String(
+                datos.anuladoPor ||
+                ""
+            ),
 
-motivoAnulacion:
-    String(
-        datos.motivoAnulacion ||
-        ""
-    )
+        anuladoPorUsuario:
+            String(
+                datos.anuladoPorUsuario ||
+                ""
+            ),
+
+        autorizadoPor:
+            String(
+                datos.autorizadoPor ||
+                ""
+            ),
+
+        autorizadoPorUsuario:
+            String(
+                datos.autorizadoPorUsuario ||
+                ""
+            ),
+
+        fechaAnulacion:
+            String(
+                datos.fechaAnulacion ||
+                ""
+            ),
+
+        horaAnulacion:
+            String(
+                datos.horaAnulacion ||
+                ""
+            ),
+
+        origenAnulacion:
+            String(
+                datos.origenAnulacion ||
+                ""
+            ),
+
+        autorizado:
+            datos.autorizado === true
 
     };
 
@@ -1120,6 +1168,16 @@ async function registrarGastoCajaMobile(
     const nombreUsuario =
         obtenerNombreUsuarioCajaMobile();
 
+    const sesion =
+        obtenerSesionMobile();
+
+
+    const usuarioRegistro =
+        String(
+            sesion?.usuario ||
+            ""
+        );    
+
 
     const ahora =
         new Date();
@@ -1224,6 +1282,9 @@ async function registrarGastoCajaMobile(
                             registradoPor:
                                 nombreUsuario,
 
+                            registradoPorUsuario:
+                                usuarioRegistro,
+
                             creadoEn:
                                 serverTimestamp(),
 
@@ -1236,6 +1297,60 @@ async function registrarGastoCajaMobile(
                         }
 
                     );
+
+                    const gastosActuales =
+    normalizarMontoCajaMobile(
+        datosCaja.gastosDia
+    );
+
+
+const cajaEsperadaActual =
+    normalizarMontoCajaMobile(
+        datosCaja.cajaEsperada
+    );
+
+
+const nuevosGastos =
+    normalizarMontoCajaMobile(
+        gastosActuales +
+        monto
+    );
+
+
+const nuevaCajaEsperada =
+    normalizarMontoCajaMobile(
+        cajaEsperadaActual -
+        monto
+    );
+
+
+transaccion.update(
+
+    cajaRef,
+
+    {
+
+        gastosDia:
+            nuevosGastos,
+
+        cajaEsperada:
+            nuevaCajaEsperada,
+
+        actualizadaEn:
+            serverTimestamp(),
+
+        ultimaOperacion:
+            "registro-gasto",
+
+        ultimaOperacionOrigen:
+            "mobile",
+
+        ultimaOperacionPor:
+            nombreUsuario
+
+    }
+
+);
 
 
                     return {
@@ -1369,7 +1484,7 @@ async function registrarGastoCajaMobile(
 }
 
 // =====================================================
-// ANULACIÓN DE GASTOS
+// ANULACIÓN AUDITADA DE GASTOS
 // =====================================================
 
 async function anularGastoCajaMobile(
@@ -1400,33 +1515,39 @@ async function anularGastoCajaMobile(
         String(
             opciones.gastoId ||
             ""
-        ).trim();
+        )
+            .trim();
 
 
-    const motivo =
+    const motivoAnulacion =
         String(
             opciones.motivo ||
             ""
-        ).trim();
+        )
+            .trim();
 
 
     const autorizado =
-        opciones.autorizado ===
-        true;
+        opciones.autorizado === true;
 
 
-    const rolUsuario =
-        obtenerRolUsuarioCajaMobile();
+    const autorizadoPor =
+        String(
+            opciones.autorizadoPor ||
+            ""
+        )
+            .trim();
 
 
-    const esAdministrador =
-        rolUsuario === "admin" ||
-        rolUsuario === "administrador";
+    const autorizadoPorUsuario =
+        String(
+            opciones.autorizadoPorUsuario ||
+            ""
+        )
+            .trim();
 
 
-    if(
-        !gastoId
-    ){
+    if(!gastoId){
 
         return {
 
@@ -1437,7 +1558,7 @@ async function anularGastoCajaMobile(
                 "gasto-invalido",
 
             mensaje:
-                "No se pudo identificar el gasto."
+                "No se encontró el gasto que deseas anular."
 
         };
 
@@ -1445,7 +1566,7 @@ async function anularGastoCajaMobile(
 
 
     if(
-        motivo.length < 3
+        motivoAnulacion.length < 3
     ){
 
         return {
@@ -1457,7 +1578,25 @@ async function anularGastoCajaMobile(
                 "motivo-invalido",
 
             mensaje:
-                "Ingresa el motivo de la anulación."
+                "Ingresa un motivo válido para la anulación."
+
+        };
+
+    }
+
+
+    if(!autorizado){
+
+        return {
+
+            completada:
+                false,
+
+            motivo:
+                "autorizacion-requerida",
+
+            mensaje:
+                "Esta operación requiere autorización administrativa."
 
         };
 
@@ -1465,8 +1604,8 @@ async function anularGastoCajaMobile(
 
 
     if(
-        !esAdministrador &&
-        !autorizado
+        !autorizadoPor ||
+        !autorizadoPorUsuario
     ){
 
         return {
@@ -1475,10 +1614,10 @@ async function anularGastoCajaMobile(
                 false,
 
             motivo:
-                "requiere-autorizacion",
+                "auditoria-incompleta",
 
             mensaje:
-                "Se requiere autorización administrativa para anular este gasto."
+                "No se pudo identificar al administrador que autorizó la operación."
 
         };
 
@@ -1516,34 +1655,49 @@ async function anularGastoCajaMobile(
 
     const cajaRef =
         doc(
+
             mobileDB,
+
             "cajas",
+
             cajaId
+
         );
 
 
     const gastoRef =
         doc(
+
             mobileDB,
+
             "cajas",
+
             cajaId,
+
             "gastos",
+
             gastoId
+
         );
 
 
-    const usuarioActual =
-        obtenerNombreUsuarioCajaMobile();
+    const sesion =
+        obtenerSesionMobile();
 
 
-    const autorizadoPor =
+    const anuladoPor =
         String(
-            opciones.autorizadoPor ||
-            (
-                esAdministrador
-                    ? usuarioActual
-                    : "Administrador autorizado"
-            )
+            sesion?.nombreCompleto ||
+            sesion?.nombre ||
+            sesion?.usuario ||
+            "Sin usuario"
+        );
+
+
+    const anuladoPorUsuario =
+        String(
+            sesion?.usuario ||
+            ""
         );
 
 
@@ -1557,141 +1711,234 @@ async function anularGastoCajaMobile(
 
     try{
 
-        await runTransaction(
+        const resultado =
+            await runTransaction(
 
-            mobileDB,
+                mobileDB,
 
-            async function(
-                transaccion
-            ){
-
-                /*
-                 * Primero realizamos todas las lecturas.
-                 */
-
-                const snapshotCaja =
-                    await transaccion.get(
-                        cajaRef
-                    );
-
-
-                const snapshotGasto =
-                    await transaccion.get(
-                        gastoRef
-                    );
-
-
-                if(
-                    !snapshotCaja.exists()
+                async function(
+                    transaccion
                 ){
 
-                    throw new Error(
-                        "CAJA_NO_EXISTE"
-                    );
-
-                }
-
-
-                const datosCaja =
-                    snapshotCaja.data() ||
-                    {};
+                    const snapshotCaja =
+                        await transaccion.get(
+                            cajaRef
+                        );
 
 
-                if(
-                    datosCaja.anulada ===
-                    true
-                ){
+                    if(
+                        !snapshotCaja.exists()
+                    ){
 
-                    throw new Error(
-                        "CAJA_ANULADA"
-                    );
-
-                }
-
-
-                if(
-                    datosCaja.abierta !==
-                    true
-                ){
-
-                    throw new Error(
-                        "CAJA_CERRADA"
-                    );
-
-                }
-
-
-                if(
-                    !snapshotGasto.exists()
-                ){
-
-                    throw new Error(
-                        "GASTO_NO_EXISTE"
-                    );
-
-                }
-
-
-                const datosGasto =
-                    snapshotGasto.data() ||
-                    {};
-
-
-                if(
-                    datosGasto.anulado ===
-                    true ||
-                    datosGasto.estado ===
-                    "anulado"
-                ){
-
-                    throw new Error(
-                        "GASTO_YA_ANULADO"
-                    );
-
-                }
-
-
-                transaccion.update(
-
-                    gastoRef,
-
-                    {
-
-                        estado:
-                            "anulado",
-
-                        anulado:
-                            true,
-
-                        motivoAnulacion:
-                            motivo,
-
-                        anuladoPor:
-                            autorizadoPor,
-
-                        fechaAnulacion:
-                            obtenerFechaLocalCajaMobile(
-                                ahora
-                            ),
-
-                        horaAnulacion:
-                            obtenerHoraLocalCajaMobile(
-                                ahora
-                            ),
-
-                        anuladoEn:
-                            serverTimestamp(),
-
-                        origenAnulacion:
-                            "mobile"
+                        throw new Error(
+                            "CAJA_NO_EXISTE"
+                        );
 
                     }
 
-                );
 
-            }
+                    const datosCaja =
+                        snapshotCaja.data() ||
+                        {};
 
-        );
+
+                    if(
+                        datosCaja.anulada ===
+                        true
+                    ){
+
+                        throw new Error(
+                            "CAJA_ANULADA"
+                        );
+
+                    }
+
+
+                    if(
+                        datosCaja.abierta !==
+                        true
+                    ){
+
+                        throw new Error(
+                            "CAJA_CERRADA"
+                        );
+
+                    }
+
+
+                    const snapshotGasto =
+                        await transaccion.get(
+                            gastoRef
+                        );
+
+
+                    if(
+                        !snapshotGasto.exists()
+                    ){
+
+                        throw new Error(
+                            "GASTO_NO_EXISTE"
+                        );
+
+                    }
+
+
+                    const datosGasto =
+                        snapshotGasto.data() ||
+                        {};
+
+
+                    const gastoYaAnulado =
+                        datosGasto.anulado === true ||
+                        String(
+                            datosGasto.estado ||
+                            ""
+                        )
+                            .trim()
+                            .toLowerCase() ===
+                            "anulado";
+
+
+                    if(gastoYaAnulado){
+
+                        throw new Error(
+                            "GASTO_YA_ANULADO"
+                        );
+
+                    }
+
+
+                    const montoGasto =
+                        normalizarMontoCajaMobile(
+                            datosGasto.monto
+                        );
+
+
+                    transaccion.update(
+
+                        gastoRef,
+
+                        {
+
+                            estado:
+                                "anulado",
+
+                            anulado:
+                                true,
+
+                            motivoAnulacion,
+
+                            anuladoPor,
+
+                            anuladoPorUsuario,
+
+                            autorizado:
+                                true,
+
+                            autorizadoPor,
+
+                            autorizadoPorUsuario,
+
+                            fechaAnulacion:
+                                obtenerFechaLocalCajaMobile(
+                                    ahora
+                                ),
+
+                            fechaAnulacionISO:
+                                fechaISO,
+
+                            horaAnulacion:
+                                obtenerHoraLocalCajaMobile(
+                                    ahora
+                                ),
+
+                            anuladaEn:
+                                serverTimestamp(),
+
+                            origenAnulacion:
+                                "mobile"
+
+                        }
+
+                    );
+
+
+                    const gastosActuales =
+                        normalizarMontoCajaMobile(
+                            datosCaja.gastosDia
+                        );
+
+
+                    const cajaEsperadaActual =
+                        normalizarMontoCajaMobile(
+                            datosCaja.cajaEsperada
+                        );
+
+
+                    const nuevosGastos =
+                        normalizarMontoCajaMobile(
+                            Math.max(
+                                0,
+                                gastosActuales -
+                                montoGasto
+                            )
+                        );
+
+
+                    const nuevaCajaEsperada =
+                        normalizarMontoCajaMobile(
+                            cajaEsperadaActual +
+                            montoGasto
+                        );
+
+
+                    transaccion.update(
+
+                        cajaRef,
+
+                        {
+
+                            gastosDia:
+                                nuevosGastos,
+
+                            cajaEsperada:
+                                nuevaCajaEsperada,
+
+                            actualizadaEn:
+                                serverTimestamp(),
+
+                            ultimaOperacion:
+                                "anulacion-gasto",
+
+                            ultimaOperacionOrigen:
+                                "mobile",
+
+                            ultimaOperacionPor:
+                                anuladoPor
+
+                        }
+
+                    );
+
+
+                    return {
+
+                        gastoId,
+
+                        monto:
+                            montoGasto,
+
+                        gastosDia:
+                            nuevosGastos,
+
+                        cajaEsperada:
+                            nuevaCajaEsperada
+
+                    };
+
+                }
+
+            );
 
 
         return {
@@ -1705,11 +1952,27 @@ async function anularGastoCajaMobile(
             mensaje:
                 "Gasto anulado correctamente.",
 
-            gastoId,
+            gastoId:
+                resultado.gastoId,
+
+            monto:
+                resultado.monto,
+
+            gastosDia:
+                resultado.gastosDia,
+
+            cajaEsperada:
+                resultado.cajaEsperada,
 
             sucursalId,
 
-            autorizadoPor
+            anuladoPor,
+
+            anuladoPorUsuario,
+
+            autorizadoPor,
+
+            autorizadoPorUsuario
 
         };
 
@@ -1721,24 +1984,109 @@ async function anularGastoCajaMobile(
         );
 
 
-        const mensajes = {
+        if(
+            error?.message ===
+            "CAJA_NO_EXISTE"
+        ){
 
-            CAJA_NO_EXISTE:
-                "La caja seleccionada no existe.",
+            return {
 
-            CAJA_CERRADA:
-                "No puedes anular gastos porque la caja está cerrada.",
+                completada:
+                    false,
 
-            CAJA_ANULADA:
-                "No puedes modificar una caja anulada.",
+                motivo:
+                    "caja-no-existe",
 
-            GASTO_NO_EXISTE:
-                "El gasto seleccionado ya no existe.",
+                mensaje:
+                    "No se encontró la caja seleccionada."
 
-            GASTO_YA_ANULADO:
-                "Este gasto ya fue anulado."
+            };
 
-        };
+        }
+
+
+        if(
+            error?.message ===
+            "CAJA_CERRADA"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "caja-cerrada",
+
+                mensaje:
+                    "No puedes anular gastos porque la caja está cerrada."
+
+            };
+
+        }
+
+
+        if(
+            error?.message ===
+            "CAJA_ANULADA"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "caja-anulada",
+
+                mensaje:
+                    "No puedes modificar una caja anulada."
+
+            };
+
+        }
+
+
+        if(
+            error?.message ===
+            "GASTO_NO_EXISTE"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "gasto-no-existe",
+
+                mensaje:
+                    "El gasto seleccionado ya no existe."
+
+            };
+
+        }
+
+
+        if(
+            error?.message ===
+            "GASTO_YA_ANULADO"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "gasto-ya-anulado",
+
+                mensaje:
+                    "Este gasto ya fue anulado anteriormente."
+
+            };
+
+        }
 
 
         return {
@@ -1750,9 +2098,6 @@ async function anularGastoCajaMobile(
                 "error-anulacion-gasto",
 
             mensaje:
-                mensajes[
-                    error?.message
-                ] ||
                 error?.message ||
                 "No se pudo anular el gasto.",
 

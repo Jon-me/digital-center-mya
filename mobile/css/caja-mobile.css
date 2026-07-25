@@ -3085,3 +3085,983 @@ input {
     }
 
 }
+
+/* =====================================================
+   M7.3.8.3
+   ADMIN AUTHORIZATION ENGINE MOBILE
+   MODAL UNIVERSAL PREMIUM
+===================================================== */
+
+
+/* =====================================================
+   PORTAL
+===================================================== */
+
+.mobile-admin-auth-portal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 99999;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   BACKDROP
+===================================================== */
+
+.mobile-admin-auth-backdrop {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding:
+        14px;
+
+    background:
+        rgba(
+            4,
+            7,
+            18,
+            0.74
+        );
+
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition:
+        opacity 180ms ease;
+}
+
+
+.mobile-admin-auth-backdrop.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   BLOQUEO DEL BODY
+===================================================== */
+
+body.mobile-admin-auth-open {
+    overflow: hidden;
+    touch-action: none;
+}
+
+
+/* =====================================================
+   SHEET
+===================================================== */
+
+.mobile-admin-auth-sheet {
+    width:
+        min(
+            100%,
+            520px
+        );
+
+    max-height:
+        calc(
+            100dvh -
+            28px
+        );
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        10px
+        16px
+        18px;
+
+    border:
+        1px solid
+        rgba(
+            68,
+            154,
+            255,
+            0.26
+        );
+
+    border-radius:
+        25px
+        25px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(20, 34, 64, 0.995),
+            rgba(8, 13, 29, 0.998)
+        );
+
+    box-shadow:
+        0 -22px 60px
+        rgba(
+            0,
+            0,
+            0,
+            0.52
+        ),
+        inset 0 1px 0
+        rgba(
+            255,
+            255,
+            255,
+            0.035
+        );
+
+    transform:
+        translateY(32px)
+        scale(0.985);
+
+    transition:
+        transform 190ms ease;
+}
+
+
+.mobile-admin-auth-backdrop.is-visible
+.mobile-admin-auth-sheet {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =====================================================
+   HANDLE
+===================================================== */
+
+.mobile-admin-auth-handle {
+    width: 42px;
+    height: 4px;
+
+    margin:
+        0
+        auto
+        13px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            147,
+            193,
+            255,
+            0.28
+        );
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-admin-auth-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+
+.mobile-admin-auth-header > div {
+    min-width: 0;
+}
+
+
+.mobile-admin-auth-header > div > span {
+    display: block;
+
+    color:
+        rgba(
+            108,
+            181,
+            255,
+            0.84
+        );
+
+    font-size: 8px;
+    font-weight: 950;
+    letter-spacing: 0.13em;
+}
+
+
+.mobile-admin-auth-header h2 {
+    margin:
+        5px
+        0
+        0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 950;
+    line-height: 1.08;
+}
+
+
+.mobile-admin-auth-header p {
+    margin:
+        7px
+        0
+        0;
+
+    max-width: 410px;
+
+    color:
+        rgba(
+            201,
+            217,
+            241,
+            0.64
+        );
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   BOTÓN CERRAR
+===================================================== */
+
+.mobile-admin-auth-close {
+    flex:
+        0
+        0
+        auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(
+            117,
+            178,
+            255,
+            0.16
+        );
+
+    border-radius: 11px;
+
+    background:
+        rgba(
+            77,
+            132,
+            207,
+            0.1
+        );
+
+    color:
+        rgba(
+            225,
+            238,
+            255,
+            0.76
+        );
+
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        transform 130ms ease,
+        border-color 130ms ease,
+        background 130ms ease,
+        color 130ms ease;
+}
+
+
+.mobile-admin-auth-close:active {
+    transform: scale(0.94);
+
+    border-color:
+        rgba(
+            126,
+            187,
+            255,
+            0.4
+        );
+
+    background:
+        rgba(
+            84,
+            148,
+            232,
+            0.18
+        );
+
+    color: #ffffff;
+}
+
+
+/* =====================================================
+   ACCIÓN SOLICITADA
+===================================================== */
+
+.mobile-admin-auth-action {
+    display: grid;
+    grid-template-columns:
+        42px
+        minmax(0, 1fr);
+
+    align-items: center;
+    gap: 11px;
+
+    margin-top: 16px;
+    padding: 12px 13px;
+
+    border:
+        1px solid
+        rgba(
+            65,
+            151,
+            255,
+            0.18
+        );
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(29, 74, 137, 0.32),
+            rgba(13, 29, 57, 0.92)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+}
+
+
+.mobile-admin-auth-action > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border:
+        1px solid
+        rgba(
+            100,
+            175,
+            255,
+            0.2
+        );
+
+    border-radius: 13px;
+
+    background:
+        rgba(
+            54,
+            129,
+            218,
+            0.14
+        );
+
+    font-size: 18px;
+}
+
+
+.mobile-admin-auth-action > div {
+    min-width: 0;
+}
+
+
+.mobile-admin-auth-action small {
+    display: block;
+
+    color:
+        rgba(
+            116,
+            185,
+            255,
+            0.74
+        );
+
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 0.09em;
+}
+
+
+.mobile-admin-auth-action strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+
+.mobile-admin-auth-form {
+    display: grid;
+    gap: 13px;
+
+    margin-top: 16px;
+}
+
+
+/* =====================================================
+   CAMPOS
+===================================================== */
+
+.mobile-admin-auth-field {
+    display: grid;
+    gap: 7px;
+}
+
+
+.mobile-admin-auth-field > span {
+    color:
+        rgba(
+            200,
+            220,
+            247,
+            0.74
+        );
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.035em;
+}
+
+
+.mobile-admin-auth-field > input,
+.mobile-admin-auth-field > textarea,
+.mobile-admin-auth-password > input {
+    width: 100%;
+
+    border:
+        1px solid
+        rgba(
+            89,
+            160,
+            255,
+            0.2
+        );
+
+    border-radius: 13px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 45, 78, 0.94),
+            rgba(11, 20, 39, 0.995)
+        );
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 140ms ease,
+        box-shadow 140ms ease,
+        background 140ms ease;
+}
+
+
+.mobile-admin-auth-field > input,
+.mobile-admin-auth-password > input {
+    min-height: 46px;
+
+    padding:
+        0
+        13px;
+}
+
+
+.mobile-admin-auth-field > textarea {
+    min-height: 84px;
+
+    padding:
+        12px
+        13px;
+
+    resize: vertical;
+
+    line-height: 1.45;
+}
+
+
+.mobile-admin-auth-field > input::placeholder,
+.mobile-admin-auth-field > textarea::placeholder,
+.mobile-admin-auth-password > input::placeholder {
+    color:
+        rgba(
+            179,
+            202,
+            233,
+            0.34
+        );
+
+    font-weight: 600;
+}
+
+
+.mobile-admin-auth-field > input:focus,
+.mobile-admin-auth-field > textarea:focus,
+.mobile-admin-auth-password > input:focus {
+    border-color:
+        rgba(
+            88,
+            171,
+            255,
+            0.62
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(31, 57, 97, 0.98),
+            rgba(12, 24, 47, 0.998)
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            56,
+            145,
+            255,
+            0.11
+        );
+}
+
+
+/* =====================================================
+   PASSWORD
+===================================================== */
+
+.mobile-admin-auth-password {
+    position: relative;
+}
+
+
+.mobile-admin-auth-password > input {
+    padding-right: 50px;
+}
+
+
+.mobile-admin-auth-password > button {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(
+            102,
+            172,
+            255,
+            0.12
+        );
+
+    border-radius: 10px;
+
+    background:
+        rgba(
+            68,
+            137,
+            220,
+            0.1
+        );
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transform:
+        translateY(-50%);
+}
+
+
+.mobile-admin-auth-password > button:active {
+    transform:
+        translateY(-50%)
+        scale(0.94);
+}
+
+
+/* =====================================================
+   MENSAJE
+===================================================== */
+
+.mobile-admin-auth-message {
+    min-height: 18px;
+
+    margin: 0;
+    padding:
+        0
+        2px;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+
+.mobile-admin-auth-message.is-error {
+    color: #ff9aaa;
+}
+
+
+.mobile-admin-auth-message.is-success {
+    color: #6ce5ae;
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+.mobile-admin-auth-actions {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 0.78fr)
+        minmax(0, 1.22fr);
+
+    gap: 10px;
+
+    margin-top: 2px;
+}
+
+
+.mobile-admin-auth-cancel,
+.mobile-admin-auth-confirm {
+    min-height: 44px;
+
+    padding:
+        0
+        14px;
+
+    border-radius: 13px;
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        transform 130ms ease,
+        border-color 130ms ease,
+        background 130ms ease,
+        opacity 130ms ease;
+}
+
+
+.mobile-admin-auth-cancel {
+    border:
+        1px solid
+        rgba(
+            126,
+            168,
+            221,
+            0.18
+        );
+
+    background:
+        rgba(
+            57,
+            91,
+            137,
+            0.1
+        );
+
+    color:
+        rgba(
+            215,
+            230,
+            250,
+            0.72
+        );
+}
+
+
+.mobile-admin-auth-confirm {
+    position: relative;
+
+    border:
+        1px solid
+        rgba(
+            98,
+            181,
+            255,
+            0.42
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(42, 144, 255, 0.99),
+            rgba(20, 78, 190, 0.995)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 12px 28px
+        rgba(
+            17,
+            83,
+            188,
+            0.3
+        );
+}
+
+
+.mobile-admin-auth-cancel:active,
+.mobile-admin-auth-confirm:active {
+    transform: scale(0.97);
+}
+
+
+.mobile-admin-auth-cancel:disabled,
+.mobile-admin-auth-confirm:disabled {
+    opacity: 0.58;
+    cursor: wait;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.mobile-admin-auth-sheet[aria-busy="true"] {
+    cursor: wait;
+}
+
+
+.mobile-admin-auth-sheet[aria-busy="true"]
+.mobile-admin-auth-confirm {
+    padding-left: 40px;
+}
+
+
+.mobile-admin-auth-sheet[aria-busy="true"]
+.mobile-admin-auth-confirm::before {
+    content: "";
+
+    position: absolute;
+    left: 15px;
+    top: 50%;
+
+    width: 15px;
+    height: 15px;
+
+    border:
+        2px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.3
+        );
+
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    transform:
+        translateY(-50%);
+
+    animation:
+        mobileAdminAuthSpin
+        700ms
+        linear
+        infinite;
+}
+
+
+.mobile-admin-auth-sheet[aria-busy="true"]
+input,
+.mobile-admin-auth-sheet[aria-busy="true"]
+textarea,
+.mobile-admin-auth-sheet[aria-busy="true"]
+button {
+    cursor: wait;
+}
+
+
+@keyframes mobileAdminAuthSpin {
+
+    from {
+        transform:
+            translateY(-50%)
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            translateY(-50%)
+            rotate(360deg);
+    }
+
+}
+
+
+/* =====================================================
+   AUTOFILL
+===================================================== */
+
+.mobile-admin-auth-sheet
+input:-webkit-autofill,
+.mobile-admin-auth-sheet
+input:-webkit-autofill:hover,
+.mobile-admin-auth-sheet
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff;
+
+    box-shadow:
+        0 0 0 1000px
+        rgb(18, 34, 61)
+        inset;
+
+    transition:
+        background-color
+        9999s
+        ease-out;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-admin-auth-backdrop {
+        padding:
+            10px;
+    }
+
+
+    .mobile-admin-auth-sheet {
+        padding:
+            9px
+            13px
+            15px;
+    }
+
+
+    .mobile-admin-auth-header h2 {
+        font-size: 19px;
+    }
+
+
+    .mobile-admin-auth-action {
+        grid-template-columns:
+            38px
+            minmax(0, 1fr);
+    }
+
+
+    .mobile-admin-auth-action > span {
+        width: 38px;
+        height: 38px;
+
+        font-size: 16px;
+    }
+
+
+    .mobile-admin-auth-actions {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .mobile-admin-auth-confirm {
+        grid-row: 1;
+    }
+
+
+    .mobile-admin-auth-cancel {
+        grid-row: 2;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-admin-auth-backdrop,
+    .mobile-admin-auth-sheet,
+    .mobile-admin-auth-close,
+    .mobile-admin-auth-cancel,
+    .mobile-admin-auth-confirm {
+        transition: none;
+    }
+
+
+    .mobile-admin-auth-sheet[aria-busy="true"]
+    .mobile-admin-auth-confirm::before {
+        animation: none;
+    }
+
+}

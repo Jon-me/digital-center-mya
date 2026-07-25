@@ -34,10 +34,21 @@ import {
 
 import {
 
-    obtenerTiendaVentaMobile
+    obtenerTiendaVentaMobile,
+
+    obtenerSesionMobile,
+
+    obtenerRolMobile
 
 } from "../state-mobile.js";
 
+import {
+
+    solicitarAutorizacionAdminMobile,
+
+    cerrarAutorizacionAdminMobile
+
+} from "../components/admin-authorization-mobile.js";
 
 // =====================================================
 // ESTADO DE VISTA
@@ -2110,6 +2121,13 @@ async function confirmarAnulacionGastoCajaMobile(){
         false;
 
 
+    const gastoSeleccionado = {
+
+        ...gastoSeleccionadoAnulacionMobile
+
+    };
+
+
     const inputMotivo =
         portalAnulacionGastoCajaMobile
             ?.querySelector(
@@ -2146,6 +2164,130 @@ async function confirmarAnulacionGastoCajaMobile(){
     );
 
 
+    const sesion =
+        obtenerSesionMobile();
+
+
+    const rol =
+        String(
+            obtenerRolMobile() ||
+            sesion?.rol ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    let autorizado =
+        rol === "admin";
+
+
+    let autorizadoPor = {
+
+        usuario:
+            String(
+                sesion?.usuario ||
+                ""
+            ),
+
+        nombre:
+            String(
+                sesion?.nombreCompleto ||
+                sesion?.usuario ||
+                "Administrador"
+            )
+
+    };
+
+
+    /*
+     * El administrador activo puede ejecutar
+     * directamente la operación.
+     *
+     * El vendedor necesita elevar temporalmente
+     * sus permisos mediante credenciales admin.
+     */
+    if(
+        rol !== "admin"
+    ){
+
+        const autorizacion =
+            await solicitarAutorizacionAdminMobile({
+
+                titulo:
+                    "Autorizar anulación",
+
+                descripcion:
+                    "Esta operación modificará los gastos y el efectivo esperado de la caja.",
+
+                accion:
+                    `Anular gasto: ${
+                        gastoSeleccionado.descripcion ||
+                        "Gasto"
+                    }`,
+
+                solicitarMotivo:
+                    false,
+
+                motivoObligatorio:
+                    false,
+
+                textoConfirmar:
+                    "Autorizar anulación"
+
+            });
+
+
+        if(
+            !autorizacion?.autorizado
+        ){
+
+            if(
+                !autorizacion?.cancelado
+            ){
+
+                mostrarMensajeAnulacionGastoCajaMobile(
+                    autorizacion?.mensaje ||
+                    "No se concedió la autorización administrativa."
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        autorizado =
+            true;
+
+
+        autorizadoPor = {
+
+            usuario:
+                String(
+                    autorizacion
+                        ?.administrador
+                        ?.usuario ||
+                    ""
+                ),
+
+            nombre:
+                String(
+                    autorizacion
+                        ?.administrador
+                        ?.nombre ||
+                    autorizacion
+                        ?.administrador
+                        ?.usuario ||
+                    "Administrador"
+                )
+
+        };
+
+    }
+
+
     establecerLoadingAnulacionGastoCajaMobile(
         true
     );
@@ -2157,15 +2299,20 @@ async function confirmarAnulacionGastoCajaMobile(){
             await anularGastoCajaMobile({
 
                 gastoId:
-                    gastoSeleccionadoAnulacionMobile.id,
+                    gastoSeleccionado.id,
 
                 motivo,
 
                 sucursalId:
                     obtenerTiendaCajaMobile(),
 
-                autorizado:
-                    false
+                autorizado,
+
+                autorizadoPor:
+                    autorizadoPor.nombre,
+
+                autorizadoPorUsuario:
+                    autorizadoPor.usuario
 
             });
 
@@ -2190,7 +2337,8 @@ async function confirmarAnulacionGastoCajaMobile(){
 
 
         mostrarMensajeAnulacionGastoCajaMobile(
-            resultado.mensaje,
+            resultado.mensaje ||
+            "Gasto anulado correctamente.",
             "success"
         );
 
@@ -2914,10 +3062,12 @@ function construirDashboardCajaMobile(
     gastos.reduce(
         function(total, gasto){
 
-            if(
+            const anulado =
                 gasto.anulado === true ||
-                gasto.estado === "anulado"
-            ){
+                gasto.estado === "anulado";
+
+
+            if(anulado){
 
                 return total;
 
@@ -2927,7 +3077,8 @@ function construirDashboardCajaMobile(
             return (
                 total +
                 Number(
-                    gasto.monto || 0
+                    gasto.monto ||
+                    0
                 )
             );
 
@@ -3393,6 +3544,8 @@ export function reiniciarCajaMobile(){
 
 
     detenerRealtimeCajaMobile();
+
+    cerrarAutorizacionAdminMobile();
 
     if(
     portalAperturaCajaMobile
