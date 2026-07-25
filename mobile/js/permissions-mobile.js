@@ -11,7 +11,8 @@ const RUTAS_MOBILE_POR_ROL = {
         "ventas",
         "inventario",
         "caja",
-        "mas"
+        "mas",
+        "garantias"
     ],
 
     vendedor: [
@@ -19,7 +20,8 @@ const RUTAS_MOBILE_POR_ROL = {
         "ventas",
         "inventario",
         "caja",
-        "mas"
+        "mas",
+        "garantias"
     ]
 
 };

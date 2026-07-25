@@ -55,6 +55,11 @@ import {
     reiniciarMasMobile
 } from "../views/mas-mobile.js";
 
+import {
+    renderGarantiasMobile,
+    destruirGarantiasMobile
+} from "../views/garantias-mobile.js";
+
 
 let RouterMobile =
     null;
@@ -218,24 +223,27 @@ RouterMobile =
 
                 },
 
-            renderizadores: {
+renderizadores: {
 
-                inicio:
-                    renderHomeMobile,
+    inicio:
+        renderHomeMobile,
 
-                ventas:
-                    renderVentasMobile,
+    ventas:
+        renderVentasMobile,
 
-                inventario:
-                    renderInventarioMobile,
+    inventario:
+        renderInventarioMobile,
 
-                caja:
-                    renderCajaMobile,
+    caja:
+        renderCajaMobile,
 
-                mas:
-                    renderMasMobile
+    mas:
+        renderMasMobile,
 
-            }
+    garantias:
+        renderGarantiasMobile
+
+}
 
         });
 
@@ -372,6 +380,8 @@ function reiniciarVistasMobile(){
     reiniciarCajaMobile();
 
     reiniciarMasMobile();
+
+    destruirGarantiasMobile();
 
 }
 

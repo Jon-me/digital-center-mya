@@ -1,0 +1,2628 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   GARANTÍAS MOBILE ENTERPRISE
+   FASE M8.2.1.2
+   PREMIUM WARRANTY CENTER
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+
+.mobile-garantias-view {
+    display: grid;
+    gap: 16px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding:
+        14px
+        14px
+        calc(
+            var(--mobile-bottom-nav-height, 72px) +
+            env(safe-area-inset-bottom) +
+            28px
+        );
+
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   HEADER PREMIUM
+===================================================== */
+
+.mobile-garantias-header {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 18px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(77, 145, 255, 0.18);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 45, 91, 0.96),
+            rgba(7, 20, 47, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.04),
+
+        0 16px 34px
+        rgba(0, 0, 0, 0.22);
+}
+
+
+.mobile-garantias-header::before {
+    content: "";
+
+    position: absolute;
+    top: -70px;
+    right: -54px;
+
+    width: 180px;
+    height: 180px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(55, 139, 255, 0.18),
+            rgba(40, 91, 184, 0.04) 52%,
+            transparent 72%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-garantias-header::after {
+    content: "🛡️";
+
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
+    display: grid;
+    place-items: center;
+
+    width: 48px;
+    height: 48px;
+
+    border:
+        1px solid
+        rgba(102, 162, 255, 0.16);
+
+    border-radius: 16px;
+
+    background:
+        rgba(54, 106, 196, 0.12);
+
+    font-size: 23px;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.04);
+}
+
+
+.mobile-garantias-header > div {
+    position: relative;
+    z-index: 1;
+
+    min-width: 0;
+    padding-right: 60px;
+}
+
+
+.mobile-garantias-header small {
+    display: block;
+
+    color:
+        rgba(111, 169, 255, 0.76);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-garantias-header h1 {
+    margin:
+        6px
+        0
+        0;
+
+    color: #ffffff;
+
+    font-size: 24px;
+    font-weight: 950;
+    line-height: 1;
+    letter-spacing: -0.45px;
+}
+
+
+.mobile-garantias-header p {
+    max-width: 260px;
+
+    margin:
+        8px
+        0
+        0;
+
+    color:
+        rgba(178, 199, 232, 0.65);
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+/* =====================================================
+   BUSCADOR PREMIUM
+===================================================== */
+
+.mobile-garantias-search {
+    position: relative;
+
+    display: grid;
+    gap: 10px;
+
+    padding: 15px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(101, 157, 245, 0.14);
+
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 34, 69, 0.96),
+            rgba(7, 18, 41, 0.99)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.03),
+
+        0 10px 26px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+.mobile-garantias-search::after {
+    content: "";
+
+    position: absolute;
+    top: -40px;
+    left: -34px;
+
+    width: 108px;
+    height: 108px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(56, 137, 255, 0.09),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-garantias-search > label {
+    position: relative;
+    z-index: 1;
+
+    display: block;
+
+    color:
+        rgba(194, 214, 245, 0.82);
+
+    font-size: 10px;
+    font-weight: 850;
+}
+
+
+.mobile-garantias-search-controls {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        38px;
+
+    gap: 8px;
+}
+
+
+.mobile-garantias-search-controls input {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+
+    padding:
+        0
+        13px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid
+        rgba(94, 153, 247, 0.18);
+
+    border-radius: 14px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11, 28, 59, 0.98),
+            rgba(5, 16, 36, 0.995)
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 750;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.mobile-garantias-search-controls input::placeholder {
+    color:
+        rgba(157, 181, 220, 0.36);
+}
+
+
+.mobile-garantias-search-controls input:focus {
+    border-color:
+        rgba(81, 148, 255, 0.58);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 42, 87, 0.99),
+            rgba(7, 22, 50, 0.995)
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(72, 137, 255, 0.10);
+}
+
+
+.mobile-garantias-search-controls button {
+    min-height: 46px;
+
+    border-radius: 14px;
+
+    font: inherit;
+    font-size: 10px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 140ms ease,
+        background 140ms ease,
+        opacity 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+#mobile-garantias-search-button {
+    min-width: 76px;
+
+    padding:
+        0
+        15px;
+
+    border:
+        1px solid
+        rgba(83, 149, 255, 0.44);
+
+    background:
+        linear-gradient(
+            145deg,
+            #177cf2,
+            #0752c4
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 82, 201, 0.24),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.12);
+}
+
+
+#mobile-garantias-search-button:active {
+    transform: scale(0.96);
+}
+
+
+#mobile-garantias-clear-button {
+    display: grid;
+    place-items: center;
+
+    width: 38px;
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(147, 169, 205, 0.14);
+
+    background:
+        rgba(77, 96, 132, 0.14);
+
+    color:
+        rgba(218, 228, 244, 0.76);
+
+    font-size: 20px;
+    font-weight: 500;
+}
+
+
+#mobile-garantias-clear-button:active {
+    transform: scale(0.93);
+}
+
+
+.mobile-garantias-search-controls button:disabled,
+.mobile-garantias-search-controls input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   ESTADO DE BÚSQUEDA
+===================================================== */
+
+.mobile-garantias-search-status {
+    position: relative;
+    z-index: 1;
+
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 7px;
+
+    min-height: 26px;
+
+    margin: 0;
+    padding:
+        0
+        9px;
+
+    border:
+        1px solid
+        rgba(142, 169, 211, 0.1);
+
+    border-radius: 999px;
+
+    background:
+        rgba(88, 111, 151, 0.08);
+
+    color:
+        rgba(177, 197, 228, 0.62);
+
+    font-size: 8px;
+    font-weight: 750;
+}
+
+
+.mobile-garantias-search-status::before {
+    content: "";
+
+    flex: 0 0 auto;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #6f7f98;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(111, 127, 152, 0.09);
+}
+
+
+.mobile-garantias-search-status[data-tipo="loading"] {
+    color: #b9d5ff;
+
+    border-color:
+        rgba(84, 149, 255, 0.18);
+
+    background:
+        rgba(55, 111, 207, 0.11);
+}
+
+
+.mobile-garantias-search-status[data-tipo="loading"]::before {
+    background: #5da2ff;
+
+    animation:
+        mobileGarantiasStatusPulse
+        1s
+        ease-in-out
+        infinite;
+}
+
+
+.mobile-garantias-search-status[data-tipo="success"] {
+    color: #baf3d7;
+
+    border-color:
+        rgba(69, 217, 154, 0.18);
+
+    background:
+        rgba(38, 146, 102, 0.10);
+}
+
+
+.mobile-garantias-search-status[data-tipo="success"]::before {
+    background: #45d99a;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(69, 217, 154, 0.09),
+
+        0 0 10px
+        rgba(69, 217, 154, 0.22);
+}
+
+
+.mobile-garantias-search-status[data-tipo="warning"] {
+    color: #ffe0a1;
+
+    border-color:
+        rgba(245, 184, 75, 0.2);
+
+    background:
+        rgba(175, 118, 28, 0.1);
+}
+
+
+.mobile-garantias-search-status[data-tipo="warning"]::before {
+    background: #f5b84b;
+}
+
+
+.mobile-garantias-search-status[data-tipo="empty"] {
+    color: #d2dbeb;
+}
+
+
+.mobile-garantias-search-status[data-tipo="error"] {
+    color: #ffb3be;
+
+    border-color:
+        rgba(255, 91, 108, 0.2);
+
+    background:
+        rgba(135, 35, 47, 0.12);
+}
+
+
+.mobile-garantias-search-status[data-tipo="error"]::before {
+    background: #ff5b6c;
+}
+
+
+/* =====================================================
+   RESULTADOS
+===================================================== */
+
+.mobile-garantias-results {
+    display: grid;
+    gap: 14px;
+
+    min-width: 0;
+}
+
+
+/* =====================================================
+   CARD DE GARANTÍA
+===================================================== */
+
+.mobile-garantias-card {
+    position: relative;
+    isolation: isolate;
+
+    display: grid;
+    gap: 14px;
+
+    min-width: 0;
+
+    padding: 15px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(104, 158, 255, 0.15);
+
+    border-radius: 21px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 30, 61, 0.98),
+            rgba(6, 16, 36, 0.995)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.035),
+
+        0 12px 32px
+        rgba(0, 0, 0, 0.23);
+
+    animation:
+        mobileGarantiasCardIn
+        220ms
+        ease
+        both;
+}
+
+
+.mobile-garantias-card::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 3px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(63, 151, 255, 0.95),
+            rgba(35, 95, 255, 0.16)
+        );
+}
+
+
+.mobile-garantias-card::after {
+    content: "";
+
+    position: absolute;
+    z-index: -1;
+    top: -70px;
+    right: -54px;
+
+    width: 170px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(54, 132, 255, 0.12),
+            transparent 72%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   HEADER DE CARD
+===================================================== */
+
+.mobile-garantias-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-width: 0;
+
+    padding-bottom: 12px;
+
+    border-bottom:
+        1px solid
+        rgba(119, 162, 226, 0.1);
+}
+
+
+.mobile-garantias-card-header > div {
+    min-width: 0;
+}
+
+
+.mobile-garantias-card-header small {
+    display: block;
+
+    color:
+        rgba(104, 163, 255, 0.7);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+}
+
+
+.mobile-garantias-card-header h2 {
+    margin:
+        5px
+        0
+        0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 19px;
+    font-weight: 950;
+    letter-spacing: -0.3px;
+}
+
+
+/* =====================================================
+   BADGE DE ESTADO
+===================================================== */
+
+.mobile-garantias-status-badge {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    min-height: 28px;
+
+    padding:
+        0
+        9px;
+
+    border:
+        1px solid
+        rgba(142, 169, 211, 0.13);
+
+    border-radius: 999px;
+
+    background:
+        rgba(75, 97, 134, 0.12);
+
+    color:
+        rgba(218, 228, 244, 0.78);
+
+    font-size: 8px;
+    font-weight: 900;
+}
+
+
+.mobile-garantias-status-badge > span {
+    display: grid;
+    place-items: center;
+
+    width: 15px;
+    height: 15px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.07);
+
+    font-size: 10px;
+}
+
+
+.mobile-garantias-status-badge.is-approved {
+    color: #b8f3d6;
+
+    border-color:
+        rgba(69, 217, 154, 0.24);
+
+    background:
+        rgba(36, 143, 100, 0.12);
+}
+
+
+.mobile-garantias-status-badge.is-approved > span {
+    background:
+        rgba(69, 217, 154, 0.15);
+
+    color: #5be5a7;
+}
+
+
+.mobile-garantias-status-badge.is-rejected {
+    color: #ffbbc3;
+
+    border-color:
+        rgba(255, 91, 108, 0.23);
+
+    background:
+        rgba(144, 38, 50, 0.13);
+}
+
+
+.mobile-garantias-status-badge.is-rejected > span {
+    background:
+        rgba(255, 91, 108, 0.15);
+
+    color: #ff7180;
+}
+
+
+.mobile-garantias-status-badge.is-observation {
+    color: #ffe0a4;
+
+    border-color:
+        rgba(245, 184, 75, 0.24);
+
+    background:
+        rgba(165, 111, 26, 0.13);
+}
+
+
+.mobile-garantias-status-badge.is-observation > span {
+    background:
+        rgba(245, 184, 75, 0.15);
+
+    color: #ffc85c;
+}
+
+
+.mobile-garantias-status-badge.is-pending {
+    color: #c9d9f2;
+
+    border-color:
+        rgba(112, 159, 233, 0.19);
+
+    background:
+        rgba(71, 104, 159, 0.12);
+}
+
+
+/* =====================================================
+   GRID DE INFORMACIÓN
+===================================================== */
+
+.mobile-garantias-info-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+
+.mobile-garantias-info-item {
+    min-width: 0;
+
+    padding: 11px;
+
+    border:
+        1px solid
+        rgba(102, 158, 244, 0.1);
+
+    border-radius: 14px;
+
+    background:
+        rgba(8, 20, 44, 0.62);
+}
+
+
+.mobile-garantias-info-item small {
+    display: block;
+
+    color:
+        rgba(157, 185, 226, 0.54);
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+
+.mobile-garantias-info-item strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   PRODUCTOS
+===================================================== */
+
+.mobile-garantias-products {
+    display: grid;
+    gap: 9px;
+}
+
+
+.mobile-garantias-products > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.mobile-garantias-products > header small {
+    color:
+        rgba(100, 158, 249, 0.72);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.09em;
+}
+
+
+.mobile-garantias-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-width: 0;
+
+    padding: 11px;
+
+    border:
+        1px solid
+        rgba(101, 157, 245, 0.1);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 29, 59, 0.86),
+            rgba(6, 17, 38, 0.92)
+        );
+}
+
+
+.mobile-garantias-product-main {
+    min-width: 0;
+}
+
+
+.mobile-garantias-product-main strong {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-garantias-product-main small {
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        rgba(164, 188, 224, 0.54);
+
+    font-size: 8px;
+    font-weight: 650;
+}
+
+
+.mobile-garantias-product-summary {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
+.mobile-garantias-product-summary span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    min-height: 25px;
+
+    padding:
+        0
+        7px;
+
+    border:
+        1px solid
+        rgba(99, 157, 250, 0.13);
+
+    border-radius: 9px;
+
+    background:
+        rgba(54, 103, 190, 0.11);
+
+    color:
+        rgba(181, 208, 250, 0.78);
+
+    font-size: 8px;
+    font-weight: 850;
+}
+
+
+.mobile-garantias-product-summary strong {
+    color: #8fbdff;
+
+    font-size: 11px;
+    font-weight: 950;
+}
+
+
+.mobile-garantias-product-empty {
+    padding: 13px;
+
+    border:
+        1px dashed
+        rgba(139, 166, 207, 0.14);
+
+    border-radius: 14px;
+
+    color:
+        rgba(171, 193, 225, 0.56);
+
+    font-size: 9px;
+    text-align: center;
+}
+
+
+/* =====================================================
+   OBSERVACIÓN
+===================================================== */
+
+.mobile-garantias-observation {
+    position: relative;
+
+    padding: 12px 13px 12px 16px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(245, 184, 75, 0.16);
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(74, 52, 18, 0.34),
+            rgba(35, 25, 9, 0.56)
+        );
+}
+
+
+.mobile-garantias-observation::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 3px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffc857,
+            rgba(245, 184, 75, 0.18)
+        );
+}
+
+
+.mobile-garantias-observation small {
+    display: block;
+
+    color:
+        rgba(255, 210, 126, 0.72);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+}
+
+
+.mobile-garantias-observation p {
+    margin:
+        7px
+        0
+        0;
+
+    color:
+        rgba(255, 239, 208, 0.85);
+
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   FOOTER DE CARD
+===================================================== */
+
+.mobile-garantias-card-footer {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+    gap: 12px;
+
+    padding-top: 12px;
+
+    border-top:
+        1px solid
+        rgba(119, 162, 226, 0.1);
+}
+
+
+.mobile-garantias-card-footer > div {
+    min-width: 0;
+}
+
+
+.mobile-garantias-card-footer small {
+    display: block;
+
+    color:
+        rgba(157, 185, 226, 0.52);
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+}
+
+
+.mobile-garantias-card-footer strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color:
+        rgba(228, 237, 250, 0.86);
+
+    font-size: 10px;
+    font-weight: 850;
+}
+
+
+.mobile-garantias-open-button {
+    min-height: 42px;
+
+    padding:
+        0
+        14px;
+
+    border:
+        1px solid
+        rgba(83, 149, 255, 0.43);
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #177cf2,
+            #0752c4
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 9px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 82, 201, 0.22),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.1);
+
+    transition:
+        transform 140ms ease,
+        box-shadow 140ms ease,
+        border-color 140ms ease;
+}
+
+
+.mobile-garantias-open-button:active {
+    transform: scale(0.96);
+
+    box-shadow:
+        0 4px 12px
+        rgba(0, 82, 201, 0.18);
+}
+
+
+/* =====================================================
+   ESTADOS VACÍO, LOADING Y ERROR
+===================================================== */
+
+.mobile-garantias-empty,
+.mobile-garantias-loading,
+.mobile-garantias-error {
+    position: relative;
+
+    display: grid;
+    justify-items: center;
+    gap: 9px;
+
+    padding:
+        34px
+        20px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(104, 158, 245, 0.14);
+
+    border-radius: 21px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 34, 69, 0.96),
+            rgba(7, 18, 41, 0.99)
+        );
+
+    text-align: center;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.03),
+
+        0 12px 30px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+.mobile-garantias-empty::after,
+.mobile-garantias-loading::after,
+.mobile-garantias-error::after {
+    content: "";
+
+    position: absolute;
+    top: -56px;
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(57, 139, 255, 0.1),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-garantias-empty-icon,
+.mobile-garantias-error-icon {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    place-items: center;
+
+    width: 64px;
+    height: 64px;
+
+    margin-bottom: 3px;
+
+    border:
+        1px solid
+        rgba(100, 158, 255, 0.17);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(27, 62, 128, 0.48),
+            rgba(8, 23, 53, 0.94)
+        );
+
+    font-size: 27px;
+
+    box-shadow:
+        0 14px 30px
+        rgba(0, 0, 0, 0.22);
+}
+
+
+.mobile-garantias-empty h2,
+.mobile-garantias-loading h2,
+.mobile-garantias-error h2 {
+    position: relative;
+    z-index: 1;
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 950;
+}
+
+
+.mobile-garantias-empty p,
+.mobile-garantias-loading p,
+.mobile-garantias-error p {
+    position: relative;
+    z-index: 1;
+
+    max-width: 280px;
+
+    margin: 0;
+
+    color:
+        rgba(174, 194, 226, 0.64);
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+
+.mobile-garantias-empty > strong {
+    position: relative;
+    z-index: 1;
+
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 28px;
+
+    padding:
+        0
+        10px;
+
+    border:
+        1px solid
+        rgba(100, 158, 255, 0.15);
+
+    border-radius: 999px;
+
+    background:
+        rgba(48, 98, 185, 0.1);
+
+    color: #bdd8ff;
+
+    font-size: 9px;
+    font-weight: 900;
+}
+
+
+.mobile-garantias-error {
+    border-color:
+        rgba(255, 91, 108, 0.18);
+}
+
+
+.mobile-garantias-error-icon {
+    border-color:
+        rgba(255, 91, 108, 0.18);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(105, 29, 40, 0.5),
+            rgba(46, 13, 20, 0.94)
+        );
+}
+
+
+/* =====================================================
+   SPINNER
+===================================================== */
+
+.mobile-garantias-spinner {
+    position: relative;
+    z-index: 1;
+
+    width: 42px;
+    height: 42px;
+
+    margin-bottom: 5px;
+
+    border:
+        4px solid
+        rgba(99, 157, 250, 0.13);
+
+    border-top-color: #5fa2ff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileGarantiasSpinner
+        0.85s
+        linear
+        infinite;
+}
+
+
+/* =====================================================
+   BLOQUEO DE SCROLL
+===================================================== */
+
+body.mobile-garantias-modal-open {
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   ROOT DEL MODAL
+===================================================== */
+
+#mobile-garantias-modal-root {
+    position: relative;
+    z-index: 9999;
+}
+
+
+/* =====================================================
+   MODAL GENERAL
+===================================================== */
+
+.mobile-garantias-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+
+/* =====================================================
+   BACKDROP
+===================================================== */
+
+.mobile-garantias-modal-backdrop {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    padding: 0;
+
+    border: 0;
+
+    background:
+        rgba(2, 8, 20, 0.78);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    animation:
+        mobileGarantiasFadeIn
+        180ms
+        ease
+        both;
+}
+
+
+/* =====================================================
+   SHEET
+===================================================== */
+
+.mobile-garantias-modal-sheet {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    width:
+        min(
+            calc(100% - 18px),
+            620px
+        );
+
+    max-height:
+        calc(
+            100dvh -
+            12px
+        );
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(92, 151, 246, 0.22);
+
+    border-radius:
+        24px
+        24px
+        14px
+        14px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(12, 29, 61, 0.995),
+            rgba(5, 15, 34, 1)
+        );
+
+    box-shadow:
+        0 -18px 60px
+        rgba(0, 0, 0, 0.48),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.04);
+
+    animation:
+        mobileGarantiasSheetIn
+        220ms
+        cubic-bezier(.2, .8, .2, 1)
+        both;
+}
+
+
+/* =====================================================
+   HEADER DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-header {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding:
+        16px
+        16px
+        14px;
+
+    border-bottom:
+        1px solid
+        rgba(119, 162, 226, 0.1);
+
+    background:
+        rgba(7, 19, 43, 0.94);
+}
+
+
+.mobile-garantias-modal-header > div {
+    min-width: 0;
+}
+
+
+.mobile-garantias-modal-header small {
+    display: block;
+
+    color:
+        rgba(105, 164, 255, 0.74);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-garantias-modal-header h2 {
+    margin:
+        5px
+        0
+        0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 950;
+}
+
+
+.mobile-garantias-modal-close {
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(105, 161, 247, 0.16);
+
+    border-radius: 12px;
+
+    background:
+        rgba(42, 89, 170, 0.12);
+
+    color:
+        rgba(221, 231, 249, 0.88);
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        background 140ms ease;
+}
+
+
+.mobile-garantias-modal-close:active {
+    transform: scale(0.94);
+}
+
+
+/* =====================================================
+   CUERPO DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-body {
+    flex: 1;
+    min-height: 0;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding: 15px;
+
+    scrollbar-width: thin;
+}
+
+
+.mobile-garantias-modal-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.mobile-garantias-modal-body::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background:
+        rgba(94, 184, 255, 0.28);
+}
+
+
+/* =====================================================
+   CLIENTE DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-client {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+}
+
+
+.mobile-garantias-modal-client > div {
+    min-width: 0;
+
+    padding: 11px;
+
+    border:
+        1px solid
+        rgba(102, 158, 244, 0.11);
+
+    border-radius: 14px;
+
+    background:
+        rgba(8, 20, 44, 0.62);
+}
+
+
+.mobile-garantias-modal-client small {
+    display: block;
+
+    color:
+        rgba(157, 185, 226, 0.52);
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+
+.mobile-garantias-modal-client strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   SECCIONES DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-section {
+    display: grid;
+    gap: 9px;
+
+    margin-top: 15px;
+}
+
+
+.mobile-garantias-modal-section > header small,
+.mobile-garantias-modal-section > label {
+    color:
+        rgba(105, 164, 255, 0.75);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.1em;
+}
+
+
+/* =====================================================
+   PRODUCTOS DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-products {
+    display: grid;
+    gap: 8px;
+}
+
+
+.mobile-garantias-modal-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 11px;
+
+    border:
+        1px solid
+        rgba(101, 157, 245, 0.1);
+
+    border-radius: 14px;
+
+    background:
+        rgba(7, 19, 42, 0.72);
+}
+
+
+.mobile-garantias-modal-product > div {
+    min-width: 0;
+}
+
+
+.mobile-garantias-modal-product strong {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-garantias-modal-product small {
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        rgba(164, 188, 224, 0.52);
+
+    font-size: 8px;
+}
+
+
+.mobile-garantias-modal-product > span {
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    min-width: 30px;
+    min-height: 27px;
+
+    padding:
+        0
+        7px;
+
+    border:
+        1px solid
+        rgba(99, 157, 250, 0.13);
+
+    border-radius: 9px;
+
+    background:
+        rgba(54, 103, 190, 0.11);
+
+    color: #acd0ff;
+
+    font-size: 8px;
+    font-weight: 900;
+}
+
+
+.mobile-garantias-modal-empty {
+    padding: 13px;
+
+    border:
+        1px dashed
+        rgba(139, 166, 207, 0.14);
+
+    border-radius: 14px;
+
+    color:
+        rgba(171, 193, 225, 0.56);
+
+    font-size: 9px;
+    text-align: center;
+}
+
+
+/* =====================================================
+   SELECTOR DE ESTADOS
+===================================================== */
+
+.mobile-garantias-state-options {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+
+.mobile-garantias-state-option {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    min-width: 0;
+    min-height: 62px;
+
+    padding: 10px;
+
+    border:
+        1px solid
+        rgba(101, 157, 245, 0.1);
+
+    border-radius: 14px;
+
+    background:
+        rgba(7, 19, 42, 0.72);
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 140ms ease,
+        background 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+.mobile-garantias-state-option:active {
+    transform: scale(0.97);
+}
+
+
+.mobile-garantias-state-option input {
+    position: absolute;
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.mobile-garantias-state-option-icon {
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 11px;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    color:
+        rgba(220, 230, 245, 0.8);
+
+    font-size: 16px;
+    font-weight: 950;
+}
+
+
+.mobile-garantias-state-option-content {
+    min-width: 0;
+}
+
+
+.mobile-garantias-state-option-content strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 900;
+}
+
+
+.mobile-garantias-state-option-content small {
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        rgba(167, 190, 225, 0.54);
+
+    font-size: 7px;
+    line-height: 1.35;
+}
+
+
+.mobile-garantias-state-option.is-pending.is-selected {
+    border-color:
+        rgba(105, 164, 255, 0.42);
+
+    background:
+        rgba(45, 99, 193, 0.13);
+
+    box-shadow:
+        0 0 0 1px
+        rgba(105, 164, 255, 0.07);
+}
+
+
+.mobile-garantias-state-option.is-pending.is-selected
+.mobile-garantias-state-option-icon {
+    background:
+        rgba(90, 151, 255, 0.16);
+
+    color: #8fbdff;
+}
+
+
+.mobile-garantias-state-option.is-observation.is-selected {
+    border-color:
+        rgba(245, 184, 75, 0.42);
+
+    background:
+        rgba(155, 104, 23, 0.13);
+}
+
+
+.mobile-garantias-state-option.is-observation.is-selected
+.mobile-garantias-state-option-icon {
+    background:
+        rgba(245, 184, 75, 0.16);
+
+    color: #ffc857;
+}
+
+
+.mobile-garantias-state-option.is-approved.is-selected {
+    border-color:
+        rgba(69, 217, 154, 0.42);
+
+    background:
+        rgba(36, 143, 100, 0.13);
+}
+
+
+.mobile-garantias-state-option.is-approved.is-selected
+.mobile-garantias-state-option-icon {
+    background:
+        rgba(69, 217, 154, 0.16);
+
+    color: #5be5a7;
+}
+
+
+.mobile-garantias-state-option.is-rejected.is-selected {
+    border-color:
+        rgba(255, 91, 108, 0.42);
+
+    background:
+        rgba(144, 38, 50, 0.13);
+}
+
+
+.mobile-garantias-state-option.is-rejected.is-selected
+.mobile-garantias-state-option-icon {
+    background:
+        rgba(255, 91, 108, 0.16);
+
+    color: #ff7180;
+}
+
+
+/* =====================================================
+   TEXTAREA
+===================================================== */
+
+.mobile-garantias-modal-section textarea {
+    width: 100%;
+    min-height: 108px;
+
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    resize: vertical;
+
+    border:
+        1px solid
+        rgba(94, 153, 247, 0.17);
+
+    border-radius: 14px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11, 28, 59, 0.98),
+            rgba(5, 16, 36, 0.995)
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.5;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+
+.mobile-garantias-modal-section textarea::placeholder {
+    color:
+        rgba(157, 181, 220, 0.34);
+}
+
+
+.mobile-garantias-modal-section textarea:focus {
+    border-color:
+        rgba(81, 148, 255, 0.56);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(72, 137, 255, 0.09);
+}
+
+
+.mobile-garantias-modal-helper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    color:
+        rgba(157, 181, 220, 0.46);
+}
+
+
+.mobile-garantias-modal-helper small {
+    font-size: 7px;
+}
+
+
+/* =====================================================
+   MENSAJE DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-status {
+    min-height: 18px;
+
+    margin:
+        12px
+        0
+        0;
+
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+
+.mobile-garantias-modal-status[data-tipo="warning"] {
+    color: #ffd27d;
+}
+
+
+.mobile-garantias-modal-status[data-tipo="success"] {
+    color: #61e5a7;
+}
+
+
+.mobile-garantias-modal-status[data-tipo="error"] {
+    color: #ff8795;
+}
+
+
+/* =====================================================
+   FOOTER DEL MODAL
+===================================================== */
+
+.mobile-garantias-modal-footer {
+    flex: 0 0 auto;
+
+    display: grid;
+    grid-template-columns:
+        minmax(96px, 0.7fr)
+        minmax(0, 1.3fr);
+
+    gap: 9px;
+
+    padding:
+        12px
+        15px
+        max(
+            12px,
+            env(safe-area-inset-bottom)
+        );
+
+    border-top:
+        1px solid
+        rgba(119, 162, 226, 0.1);
+
+    background:
+        rgba(6, 17, 38, 0.97);
+}
+
+
+.mobile-garantias-modal-footer button {
+    min-height: 46px;
+
+    border-radius: 14px;
+
+    font: inherit;
+    font-size: 10px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        opacity 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+.mobile-garantias-modal-footer button:active {
+    transform: scale(0.97);
+}
+
+
+.mobile-garantias-modal-cancel {
+    border:
+        1px solid
+        rgba(147, 169, 205, 0.14);
+
+    background:
+        rgba(77, 96, 132, 0.14);
+
+    color:
+        rgba(218, 228, 244, 0.78);
+}
+
+
+.mobile-garantias-modal-save {
+    border:
+        1px solid
+        rgba(83, 149, 255, 0.44);
+
+    background:
+        linear-gradient(
+            145deg,
+            #177cf2,
+            #0752c4
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 22px
+        rgba(0, 82, 201, 0.24),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.11);
+}
+
+
+.mobile-garantias-modal-footer button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =====================================================
+   LOADING DEL BOTÓN
+===================================================== */
+
+#mobile-garantias-search-button.is-loading {
+    position: relative;
+
+    color: transparent;
+}
+
+
+#mobile-garantias-search-button.is-loading::after {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 16px;
+    height: 16px;
+
+    margin:
+        -8px
+        0
+        0
+        -8px;
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.3);
+
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileGarantiasSpinner
+        0.7s
+        linear
+        infinite;
+}
+
+
+/* =====================================================
+   ANIMACIONES
+===================================================== */
+
+@keyframes mobileGarantiasSpinner {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes mobileGarantiasStatusPulse {
+
+    0%,
+    100% {
+        opacity: 0.55;
+        transform: scale(0.9);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+
+}
+
+
+@keyframes mobileGarantiasCardIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px)
+            scale(0.99);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+@keyframes mobileGarantiasFadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes mobileGarantiasSheetIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(36px)
+            scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =====================================================
+   CELULARES PEQUEÑOS
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .mobile-garantias-view {
+        gap: 13px;
+
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+
+    .mobile-garantias-header {
+        padding: 15px;
+
+        border-radius: 19px;
+    }
+
+
+    .mobile-garantias-header h1 {
+        font-size: 21px;
+    }
+
+
+    .mobile-garantias-header::after {
+        top: 15px;
+        right: 15px;
+
+        width: 43px;
+        height: 43px;
+
+        border-radius: 14px;
+
+        font-size: 20px;
+    }
+
+
+    .mobile-garantias-search {
+        padding: 12px;
+
+        border-radius: 17px;
+    }
+
+
+    .mobile-garantias-search-controls {
+        grid-template-columns:
+            minmax(0, 1fr)
+            68px
+            36px;
+
+        gap: 6px;
+    }
+
+
+    #mobile-garantias-search-button {
+        min-width: 0;
+        padding: 0 8px;
+    }
+
+
+    #mobile-garantias-clear-button {
+        width: 36px;
+    }
+
+
+    .mobile-garantias-card {
+        padding: 12px;
+
+        border-radius: 18px;
+    }
+
+
+    .mobile-garantias-card-header {
+        gap: 8px;
+    }
+
+
+    .mobile-garantias-card-header h2 {
+        font-size: 16px;
+    }
+
+
+    .mobile-garantias-status-badge {
+        min-height: 25px;
+
+        padding:
+            0
+            7px;
+
+        font-size: 7px;
+    }
+
+
+    .mobile-garantias-info-grid {
+        gap: 7px;
+    }
+
+
+    .mobile-garantias-info-item {
+        padding: 9px;
+    }
+
+
+    .mobile-garantias-card-footer {
+        grid-template-columns: 1fr;
+    }
+
+
+    .mobile-garantias-open-button {
+        width: 100%;
+    }
+
+
+    .mobile-garantias-modal-sheet {
+        width:
+            calc(
+                100% -
+                10px
+            );
+
+        max-height:
+            calc(
+                100dvh -
+                5px
+            );
+    }
+
+
+    .mobile-garantias-modal-body {
+        padding: 12px;
+    }
+
+
+    .mobile-garantias-modal-client {
+        gap: 7px;
+    }
+
+
+    .mobile-garantias-state-options {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =====================================================
+   TABLETS Y ESCRITORIOS
+===================================================== */
+
+@media (min-width: 700px) {
+
+    .mobile-garantias-view {
+        max-width: 760px;
+
+        margin:
+            0
+            auto;
+    }
+
+
+    .mobile-garantias-modal {
+        align-items: center;
+
+        padding: 24px;
+    }
+
+
+    .mobile-garantias-modal-sheet {
+        max-height: 90dvh;
+
+        border-radius: 24px;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-garantias-card,
+    .mobile-garantias-modal-backdrop,
+    .mobile-garantias-modal-sheet,
+    .mobile-garantias-spinner,
+    .mobile-garantias-search-status::before,
+    #mobile-garantias-search-button.is-loading::after {
+        animation: none;
+    }
+
+
+    .mobile-garantias-open-button,
+    .mobile-garantias-state-option,
+    .mobile-garantias-modal-footer button,
+    .mobile-garantias-search-controls button {
+        transition: none;
+    }
+
+}
+
+/* =====================================================
+   GUARDADO DE GARANTÍA
+   M8.2.2
+===================================================== */
+
+.mobile-garantias-modal-save.is-loading {
+    position: relative;
+
+    color: transparent;
+
+    pointer-events: none;
+}
+
+
+.mobile-garantias-modal-save.is-loading::after {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 17px;
+    height: 17px;
+
+    margin:
+        -8.5px
+        0
+        0
+        -8.5px;
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.32);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        mobileGarantiasSpinner
+        0.7s
+        linear
+        infinite;
+}
+
+
+.mobile-garantias-modal-status[data-tipo="loading"] {
+    color: #9fc8ff;
+}

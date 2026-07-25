@@ -67,6 +67,7 @@ export async function renderMasMobile(
                 <button
                     type="button"
                     class="mobile-button"
+                    data-mobile-go="garantias"
                 >
                     🛡 Garantías
                 </button>
