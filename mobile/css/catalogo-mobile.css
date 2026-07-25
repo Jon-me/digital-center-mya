@@ -2959,3 +2959,636 @@
     outline: 2px solid rgba(79, 151, 255, 0.9);
     outline-offset: 2px;
 }
+
+/* =====================================================
+   DIGITAL CENTER M&A
+   TRANSFERENCIAS MOBILE
+   FASE M10.5 - PREMIUM UI
+===================================================== */
+
+
+/* =====================================================
+   BOTÓN TRANSFERIR EN PRODUCT SHEET
+===================================================== */
+
+.mobile-product-transfer-button {
+    width: 100%;
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(46, 154, 255, 0.28);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(10, 38, 74, 0.96),
+            rgba(7, 23, 48, 0.98)
+        );
+
+    color: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.mobile-product-transfer-button:active {
+    transform: scale(0.985);
+}
+
+
+.mobile-product-transfer-button:focus-visible {
+    outline: 2px solid rgba(77, 176, 255, 0.92);
+    outline-offset: 3px;
+}
+
+
+.mobile-product-transfer-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(44, 157, 255, 0.95),
+            rgba(16, 91, 213, 0.95)
+        );
+
+    color: #ffffff;
+
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+
+    box-shadow:
+        0 8px 20px rgba(20, 114, 230, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+
+.mobile-product-transfer-copy {
+    min-width: 0;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+.mobile-product-transfer-copy strong {
+    display: block;
+
+    color: #f7fbff;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+
+.mobile-product-transfer-copy small {
+    display: block;
+
+    color: rgba(209, 230, 255, 0.68);
+
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+
+.mobile-product-transfer-arrow {
+    flex: 0 0 auto;
+
+    color: rgba(149, 208, 255, 0.9);
+
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL DEL MODAL
+===================================================== */
+
+.mobile-transfer-sheet {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    padding-bottom: 4px;
+}
+
+
+/* =====================================================
+   RESUMEN DEL PRODUCTO
+===================================================== */
+
+.mobile-transfer-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 14px;
+
+    border: 1px solid rgba(78, 171, 255, 0.2);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(13, 43, 82, 0.94),
+            rgba(7, 24, 49, 0.96)
+        );
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+
+.mobile-transfer-product-copy {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+.mobile-transfer-product-copy span,
+.mobile-transfer-total-stock span {
+    color: rgba(181, 214, 248, 0.62);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+
+.mobile-transfer-product-copy strong {
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.3;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.mobile-transfer-product-copy small {
+    color: rgba(205, 227, 250, 0.7);
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+
+.mobile-transfer-total-stock {
+    min-width: 72px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(75, 174, 255, 0.25);
+    border-radius: 14px;
+
+    background: rgba(15, 74, 137, 0.32);
+}
+
+
+.mobile-transfer-total-stock strong {
+    color: #7fc5ff;
+
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+
+/* =====================================================
+   SECCIONES
+===================================================== */
+
+.mobile-transfer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 13px;
+
+    border: 1px solid rgba(89, 168, 241, 0.14);
+    border-radius: 18px;
+
+    background: rgba(5, 23, 46, 0.72);
+}
+
+
+.mobile-transfer-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+
+.mobile-transfer-section-header span {
+    color: #eaf5ff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+.mobile-transfer-section-header strong {
+    color: #6ebcff;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   SELECTOR DE TIENDA
+===================================================== */
+
+.mobile-transfer-store-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+
+.mobile-transfer-store-option {
+    min-height: 58px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    padding: 10px 8px;
+
+    border: 1px solid rgba(99, 172, 242, 0.18);
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 39, 73, 0.88),
+            rgba(6, 23, 45, 0.9)
+        );
+
+    color: rgba(220, 238, 255, 0.72);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.16s ease,
+        border-color 0.16s ease,
+        background 0.16s ease,
+        box-shadow 0.16s ease;
+}
+
+
+.mobile-transfer-store-option:active {
+    transform: scale(0.97);
+}
+
+
+.mobile-transfer-store-option span {
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+.mobile-transfer-store-option strong {
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+
+.mobile-transfer-store-option.is-active {
+    border-color: rgba(61, 169, 255, 0.9);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22, 109, 203, 0.9),
+            rgba(8, 61, 126, 0.94)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 24px rgba(12, 111, 221, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+
+/* =====================================================
+   RUTA DE TRANSFERENCIA
+===================================================== */
+
+.mobile-transfer-route {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+
+    padding: 11px 13px;
+
+    border: 1px solid rgba(53, 167, 255, 0.2);
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(10, 52, 99, 0.72),
+            rgba(7, 31, 62, 0.82),
+            rgba(10, 52, 99, 0.72)
+        );
+}
+
+
+.mobile-transfer-route-store {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+
+.mobile-transfer-route-store:last-child {
+    align-items: flex-end;
+    text-align: right;
+}
+
+
+.mobile-transfer-route-store small {
+    color: rgba(185, 217, 248, 0.58);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+
+.mobile-transfer-route-store strong {
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.mobile-transfer-route-arrow {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #34a8ff,
+            #1264d6
+        );
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 900;
+
+    box-shadow:
+        0 8px 20px rgba(24, 126, 232, 0.36);
+}
+
+
+/* =====================================================
+   CONTROL DE CANTIDAD
+===================================================== */
+
+.mobile-transfer-quantity {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    align-items: stretch;
+    gap: 9px;
+}
+
+
+.mobile-transfer-quantity button {
+    min-height: 52px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(74, 171, 255, 0.28);
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 83, 151, 0.88),
+            rgba(8, 48, 102, 0.94)
+        );
+
+    color: #ffffff;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+
+.mobile-transfer-quantity button:active:not(:disabled) {
+    transform: scale(0.94);
+}
+
+
+.mobile-transfer-quantity button:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+}
+
+
+.mobile-transfer-quantity-value {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+
+    border: 1px solid rgba(85, 173, 255, 0.2);
+    border-radius: 15px;
+
+    background: rgba(4, 20, 42, 0.86);
+}
+
+
+.mobile-transfer-quantity-value small {
+    color: rgba(188, 219, 249, 0.55);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+
+.mobile-transfer-quantity-value strong {
+    color: #79c4ff;
+
+    font-size: 23px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+
+/* =====================================================
+   TEXTO DE AYUDA
+===================================================== */
+
+.mobile-transfer-help {
+    margin: 0;
+
+    color: rgba(203, 226, 248, 0.66);
+
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-align: center;
+}
+
+
+/* =====================================================
+   BOTÓN CONFIRMAR DESHABILITADO
+===================================================== */
+
+.mobile-transfer-overlay
+[data-overlay-confirm]:disabled {
+    opacity: 0.42;
+    pointer-events: none;
+    filter: saturate(0.4);
+}
+
+
+/* =====================================================
+   AJUSTE DEL BODY DEL BOTTOM SHEET
+===================================================== */
+
+.mobile-transfer-overlay
+[data-overlay-body] {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+}
+
+
+.mobile-transfer-overlay
+[data-overlay-body]::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =====================================================
+   PANTALLAS PEQUEÑAS
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-product-transfer-button {
+        padding: 11px 12px;
+    }
+
+
+    .mobile-product-transfer-icon {
+        width: 38px;
+        height: 38px;
+
+        flex-basis: 38px;
+
+        font-size: 21px;
+    }
+
+
+    .mobile-transfer-product {
+        padding: 12px;
+    }
+
+
+    .mobile-transfer-total-stock {
+        min-width: 64px;
+    }
+
+
+    .mobile-transfer-quantity {
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+    }
+
+
+    .mobile-transfer-quantity button {
+        min-height: 48px;
+    }
+
+}

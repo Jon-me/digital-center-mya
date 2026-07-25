@@ -1245,6 +1245,44 @@ function construirContenidoProductSheet(
 
             </section>
 
+            <section class="mobile-product-sheet-section">
+
+    <button
+        type="button"
+        class="mobile-product-transfer-button"
+        data-product-transfer
+    >
+
+        <span
+            class="mobile-product-transfer-icon"
+            aria-hidden="true"
+        >
+            ⇄
+        </span>
+
+        <span class="mobile-product-transfer-copy">
+
+            <strong>
+                Transferir stock
+            </strong>
+
+            <small>
+                Mover unidades entre Mercado y Peluquería
+            </small>
+
+        </span>
+
+        <span
+            class="mobile-product-transfer-arrow"
+            aria-hidden="true"
+        >
+            ›
+        </span>
+
+    </button>
+
+</section>
+
         </div>
     `;
 
@@ -1704,6 +1742,40 @@ function abrirProductSheetMobile(
         ?.addEventListener(
             "click",
             async function(evento){
+
+                const botonTransferir =
+    evento.target.closest(
+        "[data-product-transfer]"
+    );
+
+
+if(botonTransferir){
+
+    if(
+        typeof opciones
+            .alTransferir ===
+        "function"
+    ){
+
+        opciones.alTransferir({
+
+            producto,
+
+            usuario,
+
+            tiendaVenta,
+
+            cerrarProductSheet:
+                sheet.cerrar
+
+        });
+
+    }
+
+
+    return;
+
+}
 
                 const botonTienda =
                     evento.target.closest(

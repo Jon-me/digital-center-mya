@@ -579,19 +579,22 @@ function abrirBottomSheet(
     );
 
 
-    return {
+return {
 
-        cerrar:
-            cerrarOverlay,
+    cerrar:
+        cerrarOverlay,
 
-        portal,
+    portal,
 
-        body:
-            portal.querySelector(
-                "[data-overlay-body]"
-            )
+    body:
+        portal.querySelector(
+            "[data-overlay-body]"
+        ),
 
-    };
+    confirmButton:
+        botonConfirmar
+
+};
 
 }
 
