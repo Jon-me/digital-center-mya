@@ -476,7 +476,8 @@ const Garantias = crearGarantias({
     updateDoc,
     query,
     where,
-    getDocs
+    getDocs,
+    onSnapshot
 
 });
 

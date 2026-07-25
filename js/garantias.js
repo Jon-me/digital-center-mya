@@ -13,8 +13,11 @@ export function crearGarantias(deps){
         updateDoc,
         query,
         where,
-        getDocs
+        getDocs,
+        onSnapshot
     } = deps;
+
+    let cancelarSuscripcionGarantiasDesktop = null;
 
     function escaparHTML(valor){
 
@@ -384,6 +387,21 @@ export function crearGarantias(deps){
 
     }
 
+    function cancelarRealtimeGarantiasDesktop(){
+
+    if(
+        typeof cancelarSuscripcionGarantiasDesktop ===
+        "function"
+    ){
+
+        cancelarSuscripcionGarantiasDesktop();
+
+    }
+
+    cancelarSuscripcionGarantiasDesktop = null;
+
+}
+
     function obtenerInputGarantia(){
 
         return (
@@ -538,146 +556,233 @@ export function crearGarantias(deps){
 
     }
 
-    async function buscarGarantia(){
+function buscarGarantia(){
 
-        const input =
-            obtenerInputGarantia();
+    const input =
+        obtenerInputGarantia();
 
-        const resultado =
-            obtenerResultadoGarantia();
+    const resultado =
+        obtenerResultadoGarantia();
 
-        if(!input || !resultado){
+    if(!input || !resultado){
 
-            alert(
-                "No se encontró el buscador de garantía"
-            );
+        alert(
+            "No se encontró el buscador de garantía"
+        );
 
-            return;
-
-        }
-
-        const texto =
-            input.value.trim();
-
-        if(!texto){
-
-            alert(
-                "Ingrese DNI o número de boleta"
-            );
-
-            input.focus();
-
-            return;
-
-        }
-
-        renderCargando();
-
-        try{
-
-            const consultaDni =
-                query(
-                    collection(
-                        db,
-                        "boletas"
-                    ),
-                    where(
-                        "clienteDni",
-                        "==",
-                        texto
-                    )
-                );
-
-            const consultaBoleta =
-                query(
-                    collection(
-                        db,
-                        "boletas"
-                    ),
-                    where(
-                        "numeroBoleta",
-                        "==",
-                        texto
-                    )
-                );
-
-            const [
-                datosDni,
-                datosBoleta
-            ] = await Promise.all([
-                getDocs(consultaDni),
-                getDocs(consultaBoleta)
-            ]);
-
-            const documentos =
-                new Map();
-
-            datosDni.forEach(
-                function(documento){
-
-                    documentos.set(
-                        documento.id,
-                        documento.data()
-                    );
-
-                }
-            );
-
-            datosBoleta.forEach(
-                function(documento){
-
-                    documentos.set(
-                        documento.id,
-                        documento.data()
-                    );
-
-                }
-            );
-
-            if(documentos.size === 0){
-
-                renderSinResultados(
-                    texto
-                );
-
-                return;
-
-            }
-
-            const html =
-                Array.from(
-                    documentos.entries()
-                )
-                .map(function([
-                    id,
-                    boleta
-                ]){
-
-                    return construirCardGarantia(
-                        id,
-                        boleta
-                    );
-
-                })
-                .join("");
-
-            resultado.innerHTML =
-                html;
-
-        }catch(error){
-
-            console.error(
-                "Error buscando garantía:",
-                error
-            );
-
-            renderError();
-
-        }
+        return;
 
     }
 
+    const texto =
+        input.value.trim();
+
+    if(!texto){
+
+        alert(
+            "Ingrese DNI o número de boleta"
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+    cancelarRealtimeGarantiasDesktop();
+
+    renderCargando();
+
+    const consultaDni =
+        query(
+            collection(
+                db,
+                "boletas"
+            ),
+            where(
+                "clienteDni",
+                "==",
+                texto
+            )
+        );
+
+    const consultaBoleta =
+        query(
+            collection(
+                db,
+                "boletas"
+            ),
+            where(
+                "numeroBoleta",
+                "==",
+                texto
+            )
+        );
+
+    const documentosDni =
+        new Map();
+
+    const documentosBoleta =
+        new Map();
+
+    let consultaDniInicializada =
+        false;
+
+    let consultaBoletaInicializada =
+        false;
+
+    let errorRealtimeMostrado =
+        false;
+
+    function renderizarResultadosRealtime(){
+
+        if(
+            !consultaDniInicializada ||
+            !consultaBoletaInicializada
+        ){
+
+            return;
+
+        }
+
+        const documentos =
+            new Map([
+                ...documentosDni,
+                ...documentosBoleta
+            ]);
+
+        if(documentos.size === 0){
+
+            renderSinResultados(
+                texto
+            );
+
+            return;
+
+        }
+
+        const html =
+            Array.from(
+                documentos.entries()
+            )
+            .map(function([
+                id,
+                boleta
+            ]){
+
+                return construirCardGarantia(
+                    id,
+                    boleta
+                );
+
+            })
+            .join("");
+
+        resultado.innerHTML =
+            html;
+
+    }
+
+    function manejarErrorRealtime(error){
+
+        console.error(
+            "Error en garantías Realtime:",
+            error
+        );
+
+        if(errorRealtimeMostrado){
+
+            return;
+
+        }
+
+        errorRealtimeMostrado =
+            true;
+
+        renderError();
+
+    }
+
+    const cancelarDni =
+        onSnapshot(
+            consultaDni,
+
+            function(snapshot){
+
+                documentosDni.clear();
+
+                snapshot.forEach(
+                    function(documento){
+
+                        documentosDni.set(
+                            documento.id,
+                            documento.data()
+                        );
+
+                    }
+                );
+
+                consultaDniInicializada =
+                    true;
+
+                renderizarResultadosRealtime();
+
+            },
+
+            manejarErrorRealtime
+        );
+
+    const cancelarBoleta =
+        onSnapshot(
+            consultaBoleta,
+
+            function(snapshot){
+
+                documentosBoleta.clear();
+
+                snapshot.forEach(
+                    function(documento){
+
+                        documentosBoleta.set(
+                            documento.id,
+                            documento.data()
+                        );
+
+                    }
+                );
+
+                consultaBoletaInicializada =
+                    true;
+
+                renderizarResultadosRealtime();
+
+            },
+
+            manejarErrorRealtime
+        );
+
+    cancelarSuscripcionGarantiasDesktop =
+        function(){
+
+            if(typeof cancelarDni === "function"){
+
+                cancelarDni();
+
+            }
+
+            if(typeof cancelarBoleta === "function"){
+
+                cancelarBoleta();
+
+            }
+
+        };
+
+}
+
     function limpiarBusquedaGarantia(){
+
+        cancelarRealtimeGarantiasDesktop();
 
         const input =
             obtenerInputGarantia();
