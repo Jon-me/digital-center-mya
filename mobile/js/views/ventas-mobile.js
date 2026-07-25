@@ -2196,27 +2196,13 @@ async function manejarMetodoPagoVentasMobile(
     }
 
 
-    if(metodo === "mixto"){
+if(metodo === "mixto"){
 
-        vibrarVentasMobile(
-            "warning"
-        );
+    abrirPagoMixtoVentasMobile();
 
+    return true;
 
-        mostrarToast({
-
-            tipo:
-                "info",
-
-            mensaje:
-                "El pago mixto se implementará en el siguiente bloque."
-
-        });
-
-
-        return false;
-
-    }
+}
 
 
     if(
@@ -2449,6 +2435,1188 @@ async function confirmarPagoDigitalVentasMobile(
 
             bloquearBotonVentasMobile(
                 botonMetodo,
+                false
+            );
+
+        }
+
+    }
+
+}
+
+// =====================================================
+// PAGO MIXTO ENTERPRISE
+// =====================================================
+
+function abrirPagoMixtoVentasMobile(){
+
+    const resumen =
+        obtenerResumenCarritoMobile();
+
+
+    if(
+        !Array.isArray(
+            resumen.items
+        ) ||
+        resumen.items.length === 0 ||
+        Number(resumen.total || 0) <= 0
+    ){
+
+        vibrarVentasMobile(
+            "warning"
+        );
+
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "La venta ya no tiene productos."
+
+        });
+
+
+        return;
+
+    }
+
+
+    const sheet =
+        abrirBottomSheet({
+
+            eyebrow:
+                "COBRO MÓVIL",
+
+            titulo:
+                "Pago mixto",
+
+            descripcion:
+                `Distribuye ${formatearMonedaVentasMobile(
+                    resumen.total
+                )} entre dos o más métodos.`,
+
+            textoCancelar:
+                "Volver",
+
+            textoConfirmar:
+                "",
+
+            contenido:
+                construirPagoMixtoVentasMobile(
+                    resumen
+                )
+
+        });
+
+
+    inicializarPagoMixtoVentasMobile({
+
+        portal:
+            sheet.portal,
+
+        total:
+            Number(
+                resumen.total || 0
+            )
+
+    });
+
+}
+
+function construirPagoMixtoVentasMobile(
+    resumen
+){
+
+    const nombreTienda =
+        resumen?.nombreTienda ||
+        obtenerNombreTiendaVentaMobile();
+
+
+    const metodos = [
+
+        {
+            id:
+                "efectivo",
+
+            nombre:
+                "Efectivo",
+
+            icono:
+                "💵"
+        },
+
+        {
+            id:
+                "yape",
+
+            nombre:
+                "Yape",
+
+            icono:
+                "📱"
+        },
+
+        {
+            id:
+                "plin",
+
+            nombre:
+                "Plin",
+
+            icono:
+                "📲"
+        },
+
+        {
+            id:
+                "tarjeta",
+
+            nombre:
+                "Tarjeta",
+
+            icono:
+                "💳"
+        },
+
+        {
+            id:
+                "transferencia",
+
+            nombre:
+                "Transferencia",
+
+            icono:
+                "🏦"
+        }
+
+    ];
+
+
+    return `
+        <section
+            class="
+                mobile-mixed-payment
+                mobile-mixed-payment-premium
+            "
+            data-mixed-payment
+        >
+
+            <header class="mobile-mixed-header">
+
+                <span class="mobile-mixed-eyebrow">
+                    DISTRIBUCIÓN DEL PAGO
+                </span>
+
+                <div class="mobile-mixed-total-card">
+
+                    <div>
+
+                        <span>
+                            Total de la venta
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaVentasMobile(
+                                resumen.total
+                            )}
+                        </strong>
+
+                    </div>
+
+                    <span
+                        class="mobile-mixed-total-icon"
+                        aria-hidden="true"
+                    >
+                        🔀
+                    </span>
+
+                </div>
+
+                <div class="mobile-mixed-meta">
+
+                    <span>
+                        🏪
+                        ${escaparHTMLVentasMobile(
+                            nombreTienda
+                        )}
+                    </span>
+
+                    <span>
+                        🛒
+                        ${Number(
+                            resumen.cantidad || 0
+                        )} unidades
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <section class="mobile-mixed-section">
+
+                <div class="mobile-mixed-section-header">
+
+                    <div>
+
+                        <span>
+                            MÉTODOS DE PAGO
+                        </span>
+
+                        <strong>
+                            Ingresa los montos utilizados
+                        </strong>
+
+                    </div>
+
+                    <span aria-hidden="true">
+                        💳
+                    </span>
+
+                </div>
+
+
+                <div class="mobile-mixed-methods">
+
+                    ${
+                        metodos
+                            .map(
+                                construirMetodoPagoMixtoVentasMobile
+                            )
+                            .join("")
+                    }
+
+                </div>
+
+            </section>
+
+
+            <section class="mobile-mixed-summary">
+
+                <div class="mobile-mixed-summary-row">
+
+                    <span>
+                        Total ingresado
+                    </span>
+
+                    <strong
+                        data-mixed-paid
+                        aria-live="polite"
+                    >
+                        S/ 0.00
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="
+                        mobile-mixed-summary-row
+                        is-remaining
+                    "
+                    data-mixed-remaining-row
+                >
+
+                    <span data-mixed-remaining-label>
+                        Falta por pagar
+                    </span>
+
+                    <strong
+                        data-mixed-remaining
+                        aria-live="polite"
+                    >
+                        ${formatearMonedaVentasMobile(
+                            resumen.total
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="mobile-mixed-status"
+                    data-mixed-status
+                    aria-live="polite"
+                >
+
+                    <span
+                        class="mobile-mixed-status-dot"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span data-mixed-status-text>
+                        Usa por lo menos dos métodos de pago.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <button
+                type="button"
+                class="
+                    mobile-button
+                    mobile-button-primary
+                    mobile-mixed-confirm
+                "
+                data-mixed-confirm
+                disabled
+            >
+
+                <span>
+                    Confirmar pago mixto
+                </span>
+
+                <span aria-hidden="true">
+                    →
+                </span>
+
+            </button>
+
+        </section>
+    `;
+
+}
+
+function construirMetodoPagoMixtoVentasMobile(
+    metodo
+){
+
+    return `
+        <label
+            class="mobile-mixed-method"
+            data-mixed-method-row="${escaparHTMLVentasMobile(
+                metodo.id
+            )}"
+        >
+
+            <span class="mobile-mixed-method-icon">
+
+                ${metodo.icono}
+
+            </span>
+
+
+            <span class="mobile-mixed-method-copy">
+
+                <strong>
+                    ${escaparHTMLVentasMobile(
+                        metodo.nombre
+                    )}
+                </strong>
+
+                <small>
+                    Ingresa el importe
+                </small>
+
+            </span>
+
+
+            <span class="mobile-mixed-method-input-wrap">
+
+                <span>
+                    S/
+                </span>
+
+                <input
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    value=""
+                    placeholder="0.00"
+                    autocomplete="off"
+                    data-mixed-payment-input="${escaparHTMLVentasMobile(
+                        metodo.id
+                    )}"
+                    aria-label="Monto pagado con ${escaparHTMLVentasMobile(
+                        metodo.nombre
+                    )}"
+                >
+
+            </span>
+
+        </label>
+    `;
+
+}
+
+function inicializarPagoMixtoVentasMobile(
+    opciones
+){
+
+    const {
+
+        portal,
+
+        total
+
+    } = opciones;
+
+
+    const totalVenta =
+        redondearMontoVentasMobile(
+            total
+        );
+
+
+    const entradas =
+        Array.from(
+            portal.querySelectorAll(
+                "[data-mixed-payment-input]"
+            )
+        );
+
+
+    const salidaPagado =
+        portal.querySelector(
+            "[data-mixed-paid]"
+        );
+
+
+    const salidaRestante =
+        portal.querySelector(
+            "[data-mixed-remaining]"
+        );
+
+
+    const etiquetaRestante =
+        portal.querySelector(
+            "[data-mixed-remaining-label]"
+        );
+
+
+    const filaRestante =
+        portal.querySelector(
+            "[data-mixed-remaining-row]"
+        );
+
+
+    const estado =
+        portal.querySelector(
+            "[data-mixed-status]"
+        );
+
+
+    const textoEstado =
+        portal.querySelector(
+            "[data-mixed-status-text]"
+        );
+
+
+    const botonConfirmar =
+        portal.querySelector(
+            "[data-mixed-confirm]"
+        );
+
+
+    function obtenerPagosIngresados(){
+
+        const pagos = {
+
+            efectivo:
+                0,
+
+            yape:
+                0,
+
+            plin:
+                0,
+
+            tarjeta:
+                0,
+
+            transferencia:
+                0
+
+        };
+
+
+        entradas.forEach(
+            function(entrada){
+
+                const metodo =
+                    entrada.dataset
+                        .mixedPaymentInput;
+
+
+                pagos[metodo] =
+                    normalizarMontoVentasMobile(
+                        entrada.value
+                    );
+
+            }
+        );
+
+
+        return pagos;
+
+    }
+
+
+    function calcularEstadoPagoMixto(){
+
+        const pagos =
+            obtenerPagosIngresados();
+
+
+        const totalPagado =
+            redondearMontoVentasMobile(
+                Object
+                    .values(
+                        pagos
+                    )
+                    .reduce(
+                        function(acumulado, monto){
+
+                            return (
+                                acumulado +
+                                Number(monto || 0)
+                            );
+
+                        },
+                        0
+                    )
+            );
+
+
+        const diferencia =
+            redondearMontoVentasMobile(
+                totalVenta -
+                totalPagado
+            );
+
+
+        const metodosUtilizados =
+            Object
+                .values(
+                    pagos
+                )
+                .filter(
+                    function(monto){
+
+                        return (
+                            Number(monto || 0) >
+                            0
+                        );
+
+                    }
+                )
+                .length;
+
+
+        const pagoCompleto =
+            Math.abs(
+                diferencia
+            ) <= 0.009;
+
+
+        const excedido =
+            diferencia < -0.009;
+
+
+        const puedeConfirmar =
+            pagoCompleto &&
+            metodosUtilizados >= 2 &&
+            !checkoutVentasEnProceso;
+
+
+        return {
+
+            pagos,
+
+            totalPagado,
+
+            diferencia,
+
+            metodosUtilizados,
+
+            pagoCompleto,
+
+            excedido,
+
+            puedeConfirmar
+
+        };
+
+    }
+
+
+    function actualizarPagoMixto(){
+
+        const resultado =
+            calcularEstadoPagoMixto();
+
+
+        if(salidaPagado){
+
+            salidaPagado.textContent =
+                formatearMonedaVentasMobile(
+                    resultado.totalPagado
+                );
+
+        }
+
+
+        if(salidaRestante){
+
+            salidaRestante.textContent =
+                formatearMonedaVentasMobile(
+                    Math.abs(
+                        resultado.diferencia
+                    )
+                );
+
+        }
+
+
+        if(etiquetaRestante){
+
+            etiquetaRestante.textContent =
+                resultado.excedido
+                    ? "Monto excedido"
+                    : resultado.pagoCompleto
+                        ? "Pago completado"
+                        : "Falta por pagar";
+
+        }
+
+
+        if(filaRestante){
+
+            filaRestante.classList.toggle(
+                "is-complete",
+                resultado.pagoCompleto &&
+                resultado.metodosUtilizados >= 2
+            );
+
+            filaRestante.classList.toggle(
+                "is-exceeded",
+                resultado.excedido
+            );
+
+        }
+
+
+        if(estado){
+
+            estado.classList.toggle(
+                "is-ready",
+                resultado.puedeConfirmar
+            );
+
+            estado.classList.toggle(
+                "is-warning",
+                resultado.excedido
+            );
+
+        }
+
+
+        if(textoEstado){
+
+            if(resultado.excedido){
+
+                textoEstado.textContent =
+                    "La distribución supera el total de la venta.";
+
+            }else if(
+                resultado.pagoCompleto &&
+                resultado.metodosUtilizados < 2
+            ){
+
+                textoEstado.textContent =
+                    "Selecciona por lo menos dos métodos de pago.";
+
+            }else if(resultado.puedeConfirmar){
+
+                textoEstado.textContent =
+                    "Pago completo. Ya puedes confirmar la venta.";
+
+            }else{
+
+                textoEstado.textContent =
+                    `Falta ${formatearMonedaVentasMobile(
+                        Math.max(
+                            0,
+                            resultado.diferencia
+                        )
+                    )} por distribuir.`;
+
+            }
+
+        }
+
+
+        if(botonConfirmar){
+
+            botonConfirmar.disabled =
+                !resultado.puedeConfirmar;
+
+        }
+
+
+        entradas.forEach(
+            function(entrada){
+
+                const metodo =
+                    entrada.dataset
+                        .mixedPaymentInput;
+
+
+                const fila =
+                    entrada.closest(
+                        "[data-mixed-method-row]"
+                    );
+
+
+                fila?.classList.toggle(
+                    "is-active",
+                    Number(
+                        resultado.pagos[
+                            metodo
+                        ] || 0
+                    ) > 0
+                );
+
+            }
+        );
+
+
+        return resultado;
+
+    }
+
+
+    entradas.forEach(
+        function(entrada){
+
+            entrada.addEventListener(
+                "input",
+                function(){
+
+                    if(checkoutVentasEnProceso){
+
+                        return;
+
+                    }
+
+
+                    if(
+                        Number(
+                            entrada.value
+                        ) < 0
+                    ){
+
+                        entrada.value =
+                            "0";
+
+                    }
+
+
+                    actualizarPagoMixto();
+
+                }
+            );
+
+
+            entrada.addEventListener(
+                "focus",
+                function(){
+
+                    entrada
+                        .closest(
+                            "[data-mixed-method-row]"
+                        )
+                        ?.classList.add(
+                            "has-focus"
+                        );
+
+                }
+            );
+
+
+            entrada.addEventListener(
+                "blur",
+                function(){
+
+                    entrada
+                        .closest(
+                            "[data-mixed-method-row]"
+                        )
+                        ?.classList.remove(
+                            "has-focus"
+                        );
+
+
+                    const monto =
+                        normalizarMontoVentasMobile(
+                            entrada.value
+                        );
+
+
+                    entrada.value =
+                        monto > 0
+                            ? monto.toFixed(2)
+                            : "";
+
+
+                    actualizarPagoMixto();
+
+                }
+            );
+
+        }
+    );
+
+
+    botonConfirmar?.addEventListener(
+        "click",
+        async function(){
+
+            if(checkoutVentasEnProceso){
+
+                return;
+
+            }
+
+
+            const resultado =
+                actualizarPagoMixto();
+
+
+            if(!resultado.puedeConfirmar){
+
+                vibrarVentasMobile(
+                    "warning"
+                );
+
+
+                mostrarToast({
+
+                    tipo:
+                        "warning",
+
+                    mensaje:
+                        "Completa correctamente la distribución del pago."
+
+                });
+
+
+                return;
+
+            }
+
+
+            await confirmarPagoMixtoVentasMobile({
+
+                total:
+                    totalVenta,
+
+                pagos:
+                    resultado.pagos,
+
+                botonConfirmar,
+
+                entradas
+
+            });
+
+        }
+    );
+
+
+    actualizarPagoMixto();
+
+}
+
+async function confirmarPagoMixtoVentasMobile(
+    datos
+){
+
+    const {
+
+        total,
+
+        pagos,
+
+        botonConfirmar,
+
+        entradas
+
+    } = datos;
+
+
+    const resumenActual =
+        obtenerResumenCarritoMobile();
+
+
+    if(
+        !Array.isArray(
+            resumenActual.items
+        ) ||
+        resumenActual.items.length === 0
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "La venta ya no tiene productos."
+
+        });
+
+
+        return false;
+
+    }
+
+
+    const totalActual =
+        redondearMontoVentasMobile(
+            resumenActual.total
+        );
+
+
+    if(
+        Math.abs(
+            totalActual -
+            total
+        ) > 0.009
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El total de la venta cambió. Revisa nuevamente el pago."
+
+        });
+
+
+        return false;
+
+    }
+
+
+    const detallePagos =
+        Object
+            .entries(
+                pagos
+            )
+            .filter(
+                function([
+                    metodo,
+                    monto
+                ]){
+
+                    return (
+                        Number(monto || 0) >
+                        0
+                    );
+
+                }
+            )
+            .map(
+                function([
+                    metodo,
+                    monto
+                ]){
+
+                    return (
+                        `${obtenerNombreMetodoPagoVentasMobile(
+                            metodo
+                        )}: ${formatearMonedaVentasMobile(
+                            monto
+                        )}`
+                    );
+
+                }
+            )
+            .join(" · ");
+
+
+    const confirmado =
+        await mostrarDialogo({
+
+            icono:
+                "🔀",
+
+            titulo:
+                "Confirmar pago mixto",
+
+            mensaje:
+                `Total: ${formatearMonedaVentasMobile(
+                    totalActual
+                )} · ${detallePagos}`,
+
+            textoCancelar:
+                "Volver",
+
+            textoConfirmar:
+                "Confirmar venta",
+
+            peligro:
+                false
+
+        });
+
+
+    if(!confirmado){
+
+        return false;
+
+    }
+
+
+    checkoutVentasEnProceso =
+        true;
+
+
+    bloquearBotonVentasMobile(
+        botonConfirmar,
+        true,
+        "Registrando..."
+    );
+
+
+    entradas.forEach(
+        function(entrada){
+
+            entrada.disabled =
+                true;
+
+        }
+    );
+
+
+    vibrarVentasMobile(
+        "tap"
+    );
+
+
+    try{
+
+        const efectivo =
+            Number(
+                pagos.efectivo || 0
+            );
+
+
+        const resultado =
+            await registrarVentaMobile({
+
+                metodoPago:
+                    "mixto",
+
+                pagos,
+
+                recibido:
+                    efectivo,
+
+                vuelto:
+                    0
+
+            });
+
+
+        if(
+            resultado?.completada !==
+            true
+        ){
+
+            vibrarVentasMobile(
+                "warning"
+            );
+
+
+            mostrarToast({
+
+                tipo:
+                    "danger",
+
+                duracion:
+                    4200,
+
+                mensaje:
+                    resultado?.mensaje ||
+                    "No se pudo registrar el pago mixto."
+
+            });
+
+
+            return false;
+
+        }
+
+
+        vaciarCarritoMobile();
+
+
+        OverlayMobile.close();
+
+
+        vibrarVentasMobile(
+            "success"
+        );
+
+
+        mostrarToast({
+
+            tipo:
+                "success",
+
+            duracion:
+                4200,
+
+            mensaje:
+                "Venta con pago mixto registrada correctamente."
+
+        });
+
+
+        return true;
+
+    }finally{
+
+        checkoutVentasEnProceso =
+            false;
+
+
+        entradas.forEach(
+            function(entrada){
+
+                if(
+                    document.body.contains(
+                        entrada
+                    )
+                ){
+
+                    entrada.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        if(
+            botonConfirmar &&
+            document.body.contains(
+                botonConfirmar
+            )
+        ){
+
+            bloquearBotonVentasMobile(
+                botonConfirmar,
                 false
             );
 
@@ -3748,27 +4916,27 @@ function construirMetodosPagoVentasMobile(
                 </span>
 
 
-                ${construirMetodoPagoVentasMobile({
+${construirMetodoPagoVentasMobile({
 
-                    id:
-                        "mixto",
+    id:
+        "mixto",
 
-                    icono:
-                        "🔀",
+    icono:
+        "🔀",
 
-                    nombre:
-                        "Pago mixto",
+    nombre:
+        "Pago mixto",
 
-                    descripcion:
-                        "Combinar efectivo, Yape, Plin u otros métodos.",
+    descripcion:
+        "Combinar efectivo, Yape, Plin u otros métodos.",
 
-                    clase:
-                        "is-mixed",
+    clase:
+        "is-mixed",
 
-                    proximo:
-                        true
+    proximo:
+        false
 
-                })}
+})}
 
             </div>
 
@@ -4090,6 +5258,43 @@ function bloquearBotonVentasMobile(
 // =====================================================
 // UTILIDADES
 // =====================================================
+
+function normalizarMontoVentasMobile(
+    valor
+){
+
+    const numero =
+        Number(valor || 0);
+
+
+    if(
+        !Number.isFinite(numero) ||
+        numero < 0
+    ){
+
+        return 0;
+
+    }
+
+
+    return Number(
+        numero.toFixed(2)
+    );
+
+}
+
+
+function redondearMontoVentasMobile(
+    valor
+){
+
+    return Math.round(
+        normalizarMontoVentasMobile(
+            valor
+        ) * 100
+    ) / 100;
+
+}
 
 function formatearMonedaVentasMobile(
     valor

@@ -102,10 +102,11 @@ function obtenerHoraLocalCheckoutMobile(fecha = new Date()) {
 
 function construirPagosCheckoutMobile(
     metodoPago,
-    total
+    total,
+    pagosPersonalizados = null
 ) {
 
-    const pagos = {
+    const pagosBase = {
         efectivo: 0,
         yape: 0,
         plin: 0,
@@ -113,19 +114,168 @@ function construirPagosCheckoutMobile(
         transferencia: 0
     };
 
-    if (
-        Object.hasOwn(
-            pagos,
-            metodoPago
-        )
-    ) {
 
-        pagos[metodoPago] =
-            redondearMontoCheckoutMobile(total);
+    /*
+     * PAGO MIXTO
+     * Recibe los montos definidos desde la interfaz.
+     */
+    if(
+        pagosPersonalizados &&
+        typeof pagosPersonalizados ===
+        "object"
+    ){
+
+        Object
+            .keys(
+                pagosBase
+            )
+            .forEach(function(metodo){
+
+                pagosBase[metodo] =
+                    redondearMontoCheckoutMobile(
+                        pagosPersonalizados[
+                            metodo
+                        ]
+                    );
+
+            });
+
+
+        return pagosBase;
 
     }
 
-    return pagos;
+
+    /*
+     * PAGO SIMPLE
+     * Conserva el comportamiento actual.
+     */
+    if(
+        Object.hasOwn(
+            pagosBase,
+            metodoPago
+        )
+    ){
+
+        pagosBase[metodoPago] =
+            redondearMontoCheckoutMobile(
+                total
+            );
+
+    }
+
+
+    return pagosBase;
+
+}
+
+function validarPagosCheckoutMobile(
+    pagos,
+    total
+){
+
+    if(
+        !pagos ||
+        typeof pagos !==
+        "object"
+    ){
+
+        throw new Error(
+            "La distribución de pagos no es válida."
+        );
+
+    }
+
+
+    const metodosPermitidos = [
+        "efectivo",
+        "yape",
+        "plin",
+        "tarjeta",
+        "transferencia"
+    ];
+
+
+    const pagosNormalizados = {};
+
+
+    metodosPermitidos.forEach(
+        function(metodo){
+
+            pagosNormalizados[metodo] =
+                redondearMontoCheckoutMobile(
+                    pagos[metodo]
+                );
+
+        }
+    );
+
+
+    const totalPagado =
+        redondearMontoCheckoutMobile(
+            metodosPermitidos.reduce(
+                function(acumulado, metodo){
+
+                    return (
+                        acumulado +
+                        pagosNormalizados[
+                            metodo
+                        ]
+                    );
+
+                },
+                0
+            )
+        );
+
+
+    const totalVenta =
+        redondearMontoCheckoutMobile(
+            total
+        );
+
+
+    if(
+        Math.abs(
+            totalPagado -
+            totalVenta
+        ) > 0.009
+    ){
+
+        throw new Error(
+            `La suma de los pagos debe ser ${totalVenta.toFixed(2)}. Actualmente suma ${totalPagado.toFixed(2)}.`
+        );
+
+    }
+
+
+    const metodosUtilizados =
+        metodosPermitidos.filter(
+            function(metodo){
+
+                return (
+                    pagosNormalizados[
+                        metodo
+                    ] > 0
+                );
+
+            }
+        );
+
+
+    if(
+        metodosUtilizados.length <
+        2
+    ){
+
+        throw new Error(
+            "El pago mixto debe utilizar al menos dos métodos de pago."
+        );
+
+    }
+
+
+    return pagosNormalizados;
 
 }
 
@@ -518,19 +668,53 @@ function construirDetalleVentaCheckoutMobile(item) {
 // CONSTRUCCIÓN DE LA VENTA
 // =====================================================
 
+function obtenerNombreMetodoPagoCheckoutMobile(
+    metodoPago
+){
+
+    const nombres = {
+
+        efectivo:
+            "Efectivo",
+
+        yape:
+            "Yape",
+
+        plin:
+            "Plin",
+
+        tarjeta:
+            "Tarjeta",
+
+        transferencia:
+            "Transferencia"
+
+    };
+
+
+    return (
+        nombres[
+            metodoPago
+        ] ||
+        "Sin método"
+    );
+
+}
+
 function construirVentaCheckoutMobile(opciones) {
 
-    const {
-        resumen,
-        metodoPago,
-        tiendaVenta,
-        tiendaVentaNombre,
-        recibido = resumen.total,
-        vuelto = 0,
-        clienteNombre = "CLIENTE GENERAL",
-        clienteDni = "-",
-        descuento = 0
-    } = opciones;
+const {
+    resumen,
+    metodoPago,
+    pagosPersonalizados = null,
+    tiendaVenta,
+    tiendaVentaNombre,
+    recibido = resumen.total,
+    vuelto = 0,
+    clienteNombre = "CLIENTE GENERAL",
+    clienteDni = "-",
+    descuento = 0
+} = opciones;
 
     const usuario =
         obtenerSesionMobile();
@@ -578,10 +762,11 @@ function construirVentaCheckoutMobile(opciones) {
         );
 
     const pagos =
-        construirPagosCheckoutMobile(
-            metodoPago,
-            totalFinal
-        );
+    construirPagosCheckoutMobile(
+        metodoPago,
+        totalFinal,
+        pagosPersonalizados
+    );
 
     return {
 
@@ -648,8 +833,12 @@ function construirVentaCheckoutMobile(opciones) {
          * Conservamos el formato que ya usa
          * tu sistema Desktop.
          */
-        metodoPago:
-            "Pagos mixtos",
+metodoPago:
+    pagosPersonalizados
+        ? "Pagos mixtos"
+        : obtenerNombreMetodoPagoCheckoutMobile(
+            metodoPago
+        ),
 
         /*
          * Tienda real desde donde se realizó
@@ -734,6 +923,22 @@ async function registrarVentaMobile(
                 opciones.metodoPago ||
                 "efectivo"
             );
+
+let pagosPersonalizados =
+    null;
+
+
+if(
+    metodoPago === "mixto"
+){
+
+    pagosPersonalizados =
+        validarPagosCheckoutMobile(
+            opciones.pagos,
+            resumen.total
+        );
+
+}
 
         const recibido =
             normalizarMontoCheckoutMobile(
@@ -965,6 +1170,8 @@ delete stockTiendas["peluquería"];
                             resumen,
 
                             metodoPago,
+
+                            pagosPersonalizados,
 
                             recibido,
 
