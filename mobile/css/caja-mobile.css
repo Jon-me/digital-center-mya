@@ -4065,3 +4065,1823 @@ input:-webkit-autofill:focus {
     }
 
 }
+
+/* =====================================================
+   M7.3.9.2
+   CIERRE Y CUADRE DE CAJA PREMIUM
+===================================================== */
+
+
+/* =====================================================
+   BACKDROP
+===================================================== */
+
+.mobile-caja-close-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1480;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding:
+        18px
+        12px
+        max(
+            14px,
+            env(safe-area-inset-bottom)
+        );
+
+    background:
+        rgba(2, 8, 20, 0.78);
+
+    backdrop-filter:
+        blur(14px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 180ms ease,
+        visibility 180ms ease;
+}
+
+
+.mobile-caja-close-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =====================================================
+   SHEET
+===================================================== */
+
+.mobile-caja-close-sheet {
+    width: min(
+        100%,
+        540px
+    );
+
+    max-height:
+        calc(
+            100dvh -
+            26px
+        );
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        12px
+        16px
+        18px;
+
+    border:
+        1px solid
+        rgba(
+            97,
+            157,
+            255,
+            0.22
+        );
+
+    border-radius:
+        25px
+        25px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(12, 30, 64, 0.995),
+            rgba(5, 15, 35, 0.998)
+        );
+
+    box-shadow:
+        0 -22px 62px
+        rgba(0, 0, 0, 0.48);
+
+    transform:
+        translateY(30px)
+        scale(0.985);
+
+    transition:
+        transform 180ms ease;
+}
+
+
+.mobile-caja-close-backdrop.is-visible
+.mobile-caja-close-sheet {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.mobile-caja-close-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+
+.mobile-caja-close-header > div {
+    min-width: 0;
+}
+
+
+.mobile-caja-close-header > div > span {
+    display: block;
+
+    color:
+        rgba(
+            105,
+            165,
+            255,
+            0.76
+        );
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-caja-close-header h2 {
+    margin: 5px 0 0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-caja-close-header p {
+    margin: 7px 0 0;
+
+    color:
+        rgba(
+            177,
+            199,
+            231,
+            0.62
+        );
+
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+
+.mobile-caja-close-x {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(
+            116,
+            164,
+            238,
+            0.16
+        );
+
+    border-radius: 11px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.045
+        );
+
+    color:
+        rgba(
+            222,
+            233,
+            249,
+            0.78
+        );
+
+    font-size: 20px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   TIENDA
+===================================================== */
+
+.mobile-caja-close-store {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    margin-top: 16px;
+    padding: 12px 13px;
+
+    border:
+        1px solid
+        rgba(
+            93,
+            151,
+            244,
+            0.15
+        );
+
+    border-radius: 15px;
+
+    background:
+        rgba(
+            32,
+            75,
+            145,
+            0.09
+        );
+}
+
+
+.mobile-caja-close-store-icon {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 37px;
+    height: 37px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(
+            77,
+            139,
+            239,
+            0.12
+        );
+
+    font-size: 17px;
+}
+
+
+.mobile-caja-close-store div {
+    min-width: 0;
+}
+
+
+.mobile-caja-close-store small {
+    display: block;
+
+    color:
+        rgba(
+            160,
+            188,
+            228,
+            0.56
+        );
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+}
+
+
+.mobile-caja-close-store strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   RESUMEN
+===================================================== */
+
+.mobile-caja-close-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+
+.mobile-caja-close-summary article {
+    min-width: 0;
+
+    padding: 11px 12px;
+
+    border:
+        1px solid
+        rgba(
+            99,
+            153,
+            238,
+            0.12
+        );
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 35, 71, 0.86),
+            rgba(7, 19, 43, 0.96)
+        );
+}
+
+
+.mobile-caja-close-summary article span {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color:
+        rgba(
+            166,
+            192,
+            228,
+            0.58
+        );
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+
+.mobile-caja-close-summary article strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 930;
+}
+
+
+.mobile-caja-close-summary
+article.is-expected {
+    border-color:
+        rgba(
+            246,
+            188,
+            73,
+            0.26
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(82, 61, 18, 0.4),
+            rgba(35, 25, 7, 0.84)
+        );
+}
+
+
+.mobile-caja-close-summary
+article.is-expected strong {
+    color: #ffd477;
+}
+
+
+/* =====================================================
+   CAMPO DINERO REAL
+===================================================== */
+
+.mobile-caja-close-field {
+    display: grid;
+    gap: 7px;
+
+    margin-top: 15px;
+}
+
+
+.mobile-caja-close-field > span {
+    color:
+        rgba(
+            219,
+            231,
+            249,
+            0.82
+        );
+
+    font-size: 9px;
+    font-weight: 850;
+}
+
+
+.mobile-caja-close-field > small {
+    color:
+        rgba(
+            162,
+            188,
+            225,
+            0.52
+        );
+
+    font-size: 8px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+
+.mobile-caja-close-input-wrap {
+    display: flex;
+    align-items: center;
+
+    min-height: 58px;
+
+    padding: 0 15px;
+
+    border:
+        1px solid
+        rgba(
+            95,
+            157,
+            255,
+            0.24
+        );
+
+    border-radius: 17px;
+
+    background:
+        rgba(
+            5,
+            17,
+            39,
+            0.82
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(
+            255,
+            255,
+            255,
+            0.03
+        );
+
+    transition:
+        border-color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+.mobile-caja-close-input-wrap:focus-within {
+    border-color:
+        rgba(
+            80,
+            153,
+            255,
+            0.68
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            67,
+            139,
+            247,
+            0.11
+        );
+}
+
+
+.mobile-caja-close-input-wrap > span {
+    flex: 0 0 auto;
+
+    color:
+        rgba(
+            128,
+            180,
+            255,
+            0.84
+        );
+
+    font-size: 17px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-close-input-wrap input {
+    min-width: 0;
+    width: 100%;
+
+    padding: 0 0 0 9px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 25px;
+    font-weight: 950;
+    text-align: right;
+}
+
+
+.mobile-caja-close-input-wrap
+input::placeholder {
+    color:
+        rgba(
+            154,
+            181,
+            220,
+            0.26
+        );
+}
+
+
+/* =====================================================
+   ACCIONES RÁPIDAS
+===================================================== */
+
+.mobile-caja-close-quick {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 8px;
+
+    margin-top: 9px;
+}
+
+
+.mobile-caja-close-quick button {
+    min-height: 38px;
+
+    border:
+        1px solid
+        rgba(
+            99,
+            156,
+            244,
+            0.14
+        );
+
+    border-radius: 12px;
+
+    background:
+        rgba(
+            41,
+            89,
+            166,
+            0.09
+        );
+
+    color:
+        rgba(
+            199,
+            219,
+            246,
+            0.74
+        );
+
+    font-size: 9px;
+    font-weight: 820;
+
+    cursor: pointer;
+}
+
+
+.mobile-caja-close-quick button:active {
+    transform: scale(0.98);
+}
+
+
+/* =====================================================
+   RESULTADO
+===================================================== */
+
+.mobile-caja-close-result {
+    display: grid;
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+    align-items: center;
+    gap: 11px;
+
+    margin-top: 13px;
+    padding: 13px;
+
+    border:
+        1px solid
+        rgba(
+            107,
+            158,
+            236,
+            0.14
+        );
+
+    border-radius: 16px;
+
+    background:
+        rgba(
+            8,
+            21,
+            47,
+            0.78
+        );
+}
+
+
+.mobile-caja-close-result-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.055
+        );
+
+    font-size: 17px;
+}
+
+
+.mobile-caja-close-result div {
+    min-width: 0;
+}
+
+
+.mobile-caja-close-result small {
+    display: block;
+
+    color:
+        rgba(
+            161,
+            186,
+            222,
+            0.5
+        );
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+
+.mobile-caja-close-result div strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-caja-close-result p {
+    margin: 3px 0 0;
+
+    color:
+        rgba(
+            174,
+            198,
+            230,
+            0.6
+        );
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+.mobile-caja-close-result-amount {
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 950;
+    white-space: nowrap;
+}
+
+
+.mobile-caja-close-result.is-exact {
+    border-color:
+        rgba(
+            67,
+            219,
+            151,
+            0.3
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 79, 59, 0.48),
+            rgba(7, 35, 29, 0.9)
+        );
+}
+
+
+.mobile-caja-close-result.is-exact
+.mobile-caja-close-result-amount {
+    color: #6ee7b7;
+}
+
+
+.mobile-caja-close-result.is-surplus {
+    border-color:
+        rgba(
+            80,
+            160,
+            255,
+            0.3
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 65, 123, 0.5),
+            rgba(7, 27, 58, 0.92)
+        );
+}
+
+
+.mobile-caja-close-result.is-surplus
+.mobile-caja-close-result-amount {
+    color: #82b9ff;
+}
+
+
+.mobile-caja-close-result.is-shortage {
+    border-color:
+        rgba(
+            255,
+            89,
+            109,
+            0.3
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(100, 27, 42, 0.52),
+            rgba(43, 10, 19, 0.92)
+        );
+}
+
+
+.mobile-caja-close-result.is-shortage
+.mobile-caja-close-result-amount {
+    color: #ff8999;
+}
+
+
+/* =====================================================
+   ADVERTENCIA
+===================================================== */
+
+.mobile-caja-close-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+
+    margin-top: 11px;
+    padding: 10px 11px;
+
+    border:
+        1px solid
+        rgba(
+            246,
+            184,
+            75,
+            0.16
+        );
+
+    border-radius: 13px;
+
+    background:
+        rgba(
+            107,
+            76,
+            19,
+            0.12
+        );
+}
+
+
+.mobile-caja-close-warning > span {
+    flex: 0 0 auto;
+
+    font-size: 13px;
+}
+
+
+.mobile-caja-close-warning p {
+    margin: 0;
+
+    color:
+        rgba(
+            225,
+            207,
+            169,
+            0.66
+        );
+
+    font-size: 8px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+
+/* =====================================================
+   MENSAJE
+===================================================== */
+
+.mobile-caja-close-message {
+    min-height: 16px;
+
+    margin-top: 8px;
+
+    color:
+        rgba(
+            255,
+            112,
+            128,
+            0.92
+        );
+
+    font-size: 9px;
+    font-weight: 750;
+    text-align: center;
+}
+
+
+.mobile-caja-close-message.is-success {
+    color:
+        rgba(
+            93,
+            225,
+            162,
+            0.94
+        );
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+.mobile-caja-close-actions {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 0.85fr)
+        minmax(0, 1.15fr);
+    gap: 9px;
+
+    margin-top: 5px;
+}
+
+
+.mobile-caja-close-actions button {
+    min-height: 47px;
+
+    border-radius: 14px;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+
+.mobile-caja-close-cancel {
+    border:
+        1px solid
+        rgba(
+            110,
+            160,
+            235,
+            0.16
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.045
+        );
+
+    color:
+        rgba(
+            209,
+            224,
+            246,
+            0.72
+        );
+}
+
+
+.mobile-caja-close-confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border:
+        1px solid
+        rgba(
+            80,
+            151,
+            255,
+            0.42
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            #347cf1,
+            #1955bb
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 24px
+        rgba(
+            18,
+            83,
+            191,
+            0.24
+        );
+}
+
+
+.mobile-caja-close-confirm:disabled {
+    opacity: 0.34;
+
+    pointer-events: none;
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-caja-close-sheet {
+        padding:
+            11px
+            13px
+            15px;
+    }
+
+
+    .mobile-caja-close-header h2 {
+        font-size: 19px;
+    }
+
+
+    .mobile-caja-close-summary article {
+        padding:
+            10px
+            9px;
+    }
+
+
+    .mobile-caja-close-summary article strong {
+        font-size: 11px;
+    }
+
+
+    .mobile-caja-close-result {
+        gap: 8px;
+        padding: 11px;
+    }
+
+
+    .mobile-caja-close-result-amount {
+        font-size: 11px;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-close-backdrop,
+    .mobile-caja-close-sheet {
+        transition: none;
+    }
+
+}
+
+/* =====================================================
+   M7.3.9.3
+   LOADING CIERRE DE CAJA
+===================================================== */
+
+.mobile-caja-close-sheet[aria-busy="true"] {
+    pointer-events: none;
+}
+
+
+.mobile-caja-close-confirm.is-loading {
+    position: relative;
+
+    color: rgba(
+        255,
+        255,
+        255,
+        0.82
+    );
+}
+
+
+.mobile-caja-close-confirm.is-loading::before {
+    content: "";
+
+    width: 15px;
+    height: 15px;
+
+    border: 2px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.28
+        );
+
+    border-top-color:
+        #ffffff;
+
+    border-radius:
+        50%;
+
+    animation:
+        mobileCajaCloseSpin
+        700ms
+        linear
+        infinite;
+}
+
+
+@keyframes mobileCajaCloseSpin {
+
+    to {
+        transform:
+            rotate(
+                360deg
+            );
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-close-confirm.is-loading::before {
+        animation-duration:
+            1.4s;
+    }
+
+}
+
+/* =====================================================
+   M7.3.9.4
+   RESULTADO FINAL DEL CIERRE
+===================================================== */
+
+.mobile-caja-result-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1510;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding:
+        18px
+        12px
+        max(
+            14px,
+            env(safe-area-inset-bottom)
+        );
+
+    background:
+        rgba(2, 8, 20, 0.82);
+
+    backdrop-filter:
+        blur(16px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 180ms ease,
+        visibility 180ms ease;
+}
+
+
+.mobile-caja-result-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.mobile-caja-result-sheet {
+    width: min(
+        100%,
+        520px
+    );
+
+    max-height:
+        calc(
+            100dvh -
+            28px
+        );
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    padding:
+        16px;
+
+    border:
+        1px solid
+        rgba(
+            97,
+            158,
+            255,
+            0.2
+        );
+
+    border-radius:
+        25px
+        25px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(12, 30, 64, 0.997),
+            rgba(5, 15, 35, 0.999)
+        );
+
+    box-shadow:
+        0 -22px 62px
+        rgba(0, 0, 0, 0.5);
+}
+
+
+/* =====================================================
+   ESTADO
+===================================================== */
+
+.mobile-caja-result-status {
+    display: grid;
+    justify-items: center;
+
+    padding:
+        20px
+        14px;
+
+    border:
+        1px solid
+        rgba(
+            102,
+            158,
+            245,
+            0.16
+        );
+
+    border-radius: 20px;
+
+    background:
+        rgba(
+            8,
+            21,
+            48,
+            0.78
+        );
+
+    text-align: center;
+}
+
+
+.mobile-caja-result-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 17px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.06
+        );
+
+    font-size: 25px;
+}
+
+
+.mobile-caja-result-status small {
+    margin-top: 11px;
+
+    color:
+        rgba(
+            165,
+            190,
+            226,
+            0.6
+        );
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.11em;
+}
+
+
+.mobile-caja-result-status h2 {
+    margin:
+        5px
+        0
+        0;
+
+    color: #ffffff;
+
+    font-size: 22px;
+    font-weight: 950;
+}
+
+
+.mobile-caja-result-status p {
+    margin:
+        6px
+        0
+        0;
+
+    color:
+        rgba(
+            186,
+            207,
+            236,
+            0.66
+        );
+
+    font-size: 9px;
+    font-weight: 650;
+}
+
+
+.mobile-caja-result-status > strong {
+    margin-top: 11px;
+
+    color: #ffffff;
+
+    font-size: 24px;
+    font-weight: 950;
+}
+
+
+.mobile-caja-result-status.is-exact {
+    border-color:
+        rgba(
+            69,
+            219,
+            153,
+            0.28
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 83, 62, 0.5),
+            rgba(7, 35, 29, 0.94)
+        );
+}
+
+
+.mobile-caja-result-status.is-exact
+> strong {
+    color: #73e8b9;
+}
+
+
+.mobile-caja-result-status.is-surplus {
+    border-color:
+        rgba(
+            79,
+            159,
+            255,
+            0.3
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(21, 68, 128, 0.52),
+            rgba(7, 28, 59, 0.94)
+        );
+}
+
+
+.mobile-caja-result-status.is-surplus
+> strong {
+    color: #87bcff;
+}
+
+
+.mobile-caja-result-status.is-shortage {
+    border-color:
+        rgba(
+            255,
+            91,
+            111,
+            0.3
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(104, 29, 44, 0.54),
+            rgba(45, 11, 20, 0.95)
+        );
+}
+
+
+.mobile-caja-result-status.is-shortage
+> strong {
+    color: #ff8c9b;
+}
+
+
+/* =====================================================
+   RESUMEN
+===================================================== */
+
+.mobile-caja-result-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 8px;
+
+    margin-top: 11px;
+}
+
+
+.mobile-caja-result-summary article {
+    min-width: 0;
+
+    padding:
+        11px
+        12px;
+
+    border:
+        1px solid
+        rgba(
+            100,
+            155,
+            239,
+            0.12
+        );
+
+    border-radius: 14px;
+
+    background:
+        rgba(
+            9,
+            22,
+            48,
+            0.76
+        );
+}
+
+
+.mobile-caja-result-summary span {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color:
+        rgba(
+            164,
+            189,
+            225,
+            0.56
+        );
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+
+.mobile-caja-result-summary strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 12px;
+    font-weight: 930;
+}
+
+
+/* =====================================================
+   AUDITORÍA
+===================================================== */
+
+.mobile-caja-result-audit {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+
+.mobile-caja-result-audit > div {
+    min-width: 0;
+
+    padding:
+        11px
+        12px;
+
+    border:
+        1px solid
+        rgba(
+            103,
+            157,
+            241,
+            0.12
+        );
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 36, 72, 0.76),
+            rgba(7, 19, 43, 0.9)
+        );
+}
+
+
+.mobile-caja-result-audit span,
+.mobile-caja-result-audit small {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.mobile-caja-result-audit span {
+    color:
+        rgba(
+            104,
+            164,
+            255,
+            0.66
+        );
+
+    font-size: 7px;
+    font-weight: 830;
+    letter-spacing: 0.08em;
+}
+
+
+.mobile-caja-result-audit strong {
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 880;
+}
+
+
+.mobile-caja-result-audit small {
+    margin-top: 3px;
+
+    color:
+        rgba(
+            161,
+            186,
+            222,
+            0.5
+        );
+
+    font-size: 7px;
+}
+
+
+/* =====================================================
+   FECHA
+===================================================== */
+
+.mobile-caja-result-date {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    margin-top: 10px;
+    padding: 10px 11px;
+
+    border:
+        1px solid
+        rgba(
+            102,
+            156,
+            239,
+            0.12
+        );
+
+    border-radius: 13px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.035
+        );
+}
+
+
+.mobile-caja-result-date p {
+    margin: 0;
+
+    color:
+        rgba(
+            181,
+            201,
+            230,
+            0.64
+        );
+
+    font-size: 8px;
+    line-height: 1.45;
+}
+
+
+.mobile-caja-result-date strong {
+    color:
+        rgba(
+            225,
+            235,
+            249,
+            0.86
+        );
+}
+
+
+/* =====================================================
+   MENSAJE
+===================================================== */
+
+.mobile-caja-result-message {
+    min-height: 16px;
+
+    margin-top: 7px;
+
+    color:
+        rgba(
+            255,
+            111,
+            128,
+            0.94
+        );
+
+    font-size: 9px;
+    font-weight: 750;
+    text-align: center;
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+.mobile-caja-result-actions {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 0.8fr);
+    gap: 9px;
+
+    margin-top: 5px;
+}
+
+
+.mobile-caja-result-actions button {
+    min-height: 48px;
+
+    border-radius: 14px;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+
+.mobile-caja-result-print {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    border:
+        1px solid
+        rgba(
+            104,
+            160,
+            247,
+            0.2
+        );
+
+    background:
+        rgba(
+            46,
+            95,
+            177,
+            0.12
+        );
+
+    color:
+        rgba(
+            217,
+            231,
+            250,
+            0.84
+        );
+}
+
+
+.mobile-caja-result-finish {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    border:
+        1px solid
+        rgba(
+            74,
+            150,
+            255,
+            0.44
+        );
+
+    background:
+        linear-gradient(
+            145deg,
+            #347cf1,
+            #1955bb
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 24px
+        rgba(
+            17,
+            82,
+            191,
+            0.24
+        );
+}
+
+
+@media (max-width: 360px) {
+
+    .mobile-caja-result-sheet {
+        padding: 13px;
+    }
+
+
+    .mobile-caja-result-status {
+        padding:
+            17px
+            12px;
+    }
+
+
+    .mobile-caja-result-status h2 {
+        font-size: 20px;
+    }
+
+
+    .mobile-caja-result-status > strong {
+        font-size: 21px;
+    }
+
+
+    .mobile-caja-result-actions {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-caja-result-backdrop {
+        transition: none;
+    }
+
+}

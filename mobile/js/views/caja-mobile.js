@@ -25,6 +25,8 @@ import {
 
     anularGastoCajaMobile,
 
+    cerrarCajaMobile,
+
     obtenerGastosCajaMobile,
 
     estaOperacionCajaMobileEnProceso
@@ -89,6 +91,24 @@ let gastoSeleccionadoAnulacionMobile =
 let anulacionGastoVistaEnProceso =
     false;
 
+let portalCierreCajaMobile =
+    null;
+
+
+let cierreCajaVistaEnProceso =
+    false;
+
+
+let estadoCajaVistaMobile =
+    null;
+
+let portalResultadoCierreCajaMobile =
+    null;
+
+
+let ultimoResultadoCierreCajaMobile =
+    null;
+
 // =====================================================
 // UTILIDADES
 // =====================================================
@@ -151,6 +171,172 @@ function escaparHTMLCajaMobile(
             "'",
             "&#039;"
         );
+
+}
+
+function normalizarResultadoCierreCajaMobile(
+    resultado = {}
+){
+
+    const ahora =
+        new Date();
+
+
+    const diferencia =
+        Number(
+            resultado.diferencia ||
+            0
+        );
+
+
+    let estadoCuadre =
+        String(
+            resultado.estadoCuadre ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if(
+        ![
+            "exacta",
+            "sobrante",
+            "faltante"
+        ].includes(
+            estadoCuadre
+        )
+    ){
+
+        if(
+            diferencia > 0.009
+        ){
+
+            estadoCuadre =
+                "sobrante";
+
+        }else if(
+            diferencia < -0.009
+        ){
+
+            estadoCuadre =
+                "faltante";
+
+        }else{
+
+            estadoCuadre =
+                "exacta";
+
+        }
+
+    }
+
+
+    return {
+
+        cajaId:
+            String(
+                resultado.cajaId ||
+                ""
+            ),
+
+        sucursalId:
+            String(
+                resultado.sucursalId ||
+                obtenerTiendaCajaMobile()
+            ),
+
+        sucursalNombre:
+            String(
+                resultado.sucursalNombre ||
+                obtenerNombreTiendaCajaMobile(
+                    resultado.sucursalId ||
+                    obtenerTiendaCajaMobile()
+                )
+            ),
+
+        cajaEsperada:
+            Number(
+                resultado.cajaEsperada ||
+                0
+            ),
+
+        dineroReal:
+            Number(
+                resultado.dineroReal ||
+                0
+            ),
+
+        diferencia,
+
+        estadoCuadre,
+
+        resultadoCuadre:
+            String(
+                resultado.resultadoCuadre ||
+                (
+                    estadoCuadre === "exacta"
+                        ? "Caja exacta"
+                        : estadoCuadre === "sobrante"
+                            ? `Sobrante S/ ${
+                                Math.abs(
+                                    diferencia
+                                ).toFixed(
+                                    2
+                                )
+                            }`
+                            : `Faltante S/ ${
+                                Math.abs(
+                                    diferencia
+                                ).toFixed(
+                                    2
+                                )
+                            }`
+                )
+            ),
+
+        cerradoPor:
+            String(
+                resultado.cerradoPor ||
+                "Sin usuario"
+            ),
+
+        cerradoPorUsuario:
+            String(
+                resultado.cerradoPorUsuario ||
+                ""
+            ),
+
+        autorizadoPor:
+            String(
+                resultado.autorizadoPor ||
+                "Sin administrador"
+            ),
+
+        autorizadoPorUsuario:
+            String(
+                resultado.autorizadoPorUsuario ||
+                ""
+            ),
+
+        fecha:
+            String(
+                resultado.fecha ||
+                ahora.toLocaleDateString(
+                    "es-PE"
+                )
+            ),
+
+        hora:
+            String(
+                resultado.horaCierre ||
+                resultado.hora ||
+                ahora.toLocaleTimeString(
+                    "es-PE"
+                )
+            )
+
+    };
 
 }
 
@@ -3288,6 +3474,2481 @@ ${construirHistorialGastosCajaMobile(
 
 }
 
+// =====================================================
+// CIERRE Y CUADRE DE CAJA
+// M7.3.9.2
+// =====================================================
+
+function construirFormularioCierreCajaMobile(
+    estado
+){
+
+    const caja =
+        estado?.caja ||
+        {};
+
+
+    const sucursalId =
+        caja.sucursalId ||
+        obtenerTiendaCajaMobile();
+
+
+    const sucursalNombre =
+        caja.sucursalNombre ||
+        obtenerNombreTiendaCajaMobile(
+            sucursalId
+        );
+
+
+    const cajaEsperada =
+        Number(
+            caja.cajaEsperada ||
+            0
+        );
+
+
+    const montoInicial =
+        Number(
+            caja.montoInicial ||
+            0
+        );
+
+
+    const efectivoDia =
+        Number(
+            caja.efectivoDia ||
+            0
+        );
+
+
+    const gastosDia =
+        Number(
+            caja.gastosDia ||
+            0
+        );
+
+
+    return `
+        <div
+            class="mobile-caja-close-backdrop"
+            data-caja-close-backdrop
+        >
+
+            <section
+                class="mobile-caja-close-sheet"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="mobileCajaCloseTitle"
+                aria-describedby="mobileCajaCloseDescription"
+                aria-busy="false"
+            >
+
+                <div
+                    class="mobile-caja-open-handle"
+                    aria-hidden="true"
+                ></div>
+
+
+                <header
+                    class="mobile-caja-close-header"
+                >
+
+                    <div>
+
+                        <span>
+                            CIERRE DE JORNADA
+                        </span>
+
+                        <h2
+                            id="mobileCajaCloseTitle"
+                        >
+                            Cuadre de caja
+                        </h2>
+
+                        <p
+                            id="mobileCajaCloseDescription"
+                        >
+                            Cuenta el efectivo físico y
+                            compáralo con el monto esperado.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="mobile-caja-close-x"
+                        data-caja-close-modal-x
+                        aria-label="Cerrar cuadre de caja"
+                    >
+                        ×
+                    </button>
+
+                </header>
+
+
+                <div
+                    class="mobile-caja-close-store"
+                >
+
+                    <span
+                        class="mobile-caja-close-store-icon"
+                        aria-hidden="true"
+                    >
+                        ${
+                            sucursalId === "sucursal"
+                                ? "✂️"
+                                : "🏪"
+                        }
+                    </span>
+
+                    <div>
+
+                        <small>
+                            CAJA SELECCIONADA
+                        </small>
+
+                        <strong>
+                            ${escaparHTMLCajaMobile(
+                                sucursalNombre
+                            )}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <section
+                    class="mobile-caja-close-summary"
+                    aria-label="Resumen de caja"
+                >
+
+                    <article>
+
+                        <span>
+                            Monto inicial
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaCajaMobile(
+                                montoInicial
+                            )}
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            Efectivo vendido
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaCajaMobile(
+                                efectivoDia
+                            )}
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            Gastos activos
+                        </span>
+
+                        <strong>
+                            − ${formatearMonedaCajaMobile(
+                                gastosDia
+                            )}
+                        </strong>
+
+                    </article>
+
+
+                    <article
+                        class="is-expected"
+                    >
+
+                        <span>
+                            Efectivo esperado
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaCajaMobile(
+                                cajaEsperada
+                            )}
+                        </strong>
+
+                    </article>
+
+                </section>
+
+
+                <label
+                    class="mobile-caja-close-field"
+                >
+
+                    <span>
+                        Dinero físico contado
+                    </span>
+
+                    <div
+                        class="mobile-caja-close-input-wrap"
+                    >
+
+                        <span
+                            aria-hidden="true"
+                        >
+                            S/
+                        </span>
+
+                        <input
+                            type="number"
+                            inputmode="decimal"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            autocomplete="off"
+                            data-caja-close-real
+                        >
+
+                    </div>
+
+                    <small>
+                        Ingresa el total de efectivo que
+                        encontraste físicamente en caja.
+                    </small>
+
+                </label>
+
+
+                <div
+                    class="mobile-caja-close-quick"
+                    aria-label="Montos rápidos"
+                >
+
+                    <button
+                        type="button"
+                        data-caja-close-quick="${cajaEsperada}"
+                    >
+                        Usar esperado
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-caja-close-clear
+                    >
+                        Limpiar
+                    </button>
+
+                </div>
+
+
+                <section
+                    class="
+                        mobile-caja-close-result
+                        is-pending
+                    "
+                    data-caja-close-result
+                    aria-live="polite"
+                >
+
+                    <span
+                        class="mobile-caja-close-result-icon"
+                        data-caja-close-result-icon
+                        aria-hidden="true"
+                    >
+                        ⚖️
+                    </span>
+
+                    <div>
+
+                        <small>
+                            RESULTADO DEL CUADRE
+                        </small>
+
+                        <strong
+                            data-caja-close-result-title
+                        >
+                            Ingresa el dinero contado
+                        </strong>
+
+                        <p
+                            data-caja-close-result-copy
+                        >
+                            La diferencia aparecerá aquí.
+                        </p>
+
+                    </div>
+
+                    <strong
+                        class="mobile-caja-close-result-amount"
+                        data-caja-close-result-amount
+                    >
+                        —
+                    </strong>
+
+                </section>
+
+
+                <div
+                    class="mobile-caja-close-warning"
+                >
+
+                    <span
+                        aria-hidden="true"
+                    >
+                        ⚠️
+                    </span>
+
+                    <p>
+                        Al continuar, el sistema solicitará
+                        autorización administrativa antes
+                        de cerrar definitivamente la caja.
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="mobile-caja-close-message"
+                    data-caja-close-message
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+
+                <div
+                    class="mobile-caja-close-actions"
+                >
+
+                    <button
+                        type="button"
+                        class="mobile-caja-close-cancel"
+                        data-caja-close-modal-cancel
+                    >
+                        Volver
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="mobile-caja-close-confirm"
+                        data-caja-close-modal-confirm
+                        disabled
+                    >
+
+                        <span
+                            data-caja-close-confirm-text
+                        >
+                            Continuar cierre
+                        </span>
+
+                        <span
+                            aria-hidden="true"
+                        >
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+    `;
+
+}
+
+function abrirFormularioCierreCajaMobile(){
+
+    if(
+        portalCierreCajaMobile ||
+        cierreCajaVistaEnProceso
+    ){
+
+        return;
+
+    }
+
+
+    const caja =
+        estadoCajaVistaMobile?.caja;
+
+
+    if(
+        !caja?.existe ||
+        caja.abierta !== true ||
+        caja.anulada === true
+    ){
+
+        return;
+
+    }
+
+
+    const contenedorPortal =
+        document.createElement(
+            "div"
+        );
+
+
+    contenedorPortal.innerHTML =
+        construirFormularioCierreCajaMobile(
+            estadoCajaVistaMobile
+        );
+
+
+    portalCierreCajaMobile =
+        contenedorPortal.firstElementChild;
+
+
+    if(!portalCierreCajaMobile){
+
+        return;
+
+    }
+
+
+    document.body.appendChild(
+        portalCierreCajaMobile
+    );
+
+
+    document.body.classList.add(
+        "mobile-caja-modal-open"
+    );
+
+
+    inicializarEventosCierreCajaMobile();
+
+
+    window.requestAnimationFrame(
+        function(){
+
+            portalCierreCajaMobile
+                ?.classList
+                .add(
+                    "is-visible"
+                );
+
+
+            portalCierreCajaMobile
+                ?.querySelector(
+                    "[data-caja-close-real]"
+                )
+                ?.focus();
+
+        }
+    );
+
+}
+
+
+function cerrarFormularioCierreCajaMobile(){
+
+    if(
+        !portalCierreCajaMobile ||
+        cierreCajaVistaEnProceso
+    ){
+
+        return;
+
+    }
+
+
+    const portal =
+        portalCierreCajaMobile;
+
+
+    portal.classList.remove(
+        "is-visible"
+    );
+
+
+    portalCierreCajaMobile =
+        null;
+
+
+    document.body.classList.remove(
+        "mobile-caja-modal-open"
+    );
+
+
+    window.setTimeout(
+        function(){
+
+            portal.remove();
+
+        },
+        180
+    );
+
+}
+
+function mostrarMensajeCierreCajaMobile(
+    mensaje = "",
+    tipo = "error"
+){
+
+    const elemento =
+        portalCierreCajaMobile
+            ?.querySelector(
+                "[data-caja-close-message]"
+            );
+
+
+    if(!elemento){
+
+        return;
+
+    }
+
+
+    elemento.textContent =
+        String(
+            mensaje ||
+            ""
+        );
+
+
+    elemento.className =
+        "mobile-caja-close-message";
+
+
+    if(mensaje){
+
+        elemento.classList.add(
+            `is-${tipo}`
+        );
+
+    }
+
+}
+
+function establecerLoadingCierreCajaMobile(
+    activo
+){
+
+    cierreCajaVistaEnProceso =
+        Boolean(
+            activo
+        );
+
+
+    if(!portalCierreCajaMobile){
+
+        return;
+
+    }
+
+
+    const sheet =
+        portalCierreCajaMobile
+            .querySelector(
+                ".mobile-caja-close-sheet"
+            );
+
+
+    const botonConfirmar =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-modal-confirm]"
+            );
+
+
+    const textoConfirmar =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-confirm-text]"
+            );
+
+
+    const controles =
+        portalCierreCajaMobile
+            .querySelectorAll(
+                `
+                    button,
+                    input
+                `
+            );
+
+
+    controles.forEach(
+        function(control){
+
+            control.disabled =
+                cierreCajaVistaEnProceso;
+
+        }
+    );
+
+
+    sheet?.setAttribute(
+        "aria-busy",
+        cierreCajaVistaEnProceso
+            ? "true"
+            : "false"
+    );
+
+
+    botonConfirmar?.classList.toggle(
+        "is-loading",
+        cierreCajaVistaEnProceso
+    );
+
+
+    if(textoConfirmar){
+
+        textoConfirmar.textContent =
+            cierreCajaVistaEnProceso
+                ? "Cerrando caja..."
+                : "Continuar cierre";
+
+    }
+
+
+    if(!cierreCajaVistaEnProceso){
+
+        calcularCuadreVistaCajaMobile();
+
+    }
+
+}
+
+function calcularCuadreVistaCajaMobile(){
+
+    if(!portalCierreCajaMobile){
+
+        return null;
+
+    }
+
+
+    const input =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-real]"
+            );
+
+
+    const resultado =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-result]"
+            );
+
+
+    const icono =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-result-icon]"
+            );
+
+
+    const titulo =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-result-title]"
+            );
+
+
+    const descripcion =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-result-copy]"
+            );
+
+
+    const montoResultado =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-result-amount]"
+            );
+
+
+    const botonConfirmar =
+        portalCierreCajaMobile
+            .querySelector(
+                "[data-caja-close-modal-confirm]"
+            );
+
+
+    const valorIngresado =
+        String(
+            input?.value ||
+            ""
+        )
+            .trim();
+
+
+    resultado?.classList.remove(
+        "is-pending",
+        "is-exact",
+        "is-surplus",
+        "is-shortage"
+    );
+
+
+    if(
+        valorIngresado === ""
+    ){
+
+        resultado?.classList.add(
+            "is-pending"
+        );
+
+
+        if(icono){
+
+            icono.textContent =
+                "⚖️";
+
+        }
+
+
+        if(titulo){
+
+            titulo.textContent =
+                "Ingresa el dinero contado";
+
+        }
+
+
+        if(descripcion){
+
+            descripcion.textContent =
+                "La diferencia aparecerá aquí.";
+
+        }
+
+
+        if(montoResultado){
+
+            montoResultado.textContent =
+                "—";
+
+        }
+
+
+        if(botonConfirmar){
+
+            botonConfirmar.disabled =
+                true;
+
+        }
+
+
+        return null;
+
+    }
+
+
+    const dineroReal =
+        Number(
+            valorIngresado
+        );
+
+
+    if(
+        !Number.isFinite(
+            dineroReal
+        ) ||
+        dineroReal < 0
+    ){
+
+        resultado?.classList.add(
+            "is-pending"
+        );
+
+
+        if(icono){
+
+            icono.textContent =
+                "⚠️";
+
+        }
+
+
+        if(titulo){
+
+            titulo.textContent =
+                "Monto no válido";
+
+        }
+
+
+        if(descripcion){
+
+            descripcion.textContent =
+                "Ingresa un valor igual o mayor que cero.";
+
+        }
+
+
+        if(montoResultado){
+
+            montoResultado.textContent =
+                "—";
+
+        }
+
+
+        if(botonConfirmar){
+
+            botonConfirmar.disabled =
+                true;
+
+        }
+
+
+        return null;
+
+    }
+
+
+    const cajaEsperada =
+        Number(
+            estadoCajaVistaMobile
+                ?.caja
+                ?.cajaEsperada ||
+            0
+        );
+
+
+    const diferencia =
+        Number(
+            (
+                dineroReal -
+                cajaEsperada
+            )
+                .toFixed(
+                    2
+                )
+        );
+
+
+    let estadoCuadre =
+        "exacta";
+
+
+    let resultadoCuadre =
+        "Caja exacta";
+
+
+    if(
+        diferencia > 0.009
+    ){
+
+        estadoCuadre =
+            "sobrante";
+
+
+        resultadoCuadre =
+            `Sobrante de ${
+                formatearMonedaCajaMobile(
+                    diferencia
+                )
+            }`;
+
+
+        resultado?.classList.add(
+            "is-surplus"
+        );
+
+
+        if(icono){
+
+            icono.textContent =
+                "📈";
+
+        }
+
+
+        if(titulo){
+
+            titulo.textContent =
+                "Hay dinero sobrante";
+
+        }
+
+
+        if(descripcion){
+
+            descripcion.textContent =
+                resultadoCuadre;
+
+        }
+
+    }else if(
+        diferencia < -0.009
+    ){
+
+        estadoCuadre =
+            "faltante";
+
+
+        resultadoCuadre =
+            `Faltante de ${
+                formatearMonedaCajaMobile(
+                    Math.abs(
+                        diferencia
+                    )
+                )
+            }`;
+
+
+        resultado?.classList.add(
+            "is-shortage"
+        );
+
+
+        if(icono){
+
+            icono.textContent =
+                "📉";
+
+        }
+
+
+        if(titulo){
+
+            titulo.textContent =
+                "Existe un faltante";
+
+        }
+
+
+        if(descripcion){
+
+            descripcion.textContent =
+                resultadoCuadre;
+
+        }
+
+    }else{
+
+        resultado?.classList.add(
+            "is-exact"
+        );
+
+
+        if(icono){
+
+            icono.textContent =
+                "✅";
+
+        }
+
+
+        if(titulo){
+
+            titulo.textContent =
+                "Caja cuadrada";
+
+        }
+
+
+        if(descripcion){
+
+            descripcion.textContent =
+                "El efectivo contado coincide con el esperado.";
+
+        }
+
+    }
+
+
+    if(montoResultado){
+
+        montoResultado.textContent =
+            diferencia === 0
+                ? formatearMonedaCajaMobile(
+                    0
+                )
+                : diferencia > 0
+                    ? `+ ${
+                        formatearMonedaCajaMobile(
+                            diferencia
+                        )
+                    }`
+                    : `− ${
+                        formatearMonedaCajaMobile(
+                            Math.abs(
+                                diferencia
+                            )
+                        )
+                    }`;
+
+    }
+
+
+    if(botonConfirmar){
+
+        botonConfirmar.disabled =
+            false;
+
+    }
+
+
+    mostrarMensajeCierreCajaMobile(
+        ""
+    );
+
+
+    return {
+
+        dineroReal,
+
+        cajaEsperada,
+
+        diferencia,
+
+        estadoCuadre,
+
+        resultadoCuadre
+
+    };
+
+}
+
+async function confirmarCierreCajaMobile(){
+
+    if(
+        cierreCajaVistaEnProceso ||
+        estaOperacionCajaMobileEnProceso()
+    ){
+
+        return;
+
+    }
+
+
+    const cuadre =
+        calcularCuadreVistaCajaMobile();
+
+
+    if(!cuadre){
+
+        mostrarMensajeCierreCajaMobile(
+            "Ingresa el dinero físico contado."
+        );
+
+        return;
+
+    }
+
+
+    const caja =
+        estadoCajaVistaMobile?.caja;
+
+
+    if(
+        !caja?.existe ||
+        caja.abierta !== true ||
+        caja.anulada === true
+    ){
+
+        mostrarMensajeCierreCajaMobile(
+            "La caja ya no está disponible para cierre."
+        );
+
+        return;
+
+    }
+
+
+    const sesion =
+        obtenerSesionMobile() ||
+        {};
+
+
+    const rol =
+        String(
+            obtenerRolMobile() ||
+            sesion.rol ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const nombreSesion =
+        String(
+            sesion.nombreCompleto ||
+            sesion.nombre ||
+            sesion.usuario ||
+            "Sin usuario"
+        );
+
+
+    const usuarioSesion =
+        String(
+            sesion.usuario ||
+            ""
+        );
+
+
+    let autorizado =
+        false;
+
+
+    let autorizadoPor =
+        "";
+
+
+    let autorizadoPorUsuario =
+        "";
+
+
+    /*
+     * ADMIN CONECTADO:
+     * no necesita ingresar nuevamente
+     * sus propias credenciales.
+     */
+    if(rol === "admin"){
+
+        autorizado =
+            true;
+
+
+        autorizadoPor =
+            nombreSesion;
+
+
+        autorizadoPorUsuario =
+            usuarioSesion;
+
+    }else{
+
+        /*
+         * VENDEDOR:
+         * requiere autorización
+         * administrativa externa.
+         */
+        const resultadoAutorizacion =
+            await solicitarAutorizacionAdminMobile({
+
+                titulo:
+                    "Autorizar cierre de caja",
+
+                descripcion:
+                    `Se cerrará la caja de ${
+                        caja.sucursalNombre ||
+                        obtenerNombreTiendaCajaMobile(
+                            caja.sucursalId
+                        )
+                    } con un resultado de ${
+                        cuadre.resultadoCuadre
+                    }.`,
+
+                accion:
+                    "Cierre definitivo de caja",
+
+                solicitarMotivo:
+                    false,
+
+                textoConfirmar:
+                    "Autorizar cierre"
+
+            });
+
+
+        if(
+            !resultadoAutorizacion?.autorizado
+        ){
+
+            if(
+                !resultadoAutorizacion?.cancelado
+            ){
+
+                mostrarMensajeCierreCajaMobile(
+                    resultadoAutorizacion?.mensaje ||
+                    "No se autorizó el cierre de caja."
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        autorizado =
+            true;
+
+
+        autorizadoPor =
+            String(
+                resultadoAutorizacion
+                    ?.administrador
+                    ?.nombre ||
+                ""
+            );
+
+
+        autorizadoPorUsuario =
+            String(
+                resultadoAutorizacion
+                    ?.administrador
+                    ?.usuario ||
+                ""
+            );
+
+    }
+
+
+    if(
+        !autorizado ||
+        !autorizadoPor ||
+        !autorizadoPorUsuario
+    ){
+
+        mostrarMensajeCierreCajaMobile(
+            "No se pudo completar la identificación administrativa."
+        );
+
+        return;
+
+    }
+
+
+    mostrarMensajeCierreCajaMobile(
+        ""
+    );
+
+
+    establecerLoadingCierreCajaMobile(
+        true
+    );
+
+
+    let cierreCompletado =
+        false;
+
+
+    try{
+
+        const resultado =
+            await cerrarCajaMobile({
+
+                dineroReal:
+                    cuadre.dineroReal,
+
+                sucursalId:
+                    caja.sucursalId ||
+                    obtenerTiendaCajaMobile(),
+
+                autorizado:
+                    true,
+
+                autorizadoPor,
+
+                autorizadoPorUsuario
+
+            });
+
+
+        if(!resultado?.completada){
+
+            mostrarMensajeCierreCajaMobile(
+                resultado?.mensaje ||
+                "No se pudo cerrar la caja."
+            );
+
+            return;
+
+        }
+
+
+        cierreCompletado =
+            true;
+
+
+        mostrarMensajeCierreCajaMobile(
+            resultado.resultadoCuadre ||
+            "Caja cerrada correctamente.",
+            "success"
+        );
+
+
+const resultadoFinal = {
+
+    ...resultado,
+
+    sucursalNombre:
+        caja.sucursalNombre ||
+        obtenerNombreTiendaCajaMobile(
+            caja.sucursalId
+        ),
+
+    cerradoPor:
+        resultado.cerradoPor ||
+        nombreSesion,
+
+    cerradoPorUsuario:
+        resultado.cerradoPorUsuario ||
+        usuarioSesion,
+
+    autorizadoPor,
+
+    autorizadoPorUsuario,
+
+    fecha:
+        new Date()
+            .toLocaleDateString(
+                "es-PE"
+            ),
+
+    horaCierre:
+        new Date()
+            .toLocaleTimeString(
+                "es-PE"
+            )
+
+};
+
+
+window.setTimeout(
+    function(){
+
+        cierreCajaVistaEnProceso =
+            false;
+
+
+        cerrarFormularioCierreCajaMobile();
+
+
+        window.setTimeout(
+            function(){
+
+                abrirResultadoCierreCajaMobile(
+                    resultadoFinal
+                );
+
+            },
+            220
+        );
+
+    },
+    650
+);
+
+    }catch(error){
+
+        console.error(
+            "Error confirmando cierre de caja:",
+            error
+        );
+
+
+        mostrarMensajeCierreCajaMobile(
+            error?.message ||
+            "No se pudo completar el cierre de caja."
+        );
+
+    }finally{
+
+        if(
+            portalCierreCajaMobile &&
+            !cierreCompletado
+        ){
+
+            establecerLoadingCierreCajaMobile(
+                false
+            );
+
+        }
+
+    }
+
+}
+
+function inicializarEventosCierreCajaMobile(){
+
+    if(!portalCierreCajaMobile){
+
+        return;
+
+    }
+
+
+    portalCierreCajaMobile.addEventListener(
+        "input",
+        function(evento){
+
+              if(cierreCajaVistaEnProceso){
+
+            return;
+
+        }
+
+            if(
+                evento.target.matches(
+                    "[data-caja-close-real]"
+                )
+            ){
+
+                calcularCuadreVistaCajaMobile();
+
+            }
+
+        }
+    );
+
+
+    portalCierreCajaMobile.addEventListener(
+        "click",
+        function(evento){
+
+        if(cierreCajaVistaEnProceso){
+
+    return;
+
+}
+
+            const botonRapido =
+                evento.target.closest(
+                    "[data-caja-close-quick]"
+                );
+
+
+            if(
+                botonRapido &&
+                !cierreCajaVistaEnProceso
+            ){
+
+                const input =
+                    portalCierreCajaMobile
+                        ?.querySelector(
+                            "[data-caja-close-real]"
+                        );
+
+
+                if(input){
+
+                    input.value =
+                        botonRapido.dataset
+                            .cajaCloseQuick ||
+                        "";
+
+
+                    calcularCuadreVistaCajaMobile();
+
+
+                    input.focus();
+
+                }
+
+
+                return;
+
+            }
+
+
+            if(
+                evento.target.closest(
+                    "[data-caja-close-clear]"
+                )
+            ){
+
+                const input =
+                    portalCierreCajaMobile
+                        ?.querySelector(
+                            "[data-caja-close-real]"
+                        );
+
+
+                if(input){
+
+                    input.value =
+                        "";
+
+
+                    calcularCuadreVistaCajaMobile();
+
+
+                    input.focus();
+
+                }
+
+
+                return;
+
+            }
+
+
+            if(
+    evento.target.closest(
+        "[data-caja-close-modal-confirm]"
+    )
+){
+
+    confirmarCierreCajaMobile();
+
+    return;
+
+}
+
+
+            if(
+                evento.target.closest(
+                    "[data-caja-close-modal-x], [data-caja-close-modal-cancel]"
+                )
+            ){
+
+                cerrarFormularioCierreCajaMobile();
+
+                return;
+
+            }
+
+
+            if(
+                evento.target.matches(
+                    "[data-caja-close-backdrop]"
+                )
+            ){
+
+                cerrarFormularioCierreCajaMobile();
+
+            }
+
+        }
+    );
+
+
+    portalCierreCajaMobile.addEventListener(
+        "keydown",
+        function(evento){
+
+            if(cierreCajaVistaEnProceso){
+
+            return;
+
+        }
+
+            if(
+                evento.key === "Escape"
+            ){
+
+                cerrarFormularioCierreCajaMobile();
+
+            }
+
+            if(
+    evento.key === "Enter"
+){
+
+    const objetivo =
+        evento.target;
+
+
+    if(
+        objetivo?.matches(
+            "[data-caja-close-real]"
+        )
+    ){
+
+        evento.preventDefault();
+
+        confirmarCierreCajaMobile();
+
+    }
+
+}
+
+        }
+    );
+
+}
+
+// =====================================================
+// RESULTADO FINAL DEL CIERRE
+// M7.3.9.4
+// =====================================================
+
+function construirResultadoCierreCajaMobile(
+    resultado
+){
+
+    const esExacta =
+        resultado.estadoCuadre ===
+        "exacta";
+
+
+    const esSobrante =
+        resultado.estadoCuadre ===
+        "sobrante";
+
+
+    const claseEstado =
+        esExacta
+            ? "is-exact"
+            : esSobrante
+                ? "is-surplus"
+                : "is-shortage";
+
+
+    const iconoEstado =
+        esExacta
+            ? "✅"
+            : esSobrante
+                ? "📈"
+                : "📉";
+
+
+    const tituloEstado =
+        esExacta
+            ? "Caja cuadrada"
+            : esSobrante
+                ? "Caja con sobrante"
+                : "Caja con faltante";
+
+
+    const diferenciaFormateada =
+        resultado.diferencia === 0
+            ? formatearMonedaCajaMobile(
+                0
+            )
+            : resultado.diferencia > 0
+                ? `+ ${
+                    formatearMonedaCajaMobile(
+                        resultado.diferencia
+                    )
+                }`
+                : `− ${
+                    formatearMonedaCajaMobile(
+                        Math.abs(
+                            resultado.diferencia
+                        )
+                    )
+                }`;
+
+
+    return `
+        <div
+            class="mobile-caja-result-backdrop is-visible"
+            data-caja-result-backdrop
+        >
+
+            <section
+                class="mobile-caja-result-sheet"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="mobileCajaResultTitle"
+            >
+
+                <div
+                    class="mobile-caja-result-status ${claseEstado}"
+                >
+
+                    <span
+                        class="mobile-caja-result-status-icon"
+                        aria-hidden="true"
+                    >
+                        ${iconoEstado}
+                    </span>
+
+                    <small>
+                        CIERRE COMPLETADO
+                    </small>
+
+                    <h2
+                        id="mobileCajaResultTitle"
+                    >
+                        ${tituloEstado}
+                    </h2>
+
+                    <p>
+                        ${escaparHTMLCajaMobile(
+                            resultado.resultadoCuadre
+                        )}
+                    </p>
+
+                    <strong>
+                        ${diferenciaFormateada}
+                    </strong>
+
+                </div>
+
+
+                <section
+                    class="mobile-caja-result-summary"
+                    aria-label="Resumen del cierre"
+                >
+
+                    <article>
+
+                        <span>
+                            Caja esperada
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaCajaMobile(
+                                resultado.cajaEsperada
+                            )}
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            Dinero contado
+                        </span>
+
+                        <strong>
+                            ${formatearMonedaCajaMobile(
+                                resultado.dineroReal
+                            )}
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            Diferencia
+                        </span>
+
+                        <strong>
+                            ${diferenciaFormateada}
+                        </strong>
+
+                    </article>
+
+
+                    <article>
+
+                        <span>
+                            Tienda
+                        </span>
+
+                        <strong>
+                            ${escaparHTMLCajaMobile(
+                                resultado.sucursalNombre
+                            )}
+                        </strong>
+
+                    </article>
+
+                </section>
+
+
+                <section
+                    class="mobile-caja-result-audit"
+                >
+
+                    <div>
+
+                        <span>
+                            CERRADO POR
+                        </span>
+
+                        <strong>
+                            ${escaparHTMLCajaMobile(
+                                resultado.cerradoPor
+                            )}
+                        </strong>
+
+                        ${
+                            resultado.cerradoPorUsuario
+                                ? `
+                                    <small>
+                                        @${escaparHTMLCajaMobile(
+                                            resultado.cerradoPorUsuario
+                                        )}
+                                    </small>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            AUTORIZADO POR
+                        </span>
+
+                        <strong>
+                            ${escaparHTMLCajaMobile(
+                                resultado.autorizadoPor
+                            )}
+                        </strong>
+
+                        ${
+                            resultado.autorizadoPorUsuario
+                                ? `
+                                    <small>
+                                        @${escaparHTMLCajaMobile(
+                                            resultado.autorizadoPorUsuario
+                                        )}
+                                    </small>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </section>
+
+
+                <div
+                    class="mobile-caja-result-date"
+                >
+
+                    <span aria-hidden="true">
+                        🕒
+                    </span>
+
+                    <p>
+                        Cierre registrado el
+                        <strong>
+                            ${escaparHTMLCajaMobile(
+                                resultado.fecha
+                            )}
+                        </strong>
+                        a las
+                        <strong>
+                            ${escaparHTMLCajaMobile(
+                                resultado.hora
+                            )}
+                        </strong>
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="mobile-caja-result-message"
+                    data-caja-result-message
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+
+                <div
+                    class="mobile-caja-result-actions"
+                >
+
+                    <button
+                        type="button"
+                        class="mobile-caja-result-print"
+                        data-caja-result-print
+                    >
+
+                        <span aria-hidden="true">
+                            🖨️
+                        </span>
+
+                        Imprimir comprobante
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="mobile-caja-result-finish"
+                        data-caja-result-finish
+                    >
+
+                        Finalizar
+
+                        <span aria-hidden="true">
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+    `;
+
+}
+
+function abrirResultadoCierreCajaMobile(
+    resultado
+){
+
+    if(
+        portalResultadoCierreCajaMobile
+    ){
+
+        portalResultadoCierreCajaMobile
+            .remove();
+
+    }
+
+
+    ultimoResultadoCierreCajaMobile =
+        normalizarResultadoCierreCajaMobile(
+            resultado
+        );
+
+
+    const contenedorPortal =
+        document.createElement(
+            "div"
+        );
+
+
+    contenedorPortal.innerHTML =
+        construirResultadoCierreCajaMobile(
+            ultimoResultadoCierreCajaMobile
+        );
+
+
+    portalResultadoCierreCajaMobile =
+        contenedorPortal.firstElementChild;
+
+
+    if(
+        !portalResultadoCierreCajaMobile
+    ){
+
+        return;
+
+    }
+
+
+    document.body.appendChild(
+        portalResultadoCierreCajaMobile
+    );
+
+
+    document.body.classList.add(
+        "mobile-caja-modal-open"
+    );
+
+
+    inicializarEventosResultadoCierreCajaMobile();
+
+}
+
+
+function cerrarResultadoCierreCajaMobile(){
+
+    if(
+        !portalResultadoCierreCajaMobile
+    ){
+
+        return;
+
+    }
+
+
+    const portal =
+        portalResultadoCierreCajaMobile;
+
+
+    portalResultadoCierreCajaMobile =
+        null;
+
+
+    ultimoResultadoCierreCajaMobile =
+        null;
+
+
+    document.body.classList.remove(
+        "mobile-caja-modal-open"
+    );
+
+
+    portal.classList.remove(
+        "is-visible"
+    );
+
+
+    window.setTimeout(
+        function(){
+
+            portal.remove();
+
+        },
+        180
+    );
+
+}
+
+function construirComprobanteCierreCajaMobile(
+    resultado
+){
+
+    const diferencia =
+        resultado.diferencia === 0
+            ? formatearMonedaCajaMobile(
+                0
+            )
+            : resultado.diferencia > 0
+                ? `+ ${
+                    formatearMonedaCajaMobile(
+                        resultado.diferencia
+                    )
+                }`
+                : `- ${
+                    formatearMonedaCajaMobile(
+                        Math.abs(
+                            resultado.diferencia
+                        )
+                    )
+                }`;
+
+
+    return `
+        <!DOCTYPE html>
+
+        <html lang="es">
+
+        <head>
+
+            <meta charset="UTF-8">
+
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1"
+            >
+
+            <title>
+                Comprobante de cierre
+            </title>
+
+            <style>
+
+                @page {
+                    size: 80mm auto;
+                    margin: 4mm;
+                }
+
+
+                * {
+                    box-sizing: border-box;
+                }
+
+
+                body {
+                    width: 72mm;
+                    margin: 0 auto;
+
+                    color: #000000;
+                    background: #ffffff;
+
+                    font-family:
+                        Arial,
+                        Helvetica,
+                        sans-serif;
+
+                    font-size: 11px;
+                }
+
+
+                .receipt-header {
+                    text-align: center;
+                }
+
+
+                .receipt-header h1 {
+                    margin: 0;
+
+                    font-size: 16px;
+                    font-weight: 800;
+                }
+
+
+                .receipt-header h2 {
+                    margin: 4px 0 0;
+
+                    font-size: 12px;
+                }
+
+
+                .receipt-header p {
+                    margin: 4px 0 0;
+
+                    font-size: 9px;
+                }
+
+
+                .separator {
+                    margin: 9px 0;
+
+                    border-top:
+                        1px dashed
+                        #000000;
+                }
+
+
+                .row {
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                    gap: 10px;
+
+                    margin: 5px 0;
+                }
+
+
+                .row span {
+                    flex: 1;
+                }
+
+
+                .row strong {
+                    text-align: right;
+                }
+
+
+                .result {
+                    margin: 10px 0;
+                    padding: 8px;
+
+                    border:
+                        1px solid
+                        #000000;
+
+                    text-align: center;
+                }
+
+
+                .result span {
+                    display: block;
+
+                    font-size: 9px;
+                }
+
+
+                .result strong {
+                    display: block;
+
+                    margin-top: 4px;
+
+                    font-size: 16px;
+                }
+
+
+                .audit {
+                    font-size: 9px;
+                    line-height: 1.5;
+                }
+
+
+                .footer {
+                    margin-top: 10px;
+
+                    text-align: center;
+                    font-size: 9px;
+                }
+
+
+                @media print {
+
+                    body {
+                        width: 100%;
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+        <body>
+
+            <header class="receipt-header">
+
+                <h1>
+                    DIGITAL CENTER M&A
+                </h1>
+
+                <h2>
+                    COMPROBANTE DE CUADRE
+                </h2>
+
+                <p>
+                    ${escaparHTMLCajaMobile(
+                        resultado.sucursalNombre
+                    )}
+                </p>
+
+            </header>
+
+
+            <div class="separator"></div>
+
+
+            <div class="row">
+
+                <span>
+                    Fecha:
+                </span>
+
+                <strong>
+                    ${escaparHTMLCajaMobile(
+                        resultado.fecha
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="row">
+
+                <span>
+                    Hora:
+                </span>
+
+                <strong>
+                    ${escaparHTMLCajaMobile(
+                        resultado.hora
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="row">
+
+                <span>
+                    Caja esperada:
+                </span>
+
+                <strong>
+                    ${formatearMonedaCajaMobile(
+                        resultado.cajaEsperada
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="row">
+
+                <span>
+                    Dinero contado:
+                </span>
+
+                <strong>
+                    ${formatearMonedaCajaMobile(
+                        resultado.dineroReal
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="result">
+
+                <span>
+                    RESULTADO DEL CUADRE
+                </span>
+
+                <strong>
+                    ${escaparHTMLCajaMobile(
+                        resultado.resultadoCuadre
+                    )}
+                </strong>
+
+                <span>
+                    Diferencia: ${diferencia}
+                </span>
+
+            </div>
+
+
+            <div class="separator"></div>
+
+
+            <section class="audit">
+
+                <div>
+                    Cerrado por:
+                    <strong>
+                        ${escaparHTMLCajaMobile(
+                            resultado.cerradoPor
+                        )}
+                    </strong>
+                </div>
+
+                <div>
+                    Autorizado por:
+                    <strong>
+                        ${escaparHTMLCajaMobile(
+                            resultado.autorizadoPor
+                        )}
+                    </strong>
+                </div>
+
+                ${
+                    resultado.cajaId
+                        ? `
+                            <div>
+                                Caja:
+                                <strong>
+                                    ${escaparHTMLCajaMobile(
+                                        resultado.cajaId
+                                    )}
+                                </strong>
+                            </div>
+                        `
+                        : ""
+                }
+
+            </section>
+
+
+            <div class="separator"></div>
+
+
+            <footer class="footer">
+
+                Documento interno de control de caja.
+
+                <br>
+
+                Digital Center M&A
+
+            </footer>
+
+        </body>
+
+        </html>
+    `;
+
+}
+
+function imprimirComprobanteCierreCajaMobile(){
+
+    if(
+        !ultimoResultadoCierreCajaMobile
+    ){
+
+        return;
+
+    }
+
+
+    const ventanaImpresion =
+        window.open(
+            "",
+            "_blank",
+            "width=420,height=720"
+        );
+
+
+    if(!ventanaImpresion){
+
+        const mensaje =
+            portalResultadoCierreCajaMobile
+                ?.querySelector(
+                    "[data-caja-result-message]"
+                );
+
+
+        if(mensaje){
+
+            mensaje.textContent =
+                "El navegador bloqueó la ventana de impresión.";
+
+            mensaje.className =
+                "mobile-caja-result-message is-error";
+
+        }
+
+
+        return;
+
+    }
+
+
+    ventanaImpresion.document.open();
+
+
+    ventanaImpresion.document.write(
+        construirComprobanteCierreCajaMobile(
+            ultimoResultadoCierreCajaMobile
+        )
+    );
+
+
+    ventanaImpresion.document.close();
+
+
+    ventanaImpresion.focus();
+
+
+    ventanaImpresion.addEventListener(
+        "load",
+        function(){
+
+            window.setTimeout(
+                function(){
+
+                    ventanaImpresion.print();
+
+                },
+                180
+            );
+
+        }
+    );
+
+}
+
+function inicializarEventosResultadoCierreCajaMobile(){
+
+    if(
+        !portalResultadoCierreCajaMobile
+    ){
+
+        return;
+
+    }
+
+
+    portalResultadoCierreCajaMobile.addEventListener(
+        "click",
+        function(evento){
+
+            if(
+                evento.target.closest(
+                    "[data-caja-result-print]"
+                )
+            ){
+
+                imprimirComprobanteCierreCajaMobile();
+
+                return;
+
+            }
+
+
+            if(
+                evento.target.closest(
+                    "[data-caja-result-finish]"
+                )
+            ){
+
+                cerrarResultadoCierreCajaMobile();
+
+            }
+
+        }
+    );
+
+}
 
 // =====================================================
 // RENDER
@@ -3296,6 +5957,10 @@ ${construirHistorialGastosCajaMobile(
 function actualizarVistaCajaMobile(
     estado
 ){
+
+    estadoCajaVistaMobile =
+        estado;
+
 
     if(
         !contenedorCajaMobile
@@ -3438,22 +6103,22 @@ if(
 }
 
 
-            const botonCerrar =
-                evento.target.closest(
-                    "[data-caja-close]"
-                );
+const botonCerrar =
+    evento.target.closest(
+        "[data-caja-close]"
+    );
 
 
-            if(
+if(
     botonCerrar &&
     !botonCerrar.disabled
 ){
 
-                alert(
-                    "El cierre de caja se implementará después de gastos."
-                );
+    abrirFormularioCierreCajaMobile();
 
-            }
+    return;
+
+}
 
         }
     );
@@ -3599,6 +6264,43 @@ gastoSeleccionadoAnulacionMobile =
 anulacionGastoVistaEnProceso =
     false;
 
+if(
+    portalCierreCajaMobile
+){
+
+    portalCierreCajaMobile.remove();
+
+}
+
+
+portalCierreCajaMobile =
+    null;
+
+
+cierreCajaVistaEnProceso =
+    false;
+
+
+estadoCajaVistaMobile =
+    null;
+
+if(
+    portalResultadoCierreCajaMobile
+){
+
+    portalResultadoCierreCajaMobile
+        .remove();
+
+}
+
+
+portalResultadoCierreCajaMobile =
+    null;
+
+
+ultimoResultadoCierreCajaMobile =
+    null;    
+    
 document.body.classList.remove(
     "mobile-caja-modal-open"
 );    

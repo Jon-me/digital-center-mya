@@ -2114,6 +2114,651 @@ async function anularGastoCajaMobile(
 
 }
 
+// =====================================================
+// CIERRE Y CUADRE DE CAJA ENTERPRISE
+// M7.3.9.1
+// =====================================================
+
+async function cerrarCajaMobile(
+    opciones = {}
+){
+
+    if(
+        operacionCajaMobileEnProceso
+    ){
+
+        return {
+
+            completada:
+                false,
+
+            motivo:
+                "operacion-en-proceso",
+
+            mensaje:
+                "Ya se está procesando una operación de caja."
+
+        };
+
+    }
+
+
+    const dineroReal =
+        normalizarMontoCajaMobile(
+            opciones.dineroReal
+        );
+
+
+    const autorizado =
+        opciones.autorizado === true;
+
+
+    const autorizadoPor =
+        String(
+            opciones.autorizadoPor ||
+            ""
+        )
+            .trim();
+
+
+    const autorizadoPorUsuario =
+        String(
+            opciones.autorizadoPorUsuario ||
+            ""
+        )
+            .trim();
+
+
+    if(
+        !Number.isFinite(
+            dineroReal
+        ) ||
+        dineroReal < 0
+    ){
+
+        return {
+
+            completada:
+                false,
+
+            motivo:
+                "dinero-real-invalido",
+
+            mensaje:
+                "Ingresa un monto válido para el dinero contado."
+
+        };
+
+    }
+
+
+    if(!autorizado){
+
+        return {
+
+            completada:
+                false,
+
+            motivo:
+                "autorizacion-requerida",
+
+            mensaje:
+                "El cierre de caja requiere autorización administrativa."
+
+        };
+
+    }
+
+
+    if(
+        !autorizadoPor ||
+        !autorizadoPorUsuario
+    ){
+
+        return {
+
+            completada:
+                false,
+
+            motivo:
+                "auditoria-incompleta",
+
+            mensaje:
+                "No se pudo identificar al administrador que autorizó el cierre."
+
+        };
+
+    }
+
+
+    const sucursalId =
+        normalizarTiendaCajaMobile(
+
+            opciones.sucursalId ||
+
+            tiendaCajaMobile ||
+
+            obtenerTiendaVentaMobile() ||
+
+            "principal"
+
+        );
+
+
+    const fechaISO =
+        obtenerFechaISOCajaMobile();
+
+
+    const cajaId =
+        obtenerIdCajaMobile({
+
+            sucursalId,
+
+            fecha:
+                fechaISO
+
+        });
+
+
+    const cajaRef =
+        doc(
+
+            mobileDB,
+
+            "cajas",
+
+            cajaId
+
+        );
+
+
+    /*
+     * Documento determinístico:
+     * una caja diaria equivale a un cierre diario.
+     */
+    const cierreRef =
+        doc(
+
+            mobileDB,
+
+            "cierresCaja",
+
+            cajaId
+
+        );
+
+
+    const sesion =
+        obtenerSesionMobile();
+
+
+    const cerradoPor =
+        String(
+            sesion?.nombreCompleto ||
+            sesion?.nombre ||
+            sesion?.usuario ||
+            "Sin usuario"
+        );
+
+
+    const cerradoPorUsuario =
+        String(
+            sesion?.usuario ||
+            ""
+        );
+
+
+    const ahora =
+        new Date();
+
+
+    operacionCajaMobileEnProceso =
+        true;
+
+
+    try{
+
+        const resultado =
+            await runTransaction(
+
+                mobileDB,
+
+                async function(
+                    transaccion
+                ){
+
+                    const snapshotCaja =
+                        await transaccion.get(
+                            cajaRef
+                        );
+
+
+                    if(
+                        !snapshotCaja.exists()
+                    ){
+
+                        throw new Error(
+                            "CAJA_NO_EXISTE"
+                        );
+
+                    }
+
+
+                    const datosCaja =
+                        snapshotCaja.data() ||
+                        {};
+
+
+                    if(
+                        datosCaja.anulada ===
+                        true
+                    ){
+
+                        throw new Error(
+                            "CAJA_ANULADA"
+                        );
+
+                    }
+
+
+                    if(
+                        datosCaja.abierta !==
+                        true
+                    ){
+
+                        throw new Error(
+                            "CAJA_YA_CERRADA"
+                        );
+
+                    }
+
+
+                    const cajaEsperada =
+                        normalizarMontoCajaMobile(
+                            datosCaja.cajaEsperada
+                        );
+
+
+                    const diferencia =
+                        normalizarMontoCajaMobile(
+                            dineroReal -
+                            cajaEsperada
+                        );
+
+
+                    let estadoCuadre =
+                        "exacta";
+
+
+                    let resultadoCuadre =
+                        "Caja exacta";
+
+
+                    if(
+                        diferencia > 0.009
+                    ){
+
+                        estadoCuadre =
+                            "sobrante";
+
+
+                        resultadoCuadre =
+                            `Sobrante S/ ${
+                                diferencia.toFixed(
+                                    2
+                                )
+                            }`;
+
+                    }else if(
+                        diferencia < -0.009
+                    ){
+
+                        estadoCuadre =
+                            "faltante";
+
+
+                        resultadoCuadre =
+                            `Faltante S/ ${
+                                Math.abs(
+                                    diferencia
+                                ).toFixed(
+                                    2
+                                )
+                            }`;
+
+                    }
+
+
+                    const datosCierre = {
+
+                        cajaId,
+
+                        fecha:
+                            String(
+                                datosCaja.fecha ||
+                                fechaISO
+                            ),
+
+                        fechaISO,
+
+                        sucursalId,
+
+                        sucursalNombre:
+                            String(
+                                datosCaja.sucursalNombre ||
+                                obtenerNombreTiendaCajaMobile(
+                                    sucursalId
+                                )
+                            ),
+
+                        montoInicial:
+                            normalizarMontoCajaMobile(
+                                datosCaja.montoInicial
+                            ),
+
+                        ventasDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.ventasDia
+                            ),
+
+                        efectivoDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.efectivoDia
+                            ),
+
+                        yapeDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.yapeDia
+                            ),
+
+                        plinDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.plinDia
+                            ),
+
+                        tarjetaDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.tarjetaDia
+                            ),
+
+                        transferenciaDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.transferenciaDia
+                            ),
+
+                        gastosDia:
+                            normalizarMontoCajaMobile(
+                                datosCaja.gastosDia
+                            ),
+
+                        cajaEsperada,
+
+                        dineroReal,
+
+                        diferencia,
+
+                        estadoCuadre,
+
+                        resultadoCuadre,
+
+                        cerradaPor:
+                            cerradoPor,
+
+                        cerradaPorUsuario:
+                            cerradoPorUsuario,
+
+                        autorizado:
+                            true,
+
+                        autorizadoPor,
+
+                        autorizadoPorUsuario,
+
+                        horaApertura:
+                            String(
+                                datosCaja.horaApertura ||
+                                ""
+                            ),
+
+                        horaCierre:
+                            obtenerHoraLocalCajaMobile(
+                                ahora
+                            ),
+
+                        origenCierre:
+                            "mobile",
+
+                        cerradaEn:
+                            serverTimestamp()
+
+                    };
+
+
+                    transaccion.update(
+
+                        cajaRef,
+
+                        {
+
+                            abierta:
+                                false,
+
+                            cerrada:
+                                true,
+
+                            dineroReal,
+
+                            diferencia,
+
+                            estadoCuadre,
+
+                            resultadoCuadre,
+
+                            cerradaPor:
+                                cerradoPor,
+
+                            cerradaPorUsuario:
+                                cerradoPorUsuario,
+
+                            autorizadoCierre:
+                                true,
+
+                            cierreAutorizadoPor:
+                                autorizadoPor,
+
+                            cierreAutorizadoPorUsuario:
+                                autorizadoPorUsuario,
+
+                            horaCierre:
+                                datosCierre.horaCierre,
+
+                            cerradaEn:
+                                serverTimestamp(),
+
+                            origenCierre:
+                                "mobile",
+
+                            ultimaOperacion:
+                                "cierre-caja",
+
+                            ultimaOperacionOrigen:
+                                "mobile",
+
+                            ultimaOperacionPor:
+                                cerradoPor
+
+                        }
+
+                    );
+
+
+                    transaccion.set(
+
+                        cierreRef,
+
+                        datosCierre
+
+                    );
+
+
+                    return {
+
+                        cajaId,
+
+                        cajaEsperada,
+
+                        dineroReal,
+
+                        diferencia,
+
+                        estadoCuadre,
+
+                        resultadoCuadre
+
+                    };
+
+                }
+
+            );
+
+
+        return {
+
+            completada:
+                true,
+
+            motivo:
+                "caja-cerrada",
+
+            mensaje:
+                "Caja cerrada correctamente.",
+
+            cajaId:
+                resultado.cajaId,
+
+            sucursalId,
+
+            cajaEsperada:
+                resultado.cajaEsperada,
+
+            dineroReal:
+                resultado.dineroReal,
+
+            diferencia:
+                resultado.diferencia,
+
+            estadoCuadre:
+                resultado.estadoCuadre,
+
+            resultadoCuadre:
+                resultado.resultadoCuadre,
+
+            cerradoPor,
+
+            cerradoPorUsuario,
+
+            autorizadoPor,
+
+            autorizadoPorUsuario
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "Error cerrando Caja Mobile:",
+            error
+        );
+
+
+        if(
+            error?.message ===
+            "CAJA_NO_EXISTE"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "caja-no-existe",
+
+                mensaje:
+                    "No se encontró la caja seleccionada."
+
+            };
+
+        }
+
+
+        if(
+            error?.message ===
+            "CAJA_ANULADA"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "caja-anulada",
+
+                mensaje:
+                    "No se puede cerrar una caja anulada."
+
+            };
+
+        }
+
+
+        if(
+            error?.message ===
+            "CAJA_YA_CERRADA"
+        ){
+
+            return {
+
+                completada:
+                    false,
+
+                motivo:
+                    "caja-ya-cerrada",
+
+                mensaje:
+                    "Esta caja ya fue cerrada anteriormente."
+
+            };
+
+        }
+
+
+        return {
+
+            completada:
+                false,
+
+            motivo:
+                "error-cierre-caja",
+
+            mensaje:
+                error?.message ||
+                "No se pudo cerrar la caja.",
+
+            error
+
+        };
+
+    }finally{
+
+        operacionCajaMobileEnProceso =
+            false;
+
+    }
+
+}
+
 
 // =====================================================
 // CONSULTAS
@@ -2550,6 +3195,8 @@ export {
     registrarGastoCajaMobile,
 
     anularGastoCajaMobile,
+
+    cerrarCajaMobile,
 
     suscribirseCajaMobile,
 
