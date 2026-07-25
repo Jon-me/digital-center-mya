@@ -75,12 +75,13 @@ export async function renderMasMobile(
                 ${
                     esAdmin
                         ? `
-                            <button
-                                type="button"
-                                class="mobile-button"
-                            >
-                                📊 Reportes
-                            </button>
+<button
+    type="button"
+    class="mobile-button"
+    data-mobile-go="reportes"
+>
+    📊 Reportes
+</button>
 
                             <button
                                 type="button"

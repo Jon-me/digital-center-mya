@@ -60,6 +60,10 @@ import {
     destruirGarantiasMobile
 } from "../views/garantias-mobile.js";
 
+import {
+    renderReportesMobile,
+    reiniciarReportesMobile
+} from "../views/reportes-mobile.js";
 
 let RouterMobile =
     null;
@@ -225,23 +229,26 @@ RouterMobile =
 
 renderizadores: {
 
-    inicio:
-        renderHomeMobile,
+inicio:
+    renderHomeMobile,
 
-    ventas:
-        renderVentasMobile,
+ventas:
+    renderVentasMobile,
 
-    inventario:
-        renderInventarioMobile,
+inventario:
+    renderInventarioMobile,
 
-    caja:
-        renderCajaMobile,
+caja:
+    renderCajaMobile,
 
-    mas:
-        renderMasMobile,
+reportes:
+    renderReportesMobile,
 
-    garantias:
-        renderGarantiasMobile
+mas:
+    renderMasMobile,
+
+garantias:
+    renderGarantiasMobile
 
 }
 
@@ -378,6 +385,8 @@ function reiniciarVistasMobile(){
     reiniciarInventarioMobile();
 
     reiniciarCajaMobile();
+
+    reiniciarReportesMobile();
 
     reiniciarMasMobile();
 

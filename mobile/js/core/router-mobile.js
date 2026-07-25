@@ -31,6 +31,11 @@ const RUTAS_MOBILE = {
         contenedorId: "mobileViewCaja"
     },
 
+    reportes: {
+        titulo: "Reportes",
+        contenedorId: "mobileViewReportes"
+    },
+
     mas: {
         titulo: "Más",
         contenedorId: "mobileViewMas"
