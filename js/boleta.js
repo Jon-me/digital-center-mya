@@ -196,8 +196,12 @@ h2{
 </head>
 
 <body>
+
 <div class="boleta">
-    <div class="marca-agua">DIGITAL CENTER M&A</div>
+
+    <div class="marca-agua">
+        DIGITAL CENTER M&A
+    </div>
 
     <div class="contenido">
         <div class="logo-container">
@@ -276,7 +280,19 @@ h2{
 `;
 }
 
-export function construirHTMLReimpresionBoleta(venta, detallePagos){
+export function construirHTMLReimpresionBoleta(
+    venta,
+    detallePagos,
+    opciones = {}
+){
+
+    const esReimpresion =
+        opciones.esReimpresion !== false;
+
+    const tituloDocumento =
+        esReimpresion
+            ? "REIMPRESIÓN DE BOLETA"
+            : "BOLETA DE VENTA";
 
     let productosHTML = "";
 
@@ -299,11 +315,60 @@ export function construirHTMLReimpresionBoleta(venta, detallePagos){
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Reimpresión ${venta.numeroBoleta}</title>
+<title>${tituloDocumento} ${venta.numeroBoleta}</title>
 <style>
-body{ font-family: Arial, sans-serif; background:white; padding:0; }
-.boleta{ width:280px; margin:auto; padding:15px; }
-.logo-boleta{ width:220px; display:block; margin:0 auto 10px auto; }
+body{
+    font-family:Arial, sans-serif;
+    background:white;
+    padding:0;
+}
+
+.boleta{
+    position:relative;
+    overflow:hidden;
+
+    width:280px;
+    margin:auto;
+    padding:15px;
+}
+
+.marca-agua{
+    position:absolute;
+
+    top:46%;
+    left:50%;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(-25deg);
+
+    white-space:nowrap;
+
+    font-size:42px;
+    font-weight:800;
+
+    color:rgba(37, 99, 235, 0.065);
+
+    pointer-events:none;
+    user-select:none;
+
+    z-index:0;
+}
+
+.contenido{
+    position:relative;
+    z-index:1;
+}
+
+.logo-boleta{
+    width:220px;
+    max-width:100%;
+    height:auto;
+
+    display:block;
+    margin:0 auto 10px;
+}
+
 h2{ text-align:center; margin:5px 0; }
 .subtitulo,.datos,.footer{ font-size:12px; line-height:1.5; }
 .linea{ border-top:1px dashed #000; margin:10px 0; }
@@ -318,12 +383,23 @@ h2{ text-align:center; margin:5px 0; }
 <body>
 
 <div class="boleta">
-<img src="/logo-boleta.png" class="logo-boleta">
+
+<div class="marca-agua">
+    DIGITAL CENTER M&A
+</div>
+
+<div class="contenido">
+
+<img
+    src="/logo-boleta.png?v=M12-5-3"
+    class="logo-boleta"
+    alt="Digital Center M&A"
+>
 
 <h2>DIGITAL CENTER M&A</h2>
 
 <div style="text-align:center;font-weight:bold;">
-REIMPRESIÓN DE BOLETA
+    ${tituloDocumento}
 </div>
 
 <div class="subtitulo" style="text-align:center;">
@@ -369,7 +445,10 @@ TOTAL: S/ ${Number(venta.total || 0).toFixed(2)}
 Conserve esta boleta para cualquier garantía.
 </div>
 
-</div>
+</div> <!-- contenido -->
+
+</div> <!-- boleta -->
+
 </body>
 </html>
 `;

@@ -41,10 +41,10 @@ import {
 import {
 
     construirHTMLBoletaMobile,
-
+    construirHTMLReimpresionBoletaMobile,
     imprimirHTMLBoletaMobile
 
-} from "../services/boleta-mobile-service.js";
+} from "../services/boleta-mobile-service.js?v=M12-5-3";
 
 import {
 
@@ -2541,7 +2541,7 @@ function construirPagoMixtoVentasMobile(
                 "Efectivo",
 
             icono:
-                "💵"
+                "/efectivo.png"
         },
 
         {
@@ -2552,7 +2552,7 @@ function construirPagoMixtoVentasMobile(
                 "Yape",
 
             icono:
-                "📱"
+                "/yape.png"
         },
 
         {
@@ -2563,7 +2563,7 @@ function construirPagoMixtoVentasMobile(
                 "Plin",
 
             icono:
-                "📲"
+                "/plin.png"
         },
 
         {
@@ -2574,7 +2574,7 @@ function construirPagoMixtoVentasMobile(
                 "Tarjeta",
 
             icono:
-                "💳"
+                "/tarjeta.png"
         },
 
         {
@@ -2585,7 +2585,7 @@ function construirPagoMixtoVentasMobile(
                 "Transferencia",
 
             icono:
-                "🏦"
+                "/transferencia.png"
         }
 
     ];
@@ -2792,7 +2792,15 @@ function construirMetodoPagoMixtoVentasMobile(
 
             <span class="mobile-mixed-method-icon">
 
-                ${metodo.icono}
+                <img
+                    src="${escaparHTMLVentasMobile(
+                        metodo.icono
+                    )}"
+                    alt="${escaparHTMLVentasMobile(
+                        metodo.nombre
+                    )}"
+                    class="mobile-mixed-method-image"
+                >
 
             </span>
 
@@ -4896,7 +4904,7 @@ function construirMetodosPagoVentasMobile(
                         "efectivo",
 
                     icono:
-                        "💵",
+                        "/efectivo.png",
 
                     nombre:
                         "Efectivo",
@@ -4916,7 +4924,7 @@ function construirMetodosPagoVentasMobile(
                         "yape",
 
                     icono:
-                        "📱",
+                        "/yape.png",
 
                     nombre:
                         "Yape",
@@ -4936,7 +4944,7 @@ function construirMetodosPagoVentasMobile(
                         "plin",
 
                     icono:
-                        "📲",
+                        "/plin.png",
 
                     nombre:
                         "Plin",
@@ -4956,7 +4964,7 @@ function construirMetodosPagoVentasMobile(
                         "tarjeta",
 
                     icono:
-                        "💳",
+                        "/tarjeta.png",
 
                     nombre:
                         "Tarjeta",
@@ -4976,7 +4984,7 @@ function construirMetodosPagoVentasMobile(
                         "transferencia",
 
                     icono:
-                        "🏦",
+                        "/transferencia.png",
 
                     nombre:
                         "Transferencia",
@@ -5078,11 +5086,25 @@ function construirMetodoPagoVentasMobile(
 
             <span class="mobile-checkout-method-accent"></span>
 
-            <span class="mobile-checkout-method-icon">
+<span class="mobile-checkout-method-icon">
 
-                ${icono}
+    ${
+        String(icono).startsWith("/")
+            ? `
+                <img
+                    src="${escaparHTMLVentasMobile(
+                        icono
+                    )}"
+                    alt="${escaparHTMLVentasMobile(
+                        nombre
+                    )}"
+                    class="mobile-checkout-method-image"
+                >
+            `
+            : icono
+    }
 
-            </span>
+</span>
 
             <span class="mobile-checkout-method-copy">
 
