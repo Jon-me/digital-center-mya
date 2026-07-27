@@ -1111,3 +1111,389 @@ body.mobile-overlay-open{
     }
 
 }
+
+/* =========================================================
+   VENTA COMPLETADA — SUCCESS SHEET APPLE PRO
+========================================================= */
+
+.mobile-sale-success-sheet {
+    max-height:
+        calc(
+            96dvh -
+            env(safe-area-inset-top)
+        );
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        rgba(125, 177, 255, 0.2);
+
+    border-bottom:
+        0;
+
+    border-radius:
+        34px
+        34px
+        0
+        0;
+
+    background:
+        radial-gradient(
+            circle at 50% -8%,
+            rgba(48, 209, 138, 0.14),
+            transparent 230px
+        ),
+
+        radial-gradient(
+            circle at 95% 12%,
+            rgba(48, 131, 255, 0.16),
+            transparent 260px
+        ),
+
+        linear-gradient(
+            180deg,
+            rgba(13, 27, 53, 0.995),
+            rgba(3, 10, 24, 1)
+        );
+
+    box-shadow:
+        0 -32px 90px
+        rgba(0, 0, 0, 0.68),
+
+        0 -8px 35px
+        rgba(20, 93, 190, 0.12),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.07);
+}
+
+
+/* =========================================================
+   HANDLE
+========================================================= */
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-handle-zone {
+    min-height:
+        28px;
+}
+
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-handle {
+    width:
+        38px;
+
+    height:
+        4px;
+
+    background:
+        rgba(207, 225, 255, 0.3);
+
+    box-shadow:
+        0 1px 8px
+        rgba(91, 156, 255, 0.14);
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-header {
+    align-items:
+        center;
+
+    padding:
+        2px
+        18px
+        13px;
+
+    border-bottom:
+        1px solid
+        rgba(121, 164, 225, 0.1);
+}
+
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-heading {
+    min-width:
+        0;
+}
+
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-eyebrow {
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    color:
+        rgba(102, 219, 169, 0.82);
+
+    font-size:
+        8px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        0.14em;
+}
+
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-title {
+    color:
+        rgba(255, 255, 255, 0.96);
+
+    font-size:
+        19px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.15;
+
+    letter-spacing:
+        -0.02em;
+}
+
+
+/* =========================================================
+   BOTÓN CERRAR
+========================================================= */
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-close {
+    flex:
+        0 0 auto;
+
+    width:
+        38px;
+
+    min-width:
+        38px;
+
+    height:
+        38px;
+
+    min-height:
+        38px;
+
+    border:
+        1px solid
+        rgba(139, 177, 229, 0.14);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(107, 137, 181, 0.09);
+
+    color:
+        rgba(219, 232, 250, 0.78);
+
+    font-size:
+        23px;
+
+    line-height:
+        1;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.035);
+
+    transition:
+        transform 140ms ease,
+        background 140ms ease,
+        border-color 140ms ease;
+}
+
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-close:active {
+    transform:
+        scale(0.91);
+
+    background:
+        rgba(126, 158, 205, 0.16);
+
+    border-color:
+        rgba(154, 194, 247, 0.24);
+}
+
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-body {
+    padding:
+        18px
+        18px
+        calc(
+            20px +
+            env(safe-area-inset-bottom)
+        );
+
+    overflow-x:
+        hidden;
+
+    scrollbar-width:
+        none;
+}
+
+
+.mobile-sale-success-sheet
+.mobile-bottom-sheet-body::-webkit-scrollbar {
+    display:
+        none;
+}
+
+
+/* =========================================================
+   BRILLO SUPERIOR
+========================================================= */
+
+.mobile-sale-success-sheet::before {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    right:
+        28px;
+
+    left:
+        28px;
+
+    height:
+        1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(161, 207, 255, 0.32),
+            rgba(112, 238, 184, 0.24),
+            transparent
+        );
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   ANIMACIÓN PREMIUM DE ENTRADA
+========================================================= */
+
+.mobile-overlay-portal.is-visible
+.mobile-sale-success-sheet {
+    animation:
+        mobileSaleSuccessSheetEnter
+        460ms
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        );
+}
+
+
+@keyframes mobileSaleSuccessSheetEnter {
+
+    from {
+        opacity:
+            0.72;
+
+        transform:
+            translateY(105%)
+            scale(0.97);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 370px) {
+
+    .mobile-sale-success-sheet {
+        border-radius:
+            29px
+            29px
+            0
+            0;
+    }
+
+
+    .mobile-sale-success-sheet
+    .mobile-bottom-sheet-header {
+        padding-right:
+            14px;
+
+        padding-left:
+            14px;
+    }
+
+
+    .mobile-sale-success-sheet
+    .mobile-bottom-sheet-body {
+        padding-right:
+            14px;
+
+        padding-left:
+            14px;
+    }
+
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .mobile-overlay-portal.is-visible
+    .mobile-sale-success-sheet {
+        animation:
+            none;
+    }
+
+
+    .mobile-sale-success-sheet
+    .mobile-bottom-sheet-close {
+        transition:
+            none;
+    }
+
+}

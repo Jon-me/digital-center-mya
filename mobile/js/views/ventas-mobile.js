@@ -3627,45 +3627,98 @@ async function mostrarVentaFinalizadaMobile(
         return;
     }
 
-    const html = `
-        <div class="mobile-sale-finished">
+const html = `
+    <section class="mobile-sale-finished-premium">
 
-            <div class="mobile-sale-finished-icon">
-                ✅
+        <div class="mobile-sale-success-visual">
+
+            <span class="mobile-sale-success-glow"></span>
+
+            <div class="mobile-sale-success-icon">
+                <span aria-hidden="true">✓</span>
             </div>
 
-            <h2>
-                Venta registrada
-            </h2>
+        </div>
 
-            <p>
+        <span class="mobile-sale-success-eyebrow">
+            OPERACIÓN EXITOSA
+        </span>
 
-                <strong>
-                    ${venta.numeroBoleta}
-                </strong>
+        <h2 class="mobile-sale-success-title">
+            Venta registrada
+        </h2>
 
-            </p>
+        <p class="mobile-sale-success-description">
+            La operación fue procesada correctamente.
+        </p>
+
+        <div class="mobile-sale-ticket-card">
+
+            <span>
+                NÚMERO DE BOLETA
+            </span>
+
+            <strong>
+                ${escaparHTMLVentasMobile(
+                    venta.numeroBoleta ||
+                    "SIN NÚMERO"
+                )}
+            </strong>
+
+        </div>
+
+        <div class="mobile-sale-success-actions">
 
             <button
-                class="mobile-button mobile-button-primary"
+                type="button"
+                class="
+                    mobile-button
+                    mobile-button-primary
+                    mobile-sale-print-button
+                "
                 data-print-ticket
             >
 
-                🖨 Imprimir boleta
+                <span
+                    class="mobile-sale-action-icon"
+                    aria-hidden="true"
+                >
+                    🖨
+                </span>
+
+                <span>
+                    Imprimir boleta
+                </span>
 
             </button>
 
             <button
-                class="mobile-button"
+                type="button"
+                class="
+                    mobile-button
+                    mobile-sale-close-button
+                "
                 data-close-sale
             >
 
-                Finalizar
+                <span>
+                    Finalizar
+                </span>
+
+                <span aria-hidden="true">
+                    →
+                </span>
 
             </button>
 
         </div>
-    `;
+
+        <p class="mobile-sale-success-note">
+            La venta ya fue guardada y el stock fue actualizado.
+        </p>
+
+    </section>
+`;
 
     const sheet =
         abrirBottomSheet({
@@ -3678,6 +3731,10 @@ async function mostrarVentaFinalizadaMobile(
 
             descripcion:
                 "",
+        
+            clase:
+                "mobile-sale-success-sheet",
+
 
             textoCancelar:
                 "",

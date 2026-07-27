@@ -38,7 +38,7 @@ import {
 import {
     renderVentasMobile,
     reiniciarVentasMobile
-} from "../views/ventas-mobile.js";
+} from "../views/ventas-mobile.js?v=M12-7-2";
 
 import {
     renderInventarioMobile,
