@@ -1,7 +1,14 @@
 import {
+    crearFirebaseAuthService
+} from "./js/firebase-auth-service.js";
+
+import {
     db,
     messaging,
     storage,
+    auth,
+    signInWithEmailAndPassword,
+    signOut,
     vapidKey,
     collection,
     addDoc,
@@ -497,6 +504,15 @@ obtenerFechaISO
 
 });
 
+const FirebaseAuthService =
+    crearFirebaseAuthService({
+
+        auth,
+        signInWithEmailAndPassword,
+        signOut
+
+    });
+
 const Auth = crearAuth({
 
     state: estadoAuthBridge,
@@ -504,7 +520,12 @@ const Auth = crearAuth({
     db,
     doc,
     getDoc,
+
+    FirebaseAuthService,
     setDoc,
+
+    auth,
+    signOut,
 
     detenerListenersFirebase,
     iniciarListenersFirebase,
@@ -679,6 +700,14 @@ const Bootstrap = crearBootstrap({
 
     localStorage,
 
+    FirebaseAuthService,
+
+    db,
+    doc,
+    getDoc,
+
+    completarInicioSesion: Auth.completarInicioSesion,
+
     apagarSonidoLogin,
     mostrarCarrito: Carrito.mostrarCarrito,
     controlarColumnaGanancia,
@@ -765,54 +794,125 @@ CatalogoProductos.mostrarProductos();
 
 async function iniciarSesion(){
 
-    let usuarioInput =
-        document.getElementById("usuario").value.trim();
+    const usuarioInput =
+        document.getElementById("usuario")
+            .value
+            .trim();
 
-    let passwordInput =
-        document.getElementById("password").value.trim();
+    const passwordInput =
+        document.getElementById("password")
+            .value
+            .trim();
 
-    let usuarioEncontrado = null;
+    if(!usuarioInput || !passwordInput){
 
-    // 1. Buscar primero en Firebase
-try{
-
-    let usuarioRef = doc(db, "usuarios", usuarioInput);
-    let usuarioSnap = await getDoc(usuarioRef);
-
-    if(usuarioSnap.exists()){
-
-        let usuarioFirebase = usuarioSnap.data();
-
-        if(usuarioFirebase.password === passwordInput){
-            usuarioEncontrado = usuarioFirebase;
-        }
+        alert("Ingrese usuario y contraseña");
+        return;
 
     }
 
-}catch(error){
+    const correoTecnico =
+        usuarioInput
+            .toLowerCase()
+            .replace(/\s+/g, "") +
+        "@digitalcentermya.app";
 
-    console.warn("No se pudo leer usuario desde Firebase. Se usará login local si existe.", error);
+    try{
+
+        /*
+         * 1. Autenticar realmente con Firebase Authentication.
+         */
+const resultadoAuth =
+    await FirebaseAuthService.iniciarSesion(
+        usuarioInput,
+        passwordInput
+    );
+
+if(!resultadoAuth.completada){
+
+    alert(resultadoAuth.mensaje);
+
+    return;
 
 }
 
-    // 2. Si no está en Firebase, buscar vendedores locales
-    if(!usuarioEncontrado){
+const uidAutenticado =
+    resultadoAuth.uid;
 
-        usuarioEncontrado = usuarios.find(function(user){
-            return (
-                user.usuario === usuarioInput &&
-                user.password === passwordInput
+        /*
+         * 2. Leer el perfil empresarial desde Firestore.
+         *
+         * Los documentos actuales conservan sus IDs:
+         * Jonatan, Mercy y David.
+         */
+        const usuarioRef =
+            doc(
+                db,
+                "usuarios",
+                usuarioInput
             );
-        });
 
-    }
+        const usuarioSnap =
+            await getDoc(usuarioRef);
 
-    if(!usuarioEncontrado){
-        alert("Usuario o contraseña incorrectos");
-        return;
-    }
+        if(!usuarioSnap.exists()){
 
-        Auth.completarInicioSesion(usuarioEncontrado);
+            alert(
+                "El usuario está autenticado, pero no tiene un perfil registrado."
+            );
+
+            return;
+
+        }
+
+        const usuarioEncontrado =
+            usuarioSnap.data();
+
+
+        /*
+         * 3. Verificar que el UID de Authentication
+         * corresponda al UID guardado en Firestore.
+         */
+        if(
+            !usuarioEncontrado.uid ||
+            usuarioEncontrado.uid !== uidAutenticado
+        ){
+
+            console.error(
+                "UID incompatible:",
+                {
+                    uidAuthentication:
+                        uidAutenticado,
+
+                    uidFirestore:
+                        usuarioEncontrado.uid
+                }
+            );
+
+            alert(
+                "La cuenta no está vinculada correctamente con su perfil."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * 4. Continuar con el flujo actual del sistema:
+         * localStorage, permisos, listeners y dashboard.
+         */
+        Auth.completarInicioSesion(
+            usuarioEncontrado
+        );
+
+    }catch(error){
+
+    console.error(error);
+
+    alert("Error inesperado.");
+
+}
 
 }
 

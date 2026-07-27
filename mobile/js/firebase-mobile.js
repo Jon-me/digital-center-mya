@@ -1,7 +1,7 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // FIREBASE MOBILE
-// FASE M3.1
+// FIRESTORE + STORAGE + AUTHENTICATION
 // =====================================================
 
 import {
@@ -11,27 +11,35 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 
 import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+import {
     getFirestore,
     collection,
     doc,
     getDoc,
     getDocs,
+    updateDoc,
     onSnapshot,
     query,
     where,
-    orderBy,
-    limit,
     runTransaction,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-// =====================================================
-// CONFIGURACIÓN FIREBASE
-// Backend compartido con Digital Center Desktop
-// Interfaz y sesión completamente independientes
-// =====================================================
+import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
 
-const firebaseConfigMobile = {
+
+const firebaseConfig = {
 
     apiKey:
         "AIzaSyD_vUmAunFhTZH24SfCZMST5PVRBcAMMNI",
@@ -57,17 +65,13 @@ const firebaseConfigMobile = {
 };
 
 
-// =====================================================
-// INICIALIZACIÓN SEGURA
-// Evita inicializar Firebase dos veces
-// =====================================================
-
 const mobileFirebaseApp =
-    getApps().length > 0
+    getApps().length
         ? getApp()
         : initializeApp(
-            firebaseConfigMobile
+            firebaseConfig
         );
+
 
 const mobileDB =
     getFirestore(
@@ -75,16 +79,33 @@ const mobileDB =
     );
 
 
-// =====================================================
-// EXPORTACIONES MÓVILES
-// Solo exportamos lo necesario para M3
-// =====================================================
+const mobileAuth =
+    getAuth(
+        mobileFirebaseApp
+    );
+
+
+const mobileStorage =
+    getStorage(
+        mobileFirebaseApp
+    );
+
 
 export {
 
     mobileFirebaseApp,
 
     mobileDB,
+
+    mobileAuth,
+
+    signInWithEmailAndPassword,
+
+    signOut,
+
+    onAuthStateChanged,
+
+    mobileStorage,
 
     collection,
 
@@ -94,18 +115,22 @@ export {
 
     getDocs,
 
+    updateDoc,
+
     onSnapshot,
 
     query,
 
     where,
 
-    orderBy,
-
-    limit,
-
     runTransaction,
 
-    serverTimestamp
+    serverTimestamp,
+
+    ref,
+
+    uploadBytes,
+
+    getDownloadURL
 
 };

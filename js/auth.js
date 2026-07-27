@@ -13,6 +13,8 @@ export function crearAuth(deps){
         db,
         doc,
         getDoc,
+
+        FirebaseAuthService,
         setDoc,
 
         detenerListenersFirebase,
@@ -248,17 +250,42 @@ function aplicarPermisos(){
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    detenerListenersFirebase();
+    try{
 
-    localStorage.removeItem("sesion");
-    localStorage.removeItem("usuarioActivo");
-    localStorage.removeItem("nombreActivo");
-    localStorage.removeItem("rolActivo");
-    localStorage.removeItem("sucursalActiva");
+        const resultado =
+            await FirebaseAuthService.cerrarSesion();
 
-    location.reload();
+        if(!resultado.completada){
+
+            console.warn(
+                resultado.mensaje,
+                resultado.error || ""
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Error inesperado cerrando la sesión:",
+            error
+        );
+
+    }finally{
+
+        detenerListenersFirebase();
+
+        localStorage.removeItem("sesion");
+        localStorage.removeItem("usuarioActivo");
+        localStorage.removeItem("nombreActivo");
+        localStorage.removeItem("rolActivo");
+        localStorage.removeItem("sucursalActiva");
+
+        location.reload();
+
+    }
 
 }
 

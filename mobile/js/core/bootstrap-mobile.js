@@ -93,7 +93,7 @@ export default async function iniciarMobile(){
     try{
 
         const sesion =
-            AuthMobile
+            await AuthMobile
                 .restaurarSesionMobile();
 
 
@@ -117,7 +117,7 @@ export default async function iniciarMobile(){
 
 
         console.info(
-            "Digital Center Mobile — Core M4.1 iniciado correctamente."
+            "Digital Center Mobile — Enterprise Authentication iniciado correctamente."
         );
 
     }catch(error){

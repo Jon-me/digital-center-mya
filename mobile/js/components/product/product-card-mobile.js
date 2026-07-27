@@ -1245,41 +1245,132 @@ function construirContenidoProductSheet(
 
             </section>
 
-            <section class="mobile-product-sheet-section">
+<section class="mobile-product-sheet-section">
 
-    <button
-        type="button"
-        class="mobile-product-transfer-button"
-        data-product-transfer
-    >
+    <header class="mobile-product-sheet-section-header">
 
-        <span
-            class="mobile-product-transfer-icon"
-            aria-hidden="true"
+        <span>
+            Acciones del producto
+        </span>
+
+        <strong>
+            Gestión
+        </strong>
+
+    </header>
+
+
+    <div class="mobile-product-sheet-actions">
+
+        <button
+            type="button"
+            class="mobile-product-transfer-button"
+            data-product-transfer
         >
-            ⇄
-        </span>
 
-        <span class="mobile-product-transfer-copy">
+            <span
+                class="mobile-product-transfer-icon"
+                aria-hidden="true"
+            >
+                ⇄
+            </span>
 
-            <strong>
-                Transferir stock
-            </strong>
+            <span class="mobile-product-transfer-copy">
 
-            <small>
-                Mover unidades entre Mercado y Peluquería
-            </small>
+                <strong>
+                    Transferir stock
+                </strong>
 
-        </span>
+                <small>
+                    Mover unidades entre Mercado y Peluquería
+                </small>
 
-        <span
-            class="mobile-product-transfer-arrow"
-            aria-hidden="true"
-        >
-            ›
-        </span>
+            </span>
 
-    </button>
+            <span
+                class="mobile-product-transfer-arrow"
+                aria-hidden="true"
+            >
+                ›
+            </span>
+
+        </button>
+
+
+        ${
+            esAdministradorMobile(
+                usuario
+            )
+                ? `
+                    <div class="mobile-product-admin-actions">
+
+                        <button
+                            type="button"
+                            class="
+                                mobile-product-admin-button
+                                is-edit
+                            "
+                            data-product-edit
+                        >
+
+                            <span
+                                class="mobile-product-admin-icon"
+                                aria-hidden="true"
+                            >
+                                ✎
+                            </span>
+
+                            <span class="mobile-product-admin-copy">
+
+                                <strong>
+                                    Editar
+                                </strong>
+
+                                <small>
+                                    Modificar producto
+                                </small>
+
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="
+                                mobile-product-admin-button
+                                is-delete
+                            "
+                            data-product-delete
+                        >
+
+                            <span
+                                class="mobile-product-admin-icon"
+                                aria-hidden="true"
+                            >
+                                ♜
+                            </span>
+
+                            <span class="mobile-product-admin-copy">
+
+                                <strong>
+                                    Eliminar
+                                </strong>
+
+                                <small>
+                                    Borrar producto
+                                </small>
+
+                            </span>
+
+                        </button>
+
+                    </div>
+                `
+                : ""
+        }
+
+    </div>
 
 </section>
 
@@ -1743,7 +1834,114 @@ function abrirProductSheetMobile(
             "click",
             async function(evento){
 
-                const botonTransferir =
+const botonEditar =
+    evento.target.closest(
+        "[data-product-edit]"
+    );
+
+
+if(botonEditar){
+
+    if(
+        !esAdministradorMobile(
+            usuario
+        )
+    ){
+
+        OverlayMobile.toast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "Solo un administrador puede editar productos."
+
+        });
+
+        return;
+
+    }
+
+
+    if(
+        typeof opciones
+            .alEditar ===
+        "function"
+    ){
+
+        opciones.alEditar({
+
+            producto,
+
+            usuario,
+
+            cerrarProductSheet:
+                sheet.cerrar
+
+        });
+
+    }
+
+
+    return;
+
+}
+
+
+const botonEliminar =
+    evento.target.closest(
+        "[data-product-delete]"
+    );
+
+
+if(botonEliminar){
+
+    if(
+        !esAdministradorMobile(
+            usuario
+        )
+    ){
+
+        OverlayMobile.toast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "Solo un administrador puede eliminar productos."
+
+        });
+
+        return;
+
+    }
+
+
+    if(
+        typeof opciones
+            .alEliminar ===
+        "function"
+    ){
+
+        opciones.alEliminar({
+
+            producto,
+
+            usuario,
+
+            cerrarProductSheet:
+                sheet.cerrar
+
+        });
+
+    }
+
+
+    return;
+
+}
+
+const botonTransferir =
     evento.target.closest(
         "[data-product-transfer]"
     );

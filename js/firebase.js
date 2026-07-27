@@ -7,6 +7,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 
 import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+import {
     getFirestore,
     collection,
     addDoc,
@@ -54,6 +60,8 @@ const messaging = getMessaging(app);
 
 const storage = getStorage(app);
 
+const auth = getAuth(app);
+
 const vapidKey = "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzLwb4FqPkz0oFFI3lgD5l21infE";
 
 export {
@@ -61,6 +69,10 @@ export {
     db,
     messaging,
     storage,
+    auth,
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
     vapidKey,
     collection,
     addDoc,

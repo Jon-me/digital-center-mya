@@ -8,11 +8,25 @@ import {
 
     mobileDB,
 
+    mobileStorage,
+
     collection,
+
+    doc,
 
     getDocs,
 
-    onSnapshot
+    updateDoc,
+
+    onSnapshot,
+
+    serverTimestamp,
+
+    ref,
+
+    uploadBytes,
+
+    getDownloadURL
 
 } from "../firebase-mobile.js";
 
@@ -440,6 +454,437 @@ function destruirSuscripcionProductosMobile(){
 
 }
 
+function limpiarNombreArchivoProductoMobile(
+    nombre
+){
+
+    const nombreSeguro =
+        String(
+            nombre || "imagen"
+        )
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .replace(
+                /[^a-z0-9._-]+/g,
+                "-"
+            )
+            .replace(
+                /-+/g,
+                "-"
+            )
+            .replace(
+                /^-|-$|^\.+/g,
+                ""
+            );
+
+
+    return (
+        nombreSeguro ||
+        "imagen-producto"
+    );
+
+}
+
+
+
+async function subirImagenProductoMobile({
+    productoId,
+    archivo
+}){
+
+    if(
+        !productoId ||
+        !(archivo instanceof File)
+    ){
+
+        return "";
+
+    }
+
+
+    if(
+        !String(
+            archivo.type || ""
+        ).startsWith(
+            "image/"
+        )
+    ){
+
+        throw new Error(
+            "El archivo seleccionado no es una imagen válida."
+        );
+
+    }
+
+
+    const limiteBytes =
+        5 * 1024 * 1024;
+
+
+    if(
+        Number(
+            archivo.size || 0
+        ) >
+        limiteBytes
+    ){
+
+        throw new Error(
+            "La imagen supera el límite de 5 MB."
+        );
+
+    }
+
+
+    const nombreArchivo =
+        limpiarNombreArchivoProductoMobile(
+            archivo.name
+        );
+
+
+    const ruta =
+        [
+            "productos",
+            productoId,
+            `${Date.now()}-${nombreArchivo}`
+        ].join("/");
+
+
+    const referenciaImagen =
+        ref(
+            mobileStorage,
+            ruta
+        );
+
+
+    await uploadBytes(
+
+        referenciaImagen,
+
+        archivo,
+
+        {
+
+            contentType:
+                archivo.type ||
+
+                "image/jpeg",
+
+            customMetadata: {
+
+                productoId:
+                    String(
+                        productoId
+                    ),
+
+                origen:
+                    "mobile-product-editor"
+
+            }
+
+        }
+
+    );
+
+
+    return await getDownloadURL(
+        referenciaImagen
+    );
+
+}
+
+
+
+function validarCambiosProductoMobile(
+    cambios = {}
+){
+
+    const codigo =
+        String(
+            cambios.codigo || ""
+        ).trim();
+
+    const producto =
+        String(
+            cambios.producto || ""
+        ).trim();
+
+    const categoria =
+        String(
+            cambios.categoria || ""
+        ).trim();
+
+    const precioCompra =
+        Number(
+            cambios.precioCompra
+        );
+
+    const precio =
+        Number(
+            cambios.precio
+        );
+
+
+    if(!codigo){
+
+        throw new Error(
+            "El código del producto es obligatorio."
+        );
+
+    }
+
+
+    if(!producto){
+
+        throw new Error(
+            "El nombre del producto es obligatorio."
+        );
+
+    }
+
+
+    if(!categoria){
+
+        throw new Error(
+            "La categoría del producto es obligatoria."
+        );
+
+    }
+
+
+    if(
+        !Number.isFinite(
+            precioCompra
+        ) ||
+        precioCompra < 0
+    ){
+
+        throw new Error(
+            "El precio de compra no es válido."
+        );
+
+    }
+
+
+    if(
+        !Number.isFinite(
+            precio
+        ) ||
+        precio < 0
+    ){
+
+        throw new Error(
+            "El precio de venta no es válido."
+        );
+
+    }
+
+
+    return {
+
+        codigo,
+
+        producto,
+
+        categoria,
+
+        precioCompra:
+            Math.round(
+                precioCompra * 100
+            ) / 100,
+
+        precio:
+            Math.round(
+                precio * 100
+            ) / 100
+
+    };
+
+}
+
+
+
+async function actualizarProductoMobile(
+    opciones = {}
+){
+
+    const {
+
+        producto = null,
+
+        cambios = {},
+
+        imagen = null,
+
+        usuario = null
+
+    } = opciones;
+
+
+    const productoId =
+        String(
+            producto?.id || ""
+        ).trim();
+
+
+    if(!productoId){
+
+        return {
+
+            completada:
+                false,
+
+            mensaje:
+                "No se encontró el identificador del producto.",
+
+            error:
+                null
+
+        };
+
+    }
+
+
+    try{
+
+        const datosActualizados =
+            validarCambiosProductoMobile(
+                cambios
+            );
+
+
+        let urlImagen =
+            String(
+                producto?.imagen || ""
+            ).trim();
+
+
+        if(
+            imagen instanceof File
+        ){
+
+            urlImagen =
+                await subirImagenProductoMobile({
+
+                    productoId,
+
+                    archivo:
+                        imagen
+
+                });
+
+        }
+
+
+        const referenciaProducto =
+            doc(
+
+                mobileDB,
+
+                "productos",
+
+                productoId
+
+            );
+
+
+        const datosFirestore = {
+
+            ...datosActualizados,
+
+            imagen:
+                urlImagen,
+
+            actualizadoEn:
+                serverTimestamp(),
+
+            actualizadoPor: {
+
+                uid:
+                    String(
+                        usuario?.uid || ""
+                    ),
+
+                nombre:
+                    String(
+                        usuario?.nombre ||
+                        usuario?.displayName ||
+                        usuario?.email ||
+                        "Administrador"
+                    ).trim(),
+
+                rol:
+                    String(
+                        usuario?.rol ||
+                        "admin"
+                    ).trim()
+
+            }
+
+        };
+
+
+        await updateDoc(
+
+            referenciaProducto,
+
+            datosFirestore
+
+        );
+
+
+        /*
+         * No modificamos directamente el catálogo.
+         * onSnapshot recibirá la versión actualizada
+         * desde Firestore y reconstruirá el caché.
+         */
+        return {
+
+            completada:
+                true,
+
+            mensaje:
+                "Producto actualizado correctamente.",
+
+            productoId,
+
+            imagenActualizada:
+                imagen instanceof File,
+
+            imagen:
+                urlImagen
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "Error actualizando producto Mobile:",
+            error
+        );
+
+
+        return {
+
+            completada:
+                false,
+
+            mensaje:
+                error?.message ||
+                "No se pudo actualizar el producto.",
+
+            error
+
+        };
+
+    }
+
+}
+
 
 function obtenerProductosCacheMobile(){
 
@@ -468,6 +913,8 @@ export {
 
     obtenerProductosCacheMobile,
 
-    limpiarCacheProductosMobile
+    limpiarCacheProductosMobile,
+
+    actualizarProductoMobile
 
 };

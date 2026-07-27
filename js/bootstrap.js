@@ -10,6 +10,14 @@ export function crearBootstrap(deps){
 
     localStorage,
 
+    FirebaseAuthService,
+
+    db,
+    doc,
+    getDoc,
+
+    completarInicioSesion,
+
     apagarSonidoLogin,
     mostrarCarrito,
     controlarColumnaGanancia,
@@ -33,48 +41,83 @@ export function crearBootstrap(deps){
 
 }
 
-function restaurarSesion(){
+async function restaurarSesion(){
 
-    if(!sesionActiva()){
+    const usuarioFirebase =
+        await FirebaseAuthService
+            .esperarUsuarioAutenticado();
+
+    if(!usuarioFirebase){
+
         return false;
+
     }
 
-    document.getElementById("login").style.display = "none";
-    document.getElementById("sistema").style.display = "block";
+    const correo =
+        usuarioFirebase.email || "";
 
-    apagarSonidoLogin();
+    const usuarioDocumento =
+        correo
+            .split("@")[0]
+            .trim();
 
-    document.body.classList.remove("rol-admin", "rol-vendedor");
-    document.body.classList.add(
-        "rol-" + localStorage.getItem("rolActivo")
+    const nombreDocumento =
+        usuarioDocumento
+            .charAt(0)
+            .toUpperCase() +
+        usuarioDocumento.slice(1);
+
+    const usuarioRef =
+        doc(
+            db,
+            "usuarios",
+            nombreDocumento
+        );
+
+    const usuarioSnap =
+        await getDoc(usuarioRef);
+
+    if(!usuarioSnap.exists()){
+
+        console.error(
+            "No existe el perfil Firestore:",
+            nombreDocumento
+        );
+
+        await FirebaseAuthService.cerrarSesion();
+
+        return false;
+
+    }
+
+    const usuarioEncontrado =
+        usuarioSnap.data();
+
+    if(
+        !usuarioEncontrado.uid ||
+        usuarioEncontrado.uid !== usuarioFirebase.uid
+    ){
+
+        console.error(
+            "UID incompatible al restaurar sesión:",
+            {
+                uidAuthentication:
+                    usuarioFirebase.uid,
+
+                uidFirestore:
+                    usuarioEncontrado.uid
+            }
+        );
+
+        await FirebaseAuthService.cerrarSesion();
+
+        return false;
+
+    }
+
+    completarInicioSesion(
+        usuarioEncontrado
     );
-
-    let dashboard = document.getElementById("dashboardAdmin");
-
-    if(dashboard){
-
-        dashboard.style.display =
-            localStorage.getItem("rolActivo") === "vendedor"
-                ? "none"
-                : "grid";
-
-    }
-
-    mostrarCarrito();
-
-    controlarColumnaGanancia();
-
-    aplicarPermisos();
-
-    desbloquearSistema();
-
-    iniciarListenersFirebase();
-
-    setTimeout(async function(){
-
-        await hidratarProductosDesdeIndexedDB();
-
-    }, 300);
 
     return true;
 
@@ -164,7 +207,7 @@ function inicializarPageshow(){
 
 }
 
-function iniciarAplicacion(){
+async function iniciarAplicacion(){
 
     inicializarEventosLogin();
 
@@ -174,7 +217,7 @@ function iniciarAplicacion(){
 
     inicializarOnMessage();
 
-    if(!restaurarSesion()){
+    if(!await restaurarSesion()){
 
         document.getElementById("login").style.display = "block";
         document.getElementById("sistema").style.display = "none";

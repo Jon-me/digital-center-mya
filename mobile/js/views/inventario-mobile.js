@@ -18,6 +18,12 @@ import {
 
 import {
 
+    abrirProductEditorMobile
+
+} from "../components/product/product-editor-mobile.js";
+
+import {
+
     prepararProductosBusquedaMobile,
 
     obtenerCategoriasMobile,
@@ -48,7 +54,9 @@ import {
 
     suscribirProductosMobile,
 
-    limpiarCacheProductosMobile
+    limpiarCacheProductosMobile,
+
+    actualizarProductoMobile
 
 } from "../services/productos-mobile-service.js";
 
@@ -647,86 +655,220 @@ function inicializarEventosCatalogoMobile(
 
                 usuarioActualMobile,
 
-                {
+{
 
-                    alAgregar:
-                        function(detalle){
+    alAgregar:
+        function(detalle){
 
-                            const resultado =
-                                agregarProductoCarritoMobile(
+            const resultado =
+                agregarProductoCarritoMobile(
 
-                                    detalle.producto,
+                    detalle.producto,
 
-                                    detalle.cantidad
+                    detalle.cantidad
 
-                                );
-
-
-                            if(
-                                resultado?.operacion?.completada ===
-                                false
-                            ){
-
-                                const stockDisponible =
-                                    Number(
-                                        resultado
-                                            .operacion
-                                            .stockDisponible || 0
-                                    );
+                );
 
 
-                                OverlayMobile.toast({
+            if(
+                resultado?.operacion?.completada ===
+                false
+            ){
 
-                                    tipo:
-                                        "warning",
-
-                                    mensaje:
-                                        stockDisponible > 0
-                                            ? `Solo tienes ${stockDisponible} unidades disponibles en esta tienda.`
-                                            : "Este producto no tiene stock en tu tienda."
-
-                                });
-
-
-                                return false;
-
-                            }
+                const stockDisponible =
+                    Number(
+                        resultado
+                            .operacion
+                            .stockDisponible || 0
+                    );
 
 
-                            OverlayMobile.toast({
+                OverlayMobile.toast({
 
-                                tipo:
-                                    "success",
+                    tipo:
+                        "warning",
 
-                                mensaje:
-                                    detalle.cantidad === 1
-                                        ? "Producto agregado a la venta."
-                                        : `${detalle.cantidad} productos agregados a la venta.`
+                    mensaje:
+                        stockDisponible > 0
+                            ? `Solo tienes ${stockDisponible} unidades disponibles en esta tienda.`
+                            : "Este producto no tiene stock en tu tienda."
 
-                            });
-
-
-                            return true;
-
-                        },
+                });
 
 
-                    alTransferir:
-                        function(detalle){
+                return false;
 
-                            abrirTransferenciaProductoMobile({
+            }
 
-                                producto:
-                                    detalle.producto,
 
-                                usuario:
-                                    detalle.usuario
+            OverlayMobile.toast({
 
-                            });
+                tipo:
+                    "success",
 
-                        }
+                mensaje:
+                    detalle.cantidad === 1
+                        ? "Producto agregado a la venta."
+                        : `${detalle.cantidad} productos agregados a la venta.`
+
+            });
+
+
+            return true;
+
+        },
+
+
+alEditar:
+    function(detalle){
+
+        abrirProductEditorMobile({
+
+            producto:
+                detalle.producto,
+
+            usuario:
+                detalle.usuario,
+
+alGuardar:
+    async function(detalle){
+
+        console.log(
+    "ARCHIVO QUE LLEGA AL GUARDADO:",
+    detalle.imagen
+);
+
+console.log(
+    "¿ES FILE?:",
+    detalle.imagen instanceof File
+);
+
+        const loading =
+            OverlayMobile.loading({
+
+                titulo:
+                    "Actualizando producto",
+
+                mensaje:
+                    detalle.imagen
+                        ? "Subiendo imagen y guardando cambios..."
+                        : "Guardando cambios..."
+
+            });
+
+
+        const resultado =
+            await actualizarProductoMobile({
+
+                producto:
+                    detalle.producto,
+
+                cambios:
+                    detalle.cambios,
+
+                imagen:
+                    detalle.imagen,
+
+                usuario:
+                    detalle.usuario
+
+            });
+
+
+        loading.cerrar();
+
+
+        if(!resultado.completada){
+
+            OverlayMobile.toast({
+
+                tipo:
+                    "danger",
+
+                mensaje:
+                    resultado.mensaje
+
+            });
+
+            return false;
+
+        }
+
+
+        OverlayMobile.toast({
+
+            tipo:
+                "success",
+
+            mensaje:
+                resultado.imagenActualizada
+                    ? "Producto e imagen actualizados."
+                    : "Producto actualizado."
+
+        });
+
+
+        return true;
+
+    },
+
+            alEliminar:
+                function(){
+
+                    OverlayMobile.toast({
+
+                        tipo:
+                            "warning",
+
+                        mensaje:
+                            "La eliminación se conectará próximamente."
+
+                    });
 
                 }
+
+        });
+
+    },
+
+
+alEliminar:
+    function(detalle){
+
+        OverlayMobile.toast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                `Eliminar producto: ${
+                    detalle.producto?.producto ||
+                    "Producto"
+                }`
+
+        });
+
+        return false;
+
+    },
+
+
+alTransferir:
+    function(detalle){
+
+        abrirTransferenciaProductoMobile({
+
+            producto:
+                detalle.producto,
+
+            usuario:
+                detalle.usuario
+
+        });
+
+    }
+
+}
 
             );
 

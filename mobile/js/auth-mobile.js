@@ -6,14 +6,19 @@
 
 import {
     mobileDB,
-    collection,
-    getDocs
+    doc,
+    getDoc
 } from "./firebase-mobile.js";
+
+import {
+    iniciarSesionFirebase,
+    cerrarSesionFirebase,
+    observarSesionFirebase
+} from "./services/firebase-auth-mobile-service.js";
 
 import {
     MobileState,
     guardarSesionMobile,
-    obtenerSesionMobile,
     limpiarSesionMobile
 } from "./state-mobile.js";
 
@@ -143,200 +148,363 @@ export function crearAuthMobile(
 
     }
 
-
-    async function iniciarSesionMobile(){
-
-        if(MobileState.autenticando){
-
-            return;
-
-        }
-
-        const {
-            usuario,
-            password
-        } = obtenerElementosLogin();
-
-        if(
-            !usuario ||
-            !password
-        ){
-
-            mostrarErrorLoginMobile(
-                "No se encontró el formulario de acceso."
-            );
-
-            return;
-
-        }
-
-        const usuarioIngresado =
-            usuario.value.trim();
-
-        const passwordIngresado =
-            password.value.trim();
-
-        limpiarErrorLoginMobile();
-
-        if(!usuarioIngresado){
-
-            mostrarErrorLoginMobile(
-                "Ingrese su usuario."
-            );
-
-            usuario.focus();
-
-            return;
-
-        }
-
-        if(!passwordIngresado){
-
-            mostrarErrorLoginMobile(
-                "Ingrese su contraseña."
-            );
-
-            password.focus();
-
-            return;
-
-        }
-
-        MobileState.autenticando =
-            true;
-
-        actualizarEstadoSubmit(
-            true
-        );
-
-        try{
-
-            const usuariosSnap =
-    await getDocs(
-        collection(
-            mobileDB,
-            "usuarios"
-        )
-    );
-
-const usuarioNormalizado =
-    usuarioIngresado
-        .toLowerCase();
-
-let usuarioData =
-    null;
-
-usuariosSnap.forEach(function(documento){
-
-    const datos =
-        documento.data();
-
-    const usuarioDocumento =
-        String(
-            datos.usuario ||
-            documento.id ||
-            ""
-        )
-        .trim()
-        .toLowerCase();
+async function cargarPerfilUsuarioMobile(
+    usuarioFirebase
+){
 
     if(
-        usuarioDocumento ===
-        usuarioNormalizado
+        !usuarioFirebase ||
+        !usuarioFirebase.uid ||
+        !usuarioFirebase.email
     ){
 
-        usuarioData =
-            datos;
+        return null;
 
     }
 
-});
 
-if(!usuarioData){
+    // jonatan@digitalcentermya.app
+    // ↓
+    // Jonatan
+
+    const usuarioDocumento =
+        usuarioFirebase.email
+            .split("@")[0]
+            .trim();
+
+
+    const nombreDocumento =
+        usuarioDocumento
+            .charAt(0)
+            .toUpperCase() +
+        usuarioDocumento.slice(1);
+
+
+    const usuarioRef =
+        doc(
+            mobileDB,
+            "usuarios",
+            nombreDocumento
+        );
+
+
+    const usuarioSnap =
+        await getDoc(
+            usuarioRef
+        );
+
+
+    if(!usuarioSnap.exists()){
+
+        console.error(
+            "No existe el perfil Firestore Mobile:",
+            nombreDocumento
+        );
+
+        return null;
+
+    }
+
+
+    const usuarioData =
+        usuarioSnap.data();
+
+
+    if(
+        !usuarioData.uid ||
+        usuarioData.uid !== usuarioFirebase.uid
+    ){
+
+        console.error(
+            "UID incompatible en Mobile:",
+            {
+                uidAuthentication:
+                    usuarioFirebase.uid,
+
+                uidFirestore:
+                    usuarioData.uid
+            }
+        );
+
+        return null;
+
+    }
+
+
+    if(usuarioData.activo === false){
+
+        return null;
+
+    }
+
+
+    return {
+
+        uid:
+            usuarioFirebase.uid,
+
+        email:
+            usuarioFirebase.email,
+
+        correo:
+            usuarioFirebase.email,
+
+        usuario:
+            usuarioData.usuario ||
+            nombreDocumento,
+
+        nombreCompleto:
+            usuarioData.nombreCompleto ||
+            usuarioData.nombre ||
+            usuarioData.usuario ||
+            nombreDocumento,
+
+        rol:
+            usuarioData.rol ||
+            "vendedor",
+
+        sucursalId:
+            usuarioData.sucursalId ||
+            "principal",
+
+        activo:
+            usuarioData.activo !== false
+
+    };
+
+}
+
+
+async function iniciarSesionMobile(){
+
+    if(MobileState.autenticando){
+
+        return;
+
+    }
+
+    const {
+        usuario,
+        password
+    } = obtenerElementosLogin();
+
+
+    if(
+        !usuario ||
+        !password
+    ){
+
+        mostrarErrorLoginMobile(
+            "No se encontró el formulario de acceso."
+        );
+
+        return;
+
+    }
+
+
+const usuarioIngresado =
+    usuario.value
+        .trim();
+
+    const passwordIngresado =
+        password.value;
+
+
+    limpiarErrorLoginMobile();
+
+
+    if(!usuarioIngresado){
+
+        mostrarErrorLoginMobile(
+            "Ingrese su usuario."
+        );
+
+        usuario.focus();
+
+        return;
+
+    }
+
+
+    if(!passwordIngresado){
+
+        mostrarErrorLoginMobile(
+            "Ingrese su contraseña."
+        );
+
+        password.focus();
+
+        return;
+
+    }
+
+
+    MobileState.autenticando =
+        true;
+
+    actualizarEstadoSubmit(
+        true
+    );
+
+
+    try{
+
+        // =============================================
+        // 1. AUTENTICACIÓN REAL EN FIREBASE AUTH
+        // =============================================
+
+    const usuarioFirebase =
+            await iniciarSesionFirebase(
+                usuarioIngresado,
+                passwordIngresado
+        );
+
+
+        if(
+            !usuarioFirebase ||
+            !usuarioFirebase.uid
+        ){
+
+            throw new Error(
+                "Firebase Authentication no devolvió un UID válido."
+            );
+
+        }
+
+
+        // =============================================
+        // 2. PERFIL Y PERMISOS DESDE FIRESTORE
+        // Documento: usuarios/{uid}
+        // =============================================
+
+const usuarioCompleto =
+    await cargarPerfilUsuarioMobile(
+        usuarioFirebase
+    );
+
+
+if(!usuarioCompleto){
+
+    await cerrarSesionFirebase();
 
     mostrarErrorLoginMobile(
-        "Usuario o contraseña incorrectos."
+        "El usuario no tiene un perfil autorizado."
     );
 
     return;
 
 }
 
-            if(
-                String(
-                    usuarioData.password || ""
-                ) !== passwordIngresado
-            ){
 
-                mostrarErrorLoginMobile(
-                    "Usuario o contraseña incorrectos."
-                );
+guardarSesionMobile(
+    usuarioCompleto
+);
 
-                return;
 
-            }
+if(
+    typeof alIniciarSesion ===
+    "function"
+){
 
-            const usuarioCompleto = {
+    await alIniciarSesion(
+        usuarioCompleto
+    );
 
-                usuario:
-                    usuarioData.usuario ||
-                    usuarioIngresado,
+}
 
-                nombreCompleto:
-                    usuarioData.nombreCompleto ||
-                    usuarioIngresado,
+    }catch(error){
 
-                rol:
-                    usuarioData.rol ||
-                    "vendedor",
+        console.error(
+            "Error iniciando sesión móvil Enterprise:",
+            error
+        );
 
-                sucursalId:
-                    usuarioData.sucursalId ||
-                    "principal"
-
-            };
-
-            guardarSesionMobile(
-                usuarioCompleto
+        const codigo =
+            String(
+                error?.code ||
+                ""
             );
 
-            if(
-                typeof alIniciarSesion ===
-                "function"
-            ){
 
-                await alIniciarSesion(
-                    usuarioCompleto
-                );
-
-            }
-
-        }catch(error){
-
-            console.error(
-                "Error iniciando sesión móvil:",
-                error
-            );
+        if(
+            codigo === "auth/invalid-credential" ||
+            codigo === "auth/wrong-password" ||
+            codigo === "auth/user-not-found"
+        ){
 
             mostrarErrorLoginMobile(
-                "No se pudo conectar con el sistema."
+                "Usuario o contraseña incorrectos."
             );
 
-        }finally{
+        }else if(
+            codigo === "auth/invalid-email"
+        ){
 
-            MobileState.autenticando =
-                false;
+            mostrarErrorLoginMobile(
+                "El usuario ingresado no es válido."
+            );
 
-            actualizarEstadoSubmit(
-                false
+        }else if(
+            codigo === "auth/user-disabled"
+        ){
+
+            mostrarErrorLoginMobile(
+                "Este usuario fue desactivado."
+            );
+
+        }else if(
+            codigo === "auth/too-many-requests"
+        ){
+
+            mostrarErrorLoginMobile(
+                "Demasiados intentos. Intente nuevamente más tarde."
+            );
+
+        }else if(
+            codigo === "auth/network-request-failed"
+        ){
+
+            mostrarErrorLoginMobile(
+                "No se pudo conectar. Verifique su conexión a internet."
+            );
+
+        }else{
+
+            mostrarErrorLoginMobile(
+                "No se pudo iniciar sesión en el sistema."
             );
 
         }
 
+    }finally{
+
+        MobileState.autenticando =
+            false;
+
+        actualizarEstadoSubmit(
+            false
+        );
+
     }
 
+}
 
-    function cerrarSesionMobile(){
+
+async function cerrarSesionMobile(){
+
+    try{
+
+        await cerrarSesionFirebase();
+
+    }catch(error){
+
+        console.error(
+            "Error cerrando Firebase Authentication:",
+            error
+        );
+
+    }finally{
 
         limpiarSesionMobile();
 
@@ -345,7 +513,7 @@ if(!usuarioData){
             "function"
         ){
 
-            alCerrarSesion();
+            await alCerrarSesion();
 
             return;
 
@@ -355,12 +523,101 @@ if(!usuarioData){
 
     }
 
+}
 
-    function restaurarSesionMobile(){
 
-        return obtenerSesionMobile();
+async function restaurarSesionMobile(){
 
-    }
+    return new Promise(
+        function(resolve){
+
+            let cancelarObservador =
+                null;
+
+
+            cancelarObservador =
+                observarSesionFirebase(
+                    async function(usuarioFirebase){
+
+                        if(
+                            typeof cancelarObservador ===
+                            "function"
+                        ){
+
+                            cancelarObservador();
+
+                        }
+
+
+                        if(!usuarioFirebase){
+
+                            limpiarSesionMobile();
+
+                            resolve(
+                                null
+                            );
+
+                            return;
+
+                        }
+
+
+                        try{
+
+                            const usuarioCompleto =
+                                await cargarPerfilUsuarioMobile(
+                                    usuarioFirebase
+                                );
+
+
+                            if(!usuarioCompleto){
+
+                                await cerrarSesionFirebase();
+
+                                limpiarSesionMobile();
+
+                                resolve(
+                                    null
+                                );
+
+                                return;
+
+                            }
+
+
+                            guardarSesionMobile(
+                                usuarioCompleto
+                            );
+
+
+                            resolve(
+                                usuarioCompleto
+                            );
+
+                        }catch(error){
+
+                            console.error(
+                                "Error restaurando sesión Mobile Enterprise:",
+                                error
+                            );
+
+
+                            limpiarSesionMobile();
+
+
+                            resolve(
+                                null
+                            );
+
+                        }
+
+                    }
+                );
+
+        }
+    );
+
+}
 
 
     function inicializarFormularioLoginMobile(){
