@@ -12,6 +12,7 @@ const RUTAS_MOBILE_POR_ROL = {
         "inventario",
         "caja",
         "reportes",
+        "historial",
         "mas",
         "garantias"
     ],
@@ -21,6 +22,7 @@ const RUTAS_MOBILE_POR_ROL = {
         "ventas",
         "inventario",
         "caja",
+        "historial",
         "mas",
         "garantias"
     ]

@@ -636,6 +636,13 @@ function construirDetalleVentaCheckoutMobile(item) {
                 "Producto"
             ),
 
+        nombreBoleta:
+            String(
+                item.nombreBoleta ||
+                item.producto ||
+                "Producto"
+            ),
+
         categoria:
             String(
                 item.categoria ||
@@ -707,6 +714,7 @@ const {
     resumen,
     metodoPago,
     pagosPersonalizados = null,
+    numeroBoleta,
     tiendaVenta,
     tiendaVentaNombre,
     recibido = resumen.total,
@@ -771,8 +779,11 @@ const {
     return {
 
         numeroBoleta:
-            "SIN IMPRESION",
-
+             String(
+                 numeroBoleta ||
+                 "SIN IMPRESION"
+             ),
+ 
         fecha:
             obtenerFechaLocalCheckoutMobile(
                 ahora
@@ -986,6 +997,21 @@ if(
                 )
             );
 
+        const correlativoBoletaRef =
+            doc(
+                mobileDB,
+                "configuracion",
+                "boletas"
+            );
+
+
+        const boletaRef =
+            doc(
+                mobileDB,
+                "boletas",
+                ventaRef.id
+            );
+
         const resultado =
             await runTransaction(
                 mobileDB,
@@ -1021,6 +1047,49 @@ if(
                                 }
                             )
                         );
+
+const correlativoBoletaSnapshot =
+    await transaccion.get(
+        correlativoBoletaRef
+    );
+
+
+const ultimoNumeroGuardado =
+    correlativoBoletaSnapshot.exists()
+        ? Number(
+            correlativoBoletaSnapshot
+                .data()
+                ?.ultimoNumero
+        )
+        : 0;
+
+
+const ultimoNumeroBoleta =
+    Number.isFinite(
+        ultimoNumeroGuardado
+    )
+        ? Math.max(
+            0,
+            Math.trunc(
+                ultimoNumeroGuardado
+            )
+        )
+        : 0;
+
+
+const nuevoNumeroBoleta =
+    ultimoNumeroBoleta + 1;
+
+
+const numeroBoleta =
+    `B001-${
+        String(
+            nuevoNumeroBoleta
+        ).padStart(
+            6,
+            "0"
+        )
+    }`;
 
                     /*
                      * Primera pasada:
@@ -1173,6 +1242,8 @@ delete stockTiendas["peluquería"];
 
                             pagosPersonalizados,
 
+                            numeroBoleta,
+
                             recibido,
 
                             vuelto,
@@ -1192,10 +1263,117 @@ delete stockTiendas["peluquería"];
 
                         });
 
-                    transaccion.set(
-                        ventaRef,
-                        venta
-                    );
+transaccion.set(
+    correlativoBoletaRef,
+    {
+        ultimoNumero:
+            nuevoNumeroBoleta,
+
+        actualizadoEn:
+            serverTimestamp()
+    },
+    {
+        merge:
+            true
+    }
+);
+
+
+transaccion.set(
+    ventaRef,
+    venta
+);
+
+
+transaccion.set(
+    boletaRef,
+    {
+        ventaId:
+            ventaRef.id,
+
+        numeroBoleta:
+            venta.numeroBoleta,
+
+        fecha:
+            venta.fecha,
+
+        fechaISO:
+            venta.fechaISO,
+
+        hora:
+            venta.hora,
+
+        productos:
+            venta.productos,
+
+        productosResumen:
+            venta.productos
+                .map(
+                    function(item){
+
+                        return {
+
+                            id:
+                                item.id,
+
+                            producto:
+                                item.producto,
+
+                            nombreBoleta:
+                                item.nombreBoleta ||
+                                item.producto,
+
+                            cantidad:
+                                item.cantidad,
+
+                            precio:
+                                item.precio,
+
+                            subtotal:
+                                item.subtotal
+
+                        };
+
+                    }
+                ),
+
+        total:
+            venta.total,
+
+        descuento:
+            venta.descuento,
+
+        pagos:
+            venta.pagos,
+
+        metodoPago:
+            venta.metodoPago,
+
+        vendedor:
+            venta.vendedor,
+
+        usuario:
+            venta.usuario,
+
+        tiendaVenta:
+            venta.tiendaVenta,
+
+        tiendaVentaNombre:
+            venta.tiendaVentaNombre,
+
+        clienteNombre:
+            venta.clienteNombre,
+
+        clienteDni:
+            venta.clienteDni,
+
+        origen:
+            "mobile",
+
+        creadaEn:
+            serverTimestamp()
+    }
+);
 
                     return {
 

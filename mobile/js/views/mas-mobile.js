@@ -72,6 +72,14 @@ export async function renderMasMobile(
                     🛡 Garantías
                 </button>
 
+                <button
+                    type="button"
+                    class="mobile-button"
+                    data-mobile-go="historial"
+                >
+                    🧾 Historial de ventas
+                </button>
+
                 ${
                     esAdmin
                         ? `

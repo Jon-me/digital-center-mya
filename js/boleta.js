@@ -201,7 +201,7 @@ h2{
 
     <div class="contenido">
         <div class="logo-container">
-            <img src="logo-boleta.png" class="logo-boleta">
+            <img src="/logo-boleta.png" class="logo-boleta">
         </div>
 
         <h2>DIGITAL CENTER M&A</h2>
@@ -256,7 +256,7 @@ h2{
         </div>
 
         <div class="qr-container">
-            <img src="qr-whatsapp.png" width="160">
+            <img src="/qr-whatsapp.png" width="160">
             <p>📲 Soporte, garantías y consultas aquí</p>
         </div>
 
@@ -318,7 +318,7 @@ h2{ text-align:center; margin:5px 0; }
 <body>
 
 <div class="boleta">
-<img src="logo-boleta.png" class="logo-boleta">
+<img src="/logo-boleta.png" class="logo-boleta">
 
 <h2>DIGITAL CENTER M&A</h2>
 
@@ -361,7 +361,7 @@ TOTAL: S/ ${Number(venta.total || 0).toFixed(2)}
 </div>
 
 <div class="qr-container">
-<img src="qr-whatsapp.png" width="150">
+<img src="/qr-whatsapp.png" width="150">
 <p>Soporte, garantías y consultas aquí</p>
 </div>
 

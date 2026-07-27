@@ -40,6 +40,14 @@ import {
 
 import {
 
+    construirHTMLBoletaMobile,
+
+    imprimirHTMLBoletaMobile
+
+} from "../services/boleta-mobile-service.js";
+
+import {
+
     obtenerTiendaVentaMobile,
 
     cambiarTiendaVentaMobile,
@@ -2392,31 +2400,20 @@ async function confirmarPagoDigitalVentasMobile(
 
         }
 
+const venta =
+    resultado.venta;
 
-        vaciarCarritoMobile();
+vaciarCarritoMobile();
 
+OverlayMobile.close();
 
-        OverlayMobile.close();
+await mostrarVentaFinalizadaMobile(
+    venta
+);
 
-
-        vibrarVentasMobile(
-            "success"
-        );
-
-
-        mostrarToast({
-
-            tipo:
-                "success",
-
-            duracion:
-                4200,
-
-            mensaje:
-                `Venta registrada con ${nombreMetodo}.`
-
-        });
-
+vibrarVentasMobile(
+    "success"
+);
 
         return true;
 
@@ -3551,36 +3548,24 @@ async function confirmarPagoMixtoVentasMobile(
 
             });
 
-
             return false;
 
         }
 
+const venta =
+    resultado.venta;
 
-        vaciarCarritoMobile();
+vaciarCarritoMobile();
 
+OverlayMobile.close();
 
-        OverlayMobile.close();
+await mostrarVentaFinalizadaMobile(
+    venta
+);
 
-
-        vibrarVentasMobile(
-            "success"
-        );
-
-
-        mostrarToast({
-
-            tipo:
-                "success",
-
-            duracion:
-                4200,
-
-            mensaje:
-                "Venta con pago mixto registrada correctamente."
-
-        });
-
+vibrarVentasMobile(
+    "success"
+);
 
         return true;
 
@@ -3623,6 +3608,113 @@ async function confirmarPagoMixtoVentasMobile(
         }
 
     }
+
+}
+
+async function mostrarVentaFinalizadaMobile(
+    venta
+){
+
+    if(!venta){
+        return;
+    }
+
+    const html = `
+        <div class="mobile-sale-finished">
+
+            <div class="mobile-sale-finished-icon">
+                ✅
+            </div>
+
+            <h2>
+                Venta registrada
+            </h2>
+
+            <p>
+
+                <strong>
+                    ${venta.numeroBoleta}
+                </strong>
+
+            </p>
+
+            <button
+                class="mobile-button mobile-button-primary"
+                data-print-ticket
+            >
+
+                🖨 Imprimir boleta
+
+            </button>
+
+            <button
+                class="mobile-button"
+                data-close-sale
+            >
+
+                Finalizar
+
+            </button>
+
+        </div>
+    `;
+
+    const sheet =
+        abrirBottomSheet({
+
+            eyebrow:
+                "DIGITAL CENTER M&A",
+
+            titulo:
+                "Venta completada",
+
+            descripcion:
+                "",
+
+            textoCancelar:
+                "",
+
+            textoConfirmar:
+                "",
+
+            contenido:
+                html
+
+        });
+
+    sheet.portal.addEventListener(
+        "click",
+        async function(evento){
+
+            if(
+                evento.target.closest(
+                    "[data-print-ticket]"
+                )
+            ){
+
+                const contenido =
+                    construirHTMLBoletaMobile(
+                        venta
+                    );
+
+                await imprimirHTMLBoletaMobile(
+                    contenido
+                );
+
+            }
+
+            if(
+                evento.target.closest(
+                    "[data-close-sale]"
+                )
+            ){
+
+                OverlayMobile.close();
+
+            }
+
+        }
+    );
 
 }
 
@@ -4597,29 +4689,20 @@ if(
 
 }
 
+const venta =
+    resultado.venta;
 
 vaciarCarritoMobile();
 
-
 OverlayMobile.close();
+
+await mostrarVentaFinalizadaMobile(
+    venta
+);
 
 vibrarVentasMobile(
     "success"
 );
-
-mostrarToast({
-
-    tipo:
-        "success",
-
-    duracion:
-        4200,
-
-    mensaje:
-        "Venta registrada correctamente."
-
-});
-
 
 return true;
 

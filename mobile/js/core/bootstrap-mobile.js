@@ -65,6 +65,11 @@ import {
     reiniciarReportesMobile
 } from "../views/reportes-mobile.js";
 
+import {
+    renderHistorialMobile,
+    reiniciarHistorialMobile
+} from "../views/historial-mobile.js";
+
 let RouterMobile =
     null;
 
@@ -244,6 +249,9 @@ caja:
 reportes:
     renderReportesMobile,
 
+historial:
+    renderHistorialMobile,
+
 mas:
     renderMasMobile,
 
@@ -387,6 +395,8 @@ function reiniciarVistasMobile(){
     reiniciarCajaMobile();
 
     reiniciarReportesMobile();
+
+    reiniciarHistorialMobile();
 
     reiniciarMasMobile();
 
