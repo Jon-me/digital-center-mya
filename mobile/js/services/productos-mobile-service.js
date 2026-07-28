@@ -20,6 +20,8 @@ import {
 
     updateDoc,
 
+    deleteDoc,
+
     onSnapshot,
 
     query,
@@ -1365,6 +1367,215 @@ async function actualizarProductoMobile(
 }
 
 
+async function eliminarProductoMobile(
+    opciones = {}
+){
+
+    const {
+
+        producto = null,
+
+        usuario = null
+
+    } = opciones;
+
+
+    const productoId =
+        String(
+            producto?.id || ""
+        ).trim();
+
+
+    const nombreProducto =
+        String(
+            producto?.producto ||
+            producto?.nombre ||
+            "Producto"
+        ).trim();
+
+
+    const urlImagen =
+        String(
+            producto?.imagen || ""
+        ).trim();
+
+
+    try{
+
+        /*
+         * Seguridad de aplicación.
+         * Firestore Rules también deben restringir
+         * esta operación exclusivamente a admins.
+         */
+        if(
+            usuario?.rol !==
+            "admin"
+        ){
+
+            throw new Error(
+                "No tienes permisos para eliminar productos."
+            );
+
+        }
+
+
+        if(!productoId){
+
+            throw new Error(
+                "No se encontró el identificador del producto."
+            );
+
+        }
+
+
+        /*
+         * Eliminamos primero el documento.
+         *
+         * Esto evita dejar un producto visible
+         * con una imagen rota si Firestore falla.
+         *
+         * Si posteriormente falla la limpieza
+         * de Storage, solamente quedará un archivo
+         * huérfano, pero el catálogo seguirá íntegro.
+         */
+        await deleteDoc(
+
+            doc(
+                mobileDB,
+                "productos",
+                productoId
+            )
+
+        );
+
+
+        let imagenEliminada =
+            false;
+
+        let advertenciaImagen =
+            "";
+
+
+        /*
+         * Limpieza de la imagen en Storage.
+         * La URL almacenada puede convertirse
+         * directamente en una referencia Storage.
+         */
+        if(urlImagen){
+
+            try{
+
+                const referenciaImagen =
+                    ref(
+                        mobileStorage,
+                        urlImagen
+                    );
+
+
+                await deleteObject(
+                    referenciaImagen
+                );
+
+
+                imagenEliminada =
+                    true;
+
+            }catch(errorImagen){
+
+                /*
+                 * Una imagen inexistente no debe impedir
+                 * que la eliminación del producto finalice.
+                 */
+                if(
+                    errorImagen?.code ===
+                    "storage/object-not-found"
+                ){
+
+                    imagenEliminada =
+                        true;
+
+                }else{
+
+                    advertenciaImagen =
+                        "El producto fue eliminado, pero no se pudo limpiar su imagen de Storage.";
+
+
+                    console.warn(
+                        "Producto eliminado, pero falló la limpieza de su imagen:",
+                        errorImagen
+                    );
+
+                }
+
+            }
+
+        }else{
+
+            imagenEliminada =
+                true;
+
+        }
+
+
+        /*
+         * No manipulamos manualmente el caché:
+         * onSnapshot retirará el producto
+         * automáticamente del catálogo.
+         */
+        return {
+
+            completada:
+                true,
+
+            mensaje:
+                advertenciaImagen ||
+                `${nombreProducto} fue eliminado correctamente.`,
+
+            productoId,
+
+            imagenEliminada,
+
+            advertencia:
+                Boolean(
+                    advertenciaImagen
+                )
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "Error eliminando producto Mobile:",
+            error
+        );
+
+
+        return {
+
+            completada:
+                false,
+
+            mensaje:
+                error?.message ||
+                "No se pudo eliminar el producto.",
+
+            productoId,
+
+            imagenEliminada:
+                false,
+
+            advertencia:
+                false,
+
+            error
+
+        };
+
+    }
+
+}
+
+
 function obtenerProductosCacheMobile(){
 
     return cacheProductosMobile || [];
@@ -1395,6 +1606,8 @@ export {
     limpiarCacheProductosMobile,
 
     actualizarProductoMobile,
+
+    eliminarProductoMobile,
 
     existeCodigoProductoMobile,
 

@@ -56,7 +56,9 @@ import {
 
     limpiarCacheProductosMobile,
 
-    actualizarProductoMobile
+    actualizarProductoMobile,
+
+    eliminarProductoMobile
 
 } from "../services/productos-mobile-service.js";
 
@@ -812,20 +814,95 @@ console.log(
 
     },
 
-            alEliminar:
-                function(){
+alEliminar:
+    async function(){
 
-                    OverlayMobile.toast({
+        const confirmado =
+            await OverlayMobile.confirm({
 
-                        tipo:
-                            "warning",
+                icono:
+                    "🗑",
 
-                        mensaje:
-                            "La eliminación se conectará próximamente."
+                titulo:
+                    "Eliminar producto",
 
-                    });
+                mensaje:
+                    `Se eliminará permanentemente "${detalle.producto.producto}".\n\nEsta acción no puede deshacerse.`,
 
-                }
+                textoCancelar:
+                    "Cancelar",
+
+                textoConfirmar:
+                    "Eliminar"
+
+            });
+
+
+        if(!confirmado){
+
+            return false;
+
+        }
+
+
+        const loading =
+            OverlayMobile.loading({
+
+                titulo:
+                    "Eliminando producto",
+
+                mensaje:
+                    "Actualizando Firebase..."
+
+            });
+
+
+        const resultado =
+            await eliminarProductoMobile({
+
+                producto:
+                    detalle.producto,
+
+                usuario:
+                    detalle.usuario
+
+            });
+
+
+        loading.cerrar();
+
+
+        if(!resultado.completada){
+
+            OverlayMobile.toast({
+
+                tipo:
+                    "danger",
+
+                mensaje:
+                    resultado.mensaje
+
+            });
+
+            return false;
+
+        }
+
+
+        OverlayMobile.toast({
+
+            tipo:
+                "success",
+
+            mensaje:
+                resultado.mensaje
+
+        });
+
+
+        return true;
+
+    }
 
         });
 
@@ -833,22 +910,158 @@ console.log(
 
 
 alEliminar:
-    function(detalle){
+    async function(detalle){
 
-        OverlayMobile.toast({
+        const producto =
+            detalle?.producto;
 
-            tipo:
-                "warning",
 
-            mensaje:
-                `Eliminar producto: ${
-                    detalle.producto?.producto ||
-                    "Producto"
-                }`
+        const usuario =
+            detalle?.usuario ||
+            usuarioActualMobile;
 
-        });
 
-        return false;
+        if(
+            !producto ||
+            !producto.id
+        ){
+
+            OverlayMobile.toast({
+
+                tipo:
+                    "danger",
+
+                mensaje:
+                    "No se encontró el producto que deseas eliminar."
+
+            });
+
+            return false;
+
+        }
+
+
+        const confirmado =
+            await OverlayMobile.confirm({
+
+                icono:
+                    "🗑",
+
+                titulo:
+                    "Eliminar producto",
+
+                mensaje:
+                    `Se eliminará permanentemente "${producto.producto || "Producto"}".\n\nTambién se eliminarán su imagen y su información de inventario.\n\nEsta acción no puede deshacerse.`,
+
+                textoCancelar:
+                    "Cancelar",
+
+                textoConfirmar:
+                    "Eliminar"
+
+            });
+
+
+        if(!confirmado){
+
+            return false;
+
+        }
+
+
+        const loading =
+            OverlayMobile.loading({
+
+                titulo:
+                    "Eliminando producto",
+
+                mensaje:
+                    "Eliminando producto e imagen de Firebase..."
+
+            });
+
+
+        try{
+
+            const resultado =
+                await eliminarProductoMobile({
+
+                    producto,
+
+                    usuario
+
+                });
+
+
+            loading.cerrar();
+
+
+            if(!resultado.completada){
+
+                OverlayMobile.toast({
+
+                    tipo:
+                        "danger",
+
+                    mensaje:
+                        resultado.mensaje ||
+                        "No se pudo eliminar el producto."
+
+                });
+
+                return false;
+
+            }
+
+
+            OverlayMobile.toast({
+
+                tipo:
+                    resultado.advertencia
+                        ? "warning"
+                        : "success",
+
+                mensaje:
+                    resultado.mensaje
+
+            });
+
+
+            /*
+             * Retornar true permite que el Product Sheet
+             * se cierre después de eliminar.
+             *
+             * onSnapshot retirará automáticamente
+             * la tarjeta del inventario.
+             */
+            return true;
+
+        }catch(error){
+
+            loading.cerrar();
+
+
+            console.error(
+                "Error eliminando producto desde Product Sheet:",
+                error
+            );
+
+
+            OverlayMobile.toast({
+
+                tipo:
+                    "danger",
+
+                mensaje:
+                    error?.message ||
+                    "Ocurrió un error al eliminar el producto."
+
+            });
+
+
+            return false;
+
+        }
 
     },
 

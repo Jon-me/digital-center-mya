@@ -24,6 +24,7 @@ import {
     getDoc,
     getDocs,
     updateDoc,
+    deleteDoc,
     addDoc,
     onSnapshot,
     query,
@@ -67,12 +68,12 @@ const firebaseConfig = {
 };
 
 
+const MOBILE_FIREBASE_APP_NAME = "digital-center-mobile";
+
 const mobileFirebaseApp =
-    getApps().length
+    getApps().length > 0
         ? getApp()
-        : initializeApp(
-            firebaseConfig
-        );
+        : initializeApp(firebaseConfig);
 
 
 const mobileDB =
@@ -120,6 +121,8 @@ export {
     addDoc,
 
     updateDoc,
+
+    deleteDoc,
 
     onSnapshot,
 
