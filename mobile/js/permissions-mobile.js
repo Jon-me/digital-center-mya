@@ -10,6 +10,8 @@ const RUTAS_MOBILE_POR_ROL = {
         "inicio",
         "ventas",
         "inventario",
+        "productstudio",
+        "productnew",
         "caja",
         "reportes",
         "historial",

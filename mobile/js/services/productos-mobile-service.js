@@ -16,9 +16,15 @@ import {
 
     getDocs,
 
+    addDoc,
+
     updateDoc,
 
     onSnapshot,
+
+    query,
+
+    where,
 
     serverTimestamp,
 
@@ -26,7 +32,9 @@ import {
 
     uploadBytes,
 
-    getDownloadURL
+    getDownloadURL,
+
+    deleteObject
 
 } from "../firebase-mobile.js";
 
@@ -706,7 +714,478 @@ function validarCambiosProductoMobile(
 
 }
 
+async function existeCodigoProductoMobile(
+    codigo
+){
 
+    const codigoNormalizado =
+        String(
+            codigo || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if(!codigoNormalizado){
+
+        return false;
+
+    }
+
+
+    /*
+     * Primero revisamos el caché Realtime.
+     * Esto evita una consulta innecesaria
+     * cuando el catálogo ya está cargado.
+     */
+    const existeEnCache =
+        obtenerProductosCacheMobile()
+            .some(function(producto){
+
+                return String(
+                    producto.codigo || ""
+                )
+                    .trim()
+                    .toLowerCase() ===
+                    codigoNormalizado;
+
+            });
+
+
+    if(existeEnCache){
+
+        return true;
+
+    }
+
+
+    /*
+     * Respaldo directo contra Firebase.
+     * Se consulta el código tal como fue ingresado.
+     */
+    const consulta =
+        query(
+
+            collection(
+                mobileDB,
+                "productos"
+            ),
+
+            where(
+                "codigo",
+                "==",
+                String(codigo || "").trim()
+            )
+
+        );
+
+
+    const snapshot =
+        await getDocs(
+            consulta
+        );
+
+
+    return !snapshot.empty;
+
+}
+
+function validarNuevoProductoMobile(
+    datos = {}
+){
+
+    const datosBase =
+        validarCambiosProductoMobile(
+            datos
+        );
+
+
+    const stockPrincipal =
+        Number(
+            datos.stockPrincipal || 0
+        );
+
+
+    const stockSucursal =
+        Number(
+            datos.stockSucursal || 0
+        );
+
+
+    if(
+        !Number.isFinite(
+            stockPrincipal
+        ) ||
+        stockPrincipal < 0 ||
+        !Number.isInteger(
+            stockPrincipal
+        )
+    ){
+
+        throw new Error(
+            "El stock de Mercado no es válido."
+        );
+
+    }
+
+
+    if(
+        !Number.isFinite(
+            stockSucursal
+        ) ||
+        stockSucursal < 0 ||
+        !Number.isInteger(
+            stockSucursal
+        )
+    ){
+
+        throw new Error(
+            "El stock de Peluquería no es válido."
+        );
+
+    }
+
+
+    if(
+        datosBase.precio <= 0
+    ){
+
+        throw new Error(
+            "El precio de venta debe ser mayor que cero."
+        );
+
+    }
+
+
+    if(
+        datosBase.precioCompra <= 0
+    ){
+
+        throw new Error(
+            "El precio de compra debe ser mayor que cero."
+        );
+
+    }
+
+
+    if(
+        datosBase.precio <
+        datosBase.precioCompra
+    ){
+
+        throw new Error(
+            "El precio de venta no puede ser menor al precio de compra."
+        );
+
+    }
+
+
+    return {
+
+        ...datosBase,
+
+        stockPrincipal,
+
+        stockSucursal,
+
+        stockTotal:
+            stockPrincipal +
+            stockSucursal
+
+    };
+
+}
+
+async function crearProductoMobile(
+    opciones = {}
+){
+
+    const {
+
+        datos = {},
+
+        imagen = null,
+
+        usuario = null
+
+    } = opciones;
+
+
+    let referenciaImagenCreada =
+        null;
+
+
+    try{
+
+        if(
+            usuario?.rol !==
+            "admin"
+        ){
+
+            throw new Error(
+                "No tienes permisos para crear productos."
+            );
+
+        }
+
+
+        const datosValidados =
+            validarNuevoProductoMobile(
+                datos
+            );
+
+
+        const codigoDuplicado =
+            await existeCodigoProductoMobile(
+                datosValidados.codigo
+            );
+
+
+        if(codigoDuplicado){
+
+            throw new Error(
+                `Ya existe un producto con el código ${datosValidados.codigo}.`
+            );
+
+        }
+
+
+        if(
+            !(imagen instanceof File)
+        ){
+
+            throw new Error(
+                "Selecciona una imagen para el producto."
+            );
+
+        }
+
+
+        /*
+         * Creamos primero el documento para obtener
+         * un ID definitivo para Storage.
+         */
+        const referenciaProducto =
+            await addDoc(
+
+                collection(
+                    mobileDB,
+                    "productos"
+                ),
+
+                {
+
+                    codigo:
+                        datosValidados.codigo,
+
+                    producto:
+                        datosValidados.producto,
+
+                    categoria:
+                        datosValidados.categoria,
+
+                    precioCompra:
+                        datosValidados.precioCompra,
+
+                    precio:
+                        datosValidados.precio,
+
+                    stock:
+                        datosValidados.stockTotal,
+
+                    stockTiendas: {
+
+                        principal:
+                            datosValidados.stockPrincipal,
+
+                        sucursal:
+                            datosValidados.stockSucursal
+
+                    },
+
+                    imagen:
+                        "",
+
+                    creadoEn:
+                        serverTimestamp(),
+
+                    actualizadoEn:
+                        serverTimestamp(),
+
+                    creadoPor: {
+
+                        uid:
+                            String(
+                                usuario?.uid || ""
+                            ),
+
+                        nombre:
+                            String(
+                                usuario?.nombreCompleto ||
+                                usuario?.nombre ||
+                                usuario?.usuario ||
+                                usuario?.email ||
+                                "Administrador"
+                            ).trim(),
+
+                        rol:
+                            String(
+                                usuario?.rol ||
+                                "admin"
+                            ).trim()
+
+                    }
+
+                }
+
+            );
+
+
+        const productoId =
+            referenciaProducto.id;
+
+
+        /*
+         * Subimos la imagen usando el ID real
+         * del documento recién creado.
+         */
+        const nombreArchivo =
+            limpiarNombreArchivoProductoMobile(
+                imagen.name
+            );
+
+
+        const rutaImagen =
+            [
+                "productos",
+                productoId,
+                `${Date.now()}-${nombreArchivo}`
+            ].join("/");
+
+
+        referenciaImagenCreada =
+            ref(
+                mobileStorage,
+                rutaImagen
+            );
+
+
+        await uploadBytes(
+
+            referenciaImagenCreada,
+
+            imagen,
+
+            {
+
+                contentType:
+                    imagen.type ||
+                    "image/jpeg",
+
+                customMetadata: {
+
+                    productoId,
+
+                    origen:
+                        "mobile-product-studio"
+
+                }
+
+            }
+
+        );
+
+
+        const urlImagen =
+            await getDownloadURL(
+                referenciaImagenCreada
+            );
+
+
+        await updateDoc(
+
+            doc(
+                mobileDB,
+                "productos",
+                productoId
+            ),
+
+            {
+
+                imagen:
+                    urlImagen,
+
+                actualizadoEn:
+                    serverTimestamp()
+
+            }
+
+        );
+
+
+        return {
+
+            completada:
+                true,
+
+            mensaje:
+                "Producto creado correctamente.",
+
+            productoId,
+
+            imagen:
+                urlImagen
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "Error creando producto Mobile:",
+            error
+        );
+
+
+        /*
+         * Si la imagen alcanzó a subirse pero una operación
+         * posterior falló, intentamos eliminarla.
+         */
+        if(referenciaImagenCreada){
+
+            try{
+
+                await deleteObject(
+                    referenciaImagenCreada
+                );
+
+            }catch(errorRollback){
+
+                console.warn(
+                    "No se pudo eliminar la imagen después del error:",
+                    errorRollback
+                );
+
+            }
+
+        }
+
+
+        return {
+
+            completada:
+                false,
+
+            mensaje:
+                error?.message ||
+                "No se pudo crear el producto.",
+
+            error
+
+        };
+
+    }
+
+}
 
 async function actualizarProductoMobile(
     opciones = {}
@@ -915,6 +1394,10 @@ export {
 
     limpiarCacheProductosMobile,
 
-    actualizarProductoMobile
+    actualizarProductoMobile,
+
+    existeCodigoProductoMobile,
+
+    crearProductoMobile
 
 };

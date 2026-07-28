@@ -46,6 +46,16 @@ import {
 } from "../views/inventario-mobile.js";
 
 import {
+    renderProductStudioMobile,
+    reiniciarProductStudioMobile
+} from "../views/product-studio-mobile.js?v=M13-3-1";
+
+import {
+    renderProductNewMobile,
+    reiniciarProductNewMobile
+} from "../views/product-new-mobile.js?v=M13-3-2";
+
+import {
     renderCajaMobile,
     reiniciarCajaMobile
 } from "../views/caja-mobile.js";
@@ -243,6 +253,12 @@ ventas:
 inventario:
     renderInventarioMobile,
 
+productstudio:
+    renderProductStudioMobile,
+
+productnew:
+    renderProductNewMobile,
+
 caja:
     renderCajaMobile,
 
@@ -391,6 +407,10 @@ function reiniciarVistasMobile(){
     reiniciarVentasMobile();
 
     reiniciarInventarioMobile();
+
+    reiniciarProductStudioMobile();
+
+    reiniciarProductNewMobile();
 
     reiniciarCajaMobile();
 

@@ -24,6 +24,7 @@ import {
     getDoc,
     getDocs,
     updateDoc,
+    addDoc,
     onSnapshot,
     query,
     where,
@@ -35,7 +36,8 @@ import {
     getStorage,
     ref,
     uploadBytes,
-    getDownloadURL
+    getDownloadURL,
+    deleteObject
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
 
 
@@ -79,14 +81,14 @@ const mobileDB =
     );
 
 
-const mobileAuth =
-    getAuth(
+const mobileStorage =
+    getStorage(
         mobileFirebaseApp
     );
 
 
-const mobileStorage =
-    getStorage(
+const mobileAuth =
+    getAuth(
         mobileFirebaseApp
     );
 
@@ -97,6 +99,8 @@ export {
 
     mobileDB,
 
+    mobileStorage,
+
     mobileAuth,
 
     signInWithEmailAndPassword,
@@ -105,8 +109,6 @@ export {
 
     onAuthStateChanged,
 
-    mobileStorage,
-
     collection,
 
     doc,
@@ -114,6 +116,8 @@ export {
     getDoc,
 
     getDocs,
+
+    addDoc,
 
     updateDoc,
 
@@ -131,6 +135,8 @@ export {
 
     uploadBytes,
 
-    getDownloadURL
+    getDownloadURL,
+
+    deleteObject
 
 };

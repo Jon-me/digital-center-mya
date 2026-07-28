@@ -26,6 +26,16 @@ const RUTAS_MOBILE = {
         contenedorId: "mobileViewInventario"
     },
 
+    productstudio: {
+        titulo: "Product Studio",
+        contenedorId: "mobileViewProductStudio"
+    },
+
+    productnew: {
+        titulo: "Nuevo producto",
+        contenedorId: "mobileViewProductNew"
+    },
+
     caja: {
         titulo: "Caja",
         contenedorId: "mobileViewCaja"
