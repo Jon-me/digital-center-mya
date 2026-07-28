@@ -288,33 +288,76 @@ export function crearRouterMobile(
                 ruta
             );
 
-        const usuario =
-            obtenerUsuario?.() || null;
-
-        const rol =
-            usuario?.rol || "vendedor";
+const usuario =
+    obtenerUsuario?.() ||
+    null;
 
 
-        if(
-            !puedeNavegarMobile(
-                rol,
-                rutaNormalizada
-            )
-        ){
+if(!usuario){
 
-            console.warn(
-                "Ruta móvil no permitida:",
-                rutaNormalizada
-            );
+    console.warn(
+        "Navegación móvil bloqueada: no existe una sesión válida."
+    );
 
-            return navegar(
-                "inicio",
-                {
-                    reemplazar: true
-                }
-            );
 
+    window.history.replaceState(
+        {},
+        "",
+        window.location.pathname
+    );
+
+
+    return false;
+
+}
+
+
+if(
+    !puedeNavegarMobile(
+        usuario,
+        rutaNormalizada
+    )
+){
+
+    console.warn(
+        "Ruta móvil no permitida:",
+        {
+            ruta:
+                rutaNormalizada,
+
+            uid:
+                usuario.uid ||
+                null,
+
+            rol:
+                usuario.rol ||
+                null
         }
+    );
+
+
+    if(
+        rutaNormalizada ===
+        "inicio"
+    ){
+
+        return false;
+
+    }
+
+
+    return navegar(
+        "inicio",
+        {
+            reemplazar:
+                true,
+
+            actualizarURL:
+                true
+        }
+    );
+
+}
 
 
         actualizarVistas(
@@ -350,7 +393,7 @@ export function crearRouterMobile(
 
         if(!actualizarURL){
 
-            return;
+            return true;
 
         }
 
@@ -363,7 +406,7 @@ export function crearRouterMobile(
             nuevoHash
         ){
 
-            return;
+            return true;
 
         }
 
@@ -379,7 +422,7 @@ export function crearRouterMobile(
                 nuevoHash
             );
 
-            return;
+            return true;
 
         }
 
@@ -392,6 +435,8 @@ export function crearRouterMobile(
             "",
             nuevoHash
         );
+
+        return true;
 
     }
 
@@ -441,17 +486,55 @@ export function crearRouterMobile(
             };
 
 
-        manejadorHash =
-            function(){
+manejadorHash =
+    async function(){
 
-                navegar(
-                    obtenerRutaDesdeHash(),
-                    {
-                        actualizarURL: false
-                    }
-                );
+        const rutaSolicitada =
+            obtenerRutaDesdeHash();
 
-            };
+
+        const navegacionCompletada =
+            await navegar(
+                rutaSolicitada,
+                {
+                    actualizarURL:
+                        false
+                }
+            );
+
+
+        if(
+            navegacionCompletada ===
+            false
+        ){
+
+            return;
+
+        }
+
+
+        const rutaPermitida =
+            obtenerRutaActual();
+
+
+        if(
+            rutaPermitida &&
+            rutaPermitida !==
+            rutaSolicitada
+        ){
+
+            window.history.replaceState(
+                {
+                    rutaMobile:
+                        rutaPermitida
+                },
+                "",
+                "#" + rutaPermitida
+            );
+
+        }
+
+    };
 
 
         document.addEventListener(

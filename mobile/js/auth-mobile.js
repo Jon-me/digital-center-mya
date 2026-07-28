@@ -17,6 +17,10 @@ import {
 } from "./services/firebase-auth-mobile-service.js";
 
 import {
+    obtenerIdentidadEnterpriseMobile
+} from "./services/enterprise-auth-mobile.js";
+
+import {
     MobileState,
     guardarSesionMobile,
     limpiarSesionMobile
@@ -206,71 +210,114 @@ async function cargarPerfilUsuarioMobile(
     }
 
 
-    const usuarioData =
-        usuarioSnap.data();
+const usuarioData =
+    usuarioSnap.data();
 
 
-    if(
-        !usuarioData.uid ||
-        usuarioData.uid !== usuarioFirebase.uid
-    ){
+if(
+    !usuarioData.uid ||
+    usuarioData.uid !== usuarioFirebase.uid
+){
 
-        console.error(
-            "UID incompatible en Mobile:",
-            {
-                uidAuthentication:
-                    usuarioFirebase.uid,
+    console.error(
+        "UID incompatible en Mobile:",
+        {
+            uidAuthentication:
+                usuarioFirebase.uid,
 
-                uidFirestore:
-                    usuarioData.uid
-            }
-        );
+            uidFirestore:
+                usuarioData.uid
+        }
+    );
 
-        return null;
+    return null;
 
-    }
-
-
-    if(usuarioData.activo === false){
-
-        return null;
-
-    }
+}
 
 
-    return {
+if(usuarioData.activo === false){
 
-        uid:
-            usuarioFirebase.uid,
+    return null;
 
-        email:
-            usuarioFirebase.email,
+}
 
-        correo:
-            usuarioFirebase.email,
 
-        usuario:
-            usuarioData.usuario ||
-            nombreDocumento,
+const identidadEnterprise =
+    await obtenerIdentidadEnterpriseMobile();
 
-        nombreCompleto:
-            usuarioData.nombreCompleto ||
-            usuarioData.nombre ||
-            usuarioData.usuario ||
-            nombreDocumento,
 
-        rol:
-            usuarioData.rol ||
-            "vendedor",
+if(!identidadEnterprise){
 
-        sucursalId:
-            usuarioData.sucursalId ||
-            "principal",
+    console.error(
+        "No se pudo obtener la identidad Enterprise Mobile:",
+        usuarioFirebase.uid
+    );
 
-        activo:
-            usuarioData.activo !== false
+    return null;
 
-    };
+}
+
+
+if(
+    identidadEnterprise.uid !==
+    usuarioFirebase.uid
+){
+
+    console.error(
+        "UID Enterprise incompatible en Mobile:",
+        {
+            uidAuthentication:
+                usuarioFirebase.uid,
+
+            uidEnterprise:
+                identidadEnterprise.uid
+        }
+    );
+
+    return null;
+
+}
+
+
+return {
+
+    uid:
+        usuarioFirebase.uid,
+
+    email:
+        usuarioFirebase.email,
+
+    correo:
+        usuarioFirebase.email,
+
+    usuario:
+        usuarioData.usuario ||
+        nombreDocumento,
+
+    nombreCompleto:
+        usuarioData.nombreCompleto ||
+        usuarioData.nombre ||
+        usuarioData.usuario ||
+        nombreDocumento,
+
+    admin:
+        identidadEnterprise.admin ===
+        true,
+
+    rol:
+        identidadEnterprise.rol,
+
+    claimsVersion:
+        identidadEnterprise.version,
+
+    sucursalId:
+        usuarioData.sucursalId ||
+        "principal",
+
+    activo:
+        usuarioData.activo !== false
+
+};
 
 }
 

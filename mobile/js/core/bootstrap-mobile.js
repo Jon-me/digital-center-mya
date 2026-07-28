@@ -232,15 +232,26 @@ inicializarBadgeCarritoMobile();
 RouterMobile =
     crearRouterMobile({
 
-            obtenerUsuario:
-                function(){
+obtenerUsuario:
+    function(){
 
-                    return (
-                        MobileState.usuarioActual ||
-                        usuario
-                    );
+        const usuarioEstado =
+            MobileState.usuarioActual ||
+            null;
 
-                },
+
+        if(
+            usuarioEstado?.uid
+        ){
+
+            return usuarioEstado;
+
+        }
+
+
+        return usuario || null;
+
+    },
 
 renderizadores: {
 

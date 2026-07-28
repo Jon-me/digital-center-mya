@@ -1,12 +1,26 @@
 // =====================================================
 // DIGITAL CENTER M&A
-// MOBILE PERMISSIONS
-// FASE M3.5
+// MOBILE PERMISSIONS BRIDGE
+// ENTERPRISE AUTHORIZATION ENGINE
+// FASE S1.5
 // =====================================================
 
-const RUTAS_MOBILE_POR_ROL = {
+import {
 
-    admin: [
+    PERMISOS_ENTERPRISE_MOBILE,
+
+    tienePermisoEnterpriseMobile
+
+} from "./services/enterprise-permissions-mobile.js";
+
+
+// =====================================================
+// RUTAS POR ROL
+// =====================================================
+
+const RUTAS_MOBILE_POR_ROL = Object.freeze({
+
+    admin: Object.freeze([
         "inicio",
         "ventas",
         "inventario",
@@ -17,9 +31,9 @@ const RUTAS_MOBILE_POR_ROL = {
         "historial",
         "mas",
         "garantias"
-    ],
+    ]),
 
-    vendedor: [
+    vendedor: Object.freeze([
         "inicio",
         "ventas",
         "inventario",
@@ -27,62 +41,162 @@ const RUTAS_MOBILE_POR_ROL = {
         "historial",
         "mas",
         "garantias"
-    ]
+    ])
 
-};
-
-
-const ACCIONES_MOBILE_POR_ROL = {
-
-    admin: [
-        "ver-metricas",
-        "crear-venta",
-        "ver-inventario",
-        "gestionar-productos",
-        "ver-caja",
-        "ver-garantias",
-        "ver-reportes",
-        "ver-dashboard",
-        "ver-configuracion",
-        "ver-transferencias"
-    ],
-
-    vendedor: [
-        "crear-venta",
-        "ver-inventario",
-        "ver-caja",
-        "ver-garantias"
-    ]
-
-};
+});
 
 
-function tienePermisoMobile(
-    rol,
+// =====================================================
+// COMPATIBILIDAD CON PERMISOS HTML ANTIGUOS
+// =====================================================
+
+const MAPA_PERMISOS_LEGACY_MOBILE = Object.freeze({
+
+    "ver-metricas":
+        PERMISOS_ENTERPRISE_MOBILE.METRICAS_VER,
+
+    "crear-venta":
+        PERMISOS_ENTERPRISE_MOBILE.VENTAS_CREAR,
+
+    "ver-inventario":
+        PERMISOS_ENTERPRISE_MOBILE.INVENTARIO_VER,
+
+    "gestionar-productos":
+        PERMISOS_ENTERPRISE_MOBILE.PRODUCTOS_GESTIONAR,
+
+    "ver-caja":
+        PERMISOS_ENTERPRISE_MOBILE.CAJA_VER,
+
+    "ver-garantias":
+        PERMISOS_ENTERPRISE_MOBILE.GARANTIAS_VER,
+
+    "ver-reportes":
+        PERMISOS_ENTERPRISE_MOBILE.REPORTES_VER,
+
+    "ver-dashboard":
+        PERMISOS_ENTERPRISE_MOBILE.DASHBOARD_VER,
+
+    "ver-configuracion":
+        PERMISOS_ENTERPRISE_MOBILE.CONFIGURACION_VER,
+
+    "ver-transferencias":
+        PERMISOS_ENTERPRISE_MOBILE.TRANSFERENCIAS_VER
+
+});
+
+
+// =====================================================
+// NORMALIZACIÓN SEGURA DE ROL
+// =====================================================
+
+function normalizarRolMobile(
+    rol
+){
+
+    return rol === "admin"
+        ? "admin"
+        : "vendedor";
+
+}
+
+
+// =====================================================
+// RESOLVER PERMISO LEGACY O ENTERPRISE
+// =====================================================
+
+function resolverPermisoMobile(
     accion
 ){
 
-    const permisos =
-        ACCIONES_MOBILE_POR_ROL[
-            rol
-        ] || [];
+    if(
+        !accion ||
+        typeof accion !==
+        "string"
+    ){
 
-    return permisos.includes(
+        return null;
+
+    }
+
+
+    return (
+        MAPA_PERMISOS_LEGACY_MOBILE[
+            accion
+        ] ||
         accion
     );
 
 }
 
 
+// =====================================================
+// CONSULTA DE PERMISOS
+// =====================================================
+
+function tienePermisoMobile(
+    usuarioORol,
+    accion
+){
+
+    const permisoEnterprise =
+        resolverPermisoMobile(
+            accion
+        );
+
+
+    if(!permisoEnterprise){
+
+        return false;
+
+    }
+
+
+    return tienePermisoEnterpriseMobile(
+        usuarioORol,
+        permisoEnterprise
+    );
+
+}
+
+
+// =====================================================
+// NAVEGACIÓN
+// =====================================================
+
 function puedeNavegarMobile(
-    rol,
+    usuarioORol,
     ruta
 ){
 
+    if(
+        !ruta ||
+        typeof ruta !==
+        "string"
+    ){
+
+        return false;
+
+    }
+
+
+    const rol =
+        typeof usuarioORol ===
+        "string"
+            ? usuarioORol
+            : usuarioORol?.rol;
+
+
+    const rolNormalizado =
+        normalizarRolMobile(
+            rol
+        );
+
+
     const rutas =
         RUTAS_MOBILE_POR_ROL[
-            rol
+            rolNormalizado
         ] || [];
+
 
     return rutas.includes(
         ruta
@@ -91,22 +205,30 @@ function puedeNavegarMobile(
 }
 
 
+// =====================================================
+// APLICAR PERMISOS EN INTERFAZ
+// =====================================================
+
 function aplicarPermisosMobile(
     usuario
 ){
 
     const rol =
-        usuario?.rol ||
-        "vendedor";
+        normalizarRolMobile(
+            usuario?.rol
+        );
+
 
     document.body.classList.remove(
         "mobile-rol-admin",
         "mobile-rol-vendedor"
     );
 
+
     document.body.classList.add(
         "mobile-rol-" + rol
     );
+
 
     document
         .querySelectorAll(
@@ -114,18 +236,21 @@ function aplicarPermisosMobile(
         )
         .forEach(function(elemento){
 
-            const permiso =
+            const accion =
                 elemento.dataset
                     .mobilePermission;
 
+
             const permitido =
                 tienePermisoMobile(
-                    rol,
-                    permiso
+                    usuario,
+                    accion
                 );
+
 
             elemento.hidden =
                 !permitido;
+
 
             elemento.setAttribute(
                 "aria-hidden",
@@ -134,7 +259,18 @@ function aplicarPermisosMobile(
                     : "true"
             );
 
+
+            if(
+                "disabled" in elemento
+            ){
+
+                elemento.disabled =
+                    !permitido;
+
+            }
+
         });
+
 
     document
         .querySelectorAll(
@@ -150,26 +286,47 @@ function aplicarPermisosMobile(
                 .split(",")
                 .map(function(item){
 
-                    return item.trim();
+                    return normalizarRolMobile(
+                        item.trim()
+                    );
 
                 })
                 .filter(Boolean);
 
-            elemento.hidden =
-                !rolesPermitidos.includes(
+
+            const permitido =
+                rolesPermitidos.includes(
                     rol
                 );
+
+
+            elemento.hidden =
+                !permitido;
+
+
+            elemento.setAttribute(
+                "aria-hidden",
+                permitido
+                    ? "false"
+                    : "true"
+            );
 
         });
 
 }
 
 
+// =====================================================
+// EXPORTACIÓN
+// =====================================================
+
 export {
 
     RUTAS_MOBILE_POR_ROL,
 
-    ACCIONES_MOBILE_POR_ROL,
+    MAPA_PERMISOS_LEGACY_MOBILE,
+
+    resolverPermisoMobile,
 
     tienePermisoMobile,
 

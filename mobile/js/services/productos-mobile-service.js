@@ -128,6 +128,11 @@ function normalizarProductoMobile(
                 "Producto sin nombre"
             ).trim(),
 
+        nombreBoleta:
+            String(
+                datos.nombreBoleta || ""
+            ).trim(),
+
         categoria:
             String(
                 datos.categoria ||
@@ -623,6 +628,11 @@ function validarCambiosProductoMobile(
             cambios.producto || ""
         ).trim();
 
+    const nombreBoleta =
+        String(
+            cambios.nombreBoleta || ""
+        ).trim();
+
     const categoria =
         String(
             cambios.categoria || ""
@@ -699,6 +709,8 @@ function validarCambiosProductoMobile(
         codigo,
 
         producto,
+
+        nombreBoleta,
 
         categoria,
 

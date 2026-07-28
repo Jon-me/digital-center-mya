@@ -386,6 +386,11 @@ function leerDatosEditorMobile(
             "[data-editor-producto]"
         );
 
+    const nombreBoletaInput =
+        contenedor.querySelector(
+            "[data-editor-nombre-boleta]"
+    );
+
     const categoriaInput =
         contenedor.querySelector(
             "[data-editor-categoria]"
@@ -410,6 +415,11 @@ function leerDatosEditorMobile(
     const nombreProducto =
         String(
             productoInput?.value || ""
+        ).trim();
+
+    const nombreBoleta =
+        String(
+            nombreBoletaInput?.value || ""
         ).trim();
 
     const categoria =
@@ -579,6 +589,8 @@ function leerDatosEditorMobile(
 
             producto:
                 nombreProducto,
+
+            nombreBoleta,    
 
             categoria,
 
@@ -750,6 +762,36 @@ function construirContenidoEditorMobile(
                 data-editor-producto
 
             >
+
+<label>
+
+    Nombre para boleta
+
+</label>
+
+<input
+
+    type="text"
+
+    maxlength="80"
+
+    placeholder="Ej. Samsung A36"
+
+    value="${
+        producto.nombreBoleta || ""
+    }"
+
+    data-editor-nombre-boleta
+
+>
+
+<small
+    class="
+        mobile-product-editor-help
+    "
+>
+    Opcional. Si está vacío, se imprimirá el nombre completo.
+</small>
 
 
             <label>

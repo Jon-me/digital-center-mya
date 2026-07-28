@@ -42,6 +42,9 @@ const SELECTORES_PRODUCT_NEW = {
     nombre:
         "#mobileProductNewName",
 
+    nombreBoleta:
+        "#mobileProductNewReceiptName",
+
     categoria:
         "#mobileProductNewCategory",
 
@@ -473,10 +476,38 @@ export async function renderProductNewMobile(
                             </div>
 
                             <small>
-                                Nombre visible en ventas y boleta.
+                               Nombre completo visible en inventario y ventas.
                             </small>
 
                         </label>
+
+<label class="product-new-field">
+
+    <span class="product-new-field-label">
+        Nombre para boleta
+    </span>
+
+    <div class="product-new-input-shell">
+
+        <span class="product-new-input-icon">
+            🧾
+        </span>
+
+        <input
+            id="mobileProductNewReceiptName"
+            type="text"
+            autocomplete="off"
+            maxlength="80"
+            placeholder="Ej. Samsung A36"
+        >
+
+    </div>
+
+    <small>
+        Opcional. Si está vacío, se imprimirá el nombre completo.
+    </small>
+
+</label>
 
 
                         <label class="product-new-field">
@@ -903,6 +934,11 @@ function inicializarProductNewMobile(
                 SELECTORES_PRODUCT_NEW.nombre
             ),
 
+        nombreBoleta:
+            obtener(
+                SELECTORES_PRODUCT_NEW.nombreBoleta
+            ),
+
         categoria:
             obtener(
                 SELECTORES_PRODUCT_NEW.categoria
@@ -1137,6 +1173,9 @@ elementos.botonGuardar?.addEventListener(
 
                         producto:
                             borrador.producto,
+
+                        nombreBoleta:
+                            borrador.nombreBoleta,
 
                         categoria:
                             borrador.categoria,
@@ -1414,6 +1453,11 @@ function obtenerBorradorProducto(
         producto:
             String(
                 elementos.nombre?.value || ""
+            ).trim(),
+
+        nombreBoleta:
+            String(
+                elementos.nombreBoleta?.value || ""
             ).trim(),
 
         categoria:

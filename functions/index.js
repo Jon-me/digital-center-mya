@@ -1,5 +1,14 @@
 const { setGlobalOptions } = require("firebase-functions");
-const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+
+const {
+    onDocumentCreated
+} = require("firebase-functions/v2/firestore");
+
+const {
+    onCall,
+    HttpsError
+} = require("firebase-functions/v2/https");
+
 const admin = require("firebase-admin");
 
 setGlobalOptions({ maxInstances: 10 });
