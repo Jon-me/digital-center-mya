@@ -764,10 +764,24 @@ const {
             construirDetalleVentaCheckoutMobile
         );
 
-    const totalFinal =
+const subtotal =
+    redondearMontoCheckoutMobile(
+        resumen.total
+    );
+
+const descuentoNormalizado =
+    Math.min(
+        subtotal,
         redondearMontoCheckoutMobile(
-            resumen.total
-        );
+            descuento
+        )
+    );
+
+const totalFinal =
+    redondearMontoCheckoutMobile(
+        subtotal -
+        descuentoNormalizado
+    );
 
     const pagos =
     construirPagosCheckoutMobile(
@@ -836,9 +850,7 @@ const {
         productos,
 
         descuento:
-            normalizarMontoCheckoutMobile(
-                descuento
-            ),
+            descuentoNormalizado,
 
         /*
          * Conservamos el formato que ya usa
@@ -929,6 +941,33 @@ async function registrarVentaMobile(
             resumen
         );
 
+const subtotal =
+    redondearMontoCheckoutMobile(
+        resumen.total
+    );
+
+const descuento =
+    Math.min(
+        subtotal,
+        redondearMontoCheckoutMobile(
+            opciones.descuento
+        )
+    );
+
+const totalFinal =
+    redondearMontoCheckoutMobile(
+        subtotal -
+        descuento
+    );
+
+if (totalFinal <= 0) {
+
+    throw new Error(
+        "El total de la venta debe ser mayor que cero."
+    );
+
+}
+
         const metodoPago =
             String(
                 opciones.metodoPago ||
@@ -943,29 +982,29 @@ if(
     metodoPago === "mixto"
 ){
 
-    pagosPersonalizados =
-        validarPagosCheckoutMobile(
-            opciones.pagos,
-            resumen.total
-        );
+pagosPersonalizados =
+    validarPagosCheckoutMobile(
+        opciones.pagos,
+        totalFinal
+    );
 
 }
 
-        const recibido =
-            normalizarMontoCheckoutMobile(
-                opciones.recibido ??
-                resumen.total
-            );
+const recibido =
+    normalizarMontoCheckoutMobile(
+        opciones.recibido ??
+        totalFinal
+    );
 
         const vuelto =
             normalizarMontoCheckoutMobile(
                 opciones.vuelto || 0
             );
 
-        if (
-            metodoPago === "efectivo" &&
-            recibido < resumen.total
-        ) {
+if (
+    metodoPago === "efectivo" &&
+    recibido < totalFinal
+) {
 
             throw new Error(
                 "El monto recibido no cubre el total."
@@ -1258,8 +1297,7 @@ delete stockTiendas["peluquería"];
                             clienteDni:
                                 opciones.clienteDni,
 
-                            descuento:
-                                opciones.descuento
+                            descuento
 
                         });
 

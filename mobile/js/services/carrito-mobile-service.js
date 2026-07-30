@@ -257,6 +257,12 @@ function construirItemCarritoMobile(
                 "Producto"
             ),
 
+        nombreBoleta:
+            String(
+                producto?.nombreBoleta ||
+                ""
+        ),    
+
         categoria:
             String(
                 producto?.categoria ||
@@ -899,6 +905,97 @@ function actualizarCantidadCarritoMobile(
 
 }
 
+// =====================================================
+// NOMBRE PERSONALIZADO PARA BOLETA
+// =====================================================
+
+function actualizarNombreBoletaCarritoMobile(
+    productoId,
+    nombreBoleta
+){
+
+    const id =
+        String(
+            productoId || ""
+        ).trim();
+
+
+    const item =
+        carritoMobile.find(
+            function(producto){
+
+                return producto.id === id;
+
+            }
+        );
+
+
+    if(!item){
+
+        return {
+
+            ...obtenerResumenCarritoMobile(),
+
+            operacion: {
+
+                completada:
+                    false,
+
+                motivo:
+                    "producto-no-encontrado",
+
+                productoId:
+                    id
+
+            }
+
+        };
+
+    }
+
+
+    const nombreNormalizado =
+        String(
+            nombreBoleta || ""
+        )
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 120);
+
+
+    item.nombreBoleta =
+        nombreNormalizado;
+
+
+    guardarCarritoMobile();
+
+    notificarCambioCarritoMobile();
+
+
+    return {
+
+        ...obtenerResumenCarritoMobile(),
+
+        operacion: {
+
+            completada:
+                true,
+
+            motivo:
+                "nombre-boleta-actualizado",
+
+            productoId:
+                id,
+
+            nombreBoleta:
+                nombreNormalizado
+
+        }
+
+    };
+
+}
+
 
 // =====================================================
 // ELIMINAR PRODUCTO
@@ -988,6 +1085,8 @@ export {
     agregarProductoCarritoMobile,
 
     actualizarCantidadCarritoMobile,
+
+    actualizarNombreBoletaCarritoMobile,
 
     eliminarProductoCarritoMobile,
 

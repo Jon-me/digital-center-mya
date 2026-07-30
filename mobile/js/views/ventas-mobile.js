@@ -12,6 +12,8 @@ import {
 
     actualizarCantidadCarritoMobile,
 
+    actualizarNombreBoletaCarritoMobile,
+
     eliminarProductoCarritoMobile,
 
     vaciarCarritoMobile,
@@ -81,6 +83,9 @@ let observadorResumenVentasMobile =
 
 let manejadorResizeVentasMobile =
     null;
+
+let descuentoCheckoutVentasMobile =
+    0;
 
 // =====================================================
 // RENDER PRINCIPAL
@@ -857,6 +862,53 @@ function construirItemVentasMobile(
                     item.producto
                 )}
             </h2>
+
+<div class="mobile-sales-receipt-name">
+
+    <label
+        class="mobile-sales-receipt-name-label"
+        for="mobileReceiptName-${escaparHTMLVentasMobile(
+            item.id
+        )}"
+    >
+        Nombre para boleta
+    </label>
+
+    <div class="mobile-sales-receipt-name-control">
+
+        <span
+            class="mobile-sales-receipt-name-icon"
+            aria-hidden="true"
+        >
+            ✎
+        </span>
+
+        <input
+            type="text"
+            id="mobileReceiptName-${escaparHTMLVentasMobile(
+                item.id
+            )}"
+            class="mobile-sales-receipt-name-input"
+            data-cart-receipt-name
+            value="${escaparHTMLVentasMobile(
+                item.nombreBoleta || ""
+            )}"
+            placeholder="${escaparHTMLVentasMobile(
+                item.producto
+            )}"
+            maxlength="120"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Nombre personalizado para la boleta"
+        >
+
+    </div>
+
+    <small class="mobile-sales-receipt-name-help">
+        Solo cambia el nombre de esta venta.
+    </small>
+
+</div>
 
             <div class="mobile-sales-item-pricing">
 
@@ -1669,6 +1721,88 @@ function inicializarEventosVentasMobile(
         }
     );
 
+contenedor.addEventListener(
+    "change",
+    function(evento){
+
+        const inputNombreBoleta =
+            evento.target.closest(
+                "[data-cart-receipt-name]"
+            );
+
+
+        if(!inputNombreBoleta){
+
+            return;
+
+        }
+
+
+        const tarjeta =
+            inputNombreBoleta.closest(
+                "[data-cart-product-id]"
+            );
+
+
+        const productoId =
+            tarjeta?.dataset
+                ?.cartProductId;
+
+
+        if(!productoId){
+
+            return;
+
+        }
+
+
+        const resultado =
+            actualizarNombreBoletaCarritoMobile(
+                productoId,
+                inputNombreBoleta.value
+            );
+
+
+        if(
+            resultado?.operacion?.completada !==
+            true
+        ){
+
+            mostrarToast({
+
+                tipo:
+                    "warning",
+
+                mensaje:
+                    "No se pudo actualizar el nombre para la boleta."
+
+            });
+
+            return;
+
+        }
+
+
+        vibrarVentasMobile(
+            "tap"
+        );
+
+
+        mostrarToast({
+
+            tipo:
+                "success",
+
+            mensaje:
+                resultado.operacion.nombreBoleta
+                    ? "Nombre para boleta actualizado."
+                    : "Se usará el nombre original del producto."
+
+        });
+
+    }
+);
+
 }
 
 function animarItemCarritoVentasMobile(
@@ -2017,12 +2151,17 @@ function abrirFlujoCobroVentasMobile(){
             textoConfirmar:
                 "",
 
-            contenido:
-                construirMetodosPagoVentasMobile(
-                    resumen
-                )
-
+contenido:
+    construirMetodosPagoVentasMobile(
+        resumen
+    )
         });
+
+
+inicializarDescuentoCheckoutMobile(
+    sheet.portal,
+    resumen
+);
 
 
     sheet.portal.addEventListener(
@@ -2120,6 +2259,91 @@ function abrirFlujoCobroVentasMobile(){
 
     }
 );
+
+}
+
+function inicializarDescuentoCheckoutMobile(
+    portal,
+    resumen
+){
+
+    const input =
+        portal.querySelector(
+            "#mobileCheckoutDiscount"
+        );
+
+    const salidaTotal =
+        portal.querySelector(
+            "#mobileCheckoutTotal"
+        );
+
+    if(
+        !input ||
+        !salidaTotal
+    ){
+        return;
+    }
+
+    const subtotal =
+        redondearMontoVentasMobile(
+            resumen.total
+        );
+
+    descuentoCheckoutVentasMobile = 0;
+
+    input.addEventListener(
+        "input",
+        function(){
+
+            let descuento =
+                Number(
+                    input.value || 0
+                );
+
+            if(
+                !Number.isFinite(
+                    descuento
+                )
+            ){
+                descuento = 0;
+            }
+
+            descuento =
+                Math.max(
+                    0,
+                    Math.min(
+                        subtotal,
+                        descuento
+                    )
+                );
+
+            descuentoCheckoutVentasMobile =
+                redondearMontoVentasMobile(
+                    descuento
+                );
+
+            const total =
+                redondearMontoVentasMobile(
+                    subtotal -
+                    descuentoCheckoutVentasMobile
+                );
+
+            salidaTotal.textContent =
+                formatearMonedaVentasMobile(
+                    total
+                );
+
+        }
+
+    );
+
+}
+
+function obtenerDescuentoCheckoutMobile(){
+
+    return redondearMontoVentasMobile(
+        descuentoCheckoutVentasMobile
+    );
 
 }
 
@@ -2294,6 +2518,54 @@ async function confirmarPagoDigitalVentasMobile(
     }
 
 
+    const subtotal =
+        redondearMontoVentasMobile(
+            Number(
+                resumen.total || 0
+            )
+        );
+
+
+    const descuento =
+        Math.min(
+            subtotal,
+            Math.max(
+                0,
+                obtenerDescuentoCheckoutMobile()
+            )
+        );
+
+
+    const totalFinal =
+        redondearMontoVentasMobile(
+            subtotal -
+            descuento
+        );
+
+
+    if(totalFinal <= 0){
+
+        vibrarVentasMobile(
+            "warning"
+        );
+
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El descuento no puede cubrir el total completo de la venta."
+
+        });
+
+
+        return false;
+
+    }
+
+
     const nombreMetodo =
         obtenerNombreMetodoPagoVentasMobile(
             metodo
@@ -2313,7 +2585,7 @@ async function confirmarPagoDigitalVentasMobile(
 
             mensaje:
                 `Total: ${formatearMonedaVentasMobile(
-                    resumen.total
+                    totalFinal
                 )} · Tienda: ${resumen.nombreTienda}`,
 
             textoCancelar:
@@ -2362,8 +2634,10 @@ async function confirmarPagoDigitalVentasMobile(
                 metodoPago:
                     metodo,
 
+                descuento,
+
                 recibido:
-                    resumen.total,
+                    totalFinal,
 
                 vuelto:
                     0
@@ -2400,20 +2674,28 @@ async function confirmarPagoDigitalVentasMobile(
 
         }
 
-const venta =
-    resultado.venta;
 
-vaciarCarritoMobile();
+        const venta =
+            resultado.venta;
 
-OverlayMobile.close();
 
-await mostrarVentaFinalizadaMobile(
-    venta
-);
+        vaciarCarritoMobile();
 
-vibrarVentasMobile(
-    "success"
-);
+        descuentoCheckoutVentasMobile =
+            0;
+
+        OverlayMobile.close();
+
+
+        await mostrarVentaFinalizadaMobile(
+            venta
+        );
+
+
+        vibrarVentasMobile(
+            "success"
+        );
+
 
         return true;
 
@@ -2480,6 +2762,52 @@ function abrirPagoMixtoVentasMobile(){
     }
 
 
+    const descuento =
+        obtenerDescuentoCheckoutMobile();
+
+
+    const totalFinal =
+        redondearMontoVentasMobile(
+            Number(resumen.total || 0) -
+            descuento
+        );
+
+
+    if(totalFinal <= 0){
+
+        vibrarVentasMobile(
+            "warning"
+        );
+
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El descuento no puede cubrir el total completo de la venta."
+
+        });
+
+
+        return;
+
+    }
+
+
+    const resumenPagoMixto = {
+
+        ...resumen,
+
+        total:
+            totalFinal,
+
+        descuento
+
+    };
+
+
     const sheet =
         abrirBottomSheet({
 
@@ -2491,7 +2819,7 @@ function abrirPagoMixtoVentasMobile(){
 
             descripcion:
                 `Distribuye ${formatearMonedaVentasMobile(
-                    resumen.total
+                    totalFinal
                 )} entre dos o más métodos.`,
 
             textoCancelar:
@@ -2502,7 +2830,7 @@ function abrirPagoMixtoVentasMobile(){
 
             contenido:
                 construirPagoMixtoVentasMobile(
-                    resumen
+                    resumenPagoMixto
                 )
 
         });
@@ -2514,9 +2842,7 @@ function abrirPagoMixtoVentasMobile(){
             sheet.portal,
 
         total:
-            Number(
-                resumen.total || 0
-            )
+            totalFinal
 
     });
 
@@ -3382,10 +3708,15 @@ async function confirmarPagoMixtoVentasMobile(
     }
 
 
-    const totalActual =
-        redondearMontoVentasMobile(
-            resumenActual.total
-        );
+const descuento =
+    obtenerDescuentoCheckoutMobile();
+
+
+const totalActual =
+    redondearMontoVentasMobile(
+        Number(resumenActual.total || 0) -
+        descuento
+    );
 
 
     if(
@@ -3522,6 +3853,8 @@ async function confirmarPagoMixtoVentasMobile(
                     "mixto",
 
                 pagos,
+
+                descuento,
 
                 recibido:
                     efectivo,
@@ -3809,6 +4142,60 @@ function abrirCobroEfectivoVentasMobile(){
     }
 
 
+    const subtotal =
+        redondearMontoVentasMobile(
+            Number(
+                resumen.total || 0
+            )
+        );
+
+
+    const descuento =
+        Math.min(
+            subtotal,
+            Math.max(
+                0,
+                obtenerDescuentoCheckoutMobile()
+            )
+        );
+
+
+    const totalFinal =
+        redondearMontoVentasMobile(
+            subtotal -
+            descuento
+        );
+
+
+    if(totalFinal <= 0){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El descuento no puede cubrir el total completo de la venta."
+
+        });
+
+        return;
+
+    }
+
+
+    const resumenEfectivo = {
+
+        ...resumen,
+
+        total:
+            totalFinal,
+
+        descuento
+
+    };
+
+
     const sheet =
         abrirBottomSheet({
 
@@ -3819,9 +4206,9 @@ function abrirCobroEfectivoVentasMobile(){
                 "Pago en efectivo",
 
             descripcion:
-    `Total: ${formatearMonedaVentasMobile(
-        resumen.total
-    )} · Tienda: ${resumen.nombreTienda}`,
+                `Total: ${formatearMonedaVentasMobile(
+                    totalFinal
+                )} · Tienda: ${resumen.nombreTienda}`,
 
             textoCancelar:
                 "Volver",
@@ -3831,7 +4218,7 @@ function abrirCobroEfectivoVentasMobile(){
 
             contenido:
                 construirCobroEfectivoVentasMobile(
-                    resumen
+                    resumenEfectivo
                 )
 
         });
@@ -3843,9 +4230,7 @@ function abrirCobroEfectivoVentasMobile(){
             sheet.portal,
 
         total:
-            Number(
-                resumen.total || 0
-            )
+            totalFinal
 
     });
 
@@ -4615,9 +5000,7 @@ async function confirmarCobroEfectivoVentasMobile(
 
         total,
 
-        recibido,
-
-        vuelto
+        recibido
 
     } = datos;
 
@@ -4648,17 +5031,75 @@ async function confirmarCobroEfectivoVentasMobile(
     }
 
 
-    const totalActual =
-        Number(
-            resumenActual.total || 0
+    const subtotalActual =
+        redondearMontoVentasMobile(
+            resumenActual.total
         );
+
+
+    const descuento =
+        Math.min(
+            subtotalActual,
+            Math.max(
+                0,
+                obtenerDescuentoCheckoutMobile()
+            )
+        );
+
+
+    const totalActual =
+        redondearMontoVentasMobile(
+            subtotalActual -
+            descuento
+        );
+
+
+    const totalCobrado =
+        redondearMontoVentasMobile(
+            total
+        );
+
+
+    const recibidoNormalizado =
+        redondearMontoVentasMobile(
+            recibido
+        );
+
+
+    const vueltoCalculado =
+        redondearMontoVentasMobile(
+            Math.max(
+                0,
+                recibidoNormalizado -
+                totalActual
+            )
+        );
+
+
+    if(
+        totalActual <= 0
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El descuento no puede cubrir el total completo de la venta."
+
+        });
+
+        return false;
+
+    }
 
 
     if(
         Math.abs(
             totalActual -
-            Number(total || 0)
-        ) > 0.001
+            totalCobrado
+        ) > 0.009
     ){
 
         mostrarToast({
@@ -4668,6 +5109,26 @@ async function confirmarCobroEfectivoVentasMobile(
 
             mensaje:
                 "El total de la venta cambió. Revisa nuevamente el cobro."
+
+        });
+
+        return false;
+
+    }
+
+
+    if(
+        recibidoNormalizado <
+        totalActual
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El monto recibido no cubre el total de la venta."
 
         });
 
@@ -4691,9 +5152,11 @@ async function confirmarCobroEfectivoVentasMobile(
                     total:
                         totalActual,
 
-                    recibido,
+                    recibido:
+                        recibidoNormalizado,
 
-                    vuelto
+                    vuelto:
+                        vueltoCalculado
 
                 }),
 
@@ -4715,61 +5178,75 @@ async function confirmarCobroEfectivoVentasMobile(
 
     }
 
-  const resultado =
-    await registrarVentaMobile({
 
-        metodoPago:
-            "efectivo",
+    const resultado =
+        await registrarVentaMobile({
 
-        recibido,
+            metodoPago:
+                "efectivo",
 
-        vuelto
+            descuento,
 
-    });
+            recibido:
+                recibidoNormalizado,
+
+            vuelto:
+                vueltoCalculado
+
+        });
 
 
-if(
-    !resultado.completada
-){
+    if(
+        resultado?.completada !==
+        true
+    ){
+
+        vibrarVentasMobile(
+            "warning"
+        );
+
+        mostrarToast({
+
+            tipo:
+                "danger",
+
+            duracion:
+                4200,
+
+            mensaje:
+                resultado?.mensaje ||
+                "No se pudo registrar la venta."
+
+        });
+
+        return false;
+
+    }
+
+
+    const venta =
+        resultado.venta;
+
+
+    vaciarCarritoMobile();
+
+    descuentoCheckoutVentasMobile =
+        0;
+
+    OverlayMobile.close();
+
+
+    await mostrarVentaFinalizadaMobile(
+        venta
+    );
+
 
     vibrarVentasMobile(
-    "warning"
-);
+        "success"
+    );
 
-    mostrarToast({
 
-        tipo:
-            "danger",
-
-        duracion:
-            4200,
-
-        mensaje:
-            resultado.mensaje ||
-            "No se pudo registrar la venta."
-
-    });
-
-    return false;
-
-}
-
-const venta =
-    resultado.venta;
-
-vaciarCarritoMobile();
-
-OverlayMobile.close();
-
-await mostrarVentaFinalizadaMobile(
-    venta
-);
-
-vibrarVentasMobile(
-    "success"
-);
-
-return true;
+    return true;
 
 }
 
@@ -4838,96 +5315,176 @@ function construirMetodosPagoVentasMobile(
         obtenerNombreTiendaVentaMobile();
 
 
-    return `
-        <section class="mobile-checkout mobile-checkout-premium">
+return `
+    <section class="mobile-checkout mobile-checkout-premium">
 
-            <header class="mobile-checkout-header">
+        <header class="mobile-checkout-header">
 
-                <span class="mobile-checkout-eyebrow">
-                    RESUMEN DE VENTA
+            <span class="mobile-checkout-eyebrow">
+                RESUMEN DE VENTA
+            </span>
+
+            <div class="mobile-checkout-total-card">
+
+                <div class="mobile-checkout-total-copy">
+
+                    <span>
+                        Total a cobrar
+                    </span>
+
+                    <strong id="mobileCheckoutTotal">
+                        ${formatearMonedaVentasMobile(
+                            resumen.total
+                        )}
+                    </strong>
+
+                </div>
+
+                <span
+                    class="mobile-checkout-total-icon"
+                    aria-hidden="true"
+                >
+                    💳
                 </span>
 
-                <div class="mobile-checkout-total-card">
+            </div>
 
-                    <div class="mobile-checkout-total-copy">
+            <div class="mobile-checkout-breakdown">
 
-                        <span>
-                            Total a cobrar
+                <div class="mobile-checkout-breakdown-row">
+
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong id="mobileCheckoutSubtotal">
+                        ${formatearMonedaVentasMobile(
+                            resumen.total
+                        )}
+                    </strong>
+
+                </div>
+
+                <label
+                    class="mobile-checkout-breakdown-row
+                           mobile-checkout-discount-row"
+                    for="mobileCheckoutDiscount"
+                >
+
+                    <span>
+                        Descuento
+                    </span>
+
+                    <div class="mobile-checkout-discount-box">
+
+                        <span aria-hidden="true">
+                            S/
                         </span>
 
-                        <strong>
-                            ${formatearMonedaVentasMobile(
-                                resumen.total
-                            )}
-                        </strong>
+                        <input
+                            id="mobileCheckoutDiscount"
+                            class="mobile-checkout-discount-input"
+                            type="number"
+                            min="0"
+                            max="${Number(
+                                resumen.total || 0
+                            ).toFixed(2)}"
+                            step="0.10"
+                            inputmode="decimal"
+                            autocomplete="off"
+                            placeholder="0.00"
+                            value="${
+                                Number(
+                                    descuentoCheckoutVentasMobile || 0
+                                ).toFixed(2)
+                            }"
+                            aria-label="Descuento de la venta"
+                        >
 
                     </div>
 
-                    <span
-                        class="mobile-checkout-total-icon"
-                        aria-hidden="true"
-                    >
-                        💳
+                </label>
+
+                <div
+                    class="mobile-checkout-breakdown-row
+                           is-total"
+                >
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong id="mobileCheckoutTotalResumen">
+                        ${formatearMonedaVentasMobile(
+                            Math.max(
+                                0,
+                                Number(resumen.total || 0) -
+                                Number(
+                                    descuentoCheckoutVentasMobile || 0
+                                )
+                            )
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div class="mobile-checkout-meta">
+
+                <div class="mobile-checkout-meta-item">
+
+                    <span aria-hidden="true">
+                        🏪
+                    </span>
+
+                    <span>
+                        ${escaparHTMLVentasMobile(
+                            nombreTienda
+                        )}
                     </span>
 
                 </div>
 
-                <div class="mobile-checkout-meta">
+                <div class="mobile-checkout-meta-divider"></div>
 
-                    <div class="mobile-checkout-meta-item">
+                <div class="mobile-checkout-meta-item">
 
-                        <span aria-hidden="true">
-                            🏪
-                        </span>
+                    <span aria-hidden="true">
+                        🛒
+                    </span>
 
-                        <span>
-                            ${escaparHTMLVentasMobile(
-                                nombreTienda
-                            )}
-                        </span>
-
-                    </div>
-
-                    <div class="mobile-checkout-meta-divider"></div>
-
-                    <div class="mobile-checkout-meta-item">
-
-                        <span aria-hidden="true">
-                            🛒
-                        </span>
-
-                        <span>
-                            ${
-                                cantidadProductos === 1
-                                    ? "1 producto"
-                                    : `${cantidadProductos} productos`
-                            }
-                        </span>
-
-                    </div>
-
-                    <div class="mobile-checkout-meta-divider"></div>
-
-                    <div class="mobile-checkout-meta-item">
-
-                        <span aria-hidden="true">
-                            📦
-                        </span>
-
-                        <span>
-                            ${
-                                cantidadUnidades === 1
-                                    ? "1 unidad"
-                                    : `${cantidadUnidades} unidades`
-                            }
-                        </span>
-
-                    </div>
+                    <span>
+                        ${
+                            cantidadProductos === 1
+                                ? "1 producto"
+                                : `${cantidadProductos} productos`
+                        }
+                    </span>
 
                 </div>
 
-            </header>
+                <div class="mobile-checkout-meta-divider"></div>
 
+                <div class="mobile-checkout-meta-item">
+
+                    <span aria-hidden="true">
+                        📦
+                    </span>
+
+                    <span>
+                        ${
+                            cantidadUnidades === 1
+                                ? "1 unidad"
+                                : `${cantidadUnidades} unidades`
+                        }
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
 
             <div class="mobile-checkout-section-header">
 
