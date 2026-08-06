@@ -1,0 +1,1536 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   M&A DESIGN SYSTEM v2
+   FOUNDATION LAYER
+
+   Este archivo contiene únicamente:
+   - Design tokens
+   - Variables globales
+   - Utilidades estructurales
+   - Animaciones reutilizables
+   - Accesibilidad
+
+   No contiene estilos específicos de módulos.
+===================================================== */
+
+
+/* =====================================================
+   1. TOKENS GLOBALES
+===================================================== */
+
+:root {
+
+    /* =================================================
+       PALETA ENTERPRISE BLUE
+    ================================================= */
+
+    --ds-blue-50:
+        #eef6ff;
+
+    --ds-blue-100:
+        #d8eaff;
+
+    --ds-blue-200:
+        #b8d9ff;
+
+    --ds-blue-300:
+        #88c1ff;
+
+    --ds-blue-400:
+        #57a6ff;
+
+    --ds-blue-500:
+        #2f86ff;
+
+    --ds-blue-600:
+        #1e6fe8;
+
+    --ds-blue-700:
+        #1858bf;
+
+    --ds-blue-800:
+        #164797;
+
+    --ds-blue-900:
+        #143b78;
+
+    --ds-blue-950:
+        #081b3d;
+
+
+    /* =================================================
+       PALETA CYAN
+    ================================================= */
+
+    --ds-cyan-100:
+        #cdf8ff;
+
+    --ds-cyan-300:
+        #78ebff;
+
+    --ds-cyan-400:
+        #3ce0ff;
+
+    --ds-cyan-500:
+        #18c7ee;
+
+    --ds-cyan-700:
+        #087fa4;
+
+
+    /* =================================================
+       PALETA VERDE
+    ================================================= */
+
+    --ds-green-100:
+        #d7ffe8;
+
+    --ds-green-300:
+        #8ff0bc;
+
+    --ds-green-400:
+        #45e69a;
+
+    --ds-green-500:
+        #25c97c;
+
+    --ds-green-700:
+        #14764c;
+
+
+    /* =================================================
+       PALETA AMARILLA / NARANJA
+    ================================================= */
+
+    --ds-yellow-300:
+        #ffd779;
+
+    --ds-yellow-400:
+        #ffc14f;
+
+    --ds-orange-400:
+        #ffae45;
+
+    --ds-orange-500:
+        #f68a22;
+
+    --ds-orange-700:
+        #9e4b12;
+
+
+    /* =================================================
+       PALETA ROJA
+    ================================================= */
+
+    --ds-red-100:
+        #ffe1e7;
+
+    --ds-red-300:
+        #ff9aad;
+
+    --ds-red-400:
+        #ff627c;
+
+    --ds-red-500:
+        #ed3e62;
+
+    --ds-red-700:
+        #9e2344;
+
+    --ds-red-900:
+        #4c1023;
+
+
+    /* =================================================
+       PALETA VIOLETA
+    ================================================= */
+
+    --ds-purple-200:
+        #dccfff;
+
+    --ds-purple-400:
+        #a988ff;
+
+    --ds-purple-500:
+        #8f68ff;
+
+    --ds-purple-700:
+        #5936bd;
+
+
+    /* =================================================
+       NEUTROS
+    ================================================= */
+
+    --ds-white:
+        #ffffff;
+
+    --ds-black:
+        #000000;
+
+    --ds-gray-50:
+        #f8fbff;
+
+    --ds-gray-100:
+        #edf3fb;
+
+    --ds-gray-200:
+        #dce6f3;
+
+    --ds-gray-300:
+        #c1cfdf;
+
+    --ds-gray-400:
+        #93a5bb;
+
+    --ds-gray-500:
+        #708198;
+
+    --ds-gray-600:
+        #526176;
+
+    --ds-gray-700:
+        #384659;
+
+    --ds-gray-800:
+        #202d3e;
+
+    --ds-gray-900:
+        #111c2c;
+
+    --ds-gray-950:
+        #070d17;
+
+
+    /* =================================================
+       FONDOS DEL SISTEMA
+    ================================================= */
+
+    --ds-background-primary:
+        #040914;
+
+    --ds-background-secondary:
+        #07111f;
+
+    --ds-background-tertiary:
+        #0a1729;
+
+    --ds-background-elevated:
+        rgba(13, 28, 51, 0.96);
+
+    --ds-background-overlay:
+        rgba(2, 7, 15, 0.76);
+
+    --ds-background-modal:
+        rgba(6, 15, 29, 0.98);
+
+
+    /* =================================================
+       SUPERFICIES
+    ================================================= */
+
+    --ds-surface-1:
+        rgba(12, 26, 48, 0.78);
+
+    --ds-surface-2:
+        rgba(13, 29, 54, 0.9);
+
+    --ds-surface-3:
+        rgba(8, 18, 35, 0.96);
+
+    --ds-surface-soft:
+        rgba(255, 255, 255, 0.035);
+
+    --ds-surface-hover:
+        rgba(71, 142, 255, 0.075);
+
+    --ds-surface-active:
+        rgba(62, 135, 255, 0.12);
+
+    --ds-surface-disabled:
+        rgba(255, 255, 255, 0.025);
+
+
+    /* =================================================
+       TEXTO
+    ================================================= */
+
+    --ds-text-primary:
+        #f8fbff;
+
+    --ds-text-secondary:
+        rgba(218, 230, 246, 0.76);
+
+    --ds-text-tertiary:
+        rgba(181, 201, 229, 0.58);
+
+    --ds-text-muted:
+        rgba(162, 182, 210, 0.45);
+
+    --ds-text-disabled:
+        rgba(173, 190, 213, 0.32);
+
+    --ds-text-inverse:
+        #06101f;
+
+
+    /* =================================================
+       BORDES
+    ================================================= */
+
+    --ds-border-subtle:
+        rgba(143, 177, 225, 0.08);
+
+    --ds-border-default:
+        rgba(128, 173, 237, 0.13);
+
+    --ds-border-strong:
+        rgba(111, 171, 255, 0.22);
+
+    --ds-border-highlight:
+        rgba(255, 255, 255, 0.16);
+
+    --ds-border-green:
+        rgba(69, 230, 154, 0.22);
+
+    --ds-border-yellow:
+        rgba(255, 193, 79, 0.22);
+
+    --ds-border-red:
+        rgba(255, 98, 124, 0.24);
+
+    --ds-border-purple:
+        rgba(169, 136, 255, 0.22);
+
+
+    /* =================================================
+       TIPOGRAFÍA
+    ================================================= */
+
+    --ds-font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "SF Pro Text",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    --ds-font-size-2xs:
+        8px;
+
+    --ds-font-size-xs:
+        10px;
+
+    --ds-font-size-sm:
+        12px;
+
+    --ds-font-size-md:
+        14px;
+
+    --ds-font-size-lg:
+        16px;
+
+    --ds-font-size-xl:
+        18px;
+
+    --ds-font-size-2xl:
+        22px;
+
+    --ds-font-size-3xl:
+        28px;
+
+    --ds-font-size-4xl:
+        34px;
+
+    --ds-font-size-display:
+        42px;
+
+    --ds-font-weight-regular:
+        400;
+
+    --ds-font-weight-medium:
+        600;
+
+    --ds-font-weight-bold:
+        800;
+
+    --ds-font-weight-heavy:
+        900;
+
+    --ds-font-weight-black:
+        950;
+
+    --ds-line-height-tight:
+        1.05;
+
+    --ds-line-height-normal:
+        1.4;
+
+    --ds-line-height-relaxed:
+        1.58;
+
+    --ds-letter-tight:
+        -0.8px;
+
+    --ds-letter-normal:
+        0;
+
+    --ds-letter-wide:
+        1.2px;
+
+    --ds-letter-eyebrow:
+        1.7px;
+
+
+    /* =================================================
+       ESPACIADO
+    ================================================= */
+
+    --ds-space-0:
+        0;
+
+    --ds-space-1:
+        4px;
+
+    --ds-space-2:
+        8px;
+
+    --ds-space-3:
+        12px;
+
+    --ds-space-4:
+        16px;
+
+    --ds-space-5:
+        20px;
+
+    --ds-space-6:
+        24px;
+
+    --ds-space-7:
+        28px;
+
+    --ds-space-8:
+        32px;
+
+    --ds-space-9:
+        36px;
+
+    --ds-space-10:
+        40px;
+
+    --ds-space-12:
+        48px;
+
+    --ds-space-14:
+        56px;
+
+    --ds-space-16:
+        64px;
+
+
+    /* =================================================
+       BORDER RADIUS
+    ================================================= */
+
+    --ds-radius-xs:
+        8px;
+
+    --ds-radius-sm:
+        12px;
+
+    --ds-radius-md:
+        16px;
+
+    --ds-radius-lg:
+        20px;
+
+    --ds-radius-xl:
+        24px;
+
+    --ds-radius-2xl:
+        28px;
+
+    --ds-radius-3xl:
+        34px;
+
+    --ds-radius-pill:
+        999px;
+
+    --ds-radius-circle:
+        50%;
+
+
+    /* =================================================
+       BLUR
+    ================================================= */
+
+    --ds-blur-sm:
+        10px;
+
+    --ds-blur-md:
+        18px;
+
+    --ds-blur-lg:
+        26px;
+
+    --ds-blur-xl:
+        38px;
+
+    --ds-blur-2xl:
+        70px;
+
+    --ds-blur-aurora:
+        95px;
+
+
+    /* =================================================
+       SOMBRAS
+    ================================================= */
+
+    --ds-shadow-xs:
+        0 4px 12px
+        rgba(0, 0, 0, 0.12);
+
+    --ds-shadow-sm:
+        0 8px 24px
+        rgba(0, 0, 0, 0.18);
+
+    --ds-shadow-card:
+        0 18px 46px
+        rgba(0, 0, 0, 0.24);
+
+    --ds-shadow-card-strong:
+        0 26px 68px
+        rgba(0, 0, 0, 0.34);
+
+    --ds-shadow-floating:
+        0 30px 90px
+        rgba(0, 0, 0, 0.46);
+
+    --ds-shadow-modal:
+        0 36px 110px
+        rgba(0, 0, 0, 0.62);
+
+    --ds-shadow-inner:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.065);
+
+    --ds-shadow-inner-strong:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.14);
+
+    --ds-shadow-glow-blue:
+        0 14px 42px
+        rgba(35, 122, 255, 0.27);
+
+    --ds-shadow-glow-cyan:
+        0 14px 42px
+        rgba(60, 224, 255, 0.22);
+
+    --ds-shadow-glow-green:
+        0 14px 42px
+        rgba(69, 230, 154, 0.22);
+
+    --ds-shadow-glow-yellow:
+        0 14px 42px
+        rgba(255, 193, 79, 0.2);
+
+    --ds-shadow-glow-red:
+        0 14px 42px
+        rgba(255, 98, 124, 0.24);
+
+    --ds-shadow-glow-purple:
+        0 14px 42px
+        rgba(169, 136, 255, 0.22);
+
+
+    /* =================================================
+       GLASSMORPHISM
+    ================================================= */
+
+    --ds-glass-background:
+        linear-gradient(
+            145deg,
+            rgba(18, 39, 72, 0.82),
+            rgba(6, 16, 32, 0.91)
+        );
+
+    --ds-glass-background-strong:
+        linear-gradient(
+            145deg,
+            rgba(17, 38, 70, 0.96),
+            rgba(7, 17, 33, 0.98)
+        );
+
+    --ds-glass-border:
+        1px solid
+        var(--ds-border-default);
+
+    --ds-glass-border-strong:
+        1px solid
+        var(--ds-border-strong);
+
+    --ds-glass-blur:
+        blur(var(--ds-blur-lg));
+
+    --ds-glass-saturation:
+        saturate(135%);
+
+
+    /* =================================================
+       GRADIENTES
+    ================================================= */
+
+    --ds-gradient-background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(42, 126, 255, 0.22),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 108% 38%,
+            rgba(60, 224, 255, 0.1),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            var(--ds-background-primary) 0%,
+            var(--ds-background-secondary) 52%,
+            #030711 100%
+        );
+
+    --ds-gradient-blue:
+        linear-gradient(
+            145deg,
+            var(--ds-blue-400),
+            var(--ds-blue-700)
+        );
+
+    --ds-gradient-cyan:
+        linear-gradient(
+            145deg,
+            var(--ds-cyan-300),
+            var(--ds-cyan-700)
+        );
+
+    --ds-gradient-green:
+        linear-gradient(
+            145deg,
+            var(--ds-green-400),
+            var(--ds-green-700)
+        );
+
+    --ds-gradient-warning:
+        linear-gradient(
+            145deg,
+            var(--ds-yellow-400),
+            var(--ds-orange-700)
+        );
+
+    --ds-gradient-danger:
+        linear-gradient(
+            145deg,
+            var(--ds-red-400),
+            var(--ds-red-900)
+        );
+
+    --ds-gradient-purple:
+        linear-gradient(
+            145deg,
+            var(--ds-purple-400),
+            var(--ds-purple-700)
+        );
+
+    --ds-gradient-shine:
+        linear-gradient(
+            112deg,
+            transparent 18%,
+            rgba(255, 255, 255, 0.045) 46%,
+            transparent 72%
+        );
+
+
+    /* =================================================
+       TAMAÑOS DE COMPONENTES
+    ================================================= */
+
+    --ds-control-height-sm:
+        38px;
+
+    --ds-control-height-md:
+        46px;
+
+    --ds-control-height-lg:
+        54px;
+
+    --ds-control-height-xl:
+        64px;
+
+    --ds-icon-sm:
+        32px;
+
+    --ds-icon-md:
+        42px;
+
+    --ds-icon-lg:
+        52px;
+
+    --ds-icon-xl:
+        68px;
+
+    --ds-container-max-width:
+        760px;
+
+
+    /* =================================================
+       DURACIONES
+    ================================================= */
+
+    --ds-duration-instant:
+        100ms;
+
+    --ds-duration-fast:
+        170ms;
+
+    --ds-duration-normal:
+        260ms;
+
+    --ds-duration-slow:
+        480ms;
+
+    --ds-duration-entrance:
+        620ms;
+
+    --ds-duration-ambient:
+        8000ms;
+
+
+    /* =================================================
+       CURVAS DE ANIMACIÓN
+    ================================================= */
+
+    --ds-ease-standard:
+        cubic-bezier(
+            0.2,
+            0.8,
+            0.2,
+            1
+        );
+
+    --ds-ease-emphasized:
+        cubic-bezier(
+            0.16,
+            1,
+            0.3,
+            1
+        );
+
+    --ds-ease-spring:
+        cubic-bezier(
+            0.22,
+            1.35,
+            0.36,
+            1
+        );
+
+
+    /* =================================================
+       OPACIDADES
+    ================================================= */
+
+    --ds-opacity-disabled:
+        0.48;
+
+    --ds-opacity-muted:
+        0.62;
+
+    --ds-opacity-soft:
+        0.78;
+
+    --ds-opacity-full:
+        1;
+
+
+    /* =================================================
+       Z-INDEX
+    ================================================= */
+
+    --ds-z-background:
+        -10;
+
+    --ds-z-base:
+        1;
+
+    --ds-z-content:
+        10;
+
+    --ds-z-sticky:
+        100;
+
+    --ds-z-dropdown:
+        300;
+
+    --ds-z-overlay:
+        700;
+
+    --ds-z-modal:
+        900;
+
+    --ds-z-toast:
+        1100;
+
+    --ds-z-critical:
+        2000;
+
+}
+
+
+/* =====================================================
+   2. FUNDAMENTOS GENERALES
+===================================================== */
+
+html {
+    color-scheme: dark;
+}
+
+
+body {
+    font-family:
+        var(--ds-font-family);
+
+    text-rendering:
+        optimizeLegibility;
+
+    -webkit-font-smoothing:
+        antialiased;
+
+    -moz-osx-font-smoothing:
+        grayscale;
+}
+
+
+button,
+input,
+select,
+textarea {
+    font-family:
+        inherit;
+}
+
+
+button {
+    -webkit-tap-highlight-color:
+        transparent;
+}
+
+
+img,
+svg {
+    max-width: 100%;
+}
+
+
+/* =====================================================
+   3. SELECCIÓN DE TEXTO
+===================================================== */
+
+::selection {
+    color:
+        var(--ds-white);
+
+    background:
+        rgba(47, 134, 255, 0.46);
+}
+
+
+/* =====================================================
+   4. SCROLLBAR PREMIUM
+===================================================== */
+
+* {
+    scrollbar-width:
+        thin;
+
+    scrollbar-color:
+        rgba(82, 146, 239, 0.35)
+        transparent;
+}
+
+
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+
+*::-webkit-scrollbar-track {
+    background:
+        transparent;
+}
+
+
+*::-webkit-scrollbar-thumb {
+    border-radius:
+        var(--ds-radius-pill);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(83, 155, 255, 0.46),
+            rgba(37, 91, 178, 0.34)
+        );
+}
+
+
+*::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(84, 157, 255, 0.62);
+}
+
+
+/* =====================================================
+   5. FOCUS VISIBLE
+===================================================== */
+
+:focus {
+    outline: none;
+}
+
+
+:focus-visible {
+    outline:
+        2px solid
+        rgba(88, 165, 255, 0.92);
+
+    outline-offset:
+        3px;
+}
+
+
+/* =====================================================
+   6. UTILIDADES DE SUPERFICIE
+===================================================== */
+
+.ds-glass {
+    border:
+        var(--ds-glass-border);
+
+    background:
+        var(--ds-glass-background);
+
+    box-shadow:
+        var(--ds-shadow-card),
+        var(--ds-shadow-inner);
+
+    backdrop-filter:
+        var(--ds-glass-blur)
+        var(--ds-glass-saturation);
+
+    -webkit-backdrop-filter:
+        var(--ds-glass-blur)
+        var(--ds-glass-saturation);
+}
+
+
+.ds-glass-strong {
+    border:
+        var(--ds-glass-border-strong);
+
+    background:
+        var(--ds-glass-background-strong);
+
+    box-shadow:
+        var(--ds-shadow-card-strong),
+        var(--ds-shadow-inner-strong);
+
+    backdrop-filter:
+        blur(var(--ds-blur-xl))
+        var(--ds-glass-saturation);
+
+    -webkit-backdrop-filter:
+        blur(var(--ds-blur-xl))
+        var(--ds-glass-saturation);
+}
+
+
+/* =====================================================
+   7. UTILIDADES DE TEXTO
+===================================================== */
+
+.ds-text-primary {
+    color:
+        var(--ds-text-primary);
+}
+
+
+.ds-text-secondary {
+    color:
+        var(--ds-text-secondary);
+}
+
+
+.ds-text-tertiary {
+    color:
+        var(--ds-text-tertiary);
+}
+
+
+.ds-text-muted {
+    color:
+        var(--ds-text-muted);
+}
+
+
+.ds-eyebrow {
+    color:
+        var(--ds-blue-300);
+
+    font-size:
+        var(--ds-font-size-xs);
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    letter-spacing:
+        var(--ds-letter-eyebrow);
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =====================================================
+   8. UTILIDADES DE ESTADO
+===================================================== */
+
+.ds-state-success {
+    --ds-state-color:
+        var(--ds-green-400);
+
+    --ds-state-border:
+        var(--ds-border-green);
+
+    --ds-state-background:
+        rgba(37, 201, 124, 0.12);
+
+    --ds-state-shadow:
+        var(--ds-shadow-glow-green);
+}
+
+
+.ds-state-warning {
+    --ds-state-color:
+        var(--ds-yellow-400);
+
+    --ds-state-border:
+        var(--ds-border-yellow);
+
+    --ds-state-background:
+        rgba(255, 193, 79, 0.11);
+
+    --ds-state-shadow:
+        var(--ds-shadow-glow-yellow);
+}
+
+
+.ds-state-danger {
+    --ds-state-color:
+        var(--ds-red-400);
+
+    --ds-state-border:
+        var(--ds-border-red);
+
+    --ds-state-background:
+        rgba(237, 62, 98, 0.11);
+
+    --ds-state-shadow:
+        var(--ds-shadow-glow-red);
+}
+
+
+.ds-state-info {
+    --ds-state-color:
+        var(--ds-blue-400);
+
+    --ds-state-border:
+        var(--ds-border-strong);
+
+    --ds-state-background:
+        rgba(47, 134, 255, 0.11);
+
+    --ds-state-shadow:
+        var(--ds-shadow-glow-blue);
+}
+
+
+.ds-state-future {
+    --ds-state-color:
+        var(--ds-purple-400);
+
+    --ds-state-border:
+        var(--ds-border-purple);
+
+    --ds-state-background:
+        rgba(143, 104, 255, 0.11);
+
+    --ds-state-shadow:
+        var(--ds-shadow-glow-purple);
+}
+
+
+/* =====================================================
+   9. ANIMACIONES REUTILIZABLES
+===================================================== */
+
+@keyframes dsFadeIn {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes dsFadeUp {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translate3d(
+                0,
+                18px,
+                0
+            );
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translate3d(
+                0,
+                0,
+                0
+            );
+    }
+
+}
+
+
+@keyframes dsScaleIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            scale(1);
+    }
+
+}
+
+
+@keyframes dsFloat {
+
+    0%,
+    100% {
+        transform:
+            translate3d(
+                0,
+                0,
+                0
+            );
+    }
+
+    50% {
+        transform:
+            translate3d(
+                0,
+                -5px,
+                0
+            );
+    }
+
+}
+
+
+@keyframes dsPulse {
+
+    0%,
+    100% {
+        opacity: 0.62;
+
+        transform:
+            scale(0.96);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            scale(1.05);
+    }
+
+}
+
+
+@keyframes dsLedPulse {
+
+    0%,
+    100% {
+        opacity: 0.72;
+
+        transform:
+            scale(0.9);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            scale(1.12);
+    }
+
+}
+
+
+@keyframes dsShine {
+
+    0%,
+    68% {
+        transform:
+            translateX(-135%);
+    }
+
+    88%,
+    100% {
+        transform:
+            translateX(135%);
+    }
+
+}
+
+
+@keyframes dsAurora {
+
+    0% {
+        opacity: 0.62;
+
+        transform:
+            translate3d(
+                0,
+                -12px,
+                0
+            )
+            scale(0.92);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            translate3d(
+                -44px,
+                34px,
+                0
+            )
+            scale(1.12);
+    }
+
+}
+
+
+@keyframes dsGlowBreath {
+
+    0%,
+    100% {
+        filter:
+            brightness(0.95);
+
+        opacity:
+            0.7;
+    }
+
+    50% {
+        filter:
+            brightness(1.18);
+
+        opacity:
+            1;
+    }
+
+}
+
+
+@keyframes dsSpin {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+/* =====================================================
+   10. CLASES DE ANIMACIÓN
+===================================================== */
+
+.ds-animate-fade-in {
+    animation:
+        dsFadeIn
+        var(--ds-duration-normal)
+        var(--ds-ease-standard)
+        both;
+}
+
+
+.ds-animate-fade-up {
+    animation:
+        dsFadeUp
+        var(--ds-duration-slow)
+        var(--ds-ease-emphasized)
+        both;
+}
+
+
+.ds-animate-scale-in {
+    animation:
+        dsScaleIn
+        var(--ds-duration-slow)
+        var(--ds-ease-emphasized)
+        both;
+}
+
+
+.ds-animate-float {
+    animation:
+        dsFloat
+        4.5s
+        ease-in-out
+        infinite;
+}
+
+
+.ds-animate-pulse {
+    animation:
+        dsPulse
+        2.2s
+        ease-in-out
+        infinite;
+}
+
+
+/* =====================================================
+   11. INTERACCIONES BASE
+===================================================== */
+
+.ds-interactive {
+    cursor: pointer;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    transition:
+        transform
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        filter
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        background
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        border-color
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+.ds-interactive:active {
+    transform:
+        scale(0.982);
+
+    filter:
+        brightness(1.08);
+}
+
+
+.ds-interactive:disabled,
+.ds-interactive.is-disabled {
+    pointer-events: none;
+
+    cursor: default;
+
+    opacity:
+        var(--ds-opacity-disabled);
+}
+
+
+/* =====================================================
+   12. SAFE AREAS
+===================================================== */
+
+.ds-safe-top {
+    padding-top:
+        env(safe-area-inset-top);
+}
+
+
+.ds-safe-bottom {
+    padding-bottom:
+        env(safe-area-inset-bottom);
+}
+
+
+/* =====================================================
+   13. VISIBILIDAD
+===================================================== */
+
+.ds-hidden {
+    display: none !important;
+}
+
+
+.ds-visually-hidden {
+    position: absolute !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    padding: 0 !important;
+    margin: -1px !important;
+
+    overflow: hidden !important;
+
+    clip:
+        rect(
+            0,
+            0,
+            0,
+            0
+        ) !important;
+
+    white-space: nowrap !important;
+
+    border: 0 !important;
+}
+
+
+/* =====================================================
+   14. PANTALLAS PEQUEÑAS
+===================================================== */
+
+@media (max-width: 390px) {
+
+    :root {
+
+        --ds-font-size-display:
+            36px;
+
+        --ds-font-size-4xl:
+            31px;
+
+        --ds-space-6:
+            22px;
+
+        --ds-space-8:
+            28px;
+
+        --ds-icon-xl:
+            62px;
+
+    }
+
+}
+
+
+/* =====================================================
+   15. PANTALLAS GRANDES
+===================================================== */
+
+@media (min-width: 720px) {
+
+    :root {
+
+        --ds-container-max-width:
+            820px;
+
+    }
+
+}
+
+
+/* =====================================================
+   16. REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior:
+            auto !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+
+}
+
+
+/* =====================================================
+   17. CONTRASTE ALTO
+===================================================== */
+
+@media (
+    prefers-contrast:
+    more
+) {
+
+    :root {
+
+        --ds-text-secondary:
+            rgba(240, 246, 255, 0.9);
+
+        --ds-text-tertiary:
+            rgba(221, 232, 247, 0.78);
+
+        --ds-border-default:
+            rgba(153, 194, 255, 0.28);
+
+        --ds-border-strong:
+            rgba(165, 204, 255, 0.45);
+
+    }
+
+}

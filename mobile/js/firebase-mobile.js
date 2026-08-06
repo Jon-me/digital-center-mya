@@ -1,7 +1,7 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // FIREBASE MOBILE
-// FIRESTORE + STORAGE + AUTHENTICATION
+// FIRESTORE + STORAGE + AUTHENTICATION + FUNCTIONS
 // =====================================================
 
 import {
@@ -41,6 +41,11 @@ import {
     deleteObject
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-storage.js";
 
+import {
+    getFunctions,
+    httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-functions.js";
+
 
 const firebaseConfig = {
 
@@ -68,12 +73,12 @@ const firebaseConfig = {
 };
 
 
-const MOBILE_FIREBASE_APP_NAME = "digital-center-mobile";
-
 const mobileFirebaseApp =
     getApps().length > 0
         ? getApp()
-        : initializeApp(firebaseConfig);
+        : initializeApp(
+            firebaseConfig
+        );
 
 
 const mobileDB =
@@ -94,6 +99,13 @@ const mobileAuth =
     );
 
 
+const mobileFunctions =
+    getFunctions(
+        mobileFirebaseApp,
+        "southamerica-west1"
+    );
+
+
 export {
 
     mobileFirebaseApp,
@@ -104,11 +116,15 @@ export {
 
     mobileAuth,
 
+    mobileFunctions,
+
     signInWithEmailAndPassword,
 
     signOut,
 
     onAuthStateChanged,
+
+    httpsCallable,
 
     collection,
 

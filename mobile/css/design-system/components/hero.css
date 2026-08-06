@@ -1,0 +1,405 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   M&A DESIGN SYSTEM v2
+   COMPONENT: HERO
+===================================================== */
+
+.ds-hero {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        var(--ds-hero-icon-size, 68px)
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    gap:
+        var(--ds-space-4);
+
+    min-height:
+        var(--ds-hero-min-height, 142px);
+
+    padding:
+        var(--ds-hero-padding, 23px 20px);
+
+    overflow: hidden;
+
+    border:
+        var(--ds-glass-border-strong);
+
+    border-radius:
+        var(--ds-radius-2xl);
+
+    background:
+        radial-gradient(
+            circle at 93% 4%,
+            color-mix(
+                in srgb,
+                var(--ds-hero-accent, var(--ds-blue-400)) 24%,
+                transparent
+            ),
+            transparent 34%
+        ),
+        var(--ds-glass-background-strong);
+
+    box-shadow:
+        var(--ds-shadow-card-strong),
+        var(--ds-shadow-glow-blue),
+        var(--ds-shadow-inner-strong);
+
+    backdrop-filter:
+        blur(var(--ds-blur-lg));
+
+    -webkit-backdrop-filter:
+        blur(var(--ds-blur-lg));
+
+    isolation: isolate;
+}
+
+
+/* =====================================================
+   AURORA
+===================================================== */
+
+.ds-hero::before {
+    content: "";
+
+    position: absolute;
+
+    top: -105px;
+    right: -70px;
+
+    width: 245px;
+    height: 245px;
+
+    border-radius:
+        var(--ds-radius-circle);
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            color-mix(
+                in srgb,
+                var(--ds-hero-accent, var(--ds-blue-400)) 28%,
+                transparent
+            ),
+            color-mix(
+                in srgb,
+                var(--ds-hero-accent, var(--ds-blue-400)) 8%,
+                transparent
+            ) 48%,
+            transparent 72%
+        );
+
+    animation:
+        dsGlowBreath
+        7s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+/* =====================================================
+   SHINE
+===================================================== */
+
+.ds-hero::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    border-radius: inherit;
+
+    background:
+        var(--ds-gradient-shine);
+
+    transform:
+        translateX(-120%);
+
+    animation:
+        dsShine
+        8s
+        ease-in-out
+        infinite;
+}
+
+
+.ds-hero > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =====================================================
+   ICONO
+===================================================== */
+
+.ds-hero__icon {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    width:
+        var(--ds-hero-icon-size, 68px);
+
+    min-width:
+        var(--ds-hero-icon-size, 68px);
+
+    height:
+        var(--ds-hero-icon-size, 68px);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.22);
+
+    border-radius:
+        var(--ds-radius-xl);
+
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(
+                in srgb,
+                var(--ds-hero-accent, var(--ds-blue-400)) 96%,
+                white
+            ),
+            color-mix(
+                in srgb,
+                var(--ds-hero-accent-dark, var(--ds-blue-700)) 94%,
+                black
+            )
+        );
+
+    box-shadow:
+        var(--ds-shadow-glow-blue),
+        var(--ds-shadow-inner-strong);
+
+    font-size:
+        var(--ds-hero-icon-font-size, 31px);
+
+    animation:
+        dsFloat
+        4.4s
+        ease-in-out
+        infinite;
+}
+
+
+.ds-hero__icon::before {
+    content: "";
+
+    position: absolute;
+
+    inset:
+        var(--ds-space-2);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.18);
+
+    border-radius:
+        var(--ds-radius-lg);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   CONTENIDO
+===================================================== */
+
+.ds-hero__content {
+    min-width: 0;
+}
+
+
+.ds-hero__eyebrow {
+    display: block;
+
+    margin-bottom:
+        var(--ds-space-2);
+
+    color:
+        color-mix(
+            in srgb,
+            var(--ds-hero-accent, var(--ds-blue-300)) 82%,
+            white
+        );
+
+    font-size:
+        9px;
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+}
+
+
+.ds-hero__title {
+    margin:
+        0
+        0
+        var(--ds-space-2);
+
+    color:
+        var(--ds-text-primary);
+
+    font-size:
+        clamp(
+            27px,
+            8vw,
+            35px
+        );
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    line-height:
+        0.98;
+
+    letter-spacing:
+        -1.3px;
+}
+
+
+.ds-hero__subtitle {
+    max-width:
+        310px;
+
+    margin: 0;
+
+    color:
+        var(--ds-text-tertiary);
+
+    font-size:
+        var(--ds-font-size-sm);
+
+    font-weight:
+        var(--ds-font-weight-medium);
+
+    line-height:
+        var(--ds-line-height-relaxed);
+}
+
+
+/* =====================================================
+   ACCIONES
+===================================================== */
+
+.ds-hero__actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap:
+        var(--ds-space-2);
+
+    margin-top:
+        var(--ds-space-4);
+}
+
+
+/* =====================================================
+   VARIANTES
+===================================================== */
+
+.ds-hero--blue {
+    --ds-hero-accent:
+        var(--ds-blue-400);
+
+    --ds-hero-accent-dark:
+        var(--ds-blue-700);
+}
+
+
+.ds-hero--green {
+    --ds-hero-accent:
+        var(--ds-green-400);
+
+    --ds-hero-accent-dark:
+        var(--ds-green-700);
+}
+
+
+.ds-hero--warning {
+    --ds-hero-accent:
+        var(--ds-yellow-400);
+
+    --ds-hero-accent-dark:
+        var(--ds-orange-700);
+}
+
+
+.ds-hero--danger {
+    --ds-hero-accent:
+        var(--ds-red-400);
+
+    --ds-hero-accent-dark:
+        var(--ds-red-900);
+}
+
+
+.ds-hero--future {
+    --ds-hero-accent:
+        var(--ds-purple-400);
+
+    --ds-hero-accent-dark:
+        var(--ds-purple-700);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 390px) {
+
+    .ds-hero {
+        --ds-hero-icon-size:
+            59px;
+
+        --ds-hero-icon-font-size:
+            27px;
+
+        grid-template-columns:
+            var(--ds-hero-icon-size)
+            minmax(0, 1fr);
+
+        gap:
+            14px;
+
+        min-height:
+            132px;
+
+        padding:
+            20px
+            16px;
+
+        border-radius:
+            var(--ds-radius-xl);
+    }
+
+
+    .ds-hero__title {
+        font-size:
+            27px;
+    }
+
+}

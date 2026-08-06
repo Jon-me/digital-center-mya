@@ -1,0 +1,640 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   M&A DESIGN SYSTEM v2
+
+   PATTERN: SETTINGS CARD
+   ID: DS-P001
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+.ds-settings-card {
+    position: relative;
+
+    overflow: hidden;
+
+    animation:
+        dsFadeUp
+        var(--ds-duration-slow)
+        var(--ds-ease-emphasized)
+        both;
+}
+
+
+/* =====================================================
+   AURORA INTERNA
+===================================================== */
+
+.ds-settings-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: -88px;
+    right: -72px;
+
+    width: 190px;
+    height: 190px;
+
+    border-radius:
+        var(--ds-radius-circle);
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            color-mix(
+                in srgb,
+                var(--ds-settings-accent, var(--ds-blue-400)) 15%,
+                transparent
+            ),
+            transparent 70%
+        );
+}
+
+
+/* =====================================================
+   ENCABEZADO
+===================================================== */
+
+.ds-settings-card__header {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap:
+        var(--ds-space-4);
+
+    min-height: 82px;
+
+    padding:
+        18px
+        18px
+        15px;
+}
+
+
+.ds-settings-card__heading {
+    min-width: 0;
+}
+
+
+.ds-settings-card__eyebrow {
+    display: block;
+
+    margin-bottom:
+        var(--ds-space-1);
+
+    color:
+        var(--ds-settings-accent, var(--ds-blue-300));
+
+    font-size:
+        var(--ds-font-size-2xs);
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    letter-spacing:
+        var(--ds-letter-eyebrow);
+
+    line-height:
+        1;
+
+    text-transform:
+        uppercase;
+}
+
+
+.ds-settings-card__title {
+    margin: 0;
+
+    color:
+        var(--ds-text-primary);
+
+    font-size:
+        var(--ds-font-size-xl);
+
+    font-weight:
+        var(--ds-font-weight-heavy);
+
+    line-height:
+        var(--ds-line-height-tight);
+
+    letter-spacing:
+        -0.35px;
+}
+
+
+/* =====================================================
+   ICONO DE SECCIÓN
+===================================================== */
+
+.ds-settings-card__icon {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--ds-settings-accent, var(--ds-blue-400)) 24%,
+            transparent
+        );
+
+    border-radius:
+        var(--ds-radius-md);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--ds-settings-accent, var(--ds-blue-400)) 10%,
+            transparent
+        );
+
+    box-shadow:
+        var(--ds-shadow-inner);
+
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   LISTA DE OPCIONES
+===================================================== */
+
+.ds-settings-card__list {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =====================================================
+   CELDA
+===================================================== */
+
+.ds-settings-item {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        47px
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+
+    gap: 13px;
+
+    width: 100%;
+    min-height: 82px;
+
+    padding:
+        14px
+        16px;
+
+    overflow: hidden;
+
+    border: 0;
+
+    border-top:
+        1px solid
+        var(--ds-border-subtle);
+
+    color: inherit;
+
+    text-align: left;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.012),
+            transparent
+        );
+
+    font: inherit;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+    transition:
+        transform
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        background
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        filter
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+/* =====================================================
+   INDICADOR LATERAL
+===================================================== */
+
+.ds-settings-item::before {
+    content: "";
+
+    position: absolute;
+
+    inset:
+        0
+        auto
+        0
+        0;
+
+    width: 3px;
+
+    opacity: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            var(--ds-settings-accent, var(--ds-blue-400)),
+            transparent
+        );
+
+    box-shadow:
+        0 0 18px
+        color-mix(
+            in srgb,
+            var(--ds-settings-accent, var(--ds-blue-400)) 62%,
+            transparent
+        );
+
+    transition:
+        opacity
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+/* =====================================================
+   RESPLANDOR INTERNO
+===================================================== */
+
+.ds-settings-item::after {
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+    left: 76px;
+
+    width: 130px;
+    height: 90px;
+
+    opacity: 0;
+
+    border-radius:
+        var(--ds-radius-circle);
+
+    pointer-events: none;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--ds-settings-accent, var(--ds-blue-400)) 13%,
+            transparent
+        );
+
+    filter:
+        blur(var(--ds-blur-xl));
+
+    transform:
+        translateY(-50%);
+
+    transition:
+        opacity
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+/* =====================================================
+   INTERACCIÓN
+===================================================== */
+
+.ds-settings-item:active:not(:disabled) {
+    transform:
+        scale(0.982);
+
+    background:
+        var(--ds-surface-hover);
+
+    filter:
+        brightness(1.08);
+}
+
+
+.ds-settings-item:active:not(:disabled)::before,
+.ds-settings-item:active:not(:disabled)::after {
+    opacity: 1;
+}
+
+
+.ds-settings-item:disabled,
+.ds-settings-item.is-disabled {
+    cursor: default;
+
+    pointer-events: none;
+
+    opacity:
+        var(--ds-opacity-disabled);
+}
+
+
+/* =====================================================
+   ICONO DE OPCIÓN
+===================================================== */
+
+.ds-settings-item__icon {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    width: 47px;
+    min-width: 47px;
+    height: 47px;
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--ds-settings-accent, var(--ds-blue-400)) 20%,
+            transparent
+        );
+
+    border-radius:
+        var(--ds-radius-md);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--ds-settings-accent, var(--ds-blue-400)) 10%,
+            transparent
+        );
+
+    box-shadow:
+        var(--ds-shadow-inner);
+
+    font-size: 21px;
+
+    transition:
+        transform
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        box-shadow
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+.ds-settings-item:active:not(:disabled)
+.ds-settings-item__icon {
+    transform:
+        scale(1.06)
+        rotate(-2deg);
+
+    box-shadow:
+        var(--ds-shadow-sm),
+        var(--ds-shadow-inner-strong);
+}
+
+
+/* =====================================================
+   CONTENIDO DE OPCIÓN
+===================================================== */
+
+.ds-settings-item__content {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+
+    gap:
+        var(--ds-space-1);
+
+    min-width: 0;
+}
+
+
+.ds-settings-item__title {
+    color:
+        var(--ds-text-primary);
+
+    font-size:
+        13px;
+
+    font-weight:
+        var(--ds-font-weight-heavy);
+
+    line-height:
+        1.25;
+}
+
+
+.ds-settings-item__description {
+    color:
+        var(--ds-text-tertiary);
+
+    font-size:
+        var(--ds-font-size-xs);
+
+    font-weight:
+        var(--ds-font-weight-medium);
+
+    line-height:
+        1.45;
+}
+
+
+/* =====================================================
+   FLECHA
+===================================================== */
+
+.ds-settings-item__arrow {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    width: 26px;
+    height: 34px;
+
+    color:
+        var(--ds-text-muted);
+
+    font-size: 28px;
+
+    font-weight:
+        var(--ds-font-weight-regular);
+
+    line-height: 1;
+
+    transition:
+        transform
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        color
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+.ds-settings-item:active:not(:disabled)
+.ds-settings-item__arrow {
+    color:
+        var(--ds-settings-accent, var(--ds-blue-400));
+
+    transform:
+        translateX(3px);
+}
+
+
+/* =====================================================
+   VARIANTES SEMÁNTICAS
+===================================================== */
+
+.ds-settings-card--info {
+    --ds-settings-accent:
+        var(--ds-blue-400);
+}
+
+
+.ds-settings-card--success {
+    --ds-settings-accent:
+        var(--ds-green-400);
+}
+
+
+.ds-settings-card--warning {
+    --ds-settings-accent:
+        var(--ds-yellow-400);
+}
+
+
+.ds-settings-card--danger {
+    --ds-settings-accent:
+        var(--ds-red-400);
+}
+
+
+.ds-settings-card--future {
+    --ds-settings-accent:
+        var(--ds-purple-400);
+}
+
+
+/* =====================================================
+   OPCIÓN PELIGROSA
+===================================================== */
+
+.ds-settings-item--danger {
+    --ds-settings-accent:
+        var(--ds-red-400);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(237, 62, 98, 0.055),
+            transparent 62%
+        );
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.ds-settings-item.is-loading {
+    pointer-events: none;
+
+    opacity:
+        var(--ds-opacity-soft);
+}
+
+
+.ds-settings-item.is-loading
+.ds-settings-item__icon {
+    animation:
+        dsPulse
+        1s
+        ease-in-out
+        infinite;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 390px) {
+
+    .ds-settings-item {
+        grid-template-columns:
+            43px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 11px;
+
+        min-height: 78px;
+
+        padding-inline:
+            13px;
+    }
+
+
+    .ds-settings-item__icon {
+        width: 43px;
+        min-width: 43px;
+        height: 43px;
+
+        border-radius:
+            15px;
+
+        font-size: 19px;
+    }
+
+
+    .ds-settings-item__arrow {
+        width: 21px;
+
+        grid-column: 3;
+        grid-row: 1 / span 2;
+    }
+
+}

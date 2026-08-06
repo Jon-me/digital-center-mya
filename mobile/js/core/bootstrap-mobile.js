@@ -71,6 +71,11 @@ import {
 } from "../views/garantias-mobile.js";
 
 import {
+    renderConfiguracionMobile,
+    reiniciarConfiguracionMobile
+} from "../views/configuracion-mobile.js";
+
+import {
     renderReportesMobile,
     reiniciarReportesMobile
 } from "../views/reportes-mobile.js";
@@ -283,7 +288,10 @@ mas:
     renderMasMobile,
 
 garantias:
-    renderGarantiasMobile
+    renderGarantiasMobile,
+
+configuracion:
+    renderConfiguracionMobile,
 
 }
 
@@ -432,6 +440,8 @@ function reiniciarVistasMobile(){
     reiniciarMasMobile();
 
     destruirGarantiasMobile();
+
+    reiniciarConfiguracionMobile();
 
 }
 

@@ -1,0 +1,13 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   DESIGN SYSTEM v2
+   ENTRY POINT
+===================================================== */
+
+@import "./foundation.css";
+
+@import "./components/cards.css";
+@import "./components/chips.css";
+@import "./components/hero.css";
+
+@import "./patterns/settings.css";

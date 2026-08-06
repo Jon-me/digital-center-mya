@@ -56,9 +56,14 @@ const RUTAS_MOBILE = {
         contenedorId: "mobileViewMas"
     },
 
-    garantias: {
+        garantias: {
         titulo: "Garantías",
         contenedorId: "mobileViewGarantias"
+    },
+
+    configuracion: {
+        titulo: "Configuración",
+        contenedorId: "mobileViewConfiguracion"
     }
 
 };

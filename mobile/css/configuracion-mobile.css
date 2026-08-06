@@ -1,0 +1,769 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   CONFIGURACIÓN MOBILE
+   ENTERPRISE CONTROL CENTER
+   APPLE PRO MAX ULTRA EXPERIENCE
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+
+.configuracion-mobile {
+    --config-blue:
+        #2f86ff;
+
+    --config-blue-bright:
+        #63b9ff;
+
+    --config-cyan:
+        #3ce0ff;
+
+    --config-green:
+        #45e69a;
+
+    --config-orange:
+        #ffb54a;
+
+    --config-red:
+        #ff627c;
+
+    --config-surface:
+        rgba(10, 22, 41, 0.84);
+
+    --config-surface-strong:
+        rgba(8, 18, 35, 0.96);
+
+    --config-line:
+        rgba(129, 174, 239, 0.13);
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    min-height: 100%;
+
+    padding:
+        16px
+        14px
+        calc(
+            var(--mobile-bottom-nav-height, 76px) +
+            env(safe-area-inset-bottom) +
+            34px
+        );
+
+    overflow: hidden;
+
+    color: #f8fbff;
+
+    isolation: isolate;
+}
+
+
+/* =====================================================
+   FONDO ENTERPRISE
+===================================================== */
+
+.configuracion-mobile::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    z-index: -5;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 48% -12%,
+            rgba(33, 120, 255, 0.26),
+            transparent 36%
+        ),
+
+        radial-gradient(
+            circle at 108% 28%,
+            rgba(31, 197, 255, 0.12),
+            transparent 34%
+        ),
+
+        radial-gradient(
+            circle at -14% 72%,
+            rgba(73, 73, 230, 0.12),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            180deg,
+            #040914 0%,
+            #07111f 46%,
+            #040810 100%
+        );
+}
+
+
+.configuracion-mobile::after {
+    content: "";
+
+    position: fixed;
+
+    top: 14%;
+    right: -150px;
+
+    z-index: -4;
+
+    width: 310px;
+    height: 310px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    background:
+        rgba(38, 139, 255, 0.14);
+
+    filter: blur(88px);
+
+    animation:
+        configuracionAurora
+        10s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+/* =====================================================
+   GRUPOS DE CONFIGURACIÓN
+===================================================== */
+
+.configuracion-mobile-group {
+    position: relative;
+
+    animation:
+        configuracionGroupEntrance
+        480ms
+        cubic-bezier(0.2, 0.8, 0.2, 1)
+        both;
+}
+
+
+.configuracion-mobile-group.ds-card--info {
+    animation-delay: 80ms;
+}
+
+
+.configuracion-mobile-group--maintenance {
+    animation-delay: 145ms;
+}
+
+
+.configuracion-mobile-group.ds-card--future {
+    animation-delay: 210ms;
+}
+
+
+.configuracion-mobile-group::before {
+    content: "";
+
+    position: absolute;
+
+    top: -90px;
+    right: -75px;
+
+    width: 190px;
+    height: 190px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(45, 136, 255, 0.11),
+            transparent 70%
+        );
+}
+
+/* =====================================================
+   ZONA DE MANTENIMIENTO
+===================================================== */
+
+.configuracion-mobile-group--maintenance {
+    border-color:
+        rgba(255, 173, 68, 0.14);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255, 161, 47, 0.075),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            145deg,
+            rgba(29, 28, 39, 0.96),
+            rgba(13, 17, 29, 0.98)
+        );
+}
+
+
+.configuracion-mobile-group--maintenance
+.configuracion-mobile-group-eyebrow {
+    color:
+        rgba(255, 185, 87, 0.78);
+}
+
+
+.configuracion-mobile-group--maintenance
+.configuracion-mobile-group-icon {
+    border-color:
+        rgba(255, 181, 74, 0.16);
+
+    background:
+        rgba(255, 156, 44, 0.08);
+}
+
+/* =====================================================
+   PROTECCIÓN DEL INVENTARIO
+===================================================== */
+
+.configuracion-mobile-protection {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        48px
+        minmax(0, 1fr);
+
+    align-items: flex-start;
+
+    gap: 14px;
+
+    padding:
+        18px;
+
+    animation:
+        configuracionProtectionEntrance
+        560ms
+        220ms
+        cubic-bezier(0.2, 0.8, 0.2, 1)
+        both;
+}
+
+
+.configuracion-mobile-protection::before {
+    content: "";
+
+    position: absolute;
+
+    top: -50px;
+    right: -38px;
+
+    width: 135px;
+    height: 135px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    background:
+        rgba(62, 226, 145, 0.1);
+
+    filter: blur(38px);
+}
+
+
+.configuracion-mobile-protection-icon {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    width: 48px;
+    height: 48px;
+
+    border:
+        1px solid
+        rgba(91, 230, 158, 0.2);
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(48, 189, 117, 0.18),
+            rgba(15, 83, 54, 0.14)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.07);
+
+    font-size: 22px;
+}
+
+
+.configuracion-mobile-protection > div {
+    position: relative;
+    z-index: 2;
+}
+
+
+.configuracion-mobile-protection strong {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color:
+        #d7ffe8;
+
+    font-size: 14px;
+
+    font-weight: 900;
+}
+
+
+.configuracion-mobile-protection p {
+    margin: 0;
+
+    color:
+        rgba(202, 239, 220, 0.66);
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1.55;
+}
+
+/* =====================================================
+   DIAGNÓSTICO OPERATIVO
+===================================================== */
+
+.configuracion-mobile-diagnostico {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    gap:
+        var(--ds-space-4);
+
+    padding:
+        var(--ds-space-5);
+
+    animation:
+        dsFadeUp
+        var(--ds-duration-slow)
+        var(--ds-ease-emphasized)
+        both;
+}
+
+
+.configuracion-mobile-diagnostico-header {
+    display: grid;
+
+    grid-template-columns:
+        48px
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    gap:
+        var(--ds-space-3);
+}
+
+
+.configuracion-mobile-diagnostico-icon {
+    display: grid;
+    place-items: center;
+
+    width: 48px;
+    height: 48px;
+
+    border:
+        1px solid
+        var(--ds-border-green);
+
+    border-radius:
+        var(--ds-radius-md);
+
+    background:
+        rgba(37, 201, 124, 0.12);
+
+    box-shadow:
+        var(--ds-shadow-inner),
+        var(--ds-shadow-glow-green);
+
+    font-size: 22px;
+}
+
+
+.configuracion-mobile-diagnostico-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        var(--ds-space-3);
+}
+
+
+.configuracion-mobile-diagnostico-grid article {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    gap:
+        var(--ds-space-1);
+
+    min-height: 82px;
+
+    padding:
+        var(--ds-space-4);
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--ds-border-subtle);
+
+    border-radius:
+        var(--ds-radius-md);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.038),
+            rgba(255, 255, 255, 0.012)
+        );
+
+    box-shadow:
+        var(--ds-shadow-inner);
+}
+
+
+.configuracion-mobile-diagnostico-grid article::before {
+    content: "";
+
+    position: absolute;
+
+    top: -26px;
+    right: -24px;
+
+    width: 76px;
+    height: 76px;
+
+    border-radius:
+        var(--ds-radius-circle);
+
+    pointer-events: none;
+
+    background:
+        rgba(69, 230, 154, 0.08);
+
+    filter:
+        blur(var(--ds-blur-md));
+}
+
+
+.configuracion-mobile-diagnostico-grid article.is-wide {
+    grid-column:
+        1 / -1;
+}
+
+
+.configuracion-mobile-diagnostico-grid span {
+    position: relative;
+    z-index: 2;
+
+    color:
+        var(--ds-text-tertiary);
+
+    font-size:
+        var(--ds-font-size-xs);
+
+    font-weight:
+        var(--ds-font-weight-medium);
+}
+
+
+.configuracion-mobile-diagnostico-grid strong {
+    position: relative;
+    z-index: 2;
+
+    color:
+        var(--ds-text-primary);
+
+    font-size:
+        var(--ds-font-size-3xl);
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    line-height:
+        1;
+}
+
+
+.configuracion-mobile-diagnostico-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* =====================================================
+   ACCESO RESTRINGIDO
+===================================================== */
+
+.configuracion-mobile-empty-icon {
+    display: grid;
+    place-items: center;
+
+    width: 70px;
+    height: 70px;
+
+    margin:
+        0
+        auto
+        17px;
+
+    border:
+        1px solid
+        rgba(255, 104, 125, 0.2);
+
+    border-radius: 23px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(191, 49, 73, 0.18),
+            rgba(75, 18, 37, 0.13)
+        );
+
+    box-shadow:
+        0 20px 45px
+        rgba(100, 15, 35, 0.18);
+
+    font-size: 31px;
+}
+
+/* =====================================================
+   ANIMACIONES
+===================================================== */
+
+@keyframes configuracionAurora {
+
+    0% {
+        transform:
+            translate3d(0, -12px, 0)
+            scale(0.94);
+    }
+
+    100% {
+        transform:
+            translate3d(-45px, 38px, 0)
+            scale(1.1);
+    }
+
+}
+
+
+@keyframes configuracionHeroGlow {
+
+    0% {
+        transform:
+            scale(0.88);
+
+        opacity: 0.68;
+    }
+
+    100% {
+        transform:
+            scale(1.16);
+
+        opacity: 1;
+    }
+
+}
+
+
+@keyframes configuracionHeroShine {
+
+    0%,
+    68% {
+        transform:
+            translateX(-125%);
+    }
+
+    86%,
+    100% {
+        transform:
+            translateX(125%);
+    }
+
+}
+
+
+@keyframes configuracionIconFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(0);
+    }
+
+    50% {
+        transform:
+            translateY(-4px)
+            rotate(2deg);
+    }
+
+}
+
+
+@keyframes configuracionGroupEntrance {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(15px)
+            scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+@keyframes configuracionProtectionEntrance {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+/* =====================================================
+   PANTALLAS PEQUEÑAS
+===================================================== */
+
+@media (max-width: 390px) {
+
+    .configuracion-mobile {
+        gap: 16px;
+
+        padding-inline: 12px;
+    }
+
+    .configuracion-mobile-option {
+        grid-template-columns:
+            43px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 11px;
+
+        min-height: 78px;
+
+        padding-inline: 13px;
+    }
+
+
+    .configuracion-mobile-option-icon {
+        width: 43px;
+        min-width: 43px;
+        height: 43px;
+
+        border-radius: 15px;
+
+        font-size: 19px;
+    }
+
+
+    .configuracion-mobile-option-arrow {
+        width: 21px;
+    }
+
+
+    .configuracion-mobile-option-badge,
+    .configuracion-mobile-status {
+        grid-column:
+            2 / 3;
+
+        justify-self: start;
+
+        margin-top: 2px;
+    }
+
+
+    .configuracion-mobile-option-arrow {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+    }
+
+    .configuracion-mobile-diagnostico {
+        padding:
+            var(--ds-space-4);
+    }
+
+
+    .configuracion-mobile-diagnostico-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .configuracion-mobile-diagnostico-grid article.is-wide {
+        grid-column:
+            auto;
+    }
+
+}
+
+
+/* =====================================================
+   REDUCCIÓN DE MOVIMIENTO
+===================================================== */
+
+@media (
+    prefers-reduced-motion:
+    reduce
+) {
+
+    .configuracion-mobile::after,
+    .configuracion-mobile-group,
+    .configuracion-mobile-protection {
+        animation: none;
+    }
+
+}

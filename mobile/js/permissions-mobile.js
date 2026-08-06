@@ -30,7 +30,8 @@ const RUTAS_MOBILE_POR_ROL = Object.freeze({
         "reportes",
         "historial",
         "mas",
-        "garantias"
+        "garantias",
+        "configuracion"
     ]),
 
     vendedor: Object.freeze([

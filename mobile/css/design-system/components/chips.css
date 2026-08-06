@@ -1,0 +1,197 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   M&A DESIGN SYSTEM v2
+   COMPONENT: STATUS CHIP
+===================================================== */
+
+.ds-chip {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 25px;
+
+    padding:
+        5px
+        9px;
+
+    border:
+        1px solid
+        var(--ds-chip-border, var(--ds-border-default));
+
+    border-radius:
+        var(--ds-radius-pill);
+
+    color:
+        var(--ds-chip-color, var(--ds-text-secondary));
+
+    background:
+        var(--ds-chip-background, var(--ds-surface-soft));
+
+    box-shadow:
+        var(--ds-shadow-inner);
+
+    white-space: nowrap;
+
+    font-size:
+        var(--ds-font-size-2xs);
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    letter-spacing:
+        0.35px;
+}
+
+
+/* =====================================================
+   LED
+===================================================== */
+
+.ds-chip--status::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    margin-right:
+        6px;
+
+    border-radius:
+        var(--ds-radius-circle);
+
+    background:
+        var(--ds-chip-led, var(--ds-gray-400));
+
+    box-shadow:
+        0 0 10px
+        color-mix(
+            in srgb,
+            var(--ds-chip-led, var(--ds-gray-400)) 58%,
+            transparent
+        );
+}
+
+
+/* =====================================================
+   ESTADOS
+===================================================== */
+
+.ds-chip--pending {
+    --ds-chip-color:
+        #ffe9b8;
+
+    --ds-chip-border:
+        var(--ds-border-yellow);
+
+    --ds-chip-background:
+        rgba(255, 193, 79, 0.11);
+
+    --ds-chip-led:
+        var(--ds-yellow-400);
+}
+
+
+.ds-chip--success {
+    --ds-chip-color:
+        var(--ds-green-100);
+
+    --ds-chip-border:
+        var(--ds-border-green);
+
+    --ds-chip-background:
+        rgba(37, 201, 124, 0.12);
+
+    --ds-chip-led:
+        var(--ds-green-400);
+}
+
+
+.ds-chip--danger {
+    --ds-chip-color:
+        var(--ds-red-100);
+
+    --ds-chip-border:
+        var(--ds-border-red);
+
+    --ds-chip-background:
+        rgba(237, 62, 98, 0.11);
+
+    --ds-chip-led:
+        var(--ds-red-400);
+}
+
+
+.ds-chip--info {
+    --ds-chip-color:
+        var(--ds-blue-100);
+
+    --ds-chip-border:
+        var(--ds-border-strong);
+
+    --ds-chip-background:
+        rgba(47, 134, 255, 0.11);
+
+    --ds-chip-led:
+        var(--ds-blue-400);
+}
+
+
+.ds-chip--future {
+    --ds-chip-color:
+        var(--ds-purple-200);
+
+    --ds-chip-border:
+        var(--ds-border-purple);
+
+    --ds-chip-background:
+        rgba(143, 104, 255, 0.11);
+
+    --ds-chip-led:
+        var(--ds-purple-400);
+}
+
+
+/* =====================================================
+   SIN LED
+===================================================== */
+
+.ds-chip--plain::before {
+    content: none;
+}
+
+
+/* =====================================================
+   ANIMACIÓN SUTIL
+===================================================== */
+
+.ds-chip--animated::before {
+    animation:
+        dsLedPulse
+        1.8s
+        ease-in-out
+        infinite;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 390px) {
+
+    .ds-chip {
+        min-height: 23px;
+
+        padding:
+            4px
+            7px;
+
+        font-size:
+            8px;
+    }
+
+}

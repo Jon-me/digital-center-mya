@@ -1,0 +1,570 @@
+/* =====================================================
+   DIGITAL CENTER M&A
+   M&A DESIGN SYSTEM v2
+   COMPONENT: CRYSTAL CARD
+===================================================== */
+
+
+/* =====================================================
+   CARD BASE
+===================================================== */
+
+.ds-card {
+    position: relative;
+
+    display: block;
+
+    overflow: hidden;
+
+    border:
+        var(--ds-glass-border);
+
+    border-radius:
+        var(--ds-radius-xl);
+
+    background:
+        var(--ds-glass-background);
+
+    box-shadow:
+        var(--ds-shadow-card),
+        var(--ds-shadow-inner);
+
+    backdrop-filter:
+        var(--ds-glass-blur)
+        var(--ds-glass-saturation);
+
+    -webkit-backdrop-filter:
+        var(--ds-glass-blur)
+        var(--ds-glass-saturation);
+
+    color:
+        var(--ds-text-primary);
+
+    isolation: isolate;
+}
+
+
+/* =====================================================
+   CAPAS DE PROFUNDIDAD
+===================================================== */
+
+.ds-card::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: -2;
+
+    pointer-events: none;
+
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(67, 148, 255, 0.12),
+            transparent 36%
+        );
+}
+
+
+.ds-card::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: -1;
+
+    pointer-events: none;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            118deg,
+            transparent 18%,
+            rgba(255, 255, 255, 0.032) 46%,
+            transparent 72%
+        );
+
+    transform:
+        translateX(-135%);
+}
+
+
+/* =====================================================
+   CONTENIDO
+===================================================== */
+
+.ds-card__content {
+    position: relative;
+    z-index: 2;
+
+    padding:
+        var(--ds-space-5);
+}
+
+
+.ds-card__header {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap:
+        var(--ds-space-4);
+
+    padding:
+        var(--ds-space-5)
+        var(--ds-space-5)
+        var(--ds-space-4);
+}
+
+
+.ds-card__body {
+    position: relative;
+    z-index: 2;
+
+    padding:
+        0
+        var(--ds-space-5)
+        var(--ds-space-5);
+}
+
+
+.ds-card__footer {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap:
+        var(--ds-space-3);
+
+    padding:
+        var(--ds-space-4)
+        var(--ds-space-5);
+
+    border-top:
+        1px solid
+        var(--ds-border-subtle);
+}
+
+
+/* =====================================================
+   TIPOGRAFÍA INTERNA
+===================================================== */
+
+.ds-card__eyebrow {
+    display: block;
+
+    margin-bottom:
+        var(--ds-space-1);
+
+    color:
+        var(--ds-blue-300);
+
+    font-size:
+        var(--ds-font-size-2xs);
+
+    font-weight:
+        var(--ds-font-weight-black);
+
+    letter-spacing:
+        var(--ds-letter-eyebrow);
+
+    text-transform:
+        uppercase;
+}
+
+
+.ds-card__title {
+    margin: 0;
+
+    color:
+        var(--ds-text-primary);
+
+    font-size:
+        var(--ds-font-size-xl);
+
+    font-weight:
+        var(--ds-font-weight-heavy);
+
+    line-height:
+        var(--ds-line-height-tight);
+
+    letter-spacing:
+        -0.35px;
+}
+
+
+.ds-card__description {
+    margin:
+        var(--ds-space-2)
+        0
+        0;
+
+    color:
+        var(--ds-text-tertiary);
+
+    font-size:
+        var(--ds-font-size-sm);
+
+    font-weight:
+        var(--ds-font-weight-medium);
+
+    line-height:
+        var(--ds-line-height-relaxed);
+}
+
+
+/* =====================================================
+   ICONO
+===================================================== */
+
+.ds-card__icon {
+    display: grid;
+    place-items: center;
+
+    width:
+        var(--ds-icon-md);
+
+    min-width:
+        var(--ds-icon-md);
+
+    height:
+        var(--ds-icon-md);
+
+    border:
+        1px solid
+        var(--ds-border-default);
+
+    border-radius:
+        var(--ds-radius-md);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(54, 132, 244, 0.18),
+            rgba(18, 54, 112, 0.12)
+        );
+
+    box-shadow:
+        var(--ds-shadow-inner);
+
+    font-size:
+        20px;
+}
+
+
+/* =====================================================
+   CARD INTERACTIVA
+===================================================== */
+
+.ds-card--interactive {
+    cursor: pointer;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+    transition:
+        transform
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        filter
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        border-color
+        var(--ds-duration-fast)
+        var(--ds-ease-standard),
+
+        box-shadow
+        var(--ds-duration-fast)
+        var(--ds-ease-standard);
+}
+
+
+.ds-card--interactive:active {
+    transform:
+        scale(0.985);
+
+    filter:
+        brightness(1.08);
+
+    border-color:
+        var(--ds-border-strong);
+
+    box-shadow:
+        var(--ds-shadow-card-strong),
+        var(--ds-shadow-inner);
+}
+
+
+.ds-card--interactive:active::after {
+    animation:
+        dsShine
+        760ms
+        var(--ds-ease-standard)
+        both;
+}
+
+
+/* =====================================================
+   VARIANTE ELEVADA
+===================================================== */
+
+.ds-card--elevated {
+    border:
+        var(--ds-glass-border-strong);
+
+    background:
+        var(--ds-glass-background-strong);
+
+    box-shadow:
+        var(--ds-shadow-card-strong),
+        var(--ds-shadow-inner-strong);
+
+    backdrop-filter:
+        blur(var(--ds-blur-xl))
+        var(--ds-glass-saturation);
+
+    -webkit-backdrop-filter:
+        blur(var(--ds-blur-xl))
+        var(--ds-glass-saturation);
+}
+
+
+/* =====================================================
+   VARIANTES SEMÁNTICAS
+===================================================== */
+
+.ds-card--success {
+    border-color:
+        var(--ds-border-green);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(69, 230, 154, 0.13),
+            transparent 34%
+        ),
+        var(--ds-glass-background);
+}
+
+
+.ds-card--warning {
+    border-color:
+        var(--ds-border-yellow);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255, 193, 79, 0.12),
+            transparent 34%
+        ),
+        var(--ds-glass-background);
+}
+
+
+.ds-card--danger {
+    border-color:
+        var(--ds-border-red);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255, 98, 124, 0.14),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(47, 15, 29, 0.93),
+            rgba(18, 9, 18, 0.98)
+        );
+
+    box-shadow:
+        var(--ds-shadow-card),
+        var(--ds-shadow-glow-red),
+        var(--ds-shadow-inner);
+}
+
+
+.ds-card--info {
+    border-color:
+        var(--ds-border-strong);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(47, 134, 255, 0.16),
+            transparent 36%
+        ),
+        var(--ds-glass-background);
+}
+
+
+.ds-card--future {
+    border-color:
+        var(--ds-border-purple);
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(169, 136, 255, 0.13),
+            transparent 36%
+        ),
+        var(--ds-glass-background);
+}
+
+
+/* =====================================================
+   VARIANTES DE TAMAÑO
+===================================================== */
+
+.ds-card--compact .ds-card__content {
+    padding:
+        var(--ds-space-4);
+}
+
+
+.ds-card--compact .ds-card__header {
+    padding:
+        var(--ds-space-4)
+        var(--ds-space-4)
+        var(--ds-space-3);
+}
+
+
+.ds-card--compact .ds-card__body {
+    padding:
+        0
+        var(--ds-space-4)
+        var(--ds-space-4);
+}
+
+
+.ds-card--spacious .ds-card__content {
+    padding:
+        var(--ds-space-7);
+}
+
+
+.ds-card--spacious .ds-card__header {
+    padding:
+        var(--ds-space-7)
+        var(--ds-space-7)
+        var(--ds-space-5);
+}
+
+
+.ds-card--spacious .ds-card__body {
+    padding:
+        0
+        var(--ds-space-7)
+        var(--ds-space-7);
+}
+
+
+/* =====================================================
+   ESTADOS
+===================================================== */
+
+.ds-card.is-loading {
+    pointer-events: none;
+
+    opacity:
+        var(--ds-opacity-soft);
+}
+
+
+.ds-card.is-disabled {
+    pointer-events: none;
+
+    opacity:
+        var(--ds-opacity-disabled);
+}
+
+
+.ds-card.is-selected {
+    border-color:
+        var(--ds-blue-400);
+
+    box-shadow:
+        var(--ds-shadow-card),
+        var(--ds-shadow-glow-blue),
+        var(--ds-shadow-inner-strong);
+}
+
+
+/* =====================================================
+   ENTRADA
+===================================================== */
+
+.ds-card--entrance {
+    animation:
+        dsFadeUp
+        var(--ds-duration-slow)
+        var(--ds-ease-emphasized)
+        both;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 390px) {
+
+    .ds-card {
+        border-radius:
+            var(--ds-radius-lg);
+    }
+
+
+    .ds-card__content,
+    .ds-card__header {
+        padding-left:
+            var(--ds-space-4);
+
+        padding-right:
+            var(--ds-space-4);
+    }
+
+
+    .ds-card__body {
+        padding-left:
+            var(--ds-space-4);
+
+        padding-right:
+            var(--ds-space-4);
+    }
+
+
+    .ds-card__title {
+        font-size:
+            var(--ds-font-size-lg);
+    }
+
+
+    .ds-card__description {
+        font-size:
+            11px;
+    }
+
+}
