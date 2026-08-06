@@ -5,7 +5,8 @@
 // =====================================================
 
 import {
-    diagnosticarDatosOperativosMobile
+    diagnosticarDatosOperativosMobile,
+    restablecerDatosOperativosMobile
 } from "../services/mantenimiento-mobile-service.js";
 
 let renderizada =
@@ -337,6 +338,582 @@ function mostrarErrorDiagnostico(
         behavior: "smooth",
         block: "nearest"
     });
+
+}
+
+function mostrarModalRestablecimiento(
+    contenedor
+){
+
+    const modalAnterior =
+        document.querySelector(
+            "[data-modal-restablecimiento]"
+        );
+
+
+    modalAnterior?.remove();
+
+
+    const modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.className =
+        "configuracion-mobile-modal-backdrop";
+
+
+    modal.dataset.modalRestablecimiento =
+        "true";
+
+
+    modal.innerHTML = `
+        <section
+            class="
+                ds-card
+                ds-card--danger
+                configuracion-mobile-modal
+            "
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloRestablecimiento"
+        >
+
+            <button
+                type="button"
+                class="configuracion-mobile-modal-close"
+                data-restablecimiento-cerrar
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+
+            <div class="configuracion-mobile-modal-icon">
+                ⚠️
+            </div>
+
+
+            <span class="ds-card__eyebrow">
+                ZONA CRÍTICA
+            </span>
+
+
+            <h2
+                id="tituloRestablecimiento"
+                class="configuracion-mobile-modal-title"
+            >
+                Restablecer datos operativos
+            </h2>
+
+
+            <p class="configuracion-mobile-modal-copy">
+                Esta acción eliminará permanentemente las ventas,
+                boletas, cajas, gastos y registros operativos.
+            </p>
+
+
+            <div class="configuracion-mobile-modal-protection">
+
+                <span>
+                    🛡️
+                </span>
+
+                <div>
+
+                    <strong>
+                        El inventario no será modificado
+                    </strong>
+
+                    <small>
+                        Productos, precios, imágenes, stock y stock
+                        por tienda permanecerán intactos.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <label class="configuracion-mobile-confirm-check">
+
+                <input
+                    type="checkbox"
+                    data-restablecimiento-aceptacion
+                >
+
+                <span>
+                    Entiendo que esta acción es permanente
+                    y no se puede deshacer.
+                </span>
+
+            </label>
+
+
+            <div class="configuracion-mobile-confirm-field">
+
+                <label for="fraseRestablecimiento">
+                    Escribe exactamente:
+                </label>
+
+                <code>
+                    RESTABLECER DIGITAL CENTER
+                </code>
+
+                <input
+                    id="fraseRestablecimiento"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Escribe la frase de seguridad"
+                    data-restablecimiento-frase
+                >
+
+            </div>
+
+
+            <div class="configuracion-mobile-modal-actions">
+
+                <button
+                    type="button"
+                    class="
+                        configuracion-mobile-modal-button
+                        configuracion-mobile-modal-button--secondary
+                    "
+                    data-restablecimiento-cerrar
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="
+                        configuracion-mobile-modal-button
+                        configuracion-mobile-modal-button--danger
+                    "
+                    data-restablecimiento-confirmar
+                    disabled
+                >
+                    Restablecer ahora
+                </button>
+
+            </div>
+
+        </section>
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    const checkbox =
+        modal.querySelector(
+            "[data-restablecimiento-aceptacion]"
+        );
+
+
+    const input =
+        modal.querySelector(
+            "[data-restablecimiento-frase]"
+        );
+
+
+    const botonConfirmar =
+        modal.querySelector(
+            "[data-restablecimiento-confirmar]"
+        );
+
+
+    const validar =
+        () => {
+
+            const fraseNormalizada =
+                input.value
+                    .trim()
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .toUpperCase();
+
+
+    const fraseCorrecta =
+        fraseNormalizada ===
+        "RESTABLECER DIGITAL CENTER";
+
+
+            botonConfirmar.disabled =
+                !checkbox.checked ||
+                !fraseCorrecta;
+
+        };
+
+
+    checkbox.addEventListener(
+        "change",
+        validar
+    );
+
+
+    input.addEventListener(
+        "input",
+        validar
+    );
+
+botonConfirmar.addEventListener(
+    "click",
+    async () => {
+
+        if(
+            botonConfirmar.disabled
+        ){
+
+            return;
+
+        }
+
+
+        const frase =
+            input.value
+                .trim()
+                .replace(
+                    /\s+/g,
+                    " "
+                )
+                .toUpperCase();
+
+
+        const confirmacionFinal =
+            window.confirm(
+                "CONFIRMACIÓN FINAL\n\n" +
+                "Se eliminarán permanentemente:\n" +
+                "• Ventas\n" +
+                "• Boletas\n" +
+                "• Cajas\n" +
+                "• Gastos\n\n" +
+                "El inventario y el stock permanecerán intactos.\n\n" +
+                "¿Deseas continuar?"
+            );
+
+
+        if(
+            !confirmacionFinal
+        ){
+
+            return;
+
+        }
+
+
+        const contenidoOriginal =
+            botonConfirmar.innerHTML;
+
+
+        botonConfirmar.disabled =
+            true;
+
+
+        botonConfirmar.classList.add(
+            "is-loading"
+        );
+
+
+        botonConfirmar.innerHTML = `
+            Restableciendo...
+        `;
+
+
+        checkbox.disabled =
+            true;
+
+
+        input.disabled =
+            true;
+
+
+        try{
+
+            const resultado =
+                await restablecerDatosOperativosMobile(
+                    frase
+                );
+
+
+            modal.remove();
+
+
+            mostrarResultadoRestablecimiento(
+                contenedor,
+                resultado
+            );
+
+        }catch(error){
+
+            console.error(
+                "[Configuración Mobile] Error al restablecer:",
+                error
+            );
+
+
+            botonConfirmar.disabled =
+                false;
+
+
+            botonConfirmar.classList.remove(
+                "is-loading"
+            );
+
+
+            botonConfirmar.innerHTML =
+                contenidoOriginal;
+
+
+            checkbox.disabled =
+                false;
+
+
+            input.disabled =
+                false;
+
+
+            mostrarErrorRestablecimiento(
+                modal,
+                error?.message ||
+                "No se pudo completar el restablecimiento."
+            );
+
+        }
+
+    }
+);    
+
+    modal.addEventListener(
+        "click",
+        (event) => {
+
+            const cerrar =
+                event.target.closest(
+                    "[data-restablecimiento-cerrar]"
+                );
+
+
+            if(cerrar){
+
+                modal.remove();
+
+                return;
+
+            }
+
+
+            if(
+                event.target ===
+                modal
+            ){
+
+                modal.remove();
+
+            }
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            modal.classList.add(
+                "is-visible"
+            );
+
+        }
+    );
+
+
+    input.focus();
+
+}
+
+function mostrarResultadoRestablecimiento(
+    contenedor,
+    resultado
+){
+
+    const panelAnterior =
+        contenedor.querySelector(
+            "[data-configuracion-restablecimiento]"
+        );
+
+
+    panelAnterior?.remove();
+
+
+    const panel =
+        document.createElement(
+            "section"
+        );
+
+
+    panel.className = `
+        ds-card
+        ds-card--success
+        configuracion-mobile-diagnostico
+    `;
+
+
+    panel.dataset.configuracionRestablecimiento =
+        "true";
+
+
+    panel.innerHTML = `
+        <div class="configuracion-mobile-diagnostico-header">
+
+            <span class="configuracion-mobile-diagnostico-icon">
+                ✅
+            </span>
+
+            <div>
+
+                <span class="ds-card__eyebrow">
+                    RESTABLECIMIENTO COMPLETADO
+                </span>
+
+                <h3 class="ds-card__title">
+                    Datos operativos eliminados
+                </h3>
+
+                <p class="ds-card__description">
+                    ${resultado.mensaje}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="configuracion-mobile-diagnostico-grid">
+
+            <article>
+                <span>Ventas eliminadas</span>
+                <strong>${resultado.eliminados.ventas}</strong>
+            </article>
+
+            <article>
+                <span>Boletas eliminadas</span>
+                <strong>${resultado.eliminados.boletas}</strong>
+            </article>
+
+            <article>
+                <span>Cajas eliminadas</span>
+                <strong>${resultado.eliminados.cajas}</strong>
+            </article>
+
+            <article>
+                <span>Gastos eliminados</span>
+                <strong>${resultado.eliminados.gastos}</strong>
+            </article>
+
+            <article class="is-wide">
+                <span>Correlativo</span>
+                <strong>
+                    ${resultado.correlativo.anterior}
+                    →
+                    ${resultado.correlativo.actual}
+                </strong>
+            </article>
+
+        </div>
+
+
+        <div class="configuracion-mobile-diagnostico-footer">
+
+            <span
+                class="
+                    ds-chip
+                    ds-chip--status
+                    ds-chip--success
+                "
+            >
+                Inventario protegido
+            </span>
+
+        </div>
+    `;
+
+
+    const mantenimiento =
+        contenedor.querySelector(
+            ".configuracion-mobile-group--maintenance"
+        );
+
+
+    mantenimiento?.insertAdjacentElement(
+        "afterend",
+        panel
+    );
+
+
+    panel.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
+}
+
+function mostrarErrorRestablecimiento(
+    modal,
+    mensaje
+){
+
+    let error =
+        modal.querySelector(
+            "[data-restablecimiento-error]"
+        );
+
+
+    if(!error){
+
+        error =
+            document.createElement(
+                "div"
+            );
+
+
+        error.className =
+            "configuracion-mobile-restablecimiento-error";
+
+
+        error.dataset.restablecimientoError =
+            "true";
+
+
+        const acciones =
+            modal.querySelector(
+                ".configuracion-mobile-modal-actions"
+            );
+
+
+        acciones?.insertAdjacentElement(
+            "beforebegin",
+            error
+        );
+
+    }
+
+
+    error.innerHTML = `
+        <strong>
+            No se pudo completar
+        </strong>
+
+        <span>
+            ${mensaje}
+        </span>
+    `;
 
 }
 
@@ -1056,6 +1633,17 @@ contenedor.addEventListener(
         ){
 
             await ejecutarDiagnosticoOperativo(
+                contenedor
+            );
+
+        }
+
+        if(
+            accion ===
+            "restablecer-operacion"
+        ){
+
+            mostrarModalRestablecimiento(
                 contenedor
             );
 
