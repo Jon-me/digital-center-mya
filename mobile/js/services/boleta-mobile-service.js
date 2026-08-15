@@ -6,9 +6,9 @@
 
 import {
 
-    construirHTMLReimpresionBoleta
+    construirHTMLBoletaRetailMobile
 
-} from "../../../js/boleta.js";
+} from "./boleta-retail-mobile.js?v=M14-3-1";
 
 let impresionBoletaMobileEnProceso = false;
 
@@ -141,17 +141,16 @@ export function construirHTMLBoletaMobile(
     venta
 ){
 
-    const detallePagos =
-        construirDetallePagosBoletaMobile(
-            venta
-        );
-
-    return construirHTMLReimpresionBoleta(
+    return construirHTMLBoletaRetailMobile(
         venta,
-        detallePagos,
         {
+
             esReimpresion:
-                false
+                false,
+
+            cssURL:
+                "/mobile/css/boleta-retail-mobile.css?v=M14-3-1"
+
         }
     );
 
@@ -166,17 +165,16 @@ export function construirHTMLReimpresionBoletaMobile(
     venta
 ){
 
-    const detallePagos =
-        construirDetallePagosBoletaMobile(
-            venta
-        );
-
-    return construirHTMLReimpresionBoleta(
+    return construirHTMLBoletaRetailMobile(
         venta,
-        detallePagos,
         {
+
             esReimpresion:
-                true
+                true,
+
+            cssURL:
+                "/mobile/css/boleta-retail-mobile.css?v=M14-3-1"
+
         }
     );
 

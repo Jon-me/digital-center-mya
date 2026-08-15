@@ -1,0 +1,900 @@
+:root {
+  --retail-paper: 80mm;
+  --retail-ink: #111111;
+  --retail-muted: #5f6368;
+  --retail-line: #b8b8b8;
+  --retail-soft: #f2f2f2;
+
+  --retail-font:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  --retail-mono:
+    "Courier New",
+    Courier,
+    monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  color: var(--retail-ink);
+  background: #ececec;
+
+  font-family: var(--retail-font);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+.retail-preview {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 24px 12px;
+}
+
+.retail-receipt {
+
+  position: relative;
+
+  isolation: isolate;
+
+  overflow: hidden;
+
+  width: min(100%, 320px);
+
+  padding: 14px 14px 12px;
+
+  background: #ffffff;
+  color: var(--retail-ink);
+
+  box-shadow:
+    0 14px 32px
+    rgba(0, 0, 0, 0.14);
+
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.retail-receipt::before {
+  content:
+    "DIGITAL CENTER M&A";
+
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  z-index: -1;
+
+  width: 120%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-18deg);
+
+  color:
+    rgba(17, 17, 17, 0.035);
+
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: 0.04em;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.retail-receipt::after {
+  content:
+    "Tecnología que conecta, soluciones que impulsan.";
+
+  position: absolute;
+
+  top: calc(50% + 24px);
+  left: 50%;
+
+  z-index: -1;
+
+  width: 120%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-18deg);
+
+  color:
+    rgba(17, 17, 17, 0.025);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.02em;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.retail-header,
+.retail-business,
+.retail-document,
+.retail-meta,
+.retail-customer,
+.retail-products,
+.retail-totals,
+.retail-payments,
+.retail-qr,
+.retail-footer,
+.retail-rule {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.retail-header {
+  text-align: center;
+
+  padding:
+    1px
+    0
+    2px;
+}
+
+.retail-header h1 {
+  margin: 0;
+
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1;
+
+  letter-spacing: 0.01em;
+}
+
+.retail-header p {
+  margin: 2px 0 0;
+
+  color: var(--retail-muted);
+
+  font-size: 7px;
+  line-height: 1.1;
+}
+
+
+/* =========================================================
+   RULES
+========================================================= */
+
+.retail-rule {
+  margin: 4px 0;
+
+  border-top:
+    1px dashed
+    var(--retail-line);
+}
+
+.retail-rule--strong {
+  border-top:
+    1.5px solid
+    var(--retail-ink);
+}
+
+
+/* =========================================================
+   BUSINESS
+========================================================= */
+
+.retail-business {
+  display: grid;
+  gap: 1px;
+}
+
+.retail-business div {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 4px;
+
+  align-items: start;
+}
+
+.retail-business span {
+  color: var(--retail-muted);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.retail-business strong {
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   DOCUMENT
+========================================================= */
+
+.retail-document {
+  text-align: center;
+}
+
+.retail-document__eyebrow {
+  display: block;
+
+  margin-bottom: 1px;
+
+  color: var(--retail-muted);
+
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.retail-document h2 {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1;
+}
+
+.retail-document__number {
+  display: block;
+
+  margin-top: 2px;
+
+  font-family: var(--retail-mono);
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   META
+========================================================= */
+
+.retail-meta,
+.retail-customer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 8px;
+
+  margin-top: 4px;
+}
+
+.retail-meta div,
+.retail-customer div {
+  min-width: 0;
+}
+
+.retail-meta span,
+.retail-customer span {
+  display: block;
+
+  color: var(--retail-muted);
+
+  font-size: 6.5px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.retail-meta strong,
+.retail-customer strong {
+  display: block;
+
+  margin-top: 0px;
+
+  font-size: 7.5px;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.retail-customer {
+  margin-top: 5px;
+
+  padding-top: 5px;
+
+  border-top:
+    1px dashed
+    var(--retail-line);
+}
+
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+.retail-products__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+
+  margin-bottom: 4px;
+
+  font-size: 7px;
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+}
+
+.retail-products__header span:last-child {
+  text-align: right;
+}
+
+.retail-product {
+  padding: 2px 0;
+}
+
+.retail-product +
+.retail-product {
+  border-top:
+    1px dotted
+    #cfcfcf;
+}
+
+.retail-product__top {
+  display: grid;
+  grid-template-columns:
+    18px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: start;
+  gap: 4px;
+}
+
+.retail-product__index {
+  font-family: var(--retail-mono);
+
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.retail-product__name {
+  min-width: 0;
+
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1.15;
+
+  overflow-wrap: anywhere;
+}
+
+.retail-product__total {
+  padding-left: 4px;
+
+  font-size: 8.5px;
+  font-weight: 800;
+
+  text-align: right;
+  white-space: nowrap;
+}
+
+.retail-product__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+
+  margin:
+    0px
+    0
+    0
+    22px;
+
+  color: var(--retail-muted);
+
+  font-size: 6.5px;
+}
+
+.retail-product__operation {
+  margin:
+    0px
+    0
+    0
+    22px;
+
+  color: var(--retail-muted);
+
+  font-family: var(--retail-mono);
+  font-size: 6.5px;
+}
+
+.retail-empty {
+  margin: 0;
+
+  text-align: center;
+
+  color: var(--retail-muted);
+
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   TOTALS
+========================================================= */
+
+.retail-totals {
+  display: grid;
+  gap: 1px;
+}
+
+.retail-totals > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  gap: 12px;
+
+  padding: 1px 0;
+}
+
+.retail-totals span {
+  font-size: 8px;
+}
+
+.retail-totals strong {
+  font-size: 8.5px;
+}
+
+.retail-total-final {
+  margin-top: 1px;
+
+  padding-top: 2px;
+
+  border-top:
+    1px solid
+    var(--retail-ink);
+}
+
+.retail-total-final span {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.retail-total-final strong {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   PAYMENTS
+========================================================= */
+
+.retail-payments {
+  margin-top: 3px;
+
+  padding-top: 3px;
+
+  border-top:
+    1px dashed
+    var(--retail-line);
+}
+
+.retail-payments__title {
+  margin-bottom: 3px;
+
+  color: var(--retail-muted);
+
+  font-size: 6.5px;
+  font-weight: 800;
+
+  letter-spacing: 0.06em;
+}
+
+.retail-payment-row {
+  display: flex;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 1px 0;
+
+  font-size: 7.5px;
+}
+
+.retail-payment-row strong {
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   QR
+========================================================= */
+
+.retail-qr {
+  display: grid;
+  grid-template-columns:
+    44px
+    minmax(0, 1fr);
+
+  align-items: center;
+  gap: 6px;
+
+  text-align: left;
+}
+
+.retail-qr img {
+  width: 44px;
+  height: 44px;
+
+  object-fit: contain;
+}
+
+.retail-qr__content {
+  min-width: 0;
+}
+
+.retail-qr__content strong {
+  font-size: 6.8px;
+}
+
+.retail-qr__content span {
+  margin-top: 0.4mm;
+
+  font-size: 5.3px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.retail-footer {
+  text-align: center;
+}
+
+.retail-footer > strong {
+  font-size: 9px;
+}
+
+.retail-footer p {
+  margin: 2px 0;
+
+  color: var(--retail-muted);
+
+  font-size: 6.5px;
+  line-height: 1.2;
+}
+
+.retail-footer small {
+  display: block;
+
+  color: var(--retail-muted);
+
+  font-size: 6px;
+  line-height: 1.2;
+}
+
+.retail-cut {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 4px;
+
+  color: var(--retail-muted);
+
+  font-size: 5.5px;
+  letter-spacing: 0.12em;
+}
+
+.retail-cut::before,
+.retail-cut::after {
+  content: "";
+
+  flex: 1;
+
+  border-top:
+    1px dashed
+    var(--retail-line);
+}
+
+
+/* =========================================================
+   PRINT 80MM
+========================================================= */
+
+@media print {
+
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 80mm;
+    min-width: 80mm;
+    max-width: 80mm;
+
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    background: #ffffff;
+  }
+
+  body {
+    display: block;
+  }
+
+  .retail-preview {
+    display: block;
+
+    width: 80mm;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  .retail-receipt {
+    width: 74mm;
+    max-width: 74mm;
+
+    margin: 0 auto;
+
+    padding:
+      1.7mm
+      2mm
+      1.4mm;
+
+    box-shadow: none;
+
+    font-size: 7.5px;
+    line-height: 1.08;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .retail-header h1 {
+    font-size: 11px;
+  }
+
+  .retail-header p {
+    margin-top: 0.6mm;
+
+    font-size: 5.7px;
+  }
+
+  .retail-rule {
+    margin: 0.8mm 0;
+  }
+
+  .retail-business {
+    gap: 0.35mm;
+  }
+
+  .retail-business div {
+    grid-template-columns:
+      17mm
+      minmax(0, 1fr);
+
+    gap: 1mm;
+  }
+
+  .retail-business span {
+    font-size: 5.5px;
+  }
+
+  .retail-business strong {
+    font-size: 6.5px;
+  }
+
+  .retail-document__eyebrow {
+    font-size: 5.2px;
+  }
+
+  .retail-document h2 {
+    font-size: 10px;
+  }
+
+  .retail-document__number {
+    margin-top: 0.5mm;
+
+    font-size: 6.5px;
+  }
+
+  .retail-meta,
+  .retail-customer {
+    gap:
+      0.7mm
+      2mm;
+
+    margin-top: 1.2mm;
+  }
+
+  .retail-meta span,
+  .retail-customer span {
+    font-size: 5.2px;
+  }
+
+  .retail-meta strong,
+  .retail-customer strong {
+    font-size: 6.5px;
+  }
+
+  .retail-customer {
+    margin-top: 1mm;
+
+    padding-top: 1mm;
+  }
+
+  .retail-products__header {
+    margin-bottom: 0.6mm;
+
+    font-size: 5.8px;
+  }
+
+  .retail-product {
+    padding: 0.45mm 0;
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .retail-product__top {
+    grid-template-columns:
+      5mm
+      minmax(0, 1fr)
+      16mm;
+
+    gap: 1mm;
+  }
+
+  .retail-product__index {
+    font-size: 5.5px;
+  }
+
+  .retail-product__name,
+  .retail-product__total {
+    font-size: 6.8px;
+  }
+
+  .retail-product__meta,
+  .retail-product__operation {
+    margin-left: 6mm;
+
+    font-size: 5.4px;
+  }
+
+  .retail-totals {
+    gap: 0.3mm;
+  }
+
+  .retail-totals > div {
+    padding: 0.25mm 0;
+  }
+
+  .retail-totals span {
+    font-size: 6.5px;
+  }
+
+  .retail-totals strong {
+    font-size: 6.8px;
+  }
+
+  .retail-total-final {
+    margin-top: 0.6mm;
+
+    padding-top: 0.8mm;
+  }
+
+  .retail-total-final span {
+    font-size: 8.5px;
+  }
+
+  .retail-total-final strong {
+    font-size: 11px;
+  }
+
+  .retail-payments {
+    margin-top: 1mm;
+    padding-top: 1mm;
+  }
+
+  .retail-payments__title {
+    margin-bottom: 0.5mm;
+
+    font-size: 5.3px;
+  }
+
+  .retail-payment-row {
+    padding: 0.35mm 0;
+
+    font-size: 6.2px;
+  }
+
+  .retail-qr {
+    grid-template-columns:
+      10mm
+      minmax(0, 1fr);
+
+    gap: 1mm;
+  }
+
+  .retail-qr img {
+    width: 10mm;
+    height: 10mm;
+  }
+
+  .retail-qr strong {
+    font-size: 6.8px;
+  }
+
+  .retail-qr span {
+    margin-top: 0.4mm;
+
+    font-size: 5.3px;
+  }
+
+  .retail-footer > strong {
+    font-size: 7px;
+  }
+
+  .retail-footer p {
+    margin: 0.5mm 0;
+
+    font-size: 5.3px;
+  }
+
+  .retail-footer small {
+    font-size: 4.9px;
+  }
+
+  .retail-cut {
+    margin-top: 1.2mm;
+
+    font-size: 4.6px;
+  }
+
+  .retail-receipt::before {
+  color:
+    rgba(17, 17, 17, 0.045);
+
+  font-size: 28px;
+}
+
+.retail-receipt::after {
+  color:
+    rgba(17, 17, 17, 0.03);
+
+  font-size: 9px;
+}
+
+}

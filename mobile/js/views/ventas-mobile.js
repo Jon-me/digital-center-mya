@@ -46,7 +46,7 @@ import {
     construirHTMLReimpresionBoletaMobile,
     imprimirHTMLBoletaMobile
 
-} from "../services/boleta-mobile-service.js?v=M12-5-3";
+} from "../services/boleta-mobile-service.js?v=M14-3-1";
 
 import {
 

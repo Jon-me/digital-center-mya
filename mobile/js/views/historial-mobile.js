@@ -15,9 +15,10 @@ import {
 
 import {
 
-    construirHTMLReimpresionBoleta
+    construirHTMLReimpresionBoletaMobile,
+    imprimirHTMLBoletaMobile
 
-} from "/js/boleta.js";
+} from "../services/boleta-mobile-service.js?v=M14-3-2";
 
 
 // =====================================================
@@ -39,8 +40,6 @@ let historialFiltroMobile = "todas";
 let ventaDetalleHistorialMobile = null;
 
 let disparadorDetalleHistorialMobile = null;
-
-let ventanaImpresionHistorialMobile = null;
 
 // =====================================================
 // RENDER PRINCIPAL
@@ -2867,7 +2866,7 @@ function crearFilaDetalleHistorialMobile(
 // REIMPRESIÓN
 // =====================================================
 
-function prepararReimpresionHistorialMobile(
+async function prepararReimpresionHistorialMobile(
     venta
 ){
 
@@ -2877,11 +2876,12 @@ function prepararReimpresionHistorialMobile(
 
     }
 
+
     const numeroBoleta =
         String(
             venta.numeroBoleta || ""
-        )
-        .trim();
+        ).trim();
+
 
     if(
         !numeroBoleta ||
@@ -2897,181 +2897,33 @@ function prepararReimpresionHistorialMobile(
 
     }
 
-    const detallePagos =
-        obtenerDetallePagosHTMLHistorialMobile(
-            venta
-        );
 
-    const html =
-        construirHTMLReimpresionBoleta(
-            venta,
-            detallePagos
-        );
+    try{
 
-    imprimirHTMLHistorialMobile(
-        html
-    );
-
-}
-
-// =====================================================
-// DETALLE PAGOS HTML
-// =====================================================
-
-function obtenerDetallePagosHTMLHistorialMobile(
-    venta
-){
-
-    if(
-        !venta.pagos
-    ){
-
-        return (
-            venta.metodoPagoVisual
-            ?.etiqueta ||
-            "No registrado"
-        );
-
-    }
-
-    let html = "";
-
-    if(venta.pagos.efectivo > 0){
-
-        html +=
-            `Efectivo: S/ ${venta.pagos.efectivo.toFixed(2)}<br>`;
-
-    }
-
-    if(venta.pagos.yape > 0){
-
-        html +=
-            `Yape: S/ ${venta.pagos.yape.toFixed(2)}<br>`;
-
-    }
-
-    if(venta.pagos.plin > 0){
-
-        html +=
-            `Plin: S/ ${venta.pagos.plin.toFixed(2)}<br>`;
-
-    }
-
-    if(venta.pagos.tarjeta > 0){
-
-        html +=
-            `Tarjeta: S/ ${venta.pagos.tarjeta.toFixed(2)}<br>`;
-
-    }
-
-    if(venta.pagos.transferencia > 0){
-
-        html +=
-            `Transferencia: S/ ${venta.pagos.transferencia.toFixed(2)}`;
-
-    }
-
-    return html || "No registrado";
-
-}
-
-// =====================================================
-// IMPRIMIR HTML
-// =====================================================
-
-function imprimirHTMLHistorialMobile(
-    html
-){
-
-    if(
-        ventanaImpresionHistorialMobile &&
-        !ventanaImpresionHistorialMobile.closed
-    ){
-
-        ventanaImpresionHistorialMobile.close();
-
-    }
-
-    ventanaImpresionHistorialMobile =
-        window.open(
-            "",
-            "_blank",
-            "width=430,height=720"
-        );
-
-    if(
-        !ventanaImpresionHistorialMobile
-    ){
-
-        window.alert(
-            "El navegador bloqueó la ventana de impresión."
-        );
-
-        return;
-
-    }
-
-    ventanaImpresionHistorialMobile.document.open();
-
-    ventanaImpresionHistorialMobile.document.write(
-        html
-    );
-
-    ventanaImpresionHistorialMobile.document.close();
-
-    ventanaImpresionHistorialMobile.onload =
-    function(){
-
-        const imagenes =
-            Array.from(
-                ventanaImpresionHistorialMobile
-                .document
-                .images
+        const html =
+            construirHTMLReimpresionBoletaMobile(
+                venta
             );
 
-        const esperarImagenes =
-            imagenes.map(function(imagen){
 
-                if(imagen.complete){
+        await imprimirHTMLBoletaMobile(
+            html
+        );
 
-                    return Promise.resolve();
+    }catch(error){
 
-                }
+        console.error(
+            "[Historial Mobile] Error al reimprimir boleta:",
+            error
+        );
 
-                return new Promise(function(resolve){
 
-                    imagen.addEventListener(
-                        "load",
-                        resolve,
-                        {
-                            once: true
-                        }
-                    );
+        window.alert(
+            error?.message ||
+            "No se pudo preparar la reimpresión."
+        );
 
-                    imagen.addEventListener(
-                        "error",
-                        resolve,
-                        {
-                            once: true
-                        }
-                    );
-
-                });
-
-            });
-
-        Promise.all(
-            esperarImagenes
-        )
-        .then(function(){
-
-            ventanaImpresionHistorialMobile.focus();
-
-            ventanaImpresionHistorialMobile.print();
-
-        });
-
-    };
+    }
 
 }
 
