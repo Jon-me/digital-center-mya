@@ -6,7 +6,8 @@
 
 import {
     diagnosticarDatosOperativosMobile,
-    restablecerDatosOperativosMobile
+    restablecerDatosOperativosMobile,
+    eliminarSoloVentasMobile
 } from "../services/mantenimiento-mobile-service.js";
 
 let renderizada =

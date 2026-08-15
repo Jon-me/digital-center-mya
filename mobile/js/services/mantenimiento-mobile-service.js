@@ -314,3 +314,190 @@ export async function restablecerDatosOperativosMobile(
     }
 
 }
+
+/**
+ * Elimina únicamente:
+ * - ventas
+ * - boletas
+ *
+ * Conserva:
+ * - cajas
+ * - gastos
+ * - correlativo
+ * - productos
+ * - stock
+ * - usuarios
+ */
+export async function eliminarSoloVentasMobile(
+    confirmacion
+){
+
+    const frase =
+        String(
+            confirmacion || ""
+        )
+            .trim()
+            .replace(
+                /\s+/g,
+                " "
+            )
+            .toUpperCase();
+
+
+    if(
+        frase !==
+        "RESTABLECER DIGITAL CENTER"
+    ){
+
+        throw new Error(
+            "La frase de confirmación no coincide."
+        );
+
+    }
+
+
+    try{
+
+        const eliminarSoloVentas =
+            httpsCallable(
+                mobileFunctions,
+                "eliminarSoloVentas"
+            );
+
+
+        const respuesta =
+            await eliminarSoloVentas({
+                confirmacion:
+                    frase
+            });
+
+
+        const datos =
+            respuesta?.data || {};
+
+
+        if(
+            datos.ok !==
+            true
+        ){
+
+            throw new Error(
+                datos.mensaje ||
+                "La eliminación de ventas no pudo completarse."
+            );
+
+        }
+
+
+        return {
+            ok:
+                true,
+
+            mensaje:
+                datos.mensaje ||
+                "Las ventas y boletas fueron eliminadas correctamente.",
+
+            eliminados: {
+                ventas:
+                    Number(
+                        datos.eliminados?.ventas || 0
+                    ),
+
+                boletas:
+                    Number(
+                        datos.eliminados?.boletas || 0
+                    ),
+
+                cajas:
+                    Number(
+                        datos.eliminados?.cajas || 0
+                    ),
+
+                gastos:
+                    Number(
+                        datos.eliminados?.gastos || 0
+                    )
+            },
+
+            correlativo: {
+                anterior:
+                    Number(
+                        datos.correlativo?.anterior || 0
+                    ),
+
+                actual:
+                    Number(
+                        datos.correlativo?.actual || 0
+                    )
+            },
+
+            inventarioProtegido:
+                datos.inventarioProtegido === true,
+
+            auditoriaId:
+                String(
+                    datos.auditoriaId || ""
+                )
+        };
+
+    }catch(error){
+
+        console.error(
+            "[Mantenimiento Mobile] Error al eliminar solo ventas:",
+            error
+        );
+
+
+        const codigo =
+            String(
+                error?.code || ""
+            );
+
+
+        if(
+            codigo.includes(
+                "unauthenticated"
+            )
+        ){
+
+            throw new Error(
+                "Debes iniciar sesión nuevamente."
+            );
+
+        }
+
+
+        if(
+            codigo.includes(
+                "permission-denied"
+            )
+        ){
+
+            throw new Error(
+                "Esta herramienta está disponible únicamente para administradores."
+            );
+
+        }
+
+
+        if(
+            codigo.includes(
+                "failed-precondition"
+            )
+        ){
+
+            throw new Error(
+                "La frase de confirmación no coincide."
+            );
+
+        }
+
+
+        throw new Error(
+            error?.message ||
+            "No se pudo completar la eliminación de ventas."
+        );
+
+    }
+
+}

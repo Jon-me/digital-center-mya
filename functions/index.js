@@ -124,6 +124,188 @@ async function eliminarColeccionRecursivamente(nombreColeccion) {
 }
 
 /**
+ * Ejecuta una limpieza operativa configurable.
+ *
+ * Este motor centraliza:
+ * - conteo previo;
+ * - eliminación de colecciones;
+ * - reinicio opcional del correlativo;
+ * - auditoría;
+ * - resumen final.
+ *
+ * Nunca modifica:
+ * - productos;
+ * - stock;
+ * - stockTiendas;
+ * - precios;
+ * - imágenes;
+ * - usuarios;
+ * - roles;
+ * - tokens de notificaciones.
+ */
+async function ejecutarLimpiezaOperativa({
+    administrador,
+    accion,
+    eliminarVentas = false,
+    eliminarBoletas = false,
+    eliminarCajas = false,
+    reiniciarCorrelativo = false
+}) {
+    const [
+        ventasAntes,
+        boletasAntes,
+        cajasAntes,
+        gastosAntes,
+        ultimoNumeroBoletaAntes
+    ] = await Promise.all([
+        eliminarVentas
+            ? contarColeccion("ventas")
+            : Promise.resolve(0),
+
+        eliminarBoletas
+            ? contarColeccion("boletas")
+            : Promise.resolve(0),
+
+        eliminarCajas
+            ? contarColeccion("cajas")
+            : Promise.resolve(0),
+
+        eliminarCajas
+            ? contarGastosDeCajas()
+            : Promise.resolve(0),
+
+        obtenerUltimoNumeroBoleta()
+    ]);
+
+
+    if (eliminarVentas) {
+        await eliminarColeccionRecursivamente(
+            "ventas"
+        );
+    }
+
+
+    if (eliminarBoletas) {
+        await eliminarColeccionRecursivamente(
+            "boletas"
+        );
+    }
+
+
+    if (eliminarCajas) {
+        await eliminarColeccionRecursivamente(
+            "cajas"
+        );
+    }
+
+
+    let correlativoActual =
+        ultimoNumeroBoletaAntes;
+
+
+    if (reiniciarCorrelativo) {
+        correlativoActual = 0;
+
+        await db
+            .collection("configuracion")
+            .doc("boletas")
+            .set(
+                {
+                    ultimoNumero:
+                        0,
+
+                    actualizadoEn:
+                        admin.firestore.FieldValue.serverTimestamp(),
+
+                    actualizadoPor:
+                        administrador.uid
+                },
+                {
+                    merge:
+                        true
+                }
+            );
+    }
+
+
+    const eliminados = {
+        ventas:
+            ventasAntes,
+
+        boletas:
+            boletasAntes,
+
+        cajas:
+            cajasAntes,
+
+        gastos:
+            gastosAntes
+    };
+
+
+    const auditoriaRef =
+        await db
+            .collection("mantenimientoAuditoria")
+            .add({
+                accion,
+
+                ejecutadoPor: {
+                    uid:
+                        administrador.uid,
+
+                    email:
+                        administrador.email,
+
+                    nombre:
+                        administrador.nombre,
+
+                    rol:
+                        administrador.rol
+                },
+
+                configuracion: {
+                    eliminarVentas,
+                    eliminarBoletas,
+                    eliminarCajas,
+                    reiniciarCorrelativo
+                },
+
+                eliminados,
+
+                correlativoAnterior:
+                    ultimoNumeroBoletaAntes,
+
+                correlativoNuevo:
+                    correlativoActual,
+
+                inventarioModificado:
+                    false,
+
+                fecha:
+                    admin.firestore.FieldValue.serverTimestamp()
+            });
+
+
+    return {
+        eliminados,
+
+        correlativo: {
+            anterior:
+                ultimoNumeroBoletaAntes,
+
+            actual:
+                correlativoActual
+        },
+
+        inventarioProtegido:
+            true,
+
+        auditoriaId:
+            auditoriaRef.id
+    };
+}
+
+/**
  * ============================================================
  * NOTIFICACIÓN AUTOMÁTICA AL CREAR UNA VENTA
  * ============================================================
@@ -301,116 +483,59 @@ exports.restablecerDatosOperativos = onCall(
             administrador.email
         );
 
-        try {
-            /*
-             * Primero contamos los registros.
-             * Este resumen se devolverá al finalizar.
-             */
-            const [
-                ventasAntes,
-                boletasAntes,
-                cajasAntes,
-                gastosAntes,
-                ultimoNumeroBoletaAntes
-            ] = await Promise.all([
-                contarColeccion("ventas"),
-                contarColeccion("boletas"),
-                contarColeccion("cajas"),
-                contarGastosDeCajas(),
-                obtenerUltimoNumeroBoleta()
-            ]);
+try {
 
-            /*
-             * Eliminamos únicamente las colecciones operativas.
-             *
-             * La eliminación de cajas es recursiva, por lo que también
-             * elimina cajas/{cajaId}/gastos.
-             */
-            await eliminarColeccionRecursivamente("ventas");
-            await eliminarColeccionRecursivamente("boletas");
-            await eliminarColeccionRecursivamente("cajas");
+    const resultado =
+        await ejecutarLimpiezaOperativa({
 
-            /*
-             * Reiniciamos el correlativo de las boletas.
-             *
-             * merge:true evita eliminar otros campos que puedan existir
-             * dentro de configuracion/boletas.
-             */
-            await db
-                .collection("configuracion")
-                .doc("boletas")
-                .set(
-                    {
-                        ultimoNumero: 0,
-                        actualizadoEn:
-                            admin.firestore.FieldValue.serverTimestamp(),
-                        actualizadoPor: administrador.uid
-                    },
-                    {
-                        merge: true
-                    }
-                );
+            administrador,
 
-            /*
-             * Registramos quién ejecutó la operación.
-             *
-             * Esta colección no forma parte del historial operativo
-             * y no se elimina durante el restablecimiento.
-             */
-            const auditoriaRef = await db
-                .collection("mantenimientoAuditoria")
-                .add({
-                    accion: "restablecerDatosOperativos",
+            accion:
+                "restablecerDatosOperativos",
 
-                    ejecutadoPor: {
-                        uid: administrador.uid,
-                        email: administrador.email,
-                        nombre: administrador.nombre,
-                        rol: administrador.rol
-                    },
+            eliminarVentas:
+                true,
 
-                    eliminados: {
-                        ventas: ventasAntes,
-                        boletas: boletasAntes,
-                        cajas: cajasAntes,
-                        gastos: gastosAntes
-                    },
+            eliminarBoletas:
+                true,
 
-                    correlativoAnterior: ultimoNumeroBoletaAntes,
-                    correlativoNuevo: 0,
+            eliminarCajas:
+                true,
 
-                    inventarioModificado: false,
+            reiniciarCorrelativo:
+                true
 
-                    fecha:
-                        admin.firestore.FieldValue.serverTimestamp()
-                });
+        });
 
-            console.warn(
-                "RESTABLECIMIENTO completado:",
-                auditoriaRef.id
-            );
 
-            return {
-                ok: true,
+    console.warn(
+        "RESTABLECIMIENTO completado:",
+        resultado.auditoriaId
+    );
 
-                mensaje:
-                    "Los datos operativos fueron restablecidos correctamente.",
 
-                eliminados: {
-                    ventas: ventasAntes,
-                    boletas: boletasAntes,
-                    cajas: cajasAntes,
-                    gastos: gastosAntes
-                },
+    return {
 
-                correlativo: {
-                    anterior: ultimoNumeroBoletaAntes,
-                    actual: 0
-                },
+        ok:
+            true,
 
-                inventarioProtegido: true,
-                auditoriaId: auditoriaRef.id
-            };
+        mensaje:
+            "Los datos operativos fueron restablecidos correctamente.",
+
+        eliminados:
+            resultado.eliminados,
+
+        correlativo:
+            resultado.correlativo,
+
+        inventarioProtegido:
+            resultado.inventarioProtegido,
+
+        auditoriaId:
+            resultado.auditoriaId
+
+    };
+    
         } catch (error) {
             console.error(
                 "Error al restablecer los datos operativos:",
@@ -426,5 +551,123 @@ exports.restablecerDatosOperativos = onCall(
                 "No se pudo completar el restablecimiento de datos operativos."
             );
         }
+    }
+);
+
+/**
+ * ============================================================
+ * ELIMINAR SOLO VENTAS
+ * ============================================================
+ *
+ * ELIMINA:
+ * - ventas
+ * - boletas
+ *
+ * NO MODIFICA:
+ * - cajas
+ * - gastos
+ * - correlativo
+ * - inventario
+ */
+exports.eliminarSoloVentas = onCall(
+    {
+        region: "southamerica-west1",
+        timeoutSeconds: 540,
+        memory: "512MiB"
+    },
+    async (request) => {
+
+        const administrador =
+            verificarAdministrador(request);
+
+        const confirmacion =
+            String(
+                request.data?.confirmacion || ""
+            ).trim();
+
+        if (
+            confirmacion !==
+            FRASE_RESTABLECIMIENTO
+        ) {
+            throw new HttpsError(
+                "failed-precondition",
+                `Debes escribir exactamente: ${FRASE_RESTABLECIMIENTO}`
+            );
+        }
+
+        console.warn(
+            "ELIMINAR SOLO VENTAS solicitado por:",
+            administrador.uid,
+            administrador.email
+        );
+
+        try {
+
+            const resultado =
+                await ejecutarLimpiezaOperativa({
+
+                    administrador,
+
+                    accion:
+                        "eliminarSoloVentas",
+
+                    eliminarVentas:
+                        true,
+
+                    eliminarBoletas:
+                        true,
+
+                    eliminarCajas:
+                        false,
+
+                    reiniciarCorrelativo:
+                        false
+
+                });
+
+            console.warn(
+                "ELIMINAR SOLO VENTAS completado:",
+                resultado.auditoriaId
+            );
+
+            return {
+
+                ok: true,
+
+                mensaje:
+                    "Las ventas y boletas fueron eliminadas correctamente.",
+
+                eliminados:
+                    resultado.eliminados,
+
+                correlativo:
+                    resultado.correlativo,
+
+                inventarioProtegido:
+                    resultado.inventarioProtegido,
+
+                auditoriaId:
+                    resultado.auditoriaId
+
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Error al eliminar solo ventas:",
+                error
+            );
+
+            if (error instanceof HttpsError) {
+                throw error;
+            }
+
+            throw new HttpsError(
+                "internal",
+                "No se pudo completar la eliminación de ventas."
+            );
+
+        }
+
     }
 );
