@@ -87,6 +87,52 @@ let manejadorResizeVentasMobile =
 let descuentoCheckoutVentasMobile =
     0;
 
+let clienteBoletaVentasMobile = {
+
+    nombre:
+        "CLIENTE GENERAL",
+
+    dni:
+        "-"
+
+};
+
+
+function limpiarClienteBoletaVentasMobile(){
+
+    clienteBoletaVentasMobile = {
+
+        nombre:
+            "CLIENTE GENERAL",
+
+        dni:
+            "-"
+
+    };
+
+}
+
+
+function obtenerClienteBoletaVentasMobile(){
+
+    return {
+
+        nombre:
+            String(
+                clienteBoletaVentasMobile.nombre ||
+                "CLIENTE GENERAL"
+            ).trim(),
+
+        dni:
+            String(
+                clienteBoletaVentasMobile.dni ||
+                "-"
+            ).trim()
+
+    };
+
+}    
+
 // =====================================================
 // RENDER PRINCIPAL
 // =====================================================
@@ -2163,10 +2209,294 @@ inicializarDescuentoCheckoutMobile(
     resumen
 );
 
+actualizarClienteCheckoutVentasMobile();
+
 
     sheet.portal.addEventListener(
     "click",
     async function(evento){
+
+const botonCliente =
+    evento.target.closest(
+        "[data-checkout-client]"
+    );
+
+
+if(botonCliente){
+
+    const panel =
+        sheet.portal.querySelector(
+            "[data-checkout-client-panel]"
+        );
+
+
+    if(!panel){
+
+        return;
+
+    }
+
+
+    const abrir =
+        panel.hidden;
+
+
+    panel.hidden =
+        !abrir;
+
+
+    botonCliente.setAttribute(
+        "aria-expanded",
+        abrir
+            ? "true"
+            : "false"
+    );
+
+
+    botonCliente.classList.toggle(
+        "is-open",
+        abrir
+    );
+
+
+    if(abrir){
+
+        const cliente =
+            obtenerClienteBoletaVentasMobile();
+
+
+        const inputNombre =
+            panel.querySelector(
+                "#mobileClientReceiptName"
+            );
+
+
+        const inputDni =
+            panel.querySelector(
+                "#mobileClientReceiptDni"
+            );
+
+
+        if(inputNombre){
+
+            inputNombre.value =
+                cliente.nombre ===
+                "CLIENTE GENERAL"
+                    ? ""
+                    : cliente.nombre;
+
+        }
+
+
+        if(inputDni){
+
+            inputDni.value =
+                cliente.dni === "-"
+                    ? ""
+                    : cliente.dni;
+
+        }
+
+    }
+
+
+    return;
+
+}
+
+const botonGuardarCliente =
+    evento.target.closest(
+        "[data-client-save]"
+    );
+
+
+if(botonGuardarCliente){
+
+    const panel =
+        sheet.portal.querySelector(
+            "[data-checkout-client-panel]"
+        );
+
+
+    const inputNombre =
+        panel?.querySelector(
+            "#mobileClientReceiptName"
+        );
+
+
+    const inputDni =
+        panel?.querySelector(
+            "#mobileClientReceiptDni"
+        );
+
+
+    const nombre =
+        String(
+            inputNombre?.value || ""
+        ).trim();
+
+
+    const dni =
+        String(
+            inputDni?.value || ""
+        )
+        .replace(/\D/g, "")
+        .slice(0, 8);
+
+
+    if(!nombre){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "Ingresa el nombre del cliente."
+
+        });
+
+        inputNombre?.focus();
+
+        return;
+
+    }
+
+
+    if(
+        dni &&
+        dni.length !== 8
+    ){
+
+        mostrarToast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "El DNI debe tener 8 dígitos."
+
+        });
+
+        inputDni?.focus();
+
+        return;
+
+    }
+
+
+    clienteBoletaVentasMobile = {
+
+        nombre,
+
+        dni:
+            dni || "-"
+
+    };
+
+
+    actualizarClienteCheckoutVentasMobile();
+
+
+    if(panel){
+
+        panel.hidden =
+            true;
+
+    }
+
+
+    const botonClientePrincipal =
+        sheet.portal.querySelector(
+            "[data-checkout-client]"
+        );
+
+
+    botonClientePrincipal?.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    botonClientePrincipal?.classList.remove(
+        "is-open"
+    );
+
+
+    mostrarToast({
+
+        tipo:
+            "success",
+
+        mensaje:
+            "Datos del cliente guardados."
+
+    });
+
+
+    return;
+
+}
+
+
+const botonClienteGeneral =
+    evento.target.closest(
+        "[data-client-general]"
+    );
+
+
+if(botonClienteGeneral){
+
+    limpiarClienteBoletaVentasMobile();
+
+    actualizarClienteCheckoutVentasMobile();
+
+
+    const panel =
+        sheet.portal.querySelector(
+            "[data-checkout-client-panel]"
+        );
+
+
+    if(panel){
+
+        panel.hidden =
+            true;
+
+    }
+
+
+    const botonClientePrincipal =
+        sheet.portal.querySelector(
+            "[data-checkout-client]"
+        );
+
+
+    botonClientePrincipal?.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    botonClientePrincipal?.classList.remove(
+        "is-open"
+    );
+
+
+    mostrarToast({
+
+        tipo:
+            "info",
+
+        mensaje:
+            "Se usará Cliente general."
+
+    });
+
+
+    return;
+
+}
 
         const botonMetodo =
             evento.target.closest(
@@ -2344,6 +2674,46 @@ function obtenerDescuentoCheckoutMobile(){
     return redondearMontoVentasMobile(
         descuentoCheckoutVentasMobile
     );
+
+}
+
+function actualizarClienteCheckoutVentasMobile(){
+
+    const cliente =
+        obtenerClienteBoletaVentasMobile();
+
+
+    const nombre =
+        document.getElementById(
+            "mobileCheckoutClientName"
+        );
+
+
+    const documento =
+        document.getElementById(
+            "mobileCheckoutClientDocument"
+        );
+
+
+    if(nombre){
+
+        nombre.textContent =
+            cliente.nombre ===
+            "CLIENTE GENERAL"
+                ? "Cliente general"
+                : cliente.nombre;
+
+    }
+
+
+    if(documento){
+
+        documento.textContent =
+            cliente.dni === "-"
+                ? "Sin DNI"
+                : `DNI ${cliente.dni}`;
+
+    }
 
 }
 
@@ -2628,6 +2998,9 @@ async function confirmarPagoDigitalVentasMobile(
 
     try{
 
+        const cliente =
+            obtenerClienteBoletaVentasMobile();
+
         const resultado =
             await registrarVentaMobile({
 
@@ -2640,7 +3013,13 @@ async function confirmarPagoDigitalVentasMobile(
                     totalFinal,
 
                 vuelto:
-                    0
+                    0,
+
+                clienteNombre:
+                    cliente.nombre,
+
+                clienteDni:
+                    cliente.dni    
 
             });
 
@@ -2680,6 +3059,8 @@ async function confirmarPagoDigitalVentasMobile(
 
 
         vaciarCarritoMobile();
+
+        limpiarClienteBoletaVentasMobile();
 
         descuentoCheckoutVentasMobile =
             0;
@@ -3845,6 +4226,8 @@ const totalActual =
                 pagos.efectivo || 0
             );
 
+        const cliente =
+            obtenerClienteBoletaVentasMobile();    
 
         const resultado =
             await registrarVentaMobile({
@@ -3860,7 +4243,13 @@ const totalActual =
                     efectivo,
 
                 vuelto:
-                    0
+                    0,
+
+                clienteNombre:
+                    cliente.nombre,
+
+                clienteDni:
+                    cliente.dni    
 
             });
 
@@ -3897,6 +4286,8 @@ const venta =
     resultado.venta;
 
 vaciarCarritoMobile();
+
+limpiarClienteBoletaVentasMobile();
 
 OverlayMobile.close();
 
@@ -5178,6 +5569,9 @@ async function confirmarCobroEfectivoVentasMobile(
 
     }
 
+    const cliente =
+        obtenerClienteBoletaVentasMobile();
+
 
     const resultado =
         await registrarVentaMobile({
@@ -5191,7 +5585,13 @@ async function confirmarCobroEfectivoVentasMobile(
                 recibidoNormalizado,
 
             vuelto:
-                vueltoCalculado
+                vueltoCalculado,
+
+            clienteNombre:
+                cliente.nombre,
+
+            clienteDni:
+                cliente.dni    
 
         });
 
@@ -5229,6 +5629,8 @@ async function confirmarCobroEfectivoVentasMobile(
 
 
     vaciarCarritoMobile();
+
+    limpiarClienteBoletaVentasMobile();
 
     descuentoCheckoutVentasMobile =
         0;
@@ -5485,6 +5887,137 @@ return `
             </div>
 
         </header>
+
+<section class="mobile-checkout-client">
+
+    <button
+        type="button"
+        class="mobile-checkout-client-button"
+        data-checkout-client
+        aria-expanded="false"
+    >
+
+        <span
+            class="mobile-checkout-client-icon"
+            aria-hidden="true"
+        >
+            👤
+        </span>
+
+        <span class="mobile-checkout-client-copy">
+
+            <small>
+                DATOS PARA BOLETA
+            </small>
+
+            <strong id="mobileCheckoutClientName">
+                Cliente general
+            </strong>
+
+            <span id="mobileCheckoutClientDocument">
+                Sin DNI
+            </span>
+
+        </span>
+
+        <span
+            class="mobile-checkout-client-chevron"
+            aria-hidden="true"
+        >
+            ›
+        </span>
+
+    </button>
+
+
+    <div
+        class="mobile-checkout-client-panel"
+        data-checkout-client-panel
+        hidden
+    >
+
+        <label class="mobile-client-sheet-field">
+
+            <span>
+                Nombre del cliente
+            </span>
+
+            <div class="mobile-client-sheet-input-wrap">
+
+                <span aria-hidden="true">
+                    👤
+                </span>
+
+                <input
+                    id="mobileClientReceiptName"
+                    type="text"
+                    maxlength="80"
+                    autocomplete="name"
+                    placeholder="Ej. Juan Pérez"
+                >
+
+            </div>
+
+        </label>
+
+
+        <label class="mobile-client-sheet-field">
+
+            <span>
+                DNI
+            </span>
+
+            <div class="mobile-client-sheet-input-wrap">
+
+                <span aria-hidden="true">
+                    🪪
+                </span>
+
+                <input
+                    id="mobileClientReceiptDni"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="8"
+                    autocomplete="off"
+                    placeholder="12345678"
+                >
+
+            </div>
+
+            <small>
+                El DNI debe tener 8 dígitos.
+            </small>
+
+        </label>
+
+
+        <div class="mobile-checkout-client-actions">
+
+            <button
+                type="button"
+                class="mobile-client-sheet-general"
+                data-client-general
+            >
+                Usar cliente general
+            </button>
+
+            <button
+                type="button"
+                class="
+                    mobile-button
+                    mobile-button-primary
+                    mobile-client-sheet-save
+                "
+                data-client-save
+            >
+                Guardar datos
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
 
             <div class="mobile-checkout-section-header">
 

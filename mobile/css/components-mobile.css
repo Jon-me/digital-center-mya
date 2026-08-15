@@ -1726,3 +1726,745 @@
     }
 
 }
+
+/* =====================================================
+   DIGITAL CENTER M&A
+   CLIENTE PARA BOLETA — PREMIUM CHECKOUT
+   M14.4
+===================================================== */
+
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+.mobile-checkout-client {
+    position: relative;
+
+    width: 100%;
+    margin: 14px 0 18px;
+}
+
+
+/* =====================================================
+   TARJETA PRINCIPAL
+===================================================== */
+
+.mobile-checkout-client-button {
+    position: relative;
+    isolation: isolate;
+
+    display: grid;
+    grid-template-columns:
+        46px
+        minmax(0, 1fr)
+        32px;
+
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 72px;
+
+    padding:
+        12px
+        12px
+        12px
+        13px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(104, 165, 255, 0.17);
+
+    border-radius: 19px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12, 31, 67, 0.98) 0%,
+            rgba(7, 21, 48, 0.99) 48%,
+            rgba(5, 16, 37, 1) 100%
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.055),
+
+        inset 0 -1px 0
+        rgba(0, 0, 0, 0.22),
+
+        0 10px 28px
+        rgba(0, 0, 0, 0.22);
+
+    color: #ffffff;
+
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+    transition:
+        transform 150ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease;
+}
+
+
+/* =====================================================
+   LUZ AMBIENTAL
+===================================================== */
+
+.mobile-checkout-client-button::after {
+    content: "";
+
+    position: absolute;
+    z-index: -1;
+
+    width: 150px;
+    height: 150px;
+
+    top: -105px;
+    right: -40px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59, 130, 246, 0.19) 0%,
+            rgba(37, 99, 235, 0.07) 42%,
+            transparent 72%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   ACENTO LATERAL
+===================================================== */
+
+.mobile-checkout-client-button::before {
+    content: "";
+
+    position: absolute;
+
+    top: 16px;
+    bottom: 16px;
+    left: 0;
+
+    width: 3px;
+
+    border-radius:
+        0
+        999px
+        999px
+        0;
+
+    background:
+        linear-gradient(
+            180deg,
+            #79c4ff 0%,
+            #3b82f6 48%,
+            #2563eb 100%
+        );
+
+    box-shadow:
+        0 0 9px
+        rgba(59, 130, 246, 0.72),
+
+        0 0 20px
+        rgba(37, 99, 235, 0.28);
+}
+
+
+/* =====================================================
+   INTERACCIÓN
+===================================================== */
+
+.mobile-checkout-client-button:hover {
+    border-color:
+        rgba(112, 177, 255, 0.3);
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.07),
+
+        0 12px 30px
+        rgba(0, 0, 0, 0.25),
+
+        0 0 0 1px
+        rgba(59, 130, 246, 0.035);
+}
+
+
+.mobile-checkout-client-button:active {
+    transform:
+        scale(0.985);
+
+    border-color:
+        rgba(120, 185, 255, 0.34);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 37, 79, 0.99),
+            rgba(7, 23, 52, 1)
+        );
+}
+
+
+.mobile-checkout-client-button:focus-visible {
+    border-color:
+        rgba(112, 183, 255, 0.58);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59, 130, 246, 0.13),
+
+        0 12px 30px
+        rgba(0, 0, 0, 0.24);
+}
+
+
+/* =====================================================
+   ICONO
+===================================================== */
+
+.mobile-checkout-client-icon {
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    width: 46px;
+    height: 46px;
+
+    border:
+        1px solid
+        rgba(119, 181, 255, 0.18);
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(55, 113, 214, 0.28),
+            rgba(22, 57, 119, 0.16)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.07),
+
+        0 6px 18px
+        rgba(0, 0, 0, 0.15);
+
+    font-size: 19px;
+    line-height: 1;
+}
+
+
+/* =====================================================
+   INFORMACIÓN DEL CLIENTE
+===================================================== */
+
+.mobile-checkout-client-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    min-width: 0;
+}
+
+
+.mobile-checkout-client-copy small {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        rgba(119, 176, 255, 0.82);
+
+    font-size: 7px;
+    font-weight: 900;
+
+    line-height: 1;
+
+    letter-spacing:
+        0.13em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.mobile-checkout-client-copy strong {
+    display: block;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    color:
+        rgba(248, 251, 255, 0.98);
+
+    font-size: 12px;
+    font-weight: 900;
+
+    line-height: 1.25;
+
+    letter-spacing:
+        -0.01em;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.mobile-checkout-client-copy > span {
+    display: block;
+
+    margin-top: 3px;
+
+    overflow: hidden;
+
+    color:
+        rgba(174, 197, 231, 0.57);
+
+    font-size: 8px;
+    font-weight: 650;
+
+    line-height: 1.25;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   FLECHA
+===================================================== */
+
+.mobile-checkout-client-chevron {
+    display: grid;
+    place-items: center;
+
+    width: 30px;
+    height: 30px;
+
+    border:
+        1px solid
+        rgba(108, 169, 255, 0.13);
+
+    border-radius: 11px;
+
+    background:
+        rgba(40, 88, 171, 0.11);
+
+    color:
+        rgba(144, 194, 255, 0.88);
+
+    font-size: 21px;
+    font-weight: 400;
+
+    line-height: 1;
+
+    transition:
+        transform 150ms ease,
+        background 150ms ease,
+        border-color 150ms ease;
+}
+
+
+.mobile-checkout-client-button:hover
+.mobile-checkout-client-chevron {
+    background:
+        rgba(48, 105, 202, 0.18);
+
+    border-color:
+        rgba(112, 175, 255, 0.22);
+}
+
+
+.mobile-checkout-client-button:active
+.mobile-checkout-client-chevron {
+    transform:
+        translateX(2px);
+}
+
+
+/* =====================================================
+   MICRO BRILLO SUPERIOR
+===================================================== */
+
+.mobile-checkout-client-icon::after {
+    content: "";
+
+    position: absolute;
+
+    top: 5px;
+    left: 8px;
+
+    width: 20px;
+    height: 8px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.09),
+            transparent
+        );
+
+    transform:
+        rotate(-12deg);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   MOBILE PEQUEÑO
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .mobile-checkout-client-button {
+        grid-template-columns:
+            42px
+            minmax(0, 1fr)
+            28px;
+
+        gap: 9px;
+
+        min-height: 66px;
+
+        padding:
+            10px
+            10px
+            10px
+            12px;
+
+        border-radius: 17px;
+    }
+
+
+    .mobile-checkout-client-icon {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 13px;
+
+        font-size: 17px;
+    }
+
+
+    .mobile-checkout-client-chevron {
+        width: 28px;
+        height: 28px;
+    }
+
+}
+
+/* =====================================================
+   CLIENTE PARA BOLETA — PREMIUM SHEET
+===================================================== */
+
+.mobile-client-sheet {
+    display: grid;
+    gap: 14px;
+}
+
+
+.mobile-client-sheet-header {
+    display: grid;
+    grid-template-columns:
+        44px
+        minmax(0, 1fr);
+
+    align-items: center;
+    gap: 11px;
+
+    padding:
+        12px;
+
+    border:
+        1px solid
+        rgba(94, 160, 255, 0.14);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11, 28, 61, 0.92),
+            rgba(6, 18, 42, 0.96)
+        );
+}
+
+
+.mobile-client-sheet-icon {
+    display: grid;
+    place-items: center;
+
+    width: 44px;
+    height: 44px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(52, 108, 208, 0.26),
+            rgba(20, 55, 118, 0.15)
+        );
+
+    border:
+        1px solid
+        rgba(110, 174, 255, 0.18);
+
+    font-size: 18px;
+}
+
+
+.mobile-client-sheet-eyebrow {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        rgba(111, 171, 255, 0.78);
+
+    font-size: 7px;
+    font-weight: 900;
+
+    letter-spacing:
+        0.11em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.mobile-client-sheet-header strong {
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+.mobile-client-sheet-fields {
+    display: grid;
+    gap: 12px;
+}
+
+
+.mobile-client-sheet-field {
+    display: grid;
+    gap: 6px;
+}
+
+
+.mobile-client-sheet-field > span {
+    color:
+        rgba(154, 184, 226, 0.72);
+
+    font-size: 8px;
+    font-weight: 850;
+
+    letter-spacing:
+        0.07em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.mobile-client-sheet-input-wrap {
+    display: grid;
+    grid-template-columns:
+        30px
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    min-height: 48px;
+
+    padding:
+        0
+        12px;
+
+    border:
+        1px solid
+        rgba(98, 161, 255, 0.14);
+
+    border-radius: 15px;
+
+    background:
+        rgba(6, 18, 42, 0.74);
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.mobile-client-sheet-input-wrap:focus-within {
+    border-color:
+        rgba(93, 164, 255, 0.42);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59, 130, 246, 0.11);
+
+    background:
+        rgba(8, 24, 54, 0.9);
+}
+
+
+.mobile-client-sheet-input-wrap > span {
+    opacity: 0.72;
+
+    font-size: 15px;
+}
+
+
+.mobile-client-sheet-input-wrap input {
+    width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    background:
+        transparent;
+
+    color:
+        #ffffff;
+
+    font: inherit;
+
+    font-size: 12px;
+    font-weight: 750;
+}
+
+
+.mobile-client-sheet-input-wrap input::placeholder {
+    color:
+        rgba(170, 193, 226, 0.28);
+}
+
+
+.mobile-client-sheet-field small {
+    color:
+        rgba(155, 180, 217, 0.45);
+
+    font-size: 7px;
+}
+
+
+.mobile-client-sheet-general {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    width: 100%;
+
+    padding:
+        11px
+        12px;
+
+    border:
+        1px solid
+        rgba(103, 159, 241, 0.11);
+
+    border-radius: 14px;
+
+    background:
+        rgba(8, 19, 43, 0.66);
+
+    color:
+        rgba(213, 226, 247, 0.72);
+
+    font: inherit;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+
+.mobile-client-sheet-general:active {
+    transform:
+        scale(0.99);
+}
+
+
+.mobile-client-sheet-save {
+    width: 100%;
+
+    min-height: 48px;
+
+    border-radius: 15px;
+}
+
+.mobile-checkout-client-panel {
+    display: grid;
+    gap: 12px;
+
+    margin-top: 10px;
+    padding: 13px;
+
+    border:
+        1px solid
+        rgba(95, 158, 255, 0.13);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8, 23, 51, 0.96),
+            rgba(5, 17, 39, 0.98)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.035);
+}
+
+
+.mobile-checkout-client-panel[hidden] {
+    display: none;
+}
+
+
+.mobile-checkout-client-actions {
+    display: grid;
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap: 9px;
+
+    margin-top: 2px;
+}
+
+
+.mobile-checkout-client-button.is-open
+.mobile-checkout-client-chevron {
+    transform:
+        rotate(90deg);
+}
