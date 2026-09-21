@@ -699,7 +699,7 @@ function inicializarEventosCatalogoMobile(
                     mensaje:
                         stockDisponible > 0
                             ? `Solo tienes ${stockDisponible} unidades disponibles en esta tienda.`
-                            : "Este producto no tiene stock en tu tienda."
+                            : "Este producto no tiene stock en la tienda seleccionada."
 
                 });
 

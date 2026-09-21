@@ -310,10 +310,6 @@ return {
     claimsVersion:
         identidadEnterprise.version,
 
-    sucursalId:
-        usuarioData.sucursalId ||
-        "principal",
-
     activo:
         usuarioData.activo !== false
 

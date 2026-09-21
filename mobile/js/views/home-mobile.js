@@ -10,6 +10,10 @@ import {
 
 } from "../services/dashboard-mobile-service.js";
 
+import {
+    obtenerNombreTiendaVentaMobile
+} from "../state-mobile.js";
+
 let cancelarDashboardHomeMobile =
     null;
 
@@ -69,9 +73,7 @@ function construirHeroHomeMobile(
 
 
     const sucursal =
-        obtenerNombreSucursalHomeMobile(
-            usuario
-        );
+        obtenerNombreSucursalHomeMobile();
 
 
     return `
@@ -558,37 +560,9 @@ function formatearFechaHomeMobile(
 }
 
 
-function obtenerNombreSucursalHomeMobile(
-    usuario
-){
+function obtenerNombreSucursalHomeMobile(){
 
-    const sucursal =
-        String(
-            usuario?.sucursal ||
-            usuario?.sucursalId ||
-            localStorage.getItem(
-                "sucursalActivaMobile"
-            ) ||
-            localStorage.getItem(
-                "sucursalActiva"
-            ) ||
-            "principal"
-        );
-
-
-    const nombres = {
-
-        principal:
-            "Mercado",
-
-        sucursal:
-            "Peluquería"
-
-    };
-
-
-    return nombres[sucursal] ||
-        sucursal;
+    return obtenerNombreTiendaVentaMobile();
 
 }
 

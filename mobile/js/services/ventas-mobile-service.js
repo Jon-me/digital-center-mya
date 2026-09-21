@@ -21,7 +21,7 @@ import {
 
 import {
 
-    obtenerSucursalMobile
+    obtenerTiendaVentaMobile
 
 } from "../state-mobile.js";
 
@@ -312,22 +312,32 @@ function obtenerVentasHoyCacheMobile(){
 
 function obtenerVentasSucursalHoyMobile(){
 
-    const sucursalActiva =
-        String(
-            obtenerSucursalMobile() ||
-            "principal"
-        );
+    const tiendaActiva =
+        obtenerTiendaVentaMobile();
 
 
     return ventasHoyCacheMobile.filter(
         function(venta){
 
-            return (
+            const tiendaVenta =
                 String(
                     venta.tiendaVenta ||
-                    "principal"
-                ) ===
-                sucursalActiva
+                    "mercado"
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            const tiendaNormalizada =
+                tiendaVenta === "sucursal" ||
+                tiendaVenta === "peluquería"
+                    ? "peluqueria"
+                    : "mercado";
+
+
+            return (
+                tiendaNormalizada ===
+                tiendaActiva
             );
 
         }

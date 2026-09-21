@@ -298,7 +298,7 @@ function obtenerNombreSucursalMobile(
 
 function tieneStockOtraSucursal(
     producto,
-    sucursalUsuario
+    tiendaSeleccionada
 ){
 
     const stockTiendas =
@@ -309,7 +309,7 @@ function tieneStockOtraSucursal(
     const stockTiendaActual =
         Number(
             stockTiendas[
-                sucursalUsuario
+                tiendaSeleccionada
             ] || 0
         );
 
@@ -330,7 +330,7 @@ function tieneStockOtraSucursal(
 
             return (
                 sucursalId !==
-                    sucursalUsuario &&
+                    tiendaSeleccionada &&
                 Number(cantidad || 0) > 0
             );
 
@@ -512,16 +512,16 @@ function construirResumenStock(
             [sucursalB]
         ){
 
-            const sucursalUsuario =
+            const tiendaSeleccionada =
                 obtenerTiendaVentaMobile();
 
-            if(sucursalA === sucursalUsuario){
+            if(sucursalA === tiendaSeleccionada){
 
                 return -1;
 
             }
 
-            if(sucursalB === sucursalUsuario){
+            if(sucursalB === tiendaSeleccionada){
 
                 return 1;
 
@@ -535,7 +535,7 @@ function construirResumenStock(
             cantidad
         ]){
 
-            const esTiendaUsuario =
+            const esTiendaSeleccionada =
                 obtenerTiendaVentaMobile() ===
                 sucursalId;
 
@@ -544,7 +544,7 @@ function construirResumenStock(
 
             const clases = [
                 "mobile-product-stock-pill",
-                esTiendaUsuario
+                esTiendaSeleccionada
                     ? "is-current"
                     : "",
                 tieneStock
@@ -559,11 +559,8 @@ function construirResumenStock(
 
                     <span class="mobile-product-stock-label">
 
-                        ${
-                            esTiendaUsuario
-                                ? "Tu tienda"
-                                : escaparHTMLProducto(
-                                    obtenerNombreSucursalMobile(
+                        ${escaparHTMLProducto(
+                            obtenerNombreSucursalMobile(
                                         sucursalId
                                     )
                                 )
@@ -589,7 +586,7 @@ function construirProductCardMobile(
     usuario
 ){
 
-    const sucursalUsuario =
+    const tiendaSeleccionada =
         obtenerTiendaVentaMobile();
 
     const stockTiendas =
@@ -597,10 +594,10 @@ function construirProductCardMobile(
             producto
         );
 
-    const stockTiendaUsuario =
+    const stockTiendaSeleccionada =
         Number(
             stockTiendas[
-                sucursalUsuario
+                tiendaSeleccionada
             ] || 0
         );
 
@@ -612,11 +609,11 @@ function construirProductCardMobile(
     const disponibleOtraTienda =
         tieneStockOtraSucursal(
             producto,
-            sucursalUsuario
+            tiendaSeleccionada
         );
 
     const estadoDisponibilidad =
-        stockTiendaUsuario > 0
+        stockTiendaSeleccionada > 0
             ? {
                 clase:
                     "has-stock",
@@ -630,7 +627,7 @@ function construirProductCardMobile(
                         "is-other-store",
 
                     texto:
-                        "Otra tienda"
+                        "Disponible para traslado"
                 }
                 : {
                     clase:
@@ -642,7 +639,7 @@ function construirProductCardMobile(
 
     const clasesTarjeta = [
         "mobile-product-card",
-        stockTiendaUsuario <= 0
+        stockTiendaSeleccionada <= 0
             ? "is-unavailable-here"
             : "",
         stockTotal <= 0
@@ -793,7 +790,7 @@ function construirStockSheet(
             cantidad
         ]){
 
-            const esTiendaUsuario =
+            const esTiendaSeleccionada =
                 obtenerTiendaVentaMobile() ===
                 sucursalId;
 
@@ -803,7 +800,7 @@ function construirStockSheet(
                         mobile-product-stock-row
 
                         ${
-                            esTiendaUsuario
+                            esTiendaSeleccionada
                                 ? "is-current"
                                 : ""
                         }
@@ -838,9 +835,9 @@ function construirStockSheet(
                             <small>
 
                                 ${
-                                    esTiendaUsuario
-                                        ? "Tu tienda"
-                                        : "Otra sucursal"
+                                    esTiendaSeleccionada
+                                        ? "Tienda seleccionada"
+                                        : "Disponible en esta tienda"
                                 }
 
                             </small>

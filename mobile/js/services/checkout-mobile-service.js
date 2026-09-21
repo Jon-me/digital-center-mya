@@ -19,7 +19,6 @@ import {
 
 import {
     obtenerSesionMobile,
-    obtenerSucursalMobile,
     obtenerTiendaVentaMobile,
     obtenerNombreTiendaVentaMobile,
     normalizarTiendaVentaMobile
@@ -753,13 +752,6 @@ const {
         obtenerSesionMobile();
 
     /*
-     * Esta es la sucursal asignada al usuario.
-     * Se conserva únicamente como información.
-     */
-    const sucursalUsuario =
-        obtenerSucursalMobile();
-
-    /*
      * Esta es la tienda seleccionada para la venta.
      * De aquí se descontará el stock.
      */
@@ -861,15 +853,6 @@ const totalFinal =
             String(
                 usuario?.usuario ||
                 "Sin usuario"
-            ),
-
-        /*
-         * Sucursal asignada al usuario.
-         */
-        sucursalUsuario:
-            String(
-                sucursalUsuario ||
-                "mercado"
             ),
 
         productos,
@@ -1037,14 +1020,14 @@ if (
 
         }
 
-        /*
-         * IMPORTANTE:
-         * Ya no usamos obtenerSucursalMobile()
-         * para descontar el stock.
-         *
-         * Usamos la tienda que Admin o vendedor
-         * seleccionó antes de vender.
-         */
+/*
+ * IMPORTANTE:
+ * El stock se descuenta exclusivamente
+ * de la tienda seleccionada para la venta.
+ *
+ * Admin y vendedor pueden seleccionar
+ * Mercado o Peluquería antes de vender.
+ */
         const tiendaVenta =
             obtenerTiendaVentaMobile();
 

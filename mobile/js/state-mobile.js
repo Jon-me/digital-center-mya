@@ -18,9 +18,6 @@ const CLAVES_SESION_MOBILE = {
     rol:
         "mobileRolActivo",
 
-    sucursal:
-        "mobileSucursalActiva",
-
     // Tienda seleccionada para realizar la venta.
     tiendaVenta:
         "mobileTiendaVenta"
@@ -113,13 +110,6 @@ function normalizarTiendaVentaMobile(tienda){
 
 function guardarSesionMobile(usuario){
 
-    const sucursalUsuario =
-        normalizarTiendaVentaMobile(
-            usuario.sucursalId ||
-            usuario.sucursal ||
-            "mercado"
-        );
-
     /*
      * Conservamos la tienda elegida si ya existe.
      *
@@ -141,7 +131,7 @@ function guardarSesionMobile(usuario){
             ? normalizarTiendaVentaMobile(
                 tiendaGuardada
             )
-            : sucursalUsuario;
+            : "mercado";
 
     localStorage.setItem(
         CLAVES_SESION_MOBILE.sesion,
@@ -166,11 +156,6 @@ function guardarSesionMobile(usuario){
     );
 
     localStorage.setItem(
-        CLAVES_SESION_MOBILE.sucursal,
-        sucursalUsuario
-    );
-
-    localStorage.setItem(
         CLAVES_SESION_MOBILE.tiendaVenta,
         tiendaVentaInicial
     );
@@ -187,9 +172,6 @@ function guardarSesionMobile(usuario){
 
         rol:
             usuario.rol || "vendedor",
-
-        sucursalId:
-            sucursalUsuario
 
     };
 
@@ -216,19 +198,12 @@ function obtenerSesionMobile(){
 
     }
 
-    const sucursalUsuario =
-        normalizarTiendaVentaMobile(
-            localStorage.getItem(
-                CLAVES_SESION_MOBILE.sucursal
-            ) || "mercado"
-        );
-
     const tiendaVenta =
         normalizarTiendaVentaMobile(
             localStorage.getItem(
                 CLAVES_SESION_MOBILE.tiendaVenta
             ) ||
-            sucursalUsuario
+            "mercado"
         );
 
     const usuario = {
@@ -246,10 +221,7 @@ function obtenerSesionMobile(){
         rol:
             localStorage.getItem(
                 CLAVES_SESION_MOBILE.rol
-            ) || "vendedor",
-
-        sucursalId:
-            sucursalUsuario
+            ) || "vendedor"
 
     };
 
@@ -265,11 +237,6 @@ function obtenerSesionMobile(){
      * Esto migra silenciosamente sesiones antiguas
      * almacenadas como principal/sucursal.
      */
-
-    localStorage.setItem(
-        CLAVES_SESION_MOBILE.sucursal,
-        sucursalUsuario
-    );
 
     localStorage.setItem(
         CLAVES_SESION_MOBILE.tiendaVenta,
@@ -324,24 +291,6 @@ function obtenerRolMobile(){
 
 }
 
-
-// =====================================================
-// OBTENER SUCURSAL ASIGNADA AL USUARIO
-// =====================================================
-
-function obtenerSucursalMobile(){
-
-    return normalizarTiendaVentaMobile(
-        MobileState.usuarioActual?.sucursalId ||
-        localStorage.getItem(
-            CLAVES_SESION_MOBILE.sucursal
-        ) ||
-        "mercado"
-    );
-
-}
-
-
 // =====================================================
 // CAMBIAR TIENDA DE VENTA
 // =====================================================
@@ -378,7 +327,7 @@ function obtenerTiendaVentaMobile(){
             localStorage.getItem(
                 CLAVES_SESION_MOBILE.tiendaVenta
             ) ||
-            obtenerSucursalMobile()
+            "mercado"
         );
 
     MobileState.tiendaVenta =
@@ -430,8 +379,6 @@ export {
     limpiarSesionMobile,
 
     obtenerRolMobile,
-
-    obtenerSucursalMobile,
 
     cambiarTiendaVentaMobile,
 
