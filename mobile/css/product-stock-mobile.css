@@ -1,0 +1,1121 @@
+/* =========================================================
+   DIGITAL CENTER M&A
+   PRODUCT STOCK MANAGER MOBILE
+   INVENTORY CONTROL — PREMIUM
+========================================================= */
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+.mobile-stock-manager {
+    position: relative;
+
+    display: grid;
+    gap: 14px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 2px 0 4px;
+
+    box-sizing: border-box;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   PRODUCT HERO
+========================================================= */
+
+.mobile-stock-manager-product {
+    position: relative;
+    isolation: isolate;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+
+    min-width: 0;
+
+    padding: 16px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(89, 153, 255, 0.18);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18, 45, 91, 0.98),
+            rgba(7, 20, 47, 0.995)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.045),
+
+        0 14px 32px
+        rgba(0, 0, 0, 0.22);
+}
+
+
+.mobile-stock-manager-product::before {
+    content: "";
+
+    position: absolute;
+
+    top: -68px;
+    right: -48px;
+
+    width: 170px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(65, 145, 255, 0.20),
+            rgba(42, 96, 194, 0.055) 48%,
+            transparent 72%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-stock-manager-product::after {
+    content: "";
+
+    position: absolute;
+    z-index: 0;
+
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(102, 166, 255, 0.28),
+            transparent
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-stock-manager-product-copy,
+.mobile-stock-manager-total {
+    position: relative;
+    z-index: 1;
+}
+
+
+.mobile-stock-manager-product-copy {
+    min-width: 0;
+}
+
+
+.mobile-stock-manager-product-copy > span {
+    display: block;
+
+    color:
+        rgba(116, 174, 255, 0.72);
+
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+}
+
+
+.mobile-stock-manager-product-copy > strong {
+    display: block;
+
+    margin-top: 6px;
+
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 17px;
+    font-weight: 950;
+    line-height: 1.16;
+    letter-spacing: -0.35px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.mobile-stock-manager-product-copy > small {
+    display: block;
+
+    margin-top: 6px;
+
+    color:
+        rgba(176, 199, 234, 0.58);
+
+    font-size: 9px;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   TOTAL STOCK BADGE
+========================================================= */
+
+.mobile-stock-manager-total {
+    display: grid;
+    place-items: center;
+
+    min-width: 68px;
+    min-height: 68px;
+
+    padding: 8px;
+
+    border:
+        1px solid
+        rgba(99, 163, 255, 0.20);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(41, 91, 181, 0.24),
+            rgba(10, 31, 71, 0.62)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.055),
+
+        0 8px 22px
+        rgba(0, 0, 0, 0.18);
+
+    text-align: center;
+}
+
+
+.mobile-stock-manager-total > span {
+    display: block;
+
+    color:
+        rgba(163, 193, 237, 0.58);
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+
+.mobile-stock-manager-total > strong {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #ffffff;
+
+    font-size: 25px;
+    font-weight: 950;
+    line-height: 1;
+    letter-spacing: -0.7px;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.mobile-stock-manager-section {
+    position: relative;
+
+    display: grid;
+    gap: 11px;
+
+    padding: 14px;
+
+    border:
+        1px solid
+        rgba(102, 158, 244, 0.13);
+
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 32, 66, 0.94),
+            rgba(6, 17, 39, 0.985)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025),
+
+        0 9px 24px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+.mobile-stock-manager-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+
+.mobile-stock-manager-section-header > span {
+    color:
+        rgba(165, 190, 228, 0.58);
+
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+
+.mobile-stock-manager-section-header > strong {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color:
+        rgba(222, 234, 252, 0.90);
+
+    font-size: 10px;
+    font-weight: 900;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   STORE SELECTOR
+========================================================= */
+
+.mobile-stock-manager-stores {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+
+.mobile-stock-manager-store {
+    appearance: none;
+
+    position: relative;
+
+    display: grid;
+    justify-items: start;
+    gap: 3px;
+
+    min-width: 0;
+    min-height: 76px;
+
+    padding: 12px 13px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(102, 158, 244, 0.14);
+
+    border-radius: 16px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 38, 77, 0.94),
+            rgba(7, 20, 47, 0.98)
+        );
+
+    color:
+        rgba(199, 217, 244, 0.72);
+
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease,
+        color 160ms ease;
+}
+
+
+.mobile-stock-manager-store::after {
+    content: "";
+
+    position: absolute;
+
+    top: -30px;
+    right: -28px;
+
+    width: 82px;
+    height: 82px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(81, 151, 255, 0.12),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+.mobile-stock-manager-store:active {
+    transform: scale(0.97);
+}
+
+
+.mobile-stock-manager-store > span,
+.mobile-stock-manager-store > strong,
+.mobile-stock-manager-store > small {
+    position: relative;
+    z-index: 1;
+}
+
+
+.mobile-stock-manager-store > span {
+    font-size: 10px;
+    font-weight: 850;
+}
+
+
+.mobile-stock-manager-store > strong {
+    margin-top: 2px;
+
+    color: #ffffff;
+
+    font-size: 21px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+.mobile-stock-manager-store > small {
+    color:
+        rgba(170, 195, 231, 0.48);
+
+    font-size: 7px;
+    font-weight: 700;
+}
+
+
+.mobile-stock-manager-store.is-active {
+    border-color:
+        rgba(74, 148, 255, 0.58);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(37, 86, 171, 0.96),
+            rgba(10, 37, 87, 0.995)
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 1px
+        rgba(74, 148, 255, 0.10),
+
+        0 10px 26px
+        rgba(0, 54, 139, 0.22),
+
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.055);
+}
+
+
+/* =========================================================
+   MOVEMENT TYPE
+========================================================= */
+
+.mobile-stock-manager-types {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+
+.mobile-stock-manager-type {
+    appearance: none;
+
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 4px;
+
+    min-width: 0;
+    min-height: 88px;
+
+    padding: 10px 6px;
+
+    border:
+        1px solid
+        rgba(109, 158, 235, 0.12);
+
+    border-radius: 16px;
+
+    outline: none;
+
+    background:
+        rgba(9, 23, 50, 0.78);
+
+    color:
+        rgba(191, 211, 241, 0.67);
+
+    font: inherit;
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+        transform 140ms ease,
+        border-color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease,
+        color 160ms ease;
+}
+
+
+.mobile-stock-manager-type:active {
+    transform: scale(0.96);
+}
+
+
+.mobile-stock-manager-type > span {
+    display: grid;
+    place-items: center;
+
+    width: 29px;
+    height: 29px;
+
+    border:
+        1px solid
+        rgba(114, 166, 247, 0.13);
+
+    border-radius: 10px;
+
+    background:
+        rgba(73, 119, 201, 0.09);
+
+    color:
+        rgba(184, 211, 250, 0.86);
+
+    font-size: 16px;
+    font-weight: 850;
+}
+
+
+.mobile-stock-manager-type > strong {
+    color: inherit;
+
+    font-size: 9px;
+    font-weight: 900;
+}
+
+
+.mobile-stock-manager-type > small {
+    max-width: 82px;
+
+    color:
+        rgba(161, 184, 219, 0.45);
+
+    font-size: 7px;
+    font-weight: 650;
+    line-height: 1.25;
+}
+
+
+/* INGRESO */
+
+.mobile-stock-manager-type[data-stock-type="ingreso"].is-active {
+    border-color:
+        rgba(69, 217, 154, 0.38);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22, 91, 68, 0.52),
+            rgba(7, 43, 36, 0.88)
+        );
+
+    color: #c9f9e1;
+
+    box-shadow:
+        0 8px 22px
+        rgba(13, 105, 73, 0.14);
+}
+
+
+.mobile-stock-manager-type[data-stock-type="ingreso"].is-active > span {
+    border-color:
+        rgba(69, 217, 154, 0.24);
+
+    background:
+        rgba(69, 217, 154, 0.11);
+
+    color: #6be2ad;
+}
+
+
+/* RETIRO */
+
+.mobile-stock-manager-type[data-stock-type="retiro"].is-active {
+    border-color:
+        rgba(255, 105, 121, 0.36);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(100, 35, 49, 0.52),
+            rgba(48, 13, 25, 0.91)
+        );
+
+    color: #ffd2d8;
+
+    box-shadow:
+        0 8px 22px
+        rgba(142, 36, 54, 0.13);
+}
+
+
+.mobile-stock-manager-type[data-stock-type="retiro"].is-active > span {
+    border-color:
+        rgba(255, 105, 121, 0.24);
+
+    background:
+        rgba(255, 91, 108, 0.10);
+
+    color: #ff8c99;
+}
+
+
+/* ESTABLECER */
+
+.mobile-stock-manager-type[data-stock-type="establecer"].is-active {
+    border-color:
+        rgba(245, 184, 75, 0.34);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(98, 72, 25, 0.48),
+            rgba(48, 32, 9, 0.91)
+        );
+
+    color: #ffe5ad;
+
+    box-shadow:
+        0 8px 22px
+        rgba(133, 91, 19, 0.12);
+}
+
+
+.mobile-stock-manager-type[data-stock-type="establecer"].is-active > span {
+    border-color:
+        rgba(245, 184, 75, 0.23);
+
+    background:
+        rgba(245, 184, 75, 0.10);
+
+    color: #ffd173;
+}
+
+
+/* =========================================================
+   QUANTITY CONTROL
+========================================================= */
+
+.mobile-stock-manager-quantity {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    align-items: stretch;
+    gap: 8px;
+
+    padding: 6px;
+
+    border:
+        1px solid
+        rgba(102, 158, 244, 0.13);
+
+    border-radius: 17px;
+
+    background:
+        rgba(5, 15, 34, 0.70);
+}
+
+
+.mobile-stock-manager-quantity > button {
+    appearance: none;
+
+    display: grid;
+    place-items: center;
+
+    min-width: 0;
+    min-height: 48px;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(101, 159, 255, 0.20);
+
+    border-radius: 13px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(35, 76, 148, 0.74),
+            rgba(13, 36, 83, 0.96)
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 22px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.04);
+
+    transition:
+        transform 130ms ease,
+        opacity 130ms ease,
+        border-color 130ms ease;
+}
+
+
+.mobile-stock-manager-quantity > button:active:not(:disabled) {
+    transform: scale(0.93);
+}
+
+
+.mobile-stock-manager-quantity > button:disabled {
+    opacity: 0.26;
+
+    cursor: not-allowed;
+}
+
+
+.mobile-stock-manager-quantity-value {
+    display: grid;
+    place-content: center;
+
+    min-width: 0;
+
+    text-align: center;
+}
+
+
+.mobile-stock-manager-quantity-value > small {
+    display: block;
+
+    color:
+        rgba(164, 190, 229, 0.50);
+
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+
+.mobile-stock-manager-quantity-value > strong {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #ffffff;
+
+    font-size: 23px;
+    font-weight: 950;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   RESULT PREVIEW
+========================================================= */
+
+.mobile-stock-manager-preview {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 15px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(75, 145, 255, 0.18);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(19, 46, 91, 0.82),
+            rgba(7, 24, 53, 0.96)
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.035);
+}
+
+
+.mobile-stock-manager-preview::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 3px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #4f9cff,
+            rgba(39, 95, 255, 0.18)
+        );
+}
+
+
+.mobile-stock-manager-preview > div {
+    min-width: 0;
+}
+
+
+.mobile-stock-manager-preview small {
+    display: block;
+
+    color:
+        rgba(158, 190, 237, 0.55);
+
+    font-size: 8px;
+    font-weight: 800;
+}
+
+
+.mobile-stock-manager-preview strong {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 4px;
+
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 950;
+}
+
+
+.mobile-stock-manager-preview strong span {
+    color: #6ca9ff;
+
+    font-size: 13px;
+}
+
+
+.mobile-stock-manager-preview > div:last-child {
+    text-align: right;
+}
+
+
+.mobile-stock-manager-preview > div:last-child strong {
+    justify-content: flex-end;
+
+    color: #8fbcff;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   REASON
+========================================================= */
+
+.mobile-stock-manager-reason {
+    display: grid;
+    gap: 7px;
+
+    padding: 14px;
+
+    border:
+        1px solid
+        rgba(103, 157, 244, 0.12);
+
+    border-radius: 18px;
+
+    background:
+        rgba(7, 18, 41, 0.72);
+}
+
+
+.mobile-stock-manager-reason > span {
+    color:
+        rgba(202, 219, 245, 0.80);
+
+    font-size: 9px;
+    font-weight: 850;
+}
+
+
+.mobile-stock-manager-reason textarea {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 76px;
+
+    padding: 11px 12px;
+
+    resize: vertical;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid
+        rgba(98, 155, 246, 0.16);
+
+    border-radius: 14px;
+
+    outline: none;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 27, 57, 0.98),
+            rgba(5, 16, 36, 0.995)
+        );
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.45;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.mobile-stock-manager-reason textarea::placeholder {
+    color:
+        rgba(157, 181, 220, 0.35);
+}
+
+
+.mobile-stock-manager-reason textarea:focus {
+    border-color:
+        rgba(81, 148, 255, 0.58);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17, 42, 87, 0.99),
+            rgba(7, 22, 50, 0.995)
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(72, 137, 255, 0.09);
+}
+
+
+.mobile-stock-manager-reason > small {
+    color:
+        rgba(157, 181, 220, 0.44);
+
+    font-size: 7px;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ACCESSIBILITY / FOCUS
+========================================================= */
+
+.mobile-stock-manager-store:focus-visible,
+.mobile-stock-manager-type:focus-visible,
+.mobile-stock-manager-quantity > button:focus-visible {
+    outline:
+        3px solid
+        rgba(96, 165, 250, 0.24);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   ENTRANCE
+========================================================= */
+
+.mobile-stock-manager > * {
+    animation:
+        mobileStockManagerEnter
+        260ms
+        cubic-bezier(0.22, 1, 0.36, 1)
+        both;
+}
+
+
+.mobile-stock-manager > *:nth-child(2) {
+    animation-delay: 25ms;
+}
+
+
+.mobile-stock-manager > *:nth-child(3) {
+    animation-delay: 45ms;
+}
+
+
+.mobile-stock-manager > *:nth-child(4) {
+    animation-delay: 65ms;
+}
+
+
+.mobile-stock-manager > *:nth-child(5) {
+    animation-delay: 85ms;
+}
+
+
+.mobile-stock-manager > *:nth-child(6) {
+    animation-delay: 105ms;
+}
+
+
+@keyframes mobileStockManagerEnter {
+
+    from {
+        opacity: 0;
+        transform: translateY(7px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 370px) {
+
+    .mobile-stock-manager {
+        gap: 11px;
+    }
+
+
+    .mobile-stock-manager-product {
+        padding: 13px;
+    }
+
+
+    .mobile-stock-manager-total {
+        min-width: 60px;
+        min-height: 60px;
+    }
+
+
+    .mobile-stock-manager-total > strong {
+        font-size: 22px;
+    }
+
+
+    .mobile-stock-manager-types {
+        gap: 6px;
+    }
+
+
+    .mobile-stock-manager-type {
+        min-height: 82px;
+        padding:
+            9px
+            4px;
+    }
+
+
+    .mobile-stock-manager-type > small {
+        font-size: 6.5px;
+    }
+
+
+    .mobile-stock-manager-quantity {
+        grid-template-columns:
+            46px
+            minmax(0, 1fr)
+            46px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .mobile-stock-manager > *,
+    .mobile-stock-manager-store,
+    .mobile-stock-manager-type,
+    .mobile-stock-manager-quantity > button {
+        animation: none;
+        transition: none;
+    }
+
+}

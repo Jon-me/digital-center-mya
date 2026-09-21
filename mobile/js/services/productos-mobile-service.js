@@ -36,7 +36,9 @@ import {
 
     getDownloadURL,
 
-    deleteObject
+    deleteObject,
+
+    runTransaction
 
 } from "../firebase-mobile.js";
 
@@ -1617,6 +1619,505 @@ async function eliminarProductoMobile(
 
 }
 
+async function gestionarStockMobile(
+    opciones = {}
+){
+
+    const {
+        producto = null,
+        tienda = "mercado",
+        tipo = "ingreso",
+        cantidad = 0,
+        motivo = "",
+        usuario = null
+    } = opciones;
+
+
+    const productoId =
+        String(
+            producto?.id || ""
+        ).trim();
+
+
+    try{
+
+        /*
+         * Gestión de stock es una operación
+         * exclusivamente administrativa.
+         */
+        if(
+            usuario?.rol !==
+            "admin"
+        ){
+
+            throw new Error(
+                "No tienes permisos para gestionar el stock."
+            );
+
+        }
+
+
+        if(!productoId){
+
+            throw new Error(
+                "No se encontró el identificador del producto."
+            );
+
+        }
+
+
+        const tiendaNormalizada =
+            String(
+                tienda || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        if(
+            tiendaNormalizada !== "mercado" &&
+            tiendaNormalizada !== "peluqueria"
+        ){
+
+            throw new Error(
+                "La tienda seleccionada no es válida."
+            );
+
+        }
+
+
+        const tipoNormalizado =
+            String(
+                tipo || ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        if(
+            ![
+                "ingreso",
+                "retiro",
+                "establecer"
+            ].includes(
+                tipoNormalizado
+            )
+        ){
+
+            throw new Error(
+                "El tipo de movimiento de stock no es válido."
+            );
+
+        }
+
+
+        const cantidadNormalizada =
+            Number(
+                cantidad
+            );
+
+
+        if(
+            !Number.isFinite(
+                cantidadNormalizada
+            ) ||
+            !Number.isInteger(
+                cantidadNormalizada
+            ) ||
+            cantidadNormalizada < 0
+        ){
+
+            throw new Error(
+                "La cantidad ingresada no es válida."
+            );
+
+        }
+
+
+        /*
+         * Para ingreso y retiro necesitamos
+         * necesariamente una cantidad mayor que cero.
+         *
+         * En establecer permitimos 0 porque puede
+         * utilizarse para corregir un stock inexistente.
+         */
+        if(
+            tipoNormalizado !== "establecer" &&
+            cantidadNormalizada <= 0
+        ){
+
+            throw new Error(
+                "La cantidad debe ser mayor que cero."
+            );
+
+        }
+
+
+        const referenciaProducto =
+            doc(
+                mobileDB,
+                "productos",
+                productoId
+            );
+
+
+        const resultado =
+            await runTransaction(
+                mobileDB,
+                async function(transaccion){
+
+                    /*
+                     * Siempre trabajamos contra el dato
+                     * real almacenado en Firestore.
+                     */
+                    const snapshotProducto =
+                        await transaccion.get(
+                            referenciaProducto
+                        );
+
+
+                    if(
+                        !snapshotProducto.exists()
+                    ){
+
+                        throw new Error(
+                            "El producto ya no existe."
+                        );
+
+                    }
+
+
+                    const datosProducto =
+                        snapshotProducto.data() || {};
+
+
+                    const stockOriginal =
+                        datosProducto.stockTiendas &&
+                        typeof datosProducto.stockTiendas === "object"
+                            ? datosProducto.stockTiendas
+                            : {};
+
+
+                    /*
+                     * Compatibilidad legacy.
+                     *
+                     * mercado:
+                     * mercado -> principal -> stock general
+                     *
+                     * peluqueria:
+                     * peluqueria -> sucursal
+                     */
+                    const existeMapaStock =
+                        Object.keys(
+                            stockOriginal
+                        ).length > 0;
+
+
+                    const stockMercado =
+                        Math.max(
+                            0,
+                            Math.trunc(
+                                Number(
+                                    stockOriginal.mercado ??
+                                    stockOriginal.principal ??
+                                    (
+                                        !existeMapaStock
+                                            ? datosProducto.stock
+                                            : 0
+                                    ) ??
+                                    0
+                                ) || 0
+                            )
+                        );
+
+
+                    const stockPeluqueria =
+                        Math.max(
+                            0,
+                            Math.trunc(
+                                Number(
+                                    stockOriginal.peluqueria ??
+                                    stockOriginal["peluquería"] ??
+                                    stockOriginal.sucursal ??
+                                    0
+                                ) || 0
+                            )
+                        );
+
+
+                    const stockAnterior =
+                        tiendaNormalizada === "peluqueria"
+                            ? stockPeluqueria
+                            : stockMercado;
+
+
+                    let stockNuevo =
+                        stockAnterior;
+
+
+                    if(
+                        tipoNormalizado === "ingreso"
+                    ){
+
+                        stockNuevo =
+                            stockAnterior +
+                            cantidadNormalizada;
+
+                    }
+
+
+                    if(
+                        tipoNormalizado === "retiro"
+                    ){
+
+                        stockNuevo =
+                            stockAnterior -
+                            cantidadNormalizada;
+
+                    }
+
+
+                    if(
+                        tipoNormalizado === "establecer"
+                    ){
+
+                        stockNuevo =
+                            cantidadNormalizada;
+
+                    }
+
+
+                    if(stockNuevo < 0){
+
+                        throw new Error(
+                            `No puedes retirar ${cantidadNormalizada} unidades. El stock disponible es ${stockAnterior}.`
+                        );
+
+                    }
+
+
+                    const stockTiendasNuevo = {
+
+                        mercado:
+                            tiendaNormalizada === "mercado"
+                                ? stockNuevo
+                                : stockMercado,
+
+                        peluqueria:
+                            tiendaNormalizada === "peluqueria"
+                                ? stockNuevo
+                                : stockPeluqueria
+
+                    };
+
+
+                    const stockTotal =
+                        stockTiendasNuevo.mercado +
+                        stockTiendasNuevo.peluqueria;
+
+
+                    /*
+                     * Actualización atómica del producto.
+                     *
+                     * Además de modificar la tienda,
+                     * dejamos automáticamente el producto
+                     * migrado al esquema canónico.
+                     */
+                    transaccion.update(
+                        referenciaProducto,
+                        {
+
+                            stockTiendas:
+                                stockTiendasNuevo,
+
+                            stock:
+                                stockTotal,
+
+                            actualizadoEn:
+                                serverTimestamp(),
+
+                            actualizadoPor: {
+
+                                uid:
+                                    String(
+                                        usuario?.uid || ""
+                                    ),
+
+                                nombre:
+                                    String(
+                                        usuario?.nombreCompleto ||
+                                        usuario?.nombre ||
+                                        usuario?.displayName ||
+                                        usuario?.email ||
+                                        "Administrador"
+                                    ).trim(),
+
+                                rol:
+                                    String(
+                                        usuario?.rol ||
+                                        "admin"
+                                    ).trim()
+
+                            }
+
+                        }
+                    );
+
+
+                    /*
+                     * Auditoría.
+                     *
+                     * El ID se genera antes de escribir,
+                     * pero el documento se crea dentro
+                     * de la misma transacción.
+                     */
+                    const referenciaMovimiento =
+                        doc(
+                            collection(
+                                mobileDB,
+                                "movimientosInventario"
+                            )
+                        );
+
+
+                    transaccion.set(
+                        referenciaMovimiento,
+                        {
+
+                            productoId,
+
+                            codigo:
+                                String(
+                                    datosProducto.codigo || ""
+                                ).trim(),
+
+                            producto:
+                                String(
+                                    datosProducto.producto ||
+                                    datosProducto.nombre ||
+                                    "Producto"
+                                ).trim(),
+
+                            tienda:
+                                tiendaNormalizada,
+
+                            tipo:
+                                tipoNormalizado,
+
+                            cantidad:
+                                cantidadNormalizada,
+
+                            stockAnterior,
+
+                            stockNuevo,
+
+                            stockTotal,
+
+                            motivo:
+                                String(
+                                    motivo || ""
+                                ).trim(),
+
+                            usuario: {
+
+                                uid:
+                                    String(
+                                        usuario?.uid || ""
+                                    ),
+
+                                nombre:
+                                    String(
+                                        usuario?.nombreCompleto ||
+                                        usuario?.nombre ||
+                                        usuario?.displayName ||
+                                        usuario?.email ||
+                                        "Administrador"
+                                    ).trim(),
+
+                                rol:
+                                    String(
+                                        usuario?.rol ||
+                                        "admin"
+                                    ).trim()
+
+                            },
+
+                            fecha:
+                                serverTimestamp()
+
+                        }
+                    );
+
+
+                    return {
+
+                        productoId,
+
+                        tienda:
+                            tiendaNormalizada,
+
+                        tipo:
+                            tipoNormalizado,
+
+                        cantidad:
+                            cantidadNormalizada,
+
+                        stockAnterior,
+
+                        stockNuevo,
+
+                        stockTiendas:
+                            stockTiendasNuevo,
+
+                        stockTotal
+
+                    };
+
+                }
+            );
+
+
+        return {
+
+            completada:
+                true,
+
+            mensaje:
+                tipoNormalizado === "ingreso"
+                    ? `Se ingresaron ${cantidadNormalizada} unidades correctamente.`
+                    : tipoNormalizado === "retiro"
+                        ? `Se retiraron ${cantidadNormalizada} unidades correctamente.`
+                        : `El stock fue establecido en ${cantidadNormalizada} unidades.`,
+
+            ...resultado
+
+        };
+
+
+    }catch(error){
+
+        console.error(
+            "Error gestionando stock Mobile:",
+            error
+        );
+
+
+        return {
+
+            completada:
+                false,
+
+            mensaje:
+                error?.message ||
+                "No se pudo actualizar el stock.",
+
+            error
+
+        };
+
+    }
+
+}
 
 function obtenerProductosCacheMobile(){
 
@@ -1653,6 +2154,8 @@ export {
 
     existeCodigoProductoMobile,
 
-    crearProductoMobile
+    crearProductoMobile,
+
+    gestionarStockMobile
 
 };

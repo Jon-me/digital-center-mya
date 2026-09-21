@@ -18,6 +18,12 @@ import {
 
 import {
 
+    abrirGestionStockMobile
+
+} from "../components/product/product-stock-mobile.js";
+
+import {
+
     abrirProductEditorMobile
 
 } from "../components/product/product-editor-mobile.js";
@@ -1065,6 +1071,22 @@ alEliminar:
 
     },
 
+alGestionarStock:
+    function(detalle){
+
+        abrirGestionStockMobile({
+
+            producto:
+                detalle.producto,
+
+            usuario:
+                detalle.usuario ||
+                usuarioActualMobile
+
+        });
+
+    },    
+
 
 alTransferir:
     function(detalle){
@@ -1572,38 +1594,38 @@ function abrirTransferenciaProductoMobile(
         );
 
 
-    const stockPrincipal =
+    const stockMercado =
         Number(
-            stockTiendas.principal || 0
+            stockTiendas.mercado || 0
         );
 
 
-    const stockSucursal =
+    const stockPeluqueria =
         Number(
-            stockTiendas.sucursal || 0
+            stockTiendas.peluqueria || 0
         );
 
 
-    /*
-     * Elegimos inicialmente como origen
-     * la tienda que tenga existencias.
-     */
-    let origen =
-        stockPrincipal > 0
-            ? "principal"
-            : stockSucursal > 0
-                ? "sucursal"
-                : "principal";
+/*
+ * Elegimos inicialmente como origen
+ * la tienda que tenga existencias.
+ */
+let origen =
+    stockMercado > 0
+        ? "mercado"
+        : stockPeluqueria > 0
+            ? "peluqueria"
+            : "mercado";
 
 
-    let destino =
-        origen === "principal"
-            ? "sucursal"
-            : "principal";
+let destino =
+    origen === "mercado"
+        ? "peluqueria"
+        : "mercado";
 
 
-    let cantidad =
-        1;
+let cantidad =
+    1;
 
 
     function obtenerStockOrigen(){
@@ -1659,8 +1681,8 @@ function abrirTransferenciaProductoMobile(
 
                         <strong>
                             ${
-                                stockPrincipal +
-                                stockSucursal
+                                stockMercado +
+                                stockPeluqueria
                             }
                         </strong>
 
@@ -1696,14 +1718,14 @@ function abrirTransferenciaProductoMobile(
                                 mobile-transfer-store-option
 
                                 ${
-                                    origen === "principal"
+                                    origen === "mercado"
                                         ? "is-active"
                                         : ""
                                 }
                             "
-                            data-transfer-origin="principal"
+                            data-transfer-origin="mercado"
                             aria-pressed="${
-                                origen === "principal"
+                                origen === "mercado"
                                     ? "true"
                                     : "false"
                             }"
@@ -1714,7 +1736,7 @@ function abrirTransferenciaProductoMobile(
                             </span>
 
                             <strong>
-                                ${stockPrincipal}
+                                ${stockMercado}
                             </strong>
 
                         </button>
@@ -1726,14 +1748,14 @@ function abrirTransferenciaProductoMobile(
                                 mobile-transfer-store-option
 
                                 ${
-                                    origen === "sucursal"
+                                    origen === "peluqueria"
                                         ? "is-active"
                                         : ""
                                 }
                             "
-                            data-transfer-origin="sucursal"
+                            data-transfer-origin="peluqueria"
                             aria-pressed="${
-                                origen === "sucursal"
+                                origen === "peluqueria"
                                     ? "true"
                                     : "false"
                             }"
@@ -1744,7 +1766,7 @@ function abrirTransferenciaProductoMobile(
                             </span>
 
                             <strong>
-                                ${stockSucursal}
+                                ${stockPeluqueria}
                             </strong>
 
                         </button>
@@ -2283,9 +2305,9 @@ function abrirTransferenciaProductoMobile(
 
 
                     destino =
-                        origen === "principal"
-                            ? "sucursal"
-                            : "principal";
+                        origen === "mercado"
+                            ? "peluqueria"
+                            : "mercado";
 
 
                     cantidad =

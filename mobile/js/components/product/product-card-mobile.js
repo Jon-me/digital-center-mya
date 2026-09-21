@@ -1301,6 +1301,36 @@ function construirContenidoProductSheet(
             )
                 ? `
                     <div class="mobile-product-admin-actions">
+                        
+<button
+    type="button"
+    class="
+        mobile-product-admin-button
+        is-stock
+    "
+    data-product-manage-stock
+>
+
+    <span
+        class="mobile-product-admin-icon"
+        aria-hidden="true"
+    >
+        📦
+    </span>
+
+    <span class="mobile-product-admin-copy">
+
+        <strong>
+            Gestionar stock
+        </strong>
+
+        <small>
+            Ingresar o ajustar existencias
+        </small>
+
+    </span>
+
+</button>
 
                         <button
                             type="button"
@@ -1885,6 +1915,58 @@ if(botonEditar){
 
 }
 
+const botonGestionarStock =
+    evento.target.closest(
+        "[data-product-manage-stock]"
+    );
+
+
+if(botonGestionarStock){
+
+    if(
+        !esAdministradorMobile(
+            usuario
+        )
+    ){
+
+        OverlayMobile.toast({
+
+            tipo:
+                "warning",
+
+            mensaje:
+                "Solo un administrador puede gestionar el stock."
+
+        });
+
+        return;
+
+    }
+
+
+    if(
+        typeof opciones
+            .alGestionarStock ===
+        "function"
+    ){
+
+        opciones.alGestionarStock({
+
+            producto,
+
+            usuario,
+
+            cerrarProductSheet:
+                sheet.cerrar
+
+        });
+
+    }
+
+
+    return;
+
+}
 
 const botonEliminar =
     evento.target.closest(

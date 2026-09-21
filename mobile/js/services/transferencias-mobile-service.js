@@ -32,47 +32,50 @@ function obtenerStockTiendasTransferenciaMobile(
     producto
 ){
 
-    const stockTiendasOriginal =
+    const stockOriginal =
         producto?.stockTiendas &&
         typeof producto.stockTiendas === "object"
             ? producto.stockTiendas
             : {};
 
 
-    const stockTiendas = {};
+    const tieneStockPorTiendas =
+        Object.keys(
+            stockOriginal
+        ).length > 0;
 
 
-    Object
-        .entries(
-            stockTiendasOriginal
-        )
-        .forEach(function([
-            sucursalId,
-            cantidad
-        ]){
+    let mercado =
+        Number(
+            stockOriginal.mercado ??
+            stockOriginal.principal ??
+            0
+        );
 
-            stockTiendas[sucursalId] =
-                Number(
-                    cantidad || 0
-                );
 
-        });
+    let peluqueria =
+        Number(
+            stockOriginal.peluqueria ??
+            stockOriginal["peluquería"] ??
+            stockOriginal.sucursal ??
+            0
+        );
 
 
     /*
-     * Compatibilidad con productos antiguos
-     * que únicamente tienen el campo stock.
+     * Compatibilidad con productos históricos
+     * que únicamente tienen stock general.
+     *
+     * En ese caso el stock pertenece a Mercado.
      */
     if(
-        Object.keys(
-            stockTiendas
-        ).length === 0 &&
+        !tieneStockPorTiendas &&
         Number(
             producto?.stock || 0
         ) > 0
     ){
 
-        stockTiendas.principal =
+        mercado =
             Number(
                 producto.stock || 0
             );
@@ -80,36 +83,37 @@ function obtenerStockTiendasTransferenciaMobile(
     }
 
 
-    /*
-     * Garantizamos las dos tiendas actuales.
-     */
     if(
-        !Object.prototype.hasOwnProperty.call(
-            stockTiendas,
-            "principal"
-        )
+        !Number.isFinite(
+            mercado
+        ) ||
+        mercado < 0
     ){
 
-        stockTiendas.principal =
-            0;
+        mercado = 0;
 
     }
 
 
     if(
-        !Object.prototype.hasOwnProperty.call(
-            stockTiendas,
-            "sucursal"
-        )
+        !Number.isFinite(
+            peluqueria
+        ) ||
+        peluqueria < 0
     ){
 
-        stockTiendas.sucursal =
-            0;
+        peluqueria = 0;
 
     }
 
 
-    return stockTiendas;
+    return {
+
+        mercado,
+
+        peluqueria
+
+    };
 
 }
 
@@ -119,11 +123,29 @@ function obtenerStockTiendasTransferenciaMobile(
 // =====================================================
 
 function obtenerNombreTiendaTransferenciaMobile(
-    sucursalId
+    tiendaId
 ){
+
+    const tiendaNormalizada =
+        String(
+            tiendaId || ""
+        )
+            .trim()
+            .toLowerCase();
+
 
     const nombres = {
 
+        mercado:
+            "Mercado",
+
+        peluqueria:
+            "Peluquería",
+
+        /*
+         * Alias legacy.
+         * Solo para compatibilidad de lectura/entrada.
+         */
         principal:
             "Mercado",
 
@@ -135,9 +157,9 @@ function obtenerNombreTiendaTransferenciaMobile(
 
     return (
         nombres[
-            sucursalId
+            tiendaNormalizada
         ] ||
-        sucursalId ||
+        tiendaId ||
         "Sin tienda"
     );
 
@@ -147,6 +169,43 @@ function obtenerNombreTiendaTransferenciaMobile(
 // =====================================================
 // VALIDACIÓN PREVIA
 // =====================================================
+
+function normalizarTiendaTransferenciaMobile(
+    tiendaId
+){
+
+    const tienda =
+        String(
+            tiendaId || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if(
+        tienda === "mercado" ||
+        tienda === "principal"
+    ){
+
+        return "mercado";
+
+    }
+
+
+    if(
+        tienda === "peluqueria" ||
+        tienda === "peluquería" ||
+        tienda === "sucursal"
+    ){
+
+        return "peluqueria";
+
+    }
+
+
+    return "";
+
+}
 
 function validarTransferenciaMobile(
     datos = {}
@@ -163,6 +222,17 @@ function validarTransferenciaMobile(
         cantidad
 
     } = datos;
+
+const origenNormalizado =
+    normalizarTiendaTransferenciaMobile(
+        origen
+    );
+
+
+const destinoNormalizado =
+    normalizarTiendaTransferenciaMobile(
+        destino
+    );
 
 
     if(
@@ -184,8 +254,8 @@ function validarTransferenciaMobile(
 
 
     if(
-        !origen ||
-        !destino
+        !origenNormalizado ||
+        !destinoNormalizado
     ){
 
         return {
@@ -202,7 +272,7 @@ function validarTransferenciaMobile(
 
 
     if(
-        origen === destino
+        origenNormalizado === destinoNormalizado
     ){
 
         return {
@@ -216,7 +286,6 @@ function validarTransferenciaMobile(
         };
 
     }
-
 
     const cantidadNormalizada =
         Number(
@@ -253,7 +322,7 @@ function validarTransferenciaMobile(
     const stockOrigen =
         Number(
             stockTiendas[
-                origen
+                origenNormalizado
             ] || 0
         );
 
@@ -291,7 +360,13 @@ function validarTransferenciaMobile(
             cantidadNormalizada,
 
         stockDisponible:
-            stockOrigen
+            stockOrigen,
+
+        origen:
+            origenNormalizado,
+
+        destino:
+            destinoNormalizado    
 
     };
 
@@ -378,6 +453,13 @@ async function transferirStockMobile(
 
     }
 
+    const origenCanonico =
+    validacion.origen;
+
+
+    const destinoCanonico =
+    validacion.destino;
+
 
     transferenciaEnProcesoMobile =
         true;
@@ -437,7 +519,7 @@ async function transferirStockMobile(
                     const stockOrigen =
                         Number(
                             stockTiendas[
-                                origen
+                                origenCanonico
                             ] || 0
                         );
 
@@ -445,7 +527,7 @@ async function transferirStockMobile(
                     const stockDestino =
                         Number(
                             stockTiendas[
-                                destino
+                                destinoCanonico
                             ] || 0
                         );
 
@@ -458,7 +540,7 @@ async function transferirStockMobile(
                         throw new Error(
                             `Stock insuficiente en ${
                                 obtenerNombreTiendaTransferenciaMobile(
-                                    origen
+                                    origenCanonico
                                 )
                             }. Disponible: ${stockOrigen}.`
                         );
@@ -467,14 +549,14 @@ async function transferirStockMobile(
 
 
                     stockTiendas[
-                        origen
+                        origenCanonico
                     ] =
                         stockOrigen -
                         validacion.cantidad;
 
 
                     stockTiendas[
-                        destino
+                        destinoCanonico
                     ] =
                         stockDestino +
                         validacion.cantidad;
@@ -547,19 +629,19 @@ async function transferirStockMobile(
                                 validacion.cantidad,
 
                             origenId:
-                                origen,
+                                origenCanonico,
 
                             origen:
                                 obtenerNombreTiendaTransferenciaMobile(
-                                    origen
+                                    origenCanonico
                                 ),
 
                             destinoId:
-                                destino,
+                                destinoCanonico,
 
                             destino:
                                 obtenerNombreTiendaTransferenciaMobile(
-                                    destino
+                                    destinoCanonico
                                 ),
 
                             stockOrigenAnterior:
@@ -567,7 +649,7 @@ async function transferirStockMobile(
 
                             stockOrigenNuevo:
                                 stockTiendas[
-                                    origen
+                                    origenCanonico
                                 ],
 
                             stockDestinoAnterior:
@@ -575,7 +657,7 @@ async function transferirStockMobile(
 
                             stockDestinoNuevo:
                                 stockTiendas[
-                                    destino
+                                    destinoCanonico
                                 ],
 
                             stockTotal,
@@ -644,12 +726,12 @@ async function transferirStockMobile(
 
                         stockOrigen:
                             stockTiendas[
-                                origen
+                                origenCanonico
                             ],
 
                         stockDestino:
                             stockTiendas[
-                                destino
+                                destinoCanonico
                             ]
 
                     };
@@ -669,11 +751,11 @@ async function transferirStockMobile(
             mensaje:
                 `${validacion.cantidad} unidad(es) transferidas de ${
                     obtenerNombreTiendaTransferenciaMobile(
-                        origen
+                        origenCanonico
                     )
                 } a ${
                     obtenerNombreTiendaTransferenciaMobile(
-                        destino
+                        destinoCanonico
                     )
                 }.`
 
