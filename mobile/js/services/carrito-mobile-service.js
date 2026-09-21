@@ -8,7 +8,8 @@
 import {
 
     obtenerTiendaVentaMobile,
-    obtenerNombreTiendaVentaMobile
+    obtenerNombreTiendaVentaMobile,
+    normalizarTiendaVentaMobile
 
 } from "../state-mobile.js";
 
@@ -70,28 +71,59 @@ function obtenerStockSucursalProductoMobile(
 ){
 
     const tiendaVenta =
-        String(
+        normalizarTiendaVentaMobile(
             sucursalId ||
             obtenerTiendaVentaMobile() ||
-            "principal"
+            "mercado"
         );
 
 
     const stockTiendas =
         producto?.stockTiendas &&
         typeof producto.stockTiendas ===
-        "object"
+            "object"
             ? producto.stockTiendas
             : {};
+
+
+    /*
+     * Modelo canónico:
+     *
+     * mercado
+     * peluqueria
+     *
+     * Compatibilidad:
+     *
+     * principal -> mercado
+     * sucursal  -> peluqueria
+     */
+
+    let stockTienda;
+
+
+    if(tiendaVenta === "peluqueria"){
+
+        stockTienda =
+            stockTiendas.peluqueria ??
+            stockTiendas["peluquería"] ??
+            stockTiendas.sucursal ??
+            0;
+
+    }else{
+
+        stockTienda =
+            stockTiendas.mercado ??
+            stockTiendas.principal ??
+            0;
+
+    }
 
 
     return Math.max(
         0,
         Math.trunc(
             normalizarNumeroCarritoMobile(
-                stockTiendas[
-                    tiendaVenta
-                ]
+                stockTienda
             )
         )
     );
@@ -119,7 +151,7 @@ function obtenerStockDisponibleCarritoMobile(
         String(
             sucursalId ||
             obtenerTiendaVentaMobile() ||
-            "principal"
+            "mercado"
         );
 
 
@@ -188,7 +220,7 @@ function validarCantidadContraStockCarritoMobile(
         String(
             sucursalId ||
             obtenerTiendaVentaMobile() ||
-            "principal"
+            "mercado"
         );
 
 
@@ -221,7 +253,7 @@ function validarCantidadContraStockCarritoMobile(
         tiendaVenta,
 
         nombreTienda:
-            tiendaVenta === "sucursal"
+            tiendaVenta === "peluqueria"
                 ? "Peluquería"
                 : "Mercado"
 

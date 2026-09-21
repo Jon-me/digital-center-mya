@@ -10,9 +10,8 @@ service firebase.storage {
 
     function esAdministrador() {
       return estaAutenticado()
-        && firestore.get(
-          /databases/(default)/documents/usuarios/$(request.auth.uid)
-        ).data.rol == "admin";
+        && request.auth.token.admin == true
+        && request.auth.token.rol == "admin";
     }
 
     match /productos/{productoId}/{archivo} {

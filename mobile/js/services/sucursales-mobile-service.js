@@ -10,12 +10,16 @@ import {
     getDocs
 } from "../firebase-mobile.js";
 
+import {
+    normalizarTiendaVentaMobile
+} from "../state-mobile.js";
+
 
 const SUCURSALES_RESPALDO_MOBILE = [
 
     {
         id:
-            "principal",
+            "mercado",
 
         nombre:
             "Mercado",
@@ -26,7 +30,7 @@ const SUCURSALES_RESPALDO_MOBILE = [
 
     {
         id:
-            "sucursal",
+            "peluqueria",
 
         nombre:
             "Peluquería",
@@ -63,17 +67,21 @@ async function consultarSucursalesFirebaseMobile(){
                 const datos =
                     documento.data();
 
+                const idNormalizado =
+                    normalizarTiendaVentaMobile(
+                        documento.id
+                    );
 
                 return {
 
                     id:
-                        documento.id,
+                        idNormalizado,
 
                     nombre:
-                        String(
-                            datos.nombre ||
-                            documento.id
-                        ).trim(),
+                        idNormalizado ===
+                        "peluqueria"
+                            ? "Peluquería"
+                            : "Mercado",
 
                     codigo:
                         String(
@@ -104,9 +112,25 @@ async function consultarSucursalesFirebaseMobile(){
 
             });
 
+const sucursalesUnicas =
+    Array.from(
+        new Map(
+            sucursales.map(
+                function(sucursal){
 
-    return sucursales.length > 0
-        ? sucursales
+                    return [
+                        sucursal.id,
+                        sucursal
+                    ];
+
+                }
+            )
+        ).values()
+    );
+
+
+    return sucursalesUnicas.length > 0
+        ? sucursalesUnicas
         : SUCURSALES_RESPALDO_MOBILE;
 
 }

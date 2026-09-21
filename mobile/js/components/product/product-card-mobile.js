@@ -23,14 +23,13 @@ import {
 
 let NOMBRES_SUCURSALES_MOBILE = {
 
-    principal:
+    mercado:
         "Mercado",
 
-    sucursal:
+    peluqueria:
         "Peluquería"
 
 };
-
 
 function establecerMapaSucursalesMobile(
     mapa = {}
@@ -38,10 +37,10 @@ function establecerMapaSucursalesMobile(
 
     NOMBRES_SUCURSALES_MOBILE = {
 
-        principal:
+        mercado:
             "Mercado",
 
-        sucursal:
+        peluqueria:
             "Peluquería",
 
         ...mapa
@@ -172,51 +171,55 @@ function obtenerStockTiendasProducto(
     producto
 ){
 
-    const stockTiendas = {};
+    const stockOriginal =
+        producto?.stockTiendas &&
+        typeof producto.stockTiendas ===
+            "object"
+            ? producto.stockTiendas
+            : {};
 
 
     /*
-     * Primero incorporamos todas las sucursales
-     * conocidas, incluso si tienen stock cero.
+     * =================================================
+     * MODELO CANÓNICO DE TIENDAS
+     * =================================================
+     *
+     * Actual:
+     * mercado
+     * peluqueria
+     *
+     * Compatibilidad legacy:
+     * principal -> mercado
+     * sucursal  -> peluqueria
+     *
+     * Si existen ambos formatos,
+     * siempre tiene prioridad el formato nuevo.
      */
-    Object
-        .keys(
-            NOMBRES_SUCURSALES_MOBILE
-        )
-        .forEach(function(sucursalId){
 
-            stockTiendas[sucursalId] =
-                0;
+    const stockTiendas = {
 
-        });
+        mercado:
+            Number(
+                stockOriginal.mercado ??
+                stockOriginal.principal ??
+                0
+            ),
+
+        peluqueria:
+            Number(
+                stockOriginal.peluqueria ??
+                stockOriginal.sucursal ??
+                0
+            )
+
+    };
 
 
     /*
-     * Después incorporamos el stock real
-     * registrado dentro del producto.
+     * Compatibilidad con productos muy antiguos
+     * que solamente tenían el campo stock general.
      */
-    Object
-        .entries(
-            producto?.stockTiendas ||
-            {}
-        )
-        .forEach(function([
-            sucursalId,
-            cantidad
-        ]){
 
-            stockTiendas[sucursalId] =
-                Number(
-                    cantidad || 0
-                );
-
-        });
-
-
-    /*
-     * Compatibilidad con productos antiguos
-     * que solo tienen el campo stock general.
-     */
     const todosEnCero =
         Object
             .values(
@@ -240,7 +243,7 @@ function obtenerStockTiendasProducto(
         ) > 0
     ){
 
-        stockTiendas.principal =
+        stockTiendas.mercado =
             Number(
                 producto.stock || 0
             );
@@ -510,8 +513,7 @@ function construirResumenStock(
         ){
 
             const sucursalUsuario =
-                usuario?.sucursalId ||
-                "principal";
+                obtenerTiendaVentaMobile();
 
             if(sucursalA === sucursalUsuario){
 
@@ -534,7 +536,7 @@ function construirResumenStock(
         ]){
 
             const esTiendaUsuario =
-                usuario?.sucursalId ===
+                obtenerTiendaVentaMobile() ===
                 sucursalId;
 
             const tieneStock =
@@ -588,8 +590,7 @@ function construirProductCardMobile(
 ){
 
     const sucursalUsuario =
-        usuario?.sucursalId ||
-        "principal";
+        obtenerTiendaVentaMobile();
 
     const stockTiendas =
         obtenerStockTiendasProducto(
@@ -793,10 +794,7 @@ function construirStockSheet(
         ]){
 
             const esTiendaUsuario =
-                (
-                    usuario?.sucursalId ||
-                    "principal"
-                ) ===
+                obtenerTiendaVentaMobile() ===
                 sucursalId;
 
             return `
@@ -1080,14 +1078,14 @@ function construirContenidoProductSheet(
                         class="
                             mobile-product-store-option
                             ${
-                                tiendaVenta === "principal"
+                                tiendaVenta === "mercado"
                                     ? "is-active"
                                     : ""
                             }
                         "
-                        data-product-store="principal"
+                        data-product-store="mercado"
                         aria-pressed="${
-                            tiendaVenta === "principal"
+                            tiendaVenta === "mercado"
                                 ? "true"
                                 : "false"
                         }"
@@ -1100,7 +1098,7 @@ function construirContenidoProductSheet(
                         <strong>
                             ${
                                 Number(
-                                    stockTiendas.principal || 0
+                                    stockTiendas.mercado || 0
                                 )
                             }
                         </strong>
@@ -1112,14 +1110,14 @@ function construirContenidoProductSheet(
                         class="
                             mobile-product-store-option
                             ${
-                                tiendaVenta === "sucursal"
+                                tiendaVenta === "peluqueria"
                                     ? "is-active"
                                     : ""
                             }
                         "
-                        data-product-store="sucursal"
+                        data-product-store="peluqueria"
                         aria-pressed="${
-                            tiendaVenta === "sucursal"
+                            tiendaVenta === "peluqueria"
                                 ? "true"
                                 : "false"
                         }"
@@ -1132,7 +1130,7 @@ function construirContenidoProductSheet(
                         <strong>
                             ${
                                 Number(
-                                    stockTiendas.sucursal || 0
+                                    stockTiendas.peluqueria || 0
                                 )
                             }
                         </strong>
@@ -1464,7 +1462,7 @@ function abrirProductSheetMobile(
 
                             mensaje:
                                 `No hay stock disponible en ${
-                                    tiendaVenta === "sucursal"
+                                    tiendaVenta === "peluqueria"
                                         ? "Peluquería"
                                         : "Mercado"
                                 }.`
@@ -1550,7 +1548,7 @@ function abrirProductSheetMobile(
 
                         mensaje:
                             `${cantidad} unidad(es) agregadas desde ${
-                                tiendaVenta === "sucursal"
+                                tiendaVenta === "peluqueria"
                                     ? "Peluquería"
                                     : "Mercado"
                             }.`
@@ -1635,7 +1633,7 @@ function abrirProductSheetMobile(
             );
 
         const nombreTienda =
-            tiendaVenta === "sucursal"
+            tiendaVenta === "peluqueria"
                 ? "Peluquería"
                 : "Mercado";
 

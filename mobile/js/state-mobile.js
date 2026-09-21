@@ -1,7 +1,6 @@
 // =====================================================
 // DIGITAL CENTER M&A
 // MOBILE STATE
-// FASE M7.2.2
 // ESTADO GLOBAL + TIENDA DE VENTA
 // =====================================================
 
@@ -29,6 +28,10 @@ const CLAVES_SESION_MOBILE = {
 };
 
 
+// =====================================================
+// ESTADO GLOBAL
+// =====================================================
+
 const MobileState = {
 
     usuarioActual:
@@ -40,17 +43,17 @@ const MobileState = {
     appLista:
         false,
 
-    // Tienda desde la cual se descontará el stock.
-    // principal = Mercado
-    // sucursal = Peluquería
+    // IDs canónicos:
+    // mercado     = Mercado
+    // peluqueria  = Peluquería
     tiendaVenta:
-        "principal"
+        "mercado"
 
 };
 
 
 // =====================================================
-// NORMALIZAR TIENDA DE VENTA
+// NORMALIZAR TIENDA
 // =====================================================
 
 function normalizarTiendaVentaMobile(tienda){
@@ -62,17 +65,44 @@ function normalizarTiendaVentaMobile(tienda){
             .trim()
             .toLowerCase();
 
+    /*
+     * =================================================
+     * COMPATIBILIDAD LEGACY
+     * =================================================
+     *
+     * principal  -> mercado
+     * sucursal   -> peluqueria
+     *
+     * También aceptamos nombres visibles antiguos.
+     */
+
     if(
-        valor === "sucursal" ||
         valor === "peluqueria" ||
-        valor === "peluquería"
+        valor === "peluquería" ||
+        valor === "sucursal"
     ){
 
-        return "sucursal";
+        return "peluqueria";
 
     }
 
-    return "principal";
+    if(
+        valor === "mercado" ||
+        valor === "principal"
+    ){
+
+        return "mercado";
+
+    }
+
+    /*
+     * Fallback seguro.
+     *
+     * Si llega un valor vacío o desconocido,
+     * la tienda predeterminada es Mercado.
+     */
+
+    return "mercado";
 
 }
 
@@ -86,14 +116,21 @@ function guardarSesionMobile(usuario){
     const sucursalUsuario =
         normalizarTiendaVentaMobile(
             usuario.sucursalId ||
-            "principal"
+            usuario.sucursal ||
+            "mercado"
         );
 
     /*
      * Conservamos la tienda elegida si ya existe.
-     * Si todavía no existe, usamos inicialmente
-     * la sucursal asignada al usuario.
+     *
+     * normalizarTiendaVentaMobile() también migra
+     * automáticamente valores legacy guardados en
+     * localStorage:
+     *
+     * principal -> mercado
+     * sucursal  -> peluqueria
      */
+
     const tiendaGuardada =
         localStorage.getItem(
             CLAVES_SESION_MOBILE.tiendaVenta
@@ -183,7 +220,7 @@ function obtenerSesionMobile(){
         normalizarTiendaVentaMobile(
             localStorage.getItem(
                 CLAVES_SESION_MOBILE.sucursal
-            ) || "principal"
+            ) || "mercado"
         );
 
     const tiendaVenta =
@@ -222,6 +259,18 @@ function obtenerSesionMobile(){
     MobileState.tiendaVenta =
         tiendaVenta;
 
+    /*
+     * Reescribimos los valores normalizados.
+     *
+     * Esto migra silenciosamente sesiones antiguas
+     * almacenadas como principal/sucursal.
+     */
+
+    localStorage.setItem(
+        CLAVES_SESION_MOBILE.sucursal,
+        sucursalUsuario
+    );
+
     localStorage.setItem(
         CLAVES_SESION_MOBILE.tiendaVenta,
         tiendaVenta
@@ -254,7 +303,7 @@ function limpiarSesionMobile(){
         null;
 
     MobileState.tiendaVenta =
-        "principal";
+        "mercado";
 
 }
 
@@ -282,12 +331,12 @@ function obtenerRolMobile(){
 
 function obtenerSucursalMobile(){
 
-    return (
+    return normalizarTiendaVentaMobile(
         MobileState.usuarioActual?.sucursalId ||
         localStorage.getItem(
             CLAVES_SESION_MOBILE.sucursal
         ) ||
-        "principal"
+        "mercado"
     );
 
 }
@@ -335,6 +384,16 @@ function obtenerTiendaVentaMobile(){
     MobileState.tiendaVenta =
         tienda;
 
+    /*
+     * Garantizamos que localStorage también quede
+     * usando siempre el ID canónico.
+     */
+
+    localStorage.setItem(
+        CLAVES_SESION_MOBILE.tiendaVenta,
+        tienda
+    );
+
     return tienda;
 
 }
@@ -347,7 +406,7 @@ function obtenerTiendaVentaMobile(){
 function obtenerNombreTiendaVentaMobile(){
 
     return obtenerTiendaVentaMobile() ===
-        "sucursal"
+        "peluqueria"
             ? "Peluquería"
             : "Mercado";
 

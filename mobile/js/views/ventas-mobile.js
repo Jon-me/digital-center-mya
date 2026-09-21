@@ -263,7 +263,7 @@ function construirEstructuraVentasMobile(
         <button
             type="button"
             class="mobile-sales-store-button"
-            data-mobile-sales-store="principal"
+            data-mobile-sales-store="mercado"
             aria-pressed="false"
         >
 
@@ -288,7 +288,7 @@ function construirEstructuraVentasMobile(
         <button
             type="button"
             class="mobile-sales-store-button"
-            data-mobile-sales-store="sucursal"
+            data-mobile-sales-store="peluqueria"
             aria-pressed="false"
         >
 
@@ -843,7 +843,7 @@ function construirItemVentasMobile(
         cantidad >= stockDisponible;
 
     const nombreTienda =
-        tiendaVenta === "sucursal"
+        tiendaVenta === "peluqueria"
             ? "Peluquería"
             : "Mercado";
 
@@ -1984,7 +1984,7 @@ async function cambiarTiendaVentaDesdeVentasMobile(
     if(resumen.items.length > 0){
 
         const nombreNuevaTienda =
-            nuevaTienda === "sucursal"
+            nuevaTienda === "peluqueria"
                 ? "Peluquería"
                 : "Mercado";
 
@@ -2042,7 +2042,7 @@ async function cambiarTiendaVentaDesdeVentasMobile(
             "success",
 
         mensaje:
-            tiendaSeleccionada === "sucursal"
+            tiendaSeleccionada === "peluqueria"
                 ? "Ahora vendes desde Peluquería."
                 : "Ahora vendes desde Mercado."
 

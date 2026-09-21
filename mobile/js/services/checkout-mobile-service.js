@@ -21,7 +21,8 @@ import {
     obtenerSesionMobile,
     obtenerSucursalMobile,
     obtenerTiendaVentaMobile,
-    obtenerNombreTiendaVentaMobile
+    obtenerNombreTiendaVentaMobile,
+    normalizarTiendaVentaMobile
 } from "../state-mobile.js";
 
 import {
@@ -345,11 +346,11 @@ async function obtenerNombreSucursalCheckoutMobile(
      * directamente sus nombres comerciales.
      */
 
-    if (sucursalId === "principal") {
+    if (sucursalId === "mercado") {
         return "Mercado";
     }
 
-    if (sucursalId === "sucursal") {
+    if (sucursalId === "peluqueria") {
         return "Peluquería";
     }
 
@@ -418,7 +419,7 @@ function obtenerStockProductoCheckoutMobile(
     const tiendaNormalizada =
         String(
             tiendaVenta ||
-            "principal"
+            "mercado"
         )
             .trim()
             .toLowerCase();
@@ -447,9 +448,9 @@ function obtenerStockProductoCheckoutMobile(
 
         posiblesClaves = [
 
-            "principal",
+            "mercado",
 
-            "mercado"
+            "principal"
 
         ];
 
@@ -480,7 +481,41 @@ function obtenerStockProductoCheckoutMobile(
 
     }
 
+/*
+ * Compatibilidad con productos históricos.
+ *
+ * Algunos productos antiguos solamente tienen:
+ *
+ * stock: X
+ *
+ * y todavía no poseen stockTiendas.
+ *
+ * Históricamente ese stock corresponde a Mercado.
+ */
+if(
+    Object.keys(stockTiendas).length === 0 &&
+    tiendaNormalizada !== "sucursal" &&
+    tiendaNormalizada !== "peluqueria" &&
+    tiendaNormalizada !== "peluquería"
+){
 
+    const stockGeneral =
+        Number(
+            datosProducto?.stock || 0
+        );
+
+    if(Number.isFinite(stockGeneral)){
+
+        return Math.max(
+            0,
+            Math.trunc(
+                stockGeneral
+            )
+        );
+
+    }
+
+}
     return 0;
 
 }
@@ -489,28 +524,18 @@ function construirStockTiendasCheckoutMobile(
     datosProducto
 ){
 
-    const stockOriginal =
-        datosProducto?.stockTiendas &&
-        typeof datosProducto.stockTiendas ===
-        "object"
-            ? datosProducto.stockTiendas
-            : {};
-
-
     return {
 
-        ...stockOriginal,
-
-        principal:
+        mercado:
             obtenerStockProductoCheckoutMobile(
                 datosProducto,
-                "principal"
+                "mercado"
             ),
 
-        sucursal:
+        peluqueria:
             obtenerStockProductoCheckoutMobile(
                 datosProducto,
-                "sucursal"
+                "peluqueria"
             )
 
     };
@@ -742,7 +767,7 @@ const {
         String(
             tiendaVenta ||
             obtenerTiendaVentaMobile() ||
-            "principal"
+            "mercado"
         );
 
     const nombreTiendaSeleccionada =
@@ -750,7 +775,7 @@ const {
             tiendaVentaNombre ||
             obtenerNombreTiendaVentaMobile() ||
             (
-                tiendaSeleccionada === "sucursal"
+                tiendaSeleccionada === "peluqueria"
                     ? "Peluquería"
                     : "Mercado"
             )
@@ -844,7 +869,7 @@ const totalFinal =
         sucursalUsuario:
             String(
                 sucursalUsuario ||
-                "principal"
+                "mercado"
             ),
 
         productos,
@@ -1215,49 +1240,36 @@ const numeroBoleta =
                              * seleccionada para esta venta.
                              */
 const tiendaVentaNormalizada =
-    String(
-        tiendaVenta || "principal"
-    )
-        .trim()
-        .toLowerCase();
+    normalizarTiendaVentaMobile(
+        tiendaVenta
+    );
 
 
 const claveTiendaStock =
-    (
-        tiendaVentaNormalizada === "sucursal" ||
-        tiendaVentaNormalizada === "peluqueria" ||
-        tiendaVentaNormalizada === "peluquería"
-    )
-        ? "sucursal"
-        : "principal";
+    tiendaVentaNormalizada === "peluqueria"
+        ? "peluqueria"
+        : "mercado";
+
 
 stockTiendas[claveTiendaStock] =
     stockActual -
     cantidad;
 
-delete stockTiendas.mercado;
-
-delete stockTiendas.peluqueria;
-
-delete stockTiendas["peluquería"];
-
                             /*
                              * Recalculamos el stock total
                              * sumando todas las tiendas.
                              */
-                            const stockTotal =
+const stockTotal =
     Math.max(
         0,
         Number(
-            stockTiendas.principal ||
-            0
+            stockTiendas.mercado || 0
         )
     ) +
     Math.max(
         0,
         Number(
-            stockTiendas.sucursal ||
-            0
+            stockTiendas.peluqueria || 0
         )
     );
 

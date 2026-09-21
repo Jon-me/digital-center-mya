@@ -13,6 +13,8 @@ const CATEGORIAS_COMERCIALES_MOBILE = [
 
     "Audífonos",
 
+    "Accesorios",
+
     "Pantallas",
 
     "Vidrios",
@@ -93,6 +95,14 @@ function obtenerCategoriaComercialMobile(
     ){
 
         return "Audífonos";
+
+    }
+
+    if(
+        categoria.includes("accesorio")
+    ){
+
+        return "Accesorios";
 
     }
 

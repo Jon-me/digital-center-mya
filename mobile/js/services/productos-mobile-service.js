@@ -82,20 +82,26 @@ function normalizarStockProductoMobile(
         });
 
 
-    /*
-     * Compatibilidad con productos antiguos.
-     * Si todavía no tienen stockTiendas,
-     * colocamos el stock general en principal.
-     */
-    if(
-        Object.keys(stockTiendas).length === 0 &&
-        Number(producto?.stock || 0) > 0
-    ){
+/*
+ * Compatibilidad con productos antiguos.
+ *
+ * Si el producto todavía no tiene stockTiendas,
+ * consideramos su stock general como stock de Mercado.
+ *
+ * Desde aquí el modelo interno siempre utiliza:
+ *
+ * mercado
+ * peluqueria
+ */
+if(
+    Object.keys(stockTiendas).length === 0 &&
+    Number(producto?.stock || 0) > 0
+){
 
-        stockTiendas.principal =
-            Number(producto.stock || 0);
+    stockTiendas.mercado =
+        Number(producto.stock || 0);
 
-    }
+}
 
 
     return stockTiendas;
@@ -926,7 +932,10 @@ async function crearProductoMobile(
 
 
     let referenciaImagenCreada =
-        null;
+    null;
+
+    let referenciaProductoCreado =
+    null;
 
 
     try{
@@ -1009,10 +1018,10 @@ async function crearProductoMobile(
 
                     stockTiendas: {
 
-                        principal:
+                        mercado:
                             datosValidados.stockPrincipal,
 
-                        sucursal:
+                        peluqueria:
                             datosValidados.stockSucursal
 
                     },
@@ -1054,6 +1063,8 @@ async function crearProductoMobile(
 
             );
 
+        referenciaProductoCreado =
+            referenciaProducto;
 
         const productoId =
             referenciaProducto.id;
@@ -1177,6 +1188,25 @@ async function crearProductoMobile(
                 console.warn(
                     "No se pudo eliminar la imagen después del error:",
                     errorRollback
+                );
+
+            }
+
+        }
+
+        if(referenciaProductoCreado){
+
+            try{
+
+                await deleteDoc(
+                    referenciaProductoCreado
+                );
+
+            }catch(errorRollbackProducto){
+
+                console.warn(
+                    "No se pudo eliminar el producto después del error:",
+                    errorRollbackProducto
                 );
 
             }
