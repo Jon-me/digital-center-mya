@@ -23,6 +23,7 @@ import {
     doc,
     getDoc,
     getDocs,
+    setDoc,
     updateDoc,
     deleteDoc,
     addDoc,
@@ -46,6 +47,12 @@ import {
     httpsCallable
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-functions.js";
 
+import {
+    getMessaging,
+    getToken,
+    deleteToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
 
 const firebaseConfig = {
 
@@ -105,6 +112,14 @@ const mobileFunctions =
         "southamerica-west1"
     );
 
+const mobileMessaging =
+    getMessaging(
+        mobileFirebaseApp
+    );
+
+
+const mobileVapidKey =
+    "BMSTa3aFp4Te9aFTFhFGAxlnKeGnmsry8TtLBfBQNs6BjWEvefmyR3chrKuPzLwb4FqPkz0oFFI3lgD5l21infE";    
 
 export {
 
@@ -118,6 +133,10 @@ export {
 
     mobileFunctions,
 
+    mobileMessaging,
+
+    mobileVapidKey,
+
     signInWithEmailAndPassword,
 
     signOut,
@@ -126,6 +145,12 @@ export {
 
     httpsCallable,
 
+    getToken,
+
+    deleteToken,
+
+    onMessage,
+
     collection,
 
     doc,
@@ -133,6 +158,8 @@ export {
     getDoc,
 
     getDocs,
+
+    setDoc,
 
     addDoc,
 

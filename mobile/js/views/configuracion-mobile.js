@@ -7,11 +7,70 @@
 import {
     diagnosticarDatosOperativosMobile,
     restablecerDatosOperativosMobile,
-    eliminarSoloVentasMobile
+    eliminarSoloVentasMobile,
+    reiniciarCorrelativoBoletasMobile
 } from "../services/mantenimiento-mobile-service.js";
+
+import {
+    obtenerEstadoNotificacionesMobile,
+    activarNotificacionesMobile,
+    desactivarNotificacionesMobile
+} from "../services/notificaciones-mobile-service.js";
 
 let renderizada =
     false;
+
+function actualizarEstadoVisualNotificaciones(
+    contenedor
+){
+
+    const chip =
+        contenedor.querySelector(
+            '[data-configuracion-status="notificaciones"]'
+        );
+
+
+    if(!chip){
+
+        return;
+
+    }
+
+
+    const estado =
+        obtenerEstadoNotificacionesMobile();
+
+
+    chip.classList.remove(
+        "ds-chip--pending",
+        "ds-chip--success",
+        "ds-chip--danger"
+    );
+
+
+    if(estado.activas){
+
+        chip.classList.add(
+            "ds-chip--success"
+        );
+
+        chip.textContent =
+            "Activadas";
+
+        return;
+
+    }
+
+
+    chip.classList.add(
+        "ds-chip--danger"
+    );
+
+
+    chip.textContent =
+        "Desactivadas";
+
+}
 
 
 /**
@@ -588,52 +647,160 @@ botonConfirmar.addEventListener(
                 .toUpperCase();
 
 
-        const confirmacionFinal =
-            window.confirm(
-                "CONFIRMACIÓN FINAL\n\n" +
-                "Se eliminarán permanentemente:\n" +
-                "• Ventas\n" +
-                "• Boletas\n" +
-                "• Cajas\n" +
-                "• Gastos\n\n" +
-                "El inventario y el stock permanecerán intactos.\n\n" +
-                "¿Deseas continuar?"
-            );
+const contenidoModal =
+    modal.querySelector(
+        ".configuracion-mobile-modal"
+    );
 
 
-        if(
-            !confirmacionFinal
-        ){
+contenidoModal.innerHTML = `
 
-            return;
+    <button
+        type="button"
+        class="configuracion-mobile-modal-close"
+        data-restablecimiento-final-cancelar
+        aria-label="Volver"
+    >
+        ×
+    </button>
 
-        }
+
+    <div class="configuracion-mobile-modal-icon">
+        ⚠️
+    </div>
 
 
-        const contenidoOriginal =
-            botonConfirmar.innerHTML;
+    <span class="ds-card__eyebrow">
+        CONFIRMACIÓN FINAL
+    </span>
 
 
-        botonConfirmar.disabled =
+    <h2 class="configuracion-mobile-modal-title">
+        ¿Restablecer definitivamente?
+    </h2>
+
+
+    <p class="configuracion-mobile-modal-copy">
+        Esta es la última confirmación antes de eliminar
+        los datos operativos de Digital Center M&A.
+    </p>
+
+
+    <div class="configuracion-mobile-confirm-summary">
+
+        <div
+            class="
+                configuracion-mobile-confirm-summary__item
+                configuracion-mobile-confirm-summary__item--danger
+            "
+        >
+            <span>🧹</span>
+
+            <div>
+                <strong>Se eliminarán</strong>
+
+                <small>
+                    Ventas, boletas, cajas y gastos
+                    registrados.
+                </small>
+            </div>
+        </div>
+
+
+        <div
+            class="
+                configuracion-mobile-confirm-summary__item
+                configuracion-mobile-confirm-summary__item--safe
+            "
+        >
+            <span>🛡️</span>
+
+            <div>
+                <strong>Inventario protegido</strong>
+
+                <small>
+                    Productos, precios, imágenes, stock
+                    y stock por tienda permanecerán intactos.
+                </small>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="configuracion-mobile-modal-actions">
+
+        <button
+            type="button"
+            class="
+                configuracion-mobile-modal-button
+                configuracion-mobile-modal-button--secondary
+            "
+            data-restablecimiento-final-cancelar
+        >
+            ← Volver
+        </button>
+
+
+        <button
+            type="button"
+            class="
+                configuracion-mobile-modal-button
+                configuracion-mobile-modal-button--danger
+            "
+            data-restablecimiento-final-confirmar
+        >
+            Restablecer ahora
+        </button>
+
+    </div>
+`;
+
+const botonVolverFinal =
+    contenidoModal.querySelector(
+        "[data-restablecimiento-final-cancelar]"
+    );
+
+
+const botonRestablecerFinal =
+    contenidoModal.querySelector(
+        "[data-restablecimiento-final-confirmar]"
+    );
+
+
+botonVolverFinal.addEventListener(
+    "click",
+    () => {
+
+        modal.remove();
+
+        mostrarModalRestablecimiento(
+            contenedor
+        );
+
+    }
+);
+
+
+botonRestablecerFinal.addEventListener(
+    "click",
+    async () => {
+
+        botonRestablecerFinal.disabled =
             true;
 
 
-        botonConfirmar.classList.add(
+        botonVolverFinal.disabled =
+            true;
+
+
+        botonRestablecerFinal.classList.add(
             "is-loading"
         );
 
 
-        botonConfirmar.innerHTML = `
-            Restableciendo...
-        `;
-
-
-        checkbox.disabled =
-            true;
-
-
-        input.disabled =
-            true;
+        botonRestablecerFinal.innerHTML =
+            "Restableciendo...";
 
 
         try{
@@ -652,6 +819,7 @@ botonConfirmar.addEventListener(
                 resultado
             );
 
+
         }catch(error){
 
             console.error(
@@ -660,25 +828,21 @@ botonConfirmar.addEventListener(
             );
 
 
-            botonConfirmar.disabled =
+            botonRestablecerFinal.disabled =
                 false;
 
 
-            botonConfirmar.classList.remove(
+            botonVolverFinal.disabled =
+                false;
+
+
+            botonRestablecerFinal.classList.remove(
                 "is-loading"
             );
 
 
-            botonConfirmar.innerHTML =
-                contenidoOriginal;
-
-
-            checkbox.disabled =
-                false;
-
-
-            input.disabled =
-                false;
+            botonRestablecerFinal.innerHTML =
+                "Restablecer ahora";
 
 
             mostrarErrorRestablecimiento(
@@ -690,6 +854,12 @@ botonConfirmar.addEventListener(
         }
 
     }
+);
+
+
+return;
+
+    }
 );    
 
     modal.addEventListener(
@@ -699,6 +869,1193 @@ botonConfirmar.addEventListener(
             const cerrar =
                 event.target.closest(
                     "[data-restablecimiento-cerrar]"
+                );
+
+
+            if(cerrar){
+
+                modal.remove();
+
+                return;
+
+            }
+
+
+            if(
+                event.target ===
+                modal
+            ){
+
+                modal.remove();
+
+            }
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            modal.classList.add(
+                "is-visible"
+            );
+
+        }
+    );
+
+
+    input.focus();
+
+}
+
+function mostrarModalEliminarVentas(
+    contenedor
+){
+
+    const modalAnterior =
+        document.querySelector(
+            "[data-modal-eliminar-ventas]"
+        );
+
+
+    modalAnterior?.remove();
+
+
+    const modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.className =
+        "configuracion-mobile-modal-backdrop";
+
+
+    modal.dataset.modalEliminarVentas =
+        "true";
+
+
+    modal.innerHTML = `
+        <section
+            class="
+                ds-card
+                ds-card--danger
+                configuracion-mobile-modal
+            "
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloEliminarVentas"
+        >
+
+            <button
+                type="button"
+                class="configuracion-mobile-modal-close"
+                data-eliminar-ventas-cerrar
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+
+            <div class="configuracion-mobile-modal-icon">
+                🗑️
+            </div>
+
+
+            <span class="ds-card__eyebrow">
+                LIMPIEZA DE HISTORIAL
+            </span>
+
+
+            <h2
+                id="tituloEliminarVentas"
+                class="configuracion-mobile-modal-title"
+            >
+                Eliminar ventas y boletas
+            </h2>
+
+
+            <p class="configuracion-mobile-modal-copy">
+                Esta acción eliminará permanentemente el historial
+                de ventas y las boletas registradas.
+            </p>
+
+
+            <div class="configuracion-mobile-modal-protection">
+
+                <span>
+                    🛡️
+                </span>
+
+                <div>
+
+                    <strong>
+                        Los demás datos permanecerán intactos
+                    </strong>
+
+                    <small>
+                        No se modificarán productos, stock, cajas,
+                        gastos ni el correlativo actual de boletas.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <label class="configuracion-mobile-confirm-check">
+
+                <input
+                    type="checkbox"
+                    data-eliminar-ventas-aceptacion
+                >
+
+                <span>
+                    Entiendo que las ventas y sus boletas
+                    serán eliminadas permanentemente.
+                </span>
+
+            </label>
+
+
+            <div class="configuracion-mobile-confirm-field">
+
+                <label for="fraseEliminarVentas">
+                    Escribe exactamente:
+                </label>
+
+                <code>
+                    RESTABLECER DIGITAL CENTER
+                </code>
+
+                <input
+                    id="fraseEliminarVentas"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Escribe la frase de seguridad"
+                    data-eliminar-ventas-frase
+                >
+
+            </div>
+
+
+            <div class="configuracion-mobile-modal-actions">
+
+                <button
+                    type="button"
+                    class="
+                        configuracion-mobile-modal-button
+                        configuracion-mobile-modal-button--secondary
+                    "
+                    data-eliminar-ventas-cerrar
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="
+                        configuracion-mobile-modal-button
+                        configuracion-mobile-modal-button--danger
+                    "
+                    data-eliminar-ventas-confirmar
+                    disabled
+                >
+                    Eliminar ventas
+                </button>
+
+            </div>
+
+        </section>
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    const checkbox =
+        modal.querySelector(
+            "[data-eliminar-ventas-aceptacion]"
+        );
+
+
+    const input =
+        modal.querySelector(
+            "[data-eliminar-ventas-frase]"
+        );
+
+
+    const botonConfirmar =
+        modal.querySelector(
+            "[data-eliminar-ventas-confirmar]"
+        );
+
+
+    const validar =
+        () => {
+
+            const fraseNormalizada =
+                input.value
+                    .trim()
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .toUpperCase();
+
+
+            const fraseCorrecta =
+                fraseNormalizada ===
+                "RESTABLECER DIGITAL CENTER";
+
+
+            botonConfirmar.disabled =
+                !checkbox.checked ||
+                !fraseCorrecta;
+
+        };
+
+
+    checkbox.addEventListener(
+        "change",
+        validar
+    );
+
+
+    input.addEventListener(
+        "input",
+        validar
+    );
+
+
+    botonConfirmar.addEventListener(
+        "click",
+        async () => {
+
+            if(
+                botonConfirmar.disabled
+            ){
+
+                return;
+
+            }
+
+
+            const frase =
+                input.value
+                    .trim()
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .toUpperCase();
+
+
+const contenidoModal =
+    modal.querySelector(
+        ".configuracion-mobile-modal"
+    );
+
+
+const contenidoOriginalModal =
+    contenidoModal.innerHTML;
+
+
+contenidoModal.innerHTML = `
+
+    <button
+        type="button"
+        class="configuracion-mobile-modal-close"
+        data-eliminar-final-cancelar
+        aria-label="Volver"
+    >
+        ×
+    </button>
+
+
+    <div class="configuracion-mobile-modal-icon">
+        ⚠️
+    </div>
+
+
+    <span class="ds-card__eyebrow">
+        CONFIRMACIÓN FINAL
+    </span>
+
+
+    <h2 class="configuracion-mobile-modal-title">
+        ¿Eliminar definitivamente?
+    </h2>
+
+
+    <p class="configuracion-mobile-modal-copy">
+        Estás a punto de eliminar permanentemente
+        todas las ventas y sus boletas.
+    </p>
+
+
+    <div class="configuracion-mobile-confirm-summary">
+
+        <div
+            class="
+                configuracion-mobile-confirm-summary__item
+                configuracion-mobile-confirm-summary__item--danger
+            "
+        >
+            <span>🗑️</span>
+
+            <div>
+                <strong>Se eliminarán</strong>
+                <small>
+                    Ventas y boletas registradas
+                </small>
+            </div>
+        </div>
+
+
+        <div
+            class="
+                configuracion-mobile-confirm-summary__item
+                configuracion-mobile-confirm-summary__item--safe
+            "
+        >
+            <span>🛡️</span>
+
+            <div>
+                <strong>Se conservarán</strong>
+                <small>
+                    Productos, stock, cajas, gastos
+                    y correlativo de boletas
+                </small>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="configuracion-mobile-modal-actions">
+
+        <button
+            type="button"
+            class="
+                configuracion-mobile-modal-button
+                configuracion-mobile-modal-button--secondary
+            "
+            data-eliminar-final-cancelar
+        >
+            ← Volver
+        </button>
+
+
+        <button
+            type="button"
+            class="
+                configuracion-mobile-modal-button
+                configuracion-mobile-modal-button--danger
+            "
+            data-eliminar-final-confirmar
+        >
+            Eliminar ahora
+        </button>
+
+    </div>
+`;
+
+const botonVolverFinal =
+    contenidoModal.querySelector(
+        "[data-eliminar-final-cancelar]"
+    );
+
+
+const botonEliminarFinal =
+    contenidoModal.querySelector(
+        "[data-eliminar-final-confirmar]"
+    );
+
+
+botonVolverFinal.addEventListener(
+    "click",
+    () => {
+
+        contenidoModal.innerHTML =
+            contenidoOriginalModal;
+
+        modal.remove();
+
+        mostrarModalEliminarVentas(
+            contenedor
+        );
+
+    }
+);
+
+
+botonEliminarFinal.addEventListener(
+    "click",
+    async () => {
+
+        botonEliminarFinal.disabled =
+            true;
+
+
+        botonVolverFinal.disabled =
+            true;
+
+
+        botonEliminarFinal.classList.add(
+            "is-loading"
+        );
+
+
+        botonEliminarFinal.innerHTML =
+            "Eliminando...";
+
+
+        try{
+
+            const resultado =
+                await eliminarSoloVentasMobile(
+                    frase
+                );
+
+
+            modal.remove();
+
+
+            console.info(
+                "[Configuración Mobile] Ventas eliminadas:",
+                resultado
+            );
+
+
+            await ejecutarDiagnosticoOperativo(
+                contenedor
+            );
+
+
+        }catch(error){
+
+            console.error(
+                "[Configuración Mobile] Error al eliminar ventas:",
+                error
+            );
+
+
+            botonEliminarFinal.disabled =
+                false;
+
+
+            botonVolverFinal.disabled =
+                false;
+
+
+            botonEliminarFinal.classList.remove(
+                "is-loading"
+            );
+
+
+            botonEliminarFinal.innerHTML =
+                "Eliminar ahora";
+
+
+            mostrarErrorRestablecimiento(
+                modal,
+                error?.message ||
+                "No se pudo completar la eliminación de ventas."
+            );
+
+        }
+
+    }
+);
+
+
+return;
+
+        }
+    );
+
+
+    modal.addEventListener(
+        "click",
+        (event) => {
+
+            const cerrar =
+                event.target.closest(
+                    "[data-eliminar-ventas-cerrar]"
+                );
+
+
+            if(cerrar){
+
+                modal.remove();
+
+                return;
+
+            }
+
+
+            if(
+                event.target ===
+                modal
+            ){
+
+                modal.remove();
+
+            }
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            modal.classList.add(
+                "is-visible"
+            );
+
+        }
+    );
+
+
+    input.focus();
+
+}
+
+/**
+ * ============================================================
+ * MODAL PREMIUM — REINICIAR CORRELATIVO
+ * ============================================================
+ *
+ * Reinicia únicamente la numeración interna de boletas.
+ *
+ * NO elimina:
+ * - ventas
+ * - boletas
+ * - cajas
+ * - gastos
+ * - productos
+ * - stock
+ */
+async function mostrarModalReiniciarCorrelativo(
+    contenedor
+){
+
+    const modalAnterior =
+        document.querySelector(
+            "[data-modal-reiniciar-correlativo]"
+        );
+
+
+    modalAnterior?.remove();
+
+
+    let ultimoNumeroBoleta =
+        0;
+
+
+    try{
+
+        const diagnostico =
+            await diagnosticarDatosOperativosMobile();
+
+
+        ultimoNumeroBoleta =
+            Number(
+                diagnostico?.datos?.ultimoNumeroBoleta || 0
+            );
+
+    }catch(error){
+
+        console.warn(
+            "[Configuración Mobile] No se pudo consultar el correlativo actual:",
+            error
+        );
+
+    }
+
+
+    const numeroActual =
+        `B001-${
+            String(
+                ultimoNumeroBoleta
+            ).padStart(
+                6,
+                "0"
+            )
+        }`;
+
+
+    const numeroReiniciado =
+        "B001-000000";
+
+
+    const siguienteNumero =
+        "B001-000001";
+
+
+    const modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.className =
+        "configuracion-mobile-modal-backdrop";
+
+
+    modal.dataset.modalReiniciarCorrelativo =
+        "true";
+
+
+    modal.innerHTML = `
+        <section
+            class="
+                ds-card
+                ds-card--danger
+                configuracion-mobile-modal
+            "
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tituloReiniciarCorrelativo"
+        >
+
+            <button
+                type="button"
+                class="configuracion-mobile-modal-close"
+                data-correlativo-cerrar
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+
+            <div class="configuracion-mobile-modal-icon">
+                📄
+            </div>
+
+
+            <span class="ds-card__eyebrow">
+                NUMERACIÓN DE BOLETAS
+            </span>
+
+
+            <h2
+                id="tituloReiniciarCorrelativo"
+                class="configuracion-mobile-modal-title"
+            >
+                Reiniciar correlativo
+            </h2>
+
+
+            <p class="configuracion-mobile-modal-copy">
+                Esta acción reiniciará únicamente la numeración
+                interna utilizada para generar nuevas boletas.
+            </p>
+
+
+            <div class="configuracion-mobile-confirm-summary">
+
+                <div
+                    class="
+                        configuracion-mobile-confirm-summary__item
+                        configuracion-mobile-confirm-summary__item--danger
+                    "
+                >
+                    <span>📄</span>
+
+                    <div>
+                        <strong>Correlativo actual</strong>
+
+                        <small>
+                            ${numeroActual}
+                            →
+                            ${numeroReiniciado}
+                        </small>
+                    </div>
+                </div>
+
+
+                <div
+                    class="
+                        configuracion-mobile-confirm-summary__item
+                        configuracion-mobile-confirm-summary__item--safe
+                    "
+                >
+                    <span>🧾</span>
+
+                    <div>
+                        <strong>Próxima boleta</strong>
+
+                        <small>
+                            La siguiente venta generará
+                            ${siguienteNumero}
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="configuracion-mobile-modal-protection">
+
+                <span>
+                    🛡️
+                </span>
+
+                <div>
+
+                    <strong>
+                        No se eliminará ningún registro
+                    </strong>
+
+                    <small>
+                        Ventas, boletas, cajas, gastos, productos,
+                        precios y stock permanecerán intactos.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="
+                    configuracion-mobile-confirm-summary__item
+                    configuracion-mobile-confirm-summary__item--danger
+                "
+            >
+
+                <span>
+                    ⚠️
+                </span>
+
+                <div>
+
+                    <strong>
+                        Importante
+                    </strong>
+
+                    <small>
+                        Si existen boletas anteriores, sus números
+                        podrían volver a utilizarse después del reinicio.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <label class="configuracion-mobile-confirm-check">
+
+                <input
+                    type="checkbox"
+                    data-correlativo-aceptacion
+                >
+
+                <span>
+                    Entiendo que la numeración comenzará nuevamente
+                    desde B001-000001.
+                </span>
+
+            </label>
+
+
+            <div class="configuracion-mobile-confirm-field">
+
+                <label for="fraseReiniciarCorrelativo">
+                    Escribe exactamente:
+                </label>
+
+                <code>
+                    RESTABLECER DIGITAL CENTER
+                </code>
+
+                <input
+                    id="fraseReiniciarCorrelativo"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Escribe la frase de seguridad"
+                    data-correlativo-frase
+                >
+
+            </div>
+
+
+            <div class="configuracion-mobile-modal-actions">
+
+                <button
+                    type="button"
+                    class="
+                        configuracion-mobile-modal-button
+                        configuracion-mobile-modal-button--secondary
+                    "
+                    data-correlativo-cerrar
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="
+                        configuracion-mobile-modal-button
+                        configuracion-mobile-modal-button--danger
+                    "
+                    data-correlativo-confirmar
+                    disabled
+                >
+                    Continuar
+                </button>
+
+            </div>
+
+        </section>
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    const checkbox =
+        modal.querySelector(
+            "[data-correlativo-aceptacion]"
+        );
+
+
+    const input =
+        modal.querySelector(
+            "[data-correlativo-frase]"
+        );
+
+
+    const botonConfirmar =
+        modal.querySelector(
+            "[data-correlativo-confirmar]"
+        );
+
+
+    const validar =
+        () => {
+
+            const fraseNormalizada =
+                input.value
+                    .trim()
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .toUpperCase();
+
+
+            const fraseCorrecta =
+                fraseNormalizada ===
+                "RESTABLECER DIGITAL CENTER";
+
+
+            botonConfirmar.disabled =
+                !checkbox.checked ||
+                !fraseCorrecta;
+
+        };
+
+
+    checkbox.addEventListener(
+        "change",
+        validar
+    );
+
+
+    input.addEventListener(
+        "input",
+        validar
+    );
+
+
+    botonConfirmar.addEventListener(
+        "click",
+        async () => {
+
+            if(
+                botonConfirmar.disabled
+            ){
+
+                return;
+
+            }
+
+
+            const frase =
+                input.value
+                    .trim()
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .toUpperCase();
+
+
+            const contenidoModal =
+                modal.querySelector(
+                    ".configuracion-mobile-modal"
+                );
+
+
+            contenidoModal.innerHTML = `
+
+                <button
+                    type="button"
+                    class="configuracion-mobile-modal-close"
+                    data-correlativo-final-cancelar
+                    aria-label="Volver"
+                >
+                    ×
+                </button>
+
+
+                <div class="configuracion-mobile-modal-icon">
+                    ⚠️
+                </div>
+
+
+                <span class="ds-card__eyebrow">
+                    CONFIRMACIÓN FINAL
+                </span>
+
+
+                <h2 class="configuracion-mobile-modal-title">
+                    ¿Reiniciar la numeración?
+                </h2>
+
+
+                <p class="configuracion-mobile-modal-copy">
+                    Esta es la última confirmación antes de establecer
+                    el correlativo interno de boletas en cero.
+                </p>
+
+
+                <div class="configuracion-mobile-confirm-summary">
+
+                    <div
+                        class="
+                            configuracion-mobile-confirm-summary__item
+                            configuracion-mobile-confirm-summary__item--danger
+                        "
+                    >
+                        <span>📄</span>
+
+                        <div>
+                            <strong>Correlativo</strong>
+
+                            <small>
+                                ${numeroActual}
+                                →
+                                ${numeroReiniciado}
+                            </small>
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            configuracion-mobile-confirm-summary__item
+                            configuracion-mobile-confirm-summary__item--safe
+                        "
+                    >
+                        <span>🧾</span>
+
+                        <div>
+                            <strong>Siguiente boleta</strong>
+
+                            <small>
+                                ${siguienteNumero}
+                            </small>
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            configuracion-mobile-confirm-summary__item
+                            configuracion-mobile-confirm-summary__item--safe
+                        "
+                    >
+                        <span>🛡️</span>
+
+                        <div>
+                            <strong>Datos protegidos</strong>
+
+                            <small>
+                                No se eliminarán ventas, boletas,
+                                cajas, gastos, productos ni stock.
+                            </small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="configuracion-mobile-modal-actions">
+
+                    <button
+                        type="button"
+                        class="
+                            configuracion-mobile-modal-button
+                            configuracion-mobile-modal-button--secondary
+                        "
+                        data-correlativo-final-cancelar
+                    >
+                        ← Volver
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="
+                            configuracion-mobile-modal-button
+                            configuracion-mobile-modal-button--danger
+                        "
+                        data-correlativo-final-confirmar
+                    >
+                        Reiniciar ahora
+                    </button>
+
+                </div>
+            `;
+
+
+            const botonVolverFinal =
+                contenidoModal.querySelector(
+                    "[data-correlativo-final-cancelar]"
+                );
+
+
+            const botonReiniciarFinal =
+                contenidoModal.querySelector(
+                    "[data-correlativo-final-confirmar]"
+                );
+
+
+            botonVolverFinal.addEventListener(
+                "click",
+                () => {
+
+                    modal.remove();
+
+
+                    mostrarModalReiniciarCorrelativo(
+                        contenedor
+                    );
+
+                }
+            );
+
+
+            botonReiniciarFinal.addEventListener(
+                "click",
+                async () => {
+
+                    botonReiniciarFinal.disabled =
+                        true;
+
+
+                    botonVolverFinal.disabled =
+                        true;
+
+
+                    botonReiniciarFinal.classList.add(
+                        "is-loading"
+                    );
+
+
+                    botonReiniciarFinal.innerHTML =
+                        "Reiniciando...";
+
+
+                    try{
+
+                        const resultado =
+                            await reiniciarCorrelativoBoletasMobile(
+                                frase
+                            );
+
+
+                        modal.remove();
+
+
+                        console.info(
+                            "[Configuración Mobile] Correlativo reiniciado:",
+                            resultado
+                        );
+
+
+                        await ejecutarDiagnosticoOperativo(
+                            contenedor
+                        );
+
+
+                    }catch(error){
+
+                        console.error(
+                            "[Configuración Mobile] Error al reiniciar correlativo:",
+                            error
+                        );
+
+
+                        botonReiniciarFinal.disabled =
+                            false;
+
+
+                        botonVolverFinal.disabled =
+                            false;
+
+
+                        botonReiniciarFinal.classList.remove(
+                            "is-loading"
+                        );
+
+
+                        botonReiniciarFinal.innerHTML =
+                            "Reiniciar ahora";
+
+
+                        mostrarErrorRestablecimiento(
+                            modal,
+                            error?.message ||
+                            "No se pudo reiniciar el correlativo de boletas."
+                        );
+
+                    }
+
+                }
+            );
+
+
+            return;
+
+        }
+    );
+
+
+    modal.addEventListener(
+        "click",
+        (event) => {
+
+            const cerrar =
+                event.target.closest(
+                    "[data-correlativo-cerrar]"
                 );
 
 
@@ -1279,21 +2636,20 @@ export async function renderConfiguracionMobile(
                         </strong>
 
                         <small class="ds-settings-item__description">
-                            Limpia únicamente el historial de ventas.
+                            Elimina el historial de ventas y sus boletas.
                         </small>
 
                     </span>
 
                     <span
                         class="
-                            ds-chip
-                            ds-chip--future
-                            ds-chip--plain
-                            configuracion-mobile-option-badge
+                            ds-settings-item__arrow
+                            configuracion-mobile-option-arrow
                         "
                     >
-                        Próximamente
+                        ›
                     </span>
+
                 </button>
 
 
@@ -1334,13 +2690,11 @@ export async function renderConfiguracionMobile(
 
                     <span
                         class="
-                            ds-chip
-                            ds-chip--future
-                            ds-chip--plain
-                            configuracion-mobile-option-badge
+                            ds-settings-item__arrow
+                            configuracion-mobile-option-arrow
                         "
                     >
-                        Próximamente
+                        ›
                     </span>
 
                 </button>
@@ -1352,7 +2706,7 @@ export async function renderConfiguracionMobile(
                         ds-settings-item
                         configuracion-mobile-option
                     "
-                    data-configuracion-action="limpiar-cache"
+                    data-configuracion-action="actualizar-aplicacion"
                 >
 
                     <span
@@ -1361,7 +2715,7 @@ export async function renderConfiguracionMobile(
                             configuracion-mobile-option-icon
                         "
                     >
-                        🧽
+                        🔄
                     </span>
 
                     <span
@@ -1372,12 +2726,12 @@ export async function renderConfiguracionMobile(
                     >
 
                         <strong class="ds-settings-item__title">
-                            Limpiar caché local
+                            Actualizar aplicación
                         </strong>
 
                         <small class="ds-settings-item__description">
-                            Elimina información temporal guardada
-                            en este dispositivo.
+                            Carga la versión más reciente sin cerrar
+                            tu sesión ni borrar tus datos.
                         </small>
 
                     </span>
@@ -1607,6 +2961,10 @@ export async function renderConfiguracionMobile(
         </div>
     `;
 
+    actualizarEstadoVisualNotificaciones(
+        contenedor
+    );    
+
 contenedor.addEventListener(
     "click",
     async (event) => {
@@ -1649,6 +3007,103 @@ contenedor.addEventListener(
             );
 
         }
+
+if(
+    accion ===
+    "eliminar-ventas"
+){
+
+    mostrarModalEliminarVentas(
+        contenedor
+    );
+
+}
+
+
+if(
+    accion ===
+    "reiniciar-correlativo"
+){
+
+    mostrarModalReiniciarCorrelativo(
+        contenedor
+    );
+
+}
+
+if(
+    accion ===
+    "notificaciones"
+){
+
+    const estado =
+        obtenerEstadoNotificacionesMobile();
+
+
+    try{
+
+        boton.disabled =
+            true;
+
+
+        if(estado.activas){
+
+            await desactivarNotificacionesMobile();
+
+            console.info(
+                "[Configuración Mobile] Notificaciones desactivadas."
+            );
+
+        }else{
+
+            await activarNotificacionesMobile();
+
+            console.info(
+                "[Configuración Mobile] Notificaciones activadas."
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "[Configuración Mobile] Error de notificaciones:",
+            error
+        );
+
+    }finally{
+
+        boton.disabled =
+            false;
+
+        actualizarEstadoVisualNotificaciones(
+            contenedor
+    );    
+
+    }
+
+}
+
+if(
+    accion ===
+    "actualizar-aplicacion"
+){
+
+    const url =
+        new URL(
+            window.location.href
+        );
+
+    url.searchParams.set(
+        "v",
+        Date.now().toString()
+    );
+
+    window.location.replace(
+        url.toString()
+    );
+
+}
 
     }
 );    

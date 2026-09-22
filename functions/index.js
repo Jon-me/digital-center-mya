@@ -671,3 +671,143 @@ exports.eliminarSoloVentas = onCall(
 
     }
 );
+
+/**
+ * ============================================================
+ * REINICIAR CORRELATIVO DE BOLETAS
+ * ============================================================
+ *
+ * MODIFICA:
+ * - configuracion/boletas.ultimoNumero
+ *
+ * NUEVO VALOR:
+ * - ultimoNumero = 0
+ *
+ * NO MODIFICA:
+ * - ventas
+ * - boletas
+ * - cajas
+ * - gastos
+ * - inventario
+ *
+ * La siguiente venta generará:
+ * B001-000001
+ */
+exports.reiniciarCorrelativoBoletas = onCall(
+    {
+        region: "southamerica-west1",
+        timeoutSeconds: 120,
+        memory: "256MiB"
+    },
+    async (request) => {
+
+        const administrador =
+            verificarAdministrador(request);
+
+
+        const confirmacion =
+            String(
+                request.data?.confirmacion || ""
+            ).trim();
+
+
+        if (
+            confirmacion !==
+            FRASE_RESTABLECIMIENTO
+        ) {
+
+            throw new HttpsError(
+                "failed-precondition",
+                `Debes escribir exactamente: ${FRASE_RESTABLECIMIENTO}`
+            );
+
+        }
+
+
+        console.warn(
+            "REINICIO DE CORRELATIVO solicitado por:",
+            administrador.uid,
+            administrador.email
+        );
+
+
+        try {
+
+            const resultado =
+                await ejecutarLimpiezaOperativa({
+
+                    administrador,
+
+                    accion:
+                        "reiniciarCorrelativoBoletas",
+
+                    eliminarVentas:
+                        false,
+
+                    eliminarBoletas:
+                        false,
+
+                    eliminarCajas:
+                        false,
+
+                    reiniciarCorrelativo:
+                        true
+
+                });
+
+
+            console.warn(
+                "REINICIO DE CORRELATIVO completado:",
+                resultado.auditoriaId
+            );
+
+
+            return {
+
+                ok:
+                    true,
+
+                mensaje:
+                    "El correlativo de boletas fue reiniciado correctamente.",
+
+                eliminados:
+                    resultado.eliminados,
+
+                correlativo:
+                    resultado.correlativo,
+
+                inventarioProtegido:
+                    resultado.inventarioProtegido,
+
+                auditoriaId:
+                    resultado.auditoriaId
+
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "Error al reiniciar el correlativo de boletas:",
+                error
+            );
+
+
+            if (
+                error instanceof HttpsError
+            ) {
+
+                throw error;
+
+            }
+
+
+            throw new HttpsError(
+                "internal",
+                "No se pudo reiniciar el correlativo de boletas."
+            );
+
+        }
+
+    }
+);
